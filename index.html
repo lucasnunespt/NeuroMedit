@@ -1,0 +1,1455 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="index_meta_title">NeuroMedit</title>
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script>
+    (() => {
+      const hour = new Date().getHours();
+      const theme = hour >= 5 && hour < 12
+        ? "morning"
+        : hour >= 12 && hour < 17
+          ? "afternoon"
+          : hour >= 17 && hour < 20
+            ? "sunset"
+            : hour >= 20 && hour < 21
+              ? "evening"
+            : hour >= 21
+              ? "night"
+              : "late-night";
+
+      document.documentElement.classList.add(`theme-${theme}`);
+    })();
+  </script>
+  <style>
+    :root {
+      --white: #f0ded0;
+      --muted: rgba(183, 159, 145, 0.76);
+      --dim: rgba(210, 132, 84, 0.18);
+      --deep: #0b0706;
+      --mid: #120b09;
+      --light: #1a0d12;
+      --breath-duration: 10s;
+      --theme-transition-duration: 4.8s;
+      --sanctuary-bg: #0b0706;
+      --sanctuary-bg-deep: #090504;
+      --sanctuary-bg-soft: #1a0d12;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #f4e6da;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #f4e6da;
+      --link-text: rgba(244, 230, 218, 0.86);
+      --sanctuary-dim: rgba(210, 132, 84, 0.18);
+      --sanctuary-accent: rgba(199, 122, 74, 0.46);
+      --sanctuary-accent-soft: rgba(180, 92, 48, 0.16);
+      --sanctuary-warm-light: rgba(199, 122, 74, 0.1);
+      --sanctuary-cool-light: rgba(138, 75, 42, 0.1);
+      --orb-opacity: 0.22;
+      --orb-border: rgba(210, 132, 84, 0.18);
+      --orb-glow: rgba(180, 92, 48, 0.16);
+      --shadow-soft: rgba(0, 0, 0, 0.32);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--deep);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-width: 320px;
+      opacity: 1;
+      transition: opacity 900ms ease;
+      color: var(--sanctuary-text);
+      background: var(--sanctuary-bg);
+    }
+
+    body.exiting {
+      opacity: 0;
+    }
+
+    .video-atmosphere {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 1400ms ease, visibility 0s linear 1400ms;
+    }
+
+    .video-atmosphere.is-visible {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+    }
+
+    .video-atmosphere.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .video-atmosphere video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(10px) brightness(0.48) contrast(0.82) saturate(0.6);
+      transform: scale(1.05);
+    }
+
+    .video-atmosphere::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(199, 122, 74, 0.08), transparent 34%),
+        linear-gradient(180deg, rgba(9, 5, 4, 0.48), rgba(9, 5, 4, 0.76));
+    }
+
+    html.theme-morning body,
+    body.theme-morning {
+      --sanctuary-bg: #f8f0e4;
+      --sanctuary-bg-deep: #efe0ca;
+      --sanctuary-bg-soft: #fff8ed;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #F4E6DA;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #F4E6DA;
+      --link-text: rgba(244, 230, 218, 0.8);
+      --sanctuary-dim: rgba(89, 70, 48, 0.24);
+      --sanctuary-accent: rgba(196, 128, 54, 0.34);
+      --sanctuary-accent-soft: rgba(246, 185, 102, 0.18);
+      --sanctuary-warm-light: rgba(255, 187, 95, 0.28);
+      --sanctuary-cool-light: rgba(255, 246, 229, 0.4);
+      --orb-opacity: 0.14;
+      --orb-border: rgba(175, 119, 58, 0.2);
+      --orb-glow: rgba(210, 147, 72, 0.16);
+      --shadow-soft: rgba(94, 66, 34, 0.12);
+      color-scheme: light;
+    }
+
+    html.theme-afternoon body,
+    html.theme-day body,
+    body.theme-afternoon,
+    body.theme-day {
+      --sanctuary-bg: #fbf6eb;
+      --sanctuary-bg-deep: #eee3cf;
+      --sanctuary-bg-soft: #fffdf6;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #F4E6DA;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #F4E6DA;
+      --link-text: rgba(244, 230, 218, 0.8);
+      --sanctuary-dim: rgba(96, 79, 55, 0.22);
+      --sanctuary-accent: rgba(203, 142, 61, 0.28);
+      --sanctuary-accent-soft: rgba(238, 187, 104, 0.14);
+      --sanctuary-warm-light: rgba(255, 208, 132, 0.24);
+      --sanctuary-cool-light: rgba(251, 246, 235, 0.42);
+      --orb-opacity: 0.12;
+      --orb-border: rgba(168, 118, 64, 0.18);
+      --orb-glow: rgba(213, 158, 83, 0.13);
+      --shadow-soft: rgba(92, 70, 42, 0.1);
+      color-scheme: light;
+    }
+
+    html.theme-sunset body,
+    body.theme-sunset,
+    html.theme-evening body,
+    body.theme-evening {
+      --sanctuary-bg: #1c1b22;
+      --sanctuary-bg-deep: #0f121b;
+      --sanctuary-bg-soft: #3a2e32;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #F4E6DA;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #F4E6DA;
+      --link-text: rgba(244, 230, 218, 0.8);
+      --sanctuary-dim: rgba(238, 220, 199, 0.22);
+      --sanctuary-accent: rgba(221, 151, 80, 0.38);
+      --sanctuary-accent-soft: rgba(93, 133, 170, 0.18);
+      --sanctuary-warm-light: rgba(239, 156, 75, 0.18);
+      --sanctuary-cool-light: rgba(73, 118, 158, 0.16);
+      --orb-opacity: 0.18;
+      --orb-border: rgba(229, 177, 124, 0.22);
+      --orb-glow: rgba(217, 142, 74, 0.14);
+      --shadow-soft: rgba(3, 7, 14, 0.24);
+      color-scheme: dark;
+    }
+
+    html.theme-night body,
+    body.theme-night,
+    html.theme-late-night body,
+    body.theme-late-night {
+      --sanctuary-bg: #0b0706;
+      --sanctuary-bg-deep: #090504;
+      --sanctuary-bg-soft: #1a0d12;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #F4E6DA;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #F4E6DA;
+      --link-text: rgba(244, 230, 218, 0.8);
+      --sanctuary-dim: rgba(210, 132, 84, 0.18);
+      --sanctuary-accent: rgba(199, 122, 74, 0.46);
+      --sanctuary-accent-soft: rgba(180, 92, 48, 0.16);
+      --sanctuary-warm-light: rgba(199, 122, 74, 0.1);
+      --sanctuary-cool-light: rgba(138, 75, 42, 0.1);
+      --orb-opacity: 0.22;
+      --orb-border: rgba(210, 132, 84, 0.18);
+      --orb-glow: rgba(180, 92, 48, 0.16);
+      --shadow-soft: rgba(0, 0, 0, 0.32);
+      color-scheme: dark;
+    }
+
+    body.video-atmosphere-active {
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.8);
+      --text-primary: #F4E6DA;
+      --text-secondary: rgba(244, 230, 218, 0.8);
+      --text-muted: rgba(244, 230, 218, 0.8);
+      --text-subtle: rgba(244, 230, 218, 0.8);
+      --button-text: #F4E6DA;
+      --link-text: rgba(244, 230, 218, 0.8);
+      color-scheme: dark;
+    }
+
+    body.video-atmosphere-active .experience {
+      background: transparent;
+    }
+
+    body[data-index-phase="meditation-active"],
+    body[data-index-phase="meditation-complete"] {
+      --sanctuary-bg: #0b0706;
+      --sanctuary-bg-deep: #090504;
+      --sanctuary-bg-soft: #1a0d12;
+      --sanctuary-text: #F4E6DA;
+      --sanctuary-muted: rgba(244, 230, 218, 0.82);
+      --sanctuary-dim: rgba(210, 132, 84, 0.2);
+      --sanctuary-accent: rgba(199, 122, 74, 0.42);
+      --sanctuary-accent-soft: rgba(180, 92, 48, 0.18);
+      --sanctuary-warm-light: rgba(199, 122, 74, 0.1);
+      --sanctuary-cool-light: rgba(138, 75, 42, 0.08);
+      --orb-opacity: 0.08;
+      --orb-border: rgba(210, 132, 84, 0.22);
+      --orb-glow: rgba(180, 92, 48, 0.18);
+      --shadow-soft: rgba(0, 0, 0, 0.34);
+      color-scheme: dark;
+    }
+
+    body[data-index-phase="meditation-active"] .experience,
+    body[data-index-phase="meditation-complete"] .experience {
+      background:
+        radial-gradient(circle at 50% 36%, rgba(180, 92, 48, 0.14), transparent 38%),
+        radial-gradient(circle at 18% 82%, rgba(199, 122, 74, 0.08), transparent 34%),
+        linear-gradient(145deg, #090504 0%, #1a0d12 52%, #0b0706 100%);
+    }
+
+    body.video-atmosphere-active[data-index-phase="meditation-active"] .experience,
+    body.video-atmosphere-active[data-index-phase="meditation-complete"] .experience {
+      background: transparent;
+    }
+
+    .experience {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100svh;
+      min-height: 100svh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 35%, var(--sanctuary-accent-soft), transparent 38%),
+        radial-gradient(circle at 18% 82%, var(--sanctuary-warm-light), transparent 34%),
+        linear-gradient(145deg, var(--sanctuary-bg-deep) 0%, var(--sanctuary-bg-soft) 52%, var(--sanctuary-bg) 100%);
+      transition: background var(--theme-transition-duration) ease;
+    }
+
+    .experience.deepen {
+      background:
+        radial-gradient(circle at 50% 35%, var(--sanctuary-accent), transparent 42%),
+        radial-gradient(circle at 76% 78%, var(--sanctuary-cool-light), transparent 33%),
+        linear-gradient(145deg, var(--sanctuary-bg) 0%, var(--sanctuary-bg-soft) 54%, var(--sanctuary-bg-deep) 100%);
+    }
+
+    .experience::before {
+      content: "";
+      position: absolute;
+      inset: -18%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.44;
+      background:
+        radial-gradient(circle at 42% 38%, var(--sanctuary-accent-soft), transparent 24%),
+        radial-gradient(circle at 64% 62%, var(--sanctuary-warm-light), transparent 24%);
+      filter: blur(34px);
+      transition: opacity 6s ease;
+    }
+
+    .content {
+      position: relative;
+      grid-area: 1 / 1;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: min(88vw, 720px);
+      min-height: 60vh;
+      text-align: center;
+      transition: opacity 2.4s ease, transform 2.4s ease, filter 2.4s ease;
+    }
+
+    .content.fade-out {
+      opacity: 0;
+      transform: scale(0.985);
+      filter: blur(8px);
+    }
+
+    .intro {
+      position: relative;
+      grid-area: 1 / 1;
+      z-index: 4;
+      display: grid;
+      justify-items: center;
+      gap: 0.95rem;
+      width: min(88vw, 680px);
+      text-align: center;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 1.4s ease, transform 1.4s ease, filter 1.4s ease;
+    }
+
+    .intro.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      filter: blur(8px);
+    }
+
+    .intro-title {
+      margin: 0;
+      color: #F4E6DA;
+      font-size: clamp(2.15rem, 6.4vw, 4.8rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: 0;
+      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.42), 0 0 34px rgba(180, 92, 48, 0.2);
+      transition:
+        color var(--theme-transition-duration) ease,
+        opacity 700ms ease,
+        text-shadow var(--theme-transition-duration) ease,
+        transform 700ms ease;
+    }
+
+    .intro-copy {
+      max-width: min(82vw, 480px);
+      margin: 0 0 1.45rem;
+      color: rgba(244, 230, 218, 0.8);
+      font-size: clamp(1.05rem, 3vw, 1.42rem);
+      font-weight: 300;
+      line-height: 1.45;
+      text-wrap: balance;
+      transition:
+        color var(--theme-transition-duration) ease,
+        opacity 700ms ease,
+        transform 700ms ease;
+    }
+
+    .intro-note {
+      max-width: min(82vw, 360px);
+      margin: -0.45rem 0 0.55rem;
+      color: rgba(244, 230, 218, 0.8);
+      font-size: 0.92rem;
+      font-weight: 300;
+      line-height: 1.55;
+      text-wrap: balance;
+      opacity: 1;
+      transform: translateY(8px);
+      transition: opacity 700ms ease, transform 700ms ease, color var(--theme-transition-duration) ease;
+    }
+
+    .intro-actions {
+      display: grid;
+      justify-items: center;
+      gap: 0.95rem;
+      opacity: 1;
+      transform: translateY(10px);
+      pointer-events: auto;
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .intro-language {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 0 0 1.25rem;
+      color: rgba(244, 230, 218, 0.8);
+      font-size: 0.78rem;
+    }
+
+    .intro-language .language-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--sanctuary-dim);
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(244, 230, 218, 0.8);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 10px 34px rgba(0, 0, 0, 0.22),
+        inset 0 0 24px rgba(255, 255, 255, 0.04);
+      transition:
+        width 420ms cubic-bezier(.2,.8,.2,1),
+        background 260ms ease,
+        border-color 260ms ease,
+        box-shadow 260ms ease;
+      z-index: 80;
+    }
+
+    .intro-language .language-pill.is-open {
+      width: 280px;
+      border-color: rgba(244, 230, 218, 0.28);
+      background: rgba(255, 255, 255, 0.1);
+      color: #F4E6DA;
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.30),
+        inset 0 0 28px rgba(255, 255, 255, 0.05);
+    }
+
+    .intro-language .language-trigger {
+      appearance: none;
+      position: relative;
+      z-index: 2;
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .intro-language .language-trigger:focus-visible {
+      outline: none;
+    }
+
+    .intro-language .language-options {
+      position: absolute;
+      right: 44px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 4px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(18px);
+      pointer-events: none;
+      transition:
+        opacity 220ms ease,
+        visibility 0s linear 220ms,
+        transform 420ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .intro-language .language-pill.is-open .language-options {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .intro-language .language-pill:hover,
+      .intro-language .language-pill:focus-within {
+        width: 280px;
+        border-color: rgba(244, 230, 218, 0.28);
+        background: rgba(255, 255, 255, 0.1);
+        color: #F4E6DA;
+        box-shadow:
+          0 18px 60px rgba(0, 0, 0, 0.30),
+          inset 0 0 28px rgba(255, 255, 255, 0.05);
+      }
+
+      .intro-language .language-pill:hover .language-options,
+      .intro-language .language-pill:focus-within .language-options {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+        pointer-events: auto;
+        transition-delay: 0s;
+      }
+    }
+
+    .intro-language .language-options button {
+      appearance: none;
+      min-width: 38px;
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      color: rgba(244, 230, 218, 0.74);
+      background: transparent;
+      font: inherit;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .intro-language .language-options button:hover,
+    .intro-language .language-options button:focus-visible,
+    .intro-language .language-options button.is-active {
+      color: #F4E6DA;
+      background: rgba(244, 230, 218, 0.1);
+      outline: none;
+    }
+
+    .intro-language .language-options button:active {
+      transform: scale(0.96);
+    }
+
+    @media (max-width: 768px) {
+      .intro-language .language-pill {
+        width: 46px;
+        height: 46px;
+      }
+
+      .intro-language .language-trigger {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+      }
+
+      .intro-language .language-pill.is-open {
+        width: min(286px, calc(100vw - 32px));
+      }
+
+      .intro-language .language-options {
+        right: 46px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .intro-language .language-pill,
+      .intro-language .language-options,
+      .intro-language .language-options button {
+        transition: none;
+      }
+    }
+
+    html[lang="ru"],
+    html[lang="ru"] body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Noto Sans Cyrillic", Arial, sans-serif;
+    }
+
+    html[lang="ru"] .intro-title,
+    html[lang="ru"] .meditation-title,
+    html[lang="ru"] .final-message {
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+
+    html[lang="ru"] .intro-copy,
+    html[lang="ru"] .meditation-instruction {
+      line-height: 1.65;
+    }
+
+    html[lang="ru"] .meditation-label {
+      letter-spacing: 0.08em;
+    }
+
+    .start-btn {
+      position: relative;
+      z-index: 6;
+      min-width: min(76vw, 220px);
+      border: 1px solid var(--sanctuary-dim);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #F4E6DA;
+      padding: 0.95rem 1.4rem;
+      font: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 18px 55px var(--shadow-soft), 0 0 34px var(--orb-glow);
+      backdrop-filter: blur(14px);
+      transition: transform 250ms ease, background 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+    }
+
+    .intro[data-phase="ready-to-start"] .intro-actions,
+    .intro[data-phase="ready-to-start"] .intro-note {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .intro[data-phase="intro-welcome"] .intro-title {
+      font-size: clamp(2.45rem, 8vw, 5.2rem);
+    }
+
+    .intro.is-changing .intro-title,
+    .intro.is-changing .intro-copy,
+    .intro.is-changing .intro-note,
+    .intro.is-changing .intro-actions {
+      transform: translateY(8px);
+    }
+
+    .explore-btn {
+      border: 0;
+      background: transparent;
+      color: rgba(244, 230, 218, 0.8);
+      padding: 0.45rem 0.7rem;
+      font: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: color 250ms ease, transform 250ms ease;
+    }
+
+    .exit-btn {
+      position: fixed;
+      top: max(1rem, env(safe-area-inset-top));
+      right: max(1rem, env(safe-area-inset-right));
+      z-index: 40;
+      border: 1px solid var(--sanctuary-dim);
+      border-radius: 999px;
+      background: rgba(26, 13, 18, 0.38);
+      color: rgba(244, 230, 218, 0.82);
+      padding: 0.5rem 0.72rem;
+      font: inherit;
+      font-size: 0.88rem;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(14px);
+      transition: opacity 1.4s ease, color 250ms ease, border-color 250ms ease, background 250ms ease, transform 250ms ease;
+    }
+
+    .exit-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .start-btn:hover,
+    .start-btn:focus-visible {
+      border-color: rgba(210, 132, 84, 0.36);
+      background: rgba(199, 122, 74, 0.14);
+      box-shadow: 0 0 34px rgba(180, 92, 48, 0.14);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .explore-btn:hover,
+    .explore-btn:focus-visible,
+    .exit-btn:hover,
+    .exit-btn:focus-visible {
+      color: #F4E6DA;
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .audio-error {
+      min-height: 1.4em;
+      margin: 0.35rem 0 0;
+      color: rgba(244, 230, 218, 0.68);
+      font-size: 0.84rem;
+      line-height: 1.55;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 240ms ease, transform 240ms ease;
+    }
+
+    .audio-error.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .audio-error.is-warning {
+      color: rgba(244, 230, 218, 0.78);
+    }
+
+    body.airlock-active .site-header,
+    body.airlock-active .site-footer {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .exit-btn:hover,
+    .exit-btn:focus-visible {
+      border-color: var(--sanctuary-muted);
+      background: rgba(48, 24, 20, 0.46);
+    }
+
+    .start-btn:focus-visible,
+    .explore-btn:focus-visible,
+    .exit-btn:focus-visible,
+    .final-btn:focus-visible,
+    .choice:focus-visible {
+      outline: 2px solid rgba(199, 122, 74, 0.58);
+      outline-offset: 4px;
+    }
+
+    .message {
+      position: absolute;
+      max-width: min(84vw, 620px);
+      margin: 0;
+      color: #F4E6DA;
+      font-size: clamp(2rem, 7vw, 5.8rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: 0;
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+      text-wrap: balance;
+      text-shadow: 0 0 40px var(--orb-glow);
+      transition: opacity 1.6s ease, transform 1.8s ease, filter 1.8s ease, color var(--theme-transition-duration) ease, text-shadow var(--theme-transition-duration) ease;
+      will-change: opacity, transform;
+    }
+
+    .message.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .message.small {
+      font-size: clamp(1.42rem, 4.5vw, 3.05rem);
+      line-height: 1.22;
+      color: #F4E6DA;
+    }
+
+    .message.whisper {
+      max-width: min(76vw, 360px);
+      font-size: clamp(0.92rem, 2.8vw, 1.18rem);
+      line-height: 1.45;
+      color: rgba(244, 230, 218, 0.42);
+      text-shadow: none;
+      text-transform: lowercase;
+    }
+
+    .message.final {
+      font-size: clamp(1.85rem, 6vw, 4.5rem);
+    }
+
+    .message.final span {
+      display: block;
+    }
+
+    .final-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .final-btn {
+      border: 1px solid var(--sanctuary-dim);
+      border-radius: 999px;
+      background: rgba(26, 13, 18, 0.42);
+      color: #F4E6DA;
+      padding: 0.85rem 1.2rem;
+      font: inherit;
+      font-size: clamp(0.94rem, 2.5vw, 1.06rem);
+      cursor: pointer;
+      box-shadow: 0 0 28px rgba(82, 158, 255, 0.06);
+      transition: opacity 250ms ease, transform 250ms ease, background 250ms ease, border-color 250ms ease;
+    }
+
+    .final-btn:hover,
+    .final-btn:focus-visible {
+      border-color: rgba(210, 132, 84, 0.32);
+      background: rgba(48, 24, 20, 0.46);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .final-btn.secondary {
+      opacity: 0.72;
+    }
+
+    .breath-field {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: min(52vmin, 340px);
+      aspect-ratio: 1;
+      opacity: 0;
+      transform: scale(0.86);
+      transition: opacity 3s ease, transform 3s ease, filter 3s ease;
+      filter: drop-shadow(0 0 44px rgba(180, 92, 48, 0.16));
+      will-change: opacity, transform;
+    }
+
+    .breath-field.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .breath-field.pulse {
+      filter: drop-shadow(0 0 58px rgba(180, 92, 48, 0.2));
+    }
+
+    .breath-field.slower {
+      --breath-duration: 13s;
+    }
+
+    .breath-orb {
+      position: absolute;
+      width: 62%;
+      aspect-ratio: 1;
+      border: 1px solid var(--orb-border);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 48% 46%, rgba(244, 230, 218, 0.06), rgba(199, 122, 74, 0.12) 38%, rgba(26, 13, 18, 0.42) 72%),
+        rgba(11, 7, 6, 0.48);
+      box-shadow:
+        inset 0 0 46px rgba(180, 92, 48, 0.14),
+        0 0 76px rgba(180, 92, 48, 0.16);
+      animation: breathe var(--breath-duration) cubic-bezier(0.37, 0, 0.22, 1) infinite;
+      transform-origin: center;
+    }
+
+    .breath-orb::before,
+    .breath-orb::after {
+      content: "";
+      position: absolute;
+      inset: -24%;
+      border: 1px solid rgba(210, 132, 84, 0.2);
+      border-radius: inherit;
+      opacity: 0.72;
+      animation: breathe var(--breath-duration) cubic-bezier(0.37, 0, 0.22, 1) infinite;
+    }
+
+    .breath-orb::after {
+      inset: -46%;
+      opacity: 0.36;
+      animation-delay: -1.8s;
+    }
+
+    .breath-glow {
+      position: absolute;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(180, 92, 48, 0.18), transparent 68%);
+      animation: glowPulse 10s ease-in-out infinite;
+    }
+
+    .choices {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      gap: clamp(0.75rem, 2vw, 1.25rem);
+      width: min(92vw, 640px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(14px);
+      transition: opacity 1.8s ease, transform 1.8s ease;
+    }
+
+    .choices.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .choice {
+      min-width: 0;
+      flex: 1;
+      max-width: 180px;
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--sanctuary-dim);
+      border-radius: 999px;
+      background: rgba(26, 13, 18, 0.42);
+      color: #F4E6DA;
+      font: inherit;
+      font-size: clamp(0.94rem, 2.5vw, 1.06rem);
+      letter-spacing: 0;
+      cursor: pointer;
+      box-shadow: 0 0 28px rgba(82, 158, 255, 0.06);
+      backdrop-filter: blur(14px);
+      transition: opacity 0.9s ease, transform 0.9s ease, background 0.9s ease, border-color 0.9s ease, box-shadow 0.9s ease;
+    }
+
+    .choice:hover,
+    .choice:focus-visible {
+      border-color: rgba(210, 132, 84, 0.32);
+      background: rgba(48, 24, 20, 0.42);
+      box-shadow: 0 0 34px rgba(180, 92, 48, 0.16);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .choices.complete {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+    }
+
+    audio {
+      display: none;
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        transform: scale(0.76);
+      }
+
+      40% {
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes glowPulse {
+      0%,
+      100% {
+        opacity: 0.2;
+        transform: scale(0.86);
+      }
+
+      40% {
+        opacity: 0.72;
+        transform: scale(1.16);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .content {
+        width: 92vw;
+        min-height: 66vh;
+      }
+
+      .exit-btn {
+        top: auto;
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: max(1rem, env(safe-area-inset-bottom));
+        min-height: 44px;
+        padding: 0.72rem 1rem;
+        background: rgba(26, 13, 18, 0.72);
+        box-shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
+      }
+
+      .choices {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .choice {
+        width: min(74vw, 280px);
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .breath-orb,
+      .breath-orb::before,
+      .breath-orb::after {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body class="video-atmosphere-active">
+  <div class="video-atmosphere is-visible" aria-hidden="true">
+    <video class="background-video" autoplay muted loop playsinline>
+  <source src="./assets/videos/flowers.mp4" type="video/mp4">
+</video>
+  </div>
+
+  <main class="experience" id="experience" aria-live="polite">
+    <section class="intro" id="intro" aria-labelledby="introTitle" data-phase="ready-to-start">
+      <h1 class="intro-title" id="introTitle" data-i18n="index_welcome_title">Welcome to NeuroMedit.</h1>
+      <p class="intro-copy" data-i18n="index_welcome_copy">Before you continue, pause for a moment. Breathe slowly and let your body arrive here.</p>
+      
+      <div class="intro-language" aria-live="polite">
+        <span data-i18n="index_language_note">Detected language</span>
+        <div data-language-host></div>
+      </div>
+      <div class="intro-actions">
+        <button id="airlockStartBtn" class="start-btn" type="button" data-airlock-start data-i18n="index_cta">Começar</button>
+        <button class="explore-btn" type="button" data-explore-instead data-i18n="index_explore_cta">Explore instead</button>
+      </div>
+      <p class="audio-error" id="audioError" role="status" aria-live="polite"></p>
+    </section>
+
+    <button class="exit-btn" type="button" aria-label="Exit meditation" data-exit-meditation data-airlock-stop data-i18n="index_exit_aria" data-i18n-attr="aria-label">
+      <span data-i18n="index_exit_cta">Exit</span>
+    </button>
+
+    <div class="content" id="content">
+      <div class="breath-field" id="breathField" aria-hidden="true">
+        <div class="breath-glow"></div>
+        <div class="breath-orb"></div>
+      </div>
+
+      <p class="message" id="message"></p>
+
+      <div class="choices" id="choices" aria-label="How do you feel now?" data-i18n="index_choices_aria" data-i18n-attr="aria-label">
+        <button class="choice" type="button" data-i18n="index_choice_lighter">Lighter</button>
+        <button class="choice" type="button" data-i18n="index_choice_same">The same</button>
+        <button class="choice" type="button" data-i18n="index_choice_heavier">Heavier</button>
+      </div>
+    </div>
+
+    <audio id="airlockAudio" preload="metadata">
+      <source src="./audio/respiracao-calma.m4a" type="audio/mp4">
+    </audio>
+  </main>
+
+  <script>
+    (() => {
+      const experience = document.getElementById("experience");
+      const intro = document.getElementById("intro");
+      const content = document.getElementById("content");
+      const message = document.getElementById("message");
+      const breathField = document.getElementById("breathField");
+      const choices = document.getElementById("choices");
+      const audioError = document.getElementById("audioError");
+      const videoAtmosphere = document.querySelector(".video-atmosphere");
+      const introTitle = document.getElementById("introTitle");
+      const introCopy = intro.querySelector(".intro-copy");
+      const introNote = intro.querySelector(".intro-note");
+      const startButton = document.getElementById("airlockStartBtn");
+      const exploreButton = document.querySelector("[data-explore-instead]");
+      const exitButton = document.querySelector("[data-exit-meditation]");
+      const themeClasses = ["theme-morning", "theme-afternoon", "theme-day", "theme-sunset", "theme-evening", "theme-night", "theme-late-night"];
+
+      const cues = [
+        { at: 500, key: "index_cue_pause", size: "large", duration: 1900 },
+        { at: 2700, key: "index_cue_breath", size: "large", duration: 2000 },
+        { at: 6500, key: "index_cue_nothing", size: "small", duration: 6200 },
+        { at: 16500, key: "index_cue_rhythm", size: "small", duration: 7000 },
+        { at: 36000, key: "index_cue_jaw", size: "small", duration: 9000 },
+        { at: 65000, key: "index_cue_shoulders", size: "small", duration: 9000 },
+        { at: 95000, key: "index_cue_slow", size: "small", duration: 10000 },
+        { at: 126000, key: "index_cue_safe", size: "small", duration: 10500 },
+        { at: 153000, key: "index_cue_body", size: "small", duration: 8000 },
+        { at: 169000, key: "index_cue_lighter", size: "small", duration: 7000 },
+        { at: 184500, key: "index_cue_same", size: "small", duration: 7000 },
+        { at: 199500, key: "index_cue_relaxed", size: "small", duration: 7200 }
+      ];
+
+      let messageTimer = 0;
+      let fadeTimer = 0;
+      let hasEnded = false;
+      let hasStarted = false;
+      let isStarting = false;
+      let introPhase = "ready-to-start";
+      let introPhaseTimer = 0;
+      let introChangeTimer = 0;
+      const activeTimers = new Set();
+      const activeIntervals = new Set();
+      const prefersReducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const PREPARATION_DURATION_MS = prefersReducedMotionQuery.matches ? 1200 : 11000;
+      const introPhases = {
+        "ready-to-start": {
+          title: "index_welcome_title",
+          copy: "index_welcome_copy",
+          note: "index_intro_copy",
+          cta: "index_cta",
+        },
+      };
+
+      function setVideoAtmosphereVisible(isVisible) {
+        if (!videoAtmosphere) {
+          return;
+        }
+
+        videoAtmosphere.classList.toggle("is-visible", isVisible);
+        videoAtmosphere.classList.toggle("is-hidden", !isVisible);
+        document.body.classList.toggle("video-atmosphere-active", isVisible);
+      }
+
+      function getCurrentLanguage() {
+        const savedLanguage = localStorage.getItem("neuromedit-language");
+        return ["pt", "en", "es", "it", "ru"].includes(savedLanguage) ? savedLanguage : "en";
+      }
+
+      function translate(key) {
+        if (typeof getTranslation === "function") {
+          return getTranslation(getCurrentLanguage(), key);
+        }
+
+        return key;
+      }
+
+      function renderIntroPhase() {
+        const phase = introPhases[introPhase] || introPhases["ready-to-start"];
+
+        intro.dataset.phase = introPhase;
+        document.body.dataset.indexPhase = introPhase;
+        introTitle.dataset.i18n = phase.title;
+        introCopy.dataset.i18n = phase.copy;
+        introNote.dataset.i18n = phase.note;
+        startButton.dataset.i18n = phase.cta;
+        introTitle.textContent = translate(phase.title);
+        introCopy.textContent = translate(phase.copy);
+        introNote.textContent = translate(phase.note);
+        startButton.textContent = hasStarted ? "A decorrer" : translate(phase.cta);
+        startButton.disabled = false;
+        startButton.removeAttribute("aria-disabled");
+      }
+
+      function getLocalTimeTheme(date = new Date()) {
+        const hour = date.getHours();
+
+        if (hour >= 5 && hour < 12) {
+          return "morning";
+        }
+
+        if (hour >= 12 && hour < 17) {
+          return "afternoon";
+        }
+
+        if (hour >= 17 && hour < 20) {
+          return "sunset";
+        }
+
+        if (hour >= 20 && hour < 21) {
+          return "evening";
+        }
+
+        if (hour >= 21) {
+          return "night";
+        }
+
+        return "late-night";
+      }
+
+      function updateReducedMotionPreference() {
+        document.body.classList.toggle("reduced-motion", prefersReducedMotionQuery.matches);
+      }
+
+      function applyAutomaticTheme() {
+        const theme = getLocalTimeTheme();
+        document.documentElement.classList.remove(...themeClasses);
+        document.body.classList.remove(...themeClasses);
+        document.documentElement.classList.add(`theme-${theme}`);
+        document.body.classList.add(`theme-${theme}`);
+      }
+
+      function initAutomaticTheme() {
+        applyAutomaticTheme();
+        if (typeof prefersReducedMotionQuery.addEventListener === "function") {
+          prefersReducedMotionQuery.addEventListener("change", updateReducedMotionPreference);
+        }
+      }
+
+      const setTimer = (fn, delay) => {
+        const timer = window.setTimeout(() => {
+          activeTimers.delete(timer);
+          fn();
+        }, delay);
+        activeTimers.add(timer);
+        return timer;
+      };
+
+      const setRepeatingTimer = (fn, delay) => {
+        const timer = window.setInterval(fn, delay);
+        activeIntervals.add(timer);
+        return timer;
+      };
+
+      function clearRepeatingTimer(timer) {
+        window.clearInterval(timer);
+        activeIntervals.delete(timer);
+      }
+
+      function clearActiveTimers() {
+        activeTimers.forEach((timer) => window.clearTimeout(timer));
+        activeIntervals.forEach((timer) => window.clearInterval(timer));
+        activeTimers.clear();
+        activeIntervals.clear();
+        window.clearTimeout(messageTimer);
+        window.clearTimeout(fadeTimer);
+      }
+
+      function showMessage(text, size, duration) {
+        window.clearTimeout(messageTimer);
+        window.clearTimeout(fadeTimer);
+
+        message.className = `message ${size === "small" ? "small" : ""}`;
+        message.textContent = text;
+
+        requestAnimationFrame(() => {
+          message.classList.add("active");
+        });
+
+        fadeTimer = setTimer(() => {
+          message.classList.remove("active");
+        }, duration);
+      }
+
+      function showAudioError() {
+        if (!audioError) {
+          return;
+        }
+
+        audioError.textContent = "Não foi possível iniciar o áudio. Toque novamente.";
+        audioError.classList.add("is-visible");
+      }
+
+      function clearAudioError() {
+        if (!audioError) {
+          return;
+        }
+
+        audioError.textContent = "";
+        audioError.classList.remove("is-visible");
+      }
+
+      function getInitialPauseFeedbackUrl(status) {
+        return `feedback.html?source=index&practice=initial-pause&status=${status}`;
+      }
+
+      function hidePracticeSurface() {
+        document.body.classList.remove("airlock-active", "is-meditating");
+        startButton.dataset.i18n = "index_cta";
+        startButton.textContent = translate("index_cta");
+        breathField.classList.remove("visible", "pulse", "slower");
+        choices.classList.remove("visible", "complete");
+        message.className = "message";
+        message.textContent = "";
+      }
+
+      function completeInitialPauseToFeedback() {
+        hidePracticeSurface();
+        // Redirect to feedback after completion
+        window.location.href = getInitialPauseFeedbackUrl("completed");
+      }
+
+      function exitInitialPauseToFeedback() {
+        hidePracticeSurface();
+        window.location.href = getInitialPauseFeedbackUrl("exited");
+      }
+
+      function restartInitialPause() {
+        window.location.href = "index.html";
+      }
+
+      function showFinalMessage() {
+        window.clearTimeout(messageTimer);
+        window.clearTimeout(fadeTimer);
+        choices.classList.add("complete");
+        content.classList.add("fade-out");
+        document.body.dataset.indexPhase = "meditation-complete";
+        setVideoAtmosphereVisible(true);
+
+        setTimer(() => {
+          breathField.classList.remove("visible");
+          content.classList.remove("fade-out");
+          message.className = "message final";
+          message.innerHTML = `
+            <span data-i18n="index_final_message">${translate("index_final_message")}</span>
+
+            <div class="final-actions">
+              <button class="final-btn" type="button" data-finish data-i18n="index_finish_cta">${translate("index_finish_cta")}</button>
+              <button class="final-btn secondary" type="button" data-restart data-i18n="index_restart_cta">${translate("index_restart_cta")}</button>
+            </div>
+          `;
+          requestAnimationFrame(() => message.classList.add("active"));
+
+          const finishBtn = message.querySelector("[data-finish]");
+          const restartBtn = message.querySelector("[data-restart]");
+
+          finishBtn.addEventListener("click", () => {
+            completeInitialPauseToFeedback();
+          });
+
+          restartBtn.addEventListener("click", () => {
+            restartInitialPause();
+          });
+        }, 2600);
+      }
+
+      function restoreStartButton() {
+        startButton.disabled = false;
+        startButton.removeAttribute("aria-disabled");
+        startButton.dataset.i18n = "index_cta";
+        startButton.textContent = translate("index_cta");
+        startButton.style.pointerEvents = "auto";
+      }
+
+      function enterAirlockMode() {
+        hasStarted = true;
+        isStarting = false;
+        window.clearTimeout(introPhaseTimer);
+        window.clearTimeout(introChangeTimer);
+        document.body.dataset.indexPhase = "meditation-active";
+        document.body.classList.add("airlock-active", "is-meditating");
+        startButton.removeAttribute("data-i18n");
+        startButton.textContent = "A decorrer";
+        intro.classList.add("hidden");
+        exitButton.classList.add("visible");
+        setVideoAtmosphereVisible(true);
+        choices.classList.remove("visible", "complete");
+        message.className = "message";
+        message.textContent = "";
+
+        breathField.classList.add("visible", "pulse");
+        showMessage(translate("index_close_eyes"), "whisper", 6200);
+
+        setTimer(() => {
+          breathField.classList.add("slower");
+          experience.classList.add("deepen");
+        }, 18000);
+
+        setTimer(() => {
+          if (!hasEnded) {
+            hasEnded = true;
+            completeInitialPauseToFeedback();
+          }
+        }, 240000);
+      }
+
+      function enterPreparationMode() {
+        hasStarted = true;
+        isStarting = true;
+        hasEnded = false;
+        clearActiveTimers();
+        window.clearTimeout(introPhaseTimer);
+        window.clearTimeout(introChangeTimer);
+        document.body.dataset.indexPhase = "meditation-active";
+        document.body.classList.add("airlock-active", "is-meditating");
+        startButton.removeAttribute("data-i18n");
+        startButton.textContent = "A decorrer";
+        intro.classList.add("hidden");
+        exitButton.classList.add("visible");
+        setVideoAtmosphereVisible(true);
+        choices.classList.remove("visible", "complete");
+        breathField.classList.add("visible");
+        showMessage(translate("index_prepare_body"), "small", 3800);
+        setTimer(() => showMessage(translate("index_breathe_slowly"), "small", PREPARATION_DURATION_MS - 4200), 4200);
+        setTimer(() => message.classList.remove("active"), Math.max(900, PREPARATION_DURATION_MS - 900));
+      }
+
+      function exitMeditation() {
+        clearActiveTimers();
+        document.body.classList.remove("airlock-active", "is-meditating");
+        document.body.dataset.indexPhase = "ready-to-start";
+        hasStarted = false;
+        isStarting = false;
+        hasEnded = false;
+        restoreStartButton();
+        intro.classList.remove("hidden");
+        intro.dataset.phase = "ready-to-start";
+        exitButton.classList.remove("visible");
+        content.classList.remove("fade-out", "deepen");
+        experience.classList.remove("deepen");
+        breathField.classList.remove("visible", "pulse", "slower");
+        choices.classList.remove("visible", "complete");
+        message.className = "message";
+        message.textContent = "";
+        clearAudioError();
+        renderIntroPhase();
+      }
+
+      choices.addEventListener("click", (event) => {
+        if (!event.target.closest(".choice") || hasEnded) {
+          return;
+        }
+        hasEnded = true;
+        showFinalMessage();
+      });
+
+      window.addEventListener("neuromedit:languagechange", renderIntroPhase);
+
+      exploreButton.addEventListener("click", () => {
+        document.body.classList.add("exiting");
+        setTimer(() => {
+          window.location.href = "home.html";
+        }, 700);
+      });
+
+      window.NeuroMeditAirlockView = {
+        prepare() {
+          if (hasStarted) {
+            return;
+          }
+
+          clearAudioError();
+          enterPreparationMode();
+        },
+        enter() {
+          clearAudioError();
+          enterAirlockMode();
+        },
+        reset() {
+          exitInitialPauseToFeedback();
+        },
+        complete() {
+          if (hasEnded) {
+            return;
+          }
+
+          hasEnded = true;
+          clearActiveTimers();
+          completeInitialPauseToFeedback();
+        },
+        preparationDuration: PREPARATION_DURATION_MS,
+        showError: showAudioError,
+        clearError: clearAudioError,
+        restoreStartButton,
+      };
+
+      updateReducedMotionPreference();
+      initAutomaticTheme();
+      restoreStartButton();
+      renderIntroPhase();
+    })();
+  </script>
+  <script src="js/airlock-flow.js"></script>
+</body>
+</html>

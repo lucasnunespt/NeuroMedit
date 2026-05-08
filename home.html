@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="home_meta_title">NeuroMedit Home</title>
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="i18n.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+</head>
+<body class="home-body">
+    <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a href="home.html" class="site-logo">NeuroMedit</a>
+
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="home_nav_aria" data-i18n-attr="aria-label">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <a href="home.html" class="header-nav-link nav-link active" data-nav-key="home" aria-current="page" aria-label="Home" title="Home" data-i18n="home_nav_home" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="home_nav_home">Home</span>
+        </a>
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="home_nav_library" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="home_nav_library">Library</span>
+        </a>
+        <a href="about.html" class="header-nav-link nav-link" data-nav-key="about" aria-label="About" title="About" data-i18n="home_nav_about" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="header-nav-text" data-i18n="home_nav_about">About</span>
+        </a>
+        <a href="why.html" class="header-nav-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="home_nav_why" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="header-nav-text" data-i18n="home_nav_why">Why</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-language-slot" data-language-host></div>
+
+        <button
+          type="button"
+          class="header-menu-toggle"
+          data-mobile-toggle
+          aria-controls="home-mobile-nav"
+          aria-expanded="false"
+          aria-label="Open menu"
+          title="Open menu"
+          data-i18n="global_menu_open"
+          data-i18n-attr="aria-label,title"
+        >
+          <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
+
+    <aside id="home-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+      <div class="header-mobile-inner">
+        <div class="header-mobile-top">
+          <p class="header-mobile-brand">NeuroMedit</p>
+
+          <button
+            type="button"
+            class="header-mobile-close"
+            data-mobile-close
+            aria-label="Close menu"
+            title="Close menu"
+            data-i18n="global_menu_close"
+            data-i18n-attr="aria-label,title"
+          >
+            <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+          </button>
+        </div>
+
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="home_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link active" data-nav-key="home" aria-current="page" aria-label="Home" title="Home" data-i18n="home_nav_home" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="home_nav_home">Home</span>
+          </a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="home_nav_library" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="home_nav_library">Library</span>
+          </a>
+          <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about" aria-label="About" title="About" data-i18n="home_nav_about" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="home_nav_about">About</span>
+          </a>
+          <a href="why.html" class="header-mobile-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="home_nav_why" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="home_nav_why">Why</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+  <main class="home-page">
+    <section class="home-hero">
+      <div class="container hero-content">
+        <p class="eyebrow" data-i18n="home_eyebrow">Neuroscience-informed meditation</p>
+        <h1 data-i18n="home_title">Pause. Breathe. Reset.</h1>
+        <p class="hero-text" data-i18n="home_subtitle">A calm space to reduce mental noise, return attention, and regulate your pace.</p>
+        <p class="hero-sensory-hint" data-i18n="home_headphones">Best experienced with headphones.</p>
+
+        <div class="hero-actions">
+          <a href="index.html#airlock" class="button primary-button" data-airlock-link data-i18n="home_primary_cta">Start a 2-min session</a>
+          <a href="library.html" class="button secondary-button" data-i18n="home_secondary_cta">Explore the library</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="continue-section">
+      <div class="container">
+        <p class="reflection-text" data-i18n="home_reflection_quote">You don't need to do more. You need to slow down.</p>
+
+        <div class="progress-module card-static">
+          <div class="progress-intro">
+            <p class="section-label" data-i18n="home_rhythm_label">Your rhythm</p>
+            <h2 data-i18n="home_rhythm_title">3 sessions this week</h2>
+            <p class="section-support-text" data-i18n="home_rhythm_text">A small practice still counts. Consistency matters more than intensity.</p>
+          </div>
+
+          <div class="continue-card card-static">
+            <div class="continue-text">
+              <p class="card-label" data-i18n="home_continue_label">Last session · 2 days ago</p>
+              <h3 data-i18n="home_continue_title">Calm Breath</h3>
+              <p data-i18n="home_continue_meta">3 min · A short breathing practice to settle the nervous system.</p>
+            </div>
+
+            <a href="calm.html" class="button primary-button" data-i18n="home_continue_cta">Continue</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-states">
+      <div class="container">
+        <h2 data-i18n="home_states_title">What does your mind need right now?</h2>
+        <p class="section-support-text" data-i18n="home_states_text">Choose the state that feels closest to what you need today.</p>
+
+        <div class="states-grid">
+          <a href="calm.html" class="state-card card-clickable">
+            <p class="state-signal" data-i18n="home_calm_signal">Feeling overwhelmed?</p>
+            <h3 data-i18n="home_calm_title">Calm</h3>
+            <p data-i18n="home_calm_text">Breathing and grounding sessions for emotional regulation and steadiness.</p>
+          </a>
+
+          <a href="focus.html" class="state-card card-clickable">
+            <p class="state-signal" data-i18n="home_focus_signal">Mind distracted?</p>
+            <h3 data-i18n="home_focus_title">Focus</h3>
+            <p data-i18n="home_focus_text">Short practices to reduce internal noise and gently return attention.</p>
+          </a>
+
+          <a href="sleep.html" class="state-card card-clickable">
+            <p class="state-signal" data-i18n="home_sleep_signal">Body still tense?</p>
+            <h3 data-i18n="home_sleep_title">Sleep</h3>
+            <p data-i18n="home_sleep_text">Gentle sessions to slow the body down and prepare for deeper rest.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured-section">
+      <div class="container">
+        <h2 data-i18n="home_featured_title">Start with something simple</h2>
+        <p class="section-support-text" data-i18n="home_featured_text">Short, clear entry points for different moments of the day.</p>
+
+        <div class="featured-grid">
+          <a href="calm.html" class="featured-card card-clickable">
+            <h3 data-i18n="home_featured_morning_title">Morning Reset</h3>
+            <p data-i18n="home_featured_morning_text">Start the day with less tension and more clarity.</p>
+          </a>
+
+          <a href="focus.html" class="featured-card card-clickable">
+            <h3 data-i18n="home_featured_focus_title">Deep Focus</h3>
+            <p data-i18n="home_featured_focus_text">A short session to settle the mind before work.</p>
+          </a>
+
+          <a href="sleep.html" class="featured-card card-clickable">
+            <h3 data-i18n="home_featured_night_title">Night Wind Down</h3>
+            <p data-i18n="home_featured_night_text">Slow breathing and release before sleep.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-section">
+      <div class="container">
+        <h2 data-i18n="home_why_title">Designed for a tired mind</h2>
+        <p class="section-support-text" data-i18n="home_why_text">Built to reduce friction, support regulation, and make calm easier to access.</p>
+
+        <div class="why-grid">
+          <div class="why-card card-static">
+            <h3 data-i18n="home_why_friction_title">Less friction</h3>
+            <p data-i18n="home_why_friction_text">Clear choices and simple paths reduce decision fatigue.</p>
+          </div>
+
+          <div class="why-card card-static">
+            <h3 data-i18n="home_why_calm_title">Calm by design</h3>
+            <p data-i18n="home_why_calm_text">Spacing, rhythm, and visual quiet support attention and ease.</p>
+          </div>
+
+          <div class="why-card card-static">
+            <h3 data-i18n="home_why_intention_title">Built with intention</h3>
+            <p data-i18n="home_why_intention_text">Every session is shaped around focus, regulation, and mental recovery.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing-philosophy">
+      <div class="container">
+        <p class="closing-line" data-i18n="home_closing_quote">Clarity doesn't come from effort. It comes from space.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p data-i18n="home_footer_copyright">© 2026 NeuroMedit</p>
+
+      <div class="footer-links">
+        <a href="about.html" data-i18n="home_footer_about">About</a>
+        <a href="about.html#contact" data-i18n="home_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="home_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="breath-overlay" aria-hidden="true">
+    <p data-i18n="home_breath_overlay">Take one slow breath.</p>
+  </div>
+
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script src="header-nav.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="feedback_meta_title">Feedback &middot; NeuroMedit</title>
+  <link rel="stylesheet" href="complete.css">
+  <link rel="stylesheet" href="i18n.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+</head>
+<body class="complete-body feedback-atmosphere feedback-minimal">
+  <div class="feedback-index-atmosphere" aria-hidden="true">
+    <video class="feedback-index-video" autoplay muted loop playsinline>
+      <source src="./assets/videos/flowers.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a href="home.html" class="site-logo">NeuroMedit</a>
+
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" data-i18n="global_nav_home">Home</a>
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" data-i18n="global_nav_library">Library</a>
+        <a href="about.html" class="header-nav-link nav-link" data-nav-key="about" data-i18n="global_nav_about">About</a>
+        <a href="why.html" class="header-nav-link nav-link" data-nav-key="why" data-i18n="global_nav_why">Why</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-language-slot" data-language-host></div>
+        <button type="button" class="header-menu-toggle" data-mobile-toggle aria-controls="feedback-mobile-nav" aria-expanded="false" aria-label="Open menu" title="Open menu" data-i18n="global_menu_open" data-i18n-attr="aria-label,title">
+          <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
+    <aside id="feedback-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+      <div class="header-mobile-inner">
+        <div class="header-mobile-top">
+          <p class="header-mobile-brand">NeuroMedit</p>
+          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu" data-i18n="global_menu_close" data-i18n-attr="aria-label,title">
+            <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+          </button>
+        </div>
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home" data-i18n="global_nav_home">Home</a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" data-i18n="global_nav_library">Library</a>
+          <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about" data-i18n="global_nav_about">About</a>
+          <a href="why.html" class="header-mobile-link nav-link" data-nav-key="why" data-i18n="global_nav_why">Why</a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+  <main class="complete-page">
+    <section class="complete-hero">
+      <div class="container complete-container">
+        <div class="complete-card card-static">
+          <h1 class="feedback-minimal-question" data-feedback-question data-i18n="index_choices_aria">Como você se sente agora?</h1>
+
+          <div class="feedback-options" data-feedback-options hidden>
+            <button class="feedback-option" type="button" data-feedback-completed data-i18n="index_choice_lighter">Mais leve</button>
+            <button class="feedback-option" type="button" data-feedback-completed data-i18n="index_choice_same">Igual</button>
+            <button class="feedback-option" type="button" data-feedback-completed data-feedback-tense>Mais tenso</button>
+          </div>
+
+          <p class="feedback-thank-you" data-feedback-save-status data-feedback-thank-you data-i18n="feedback_thank_you" role="status" aria-live="polite" hidden>Thank you. Your response has been saved.</p>
+
+          <div class="complete-actions" data-feedback-actions hidden>
+            <a href="home.html" class="button primary-button" data-i18n="home_continue_cta">Continuar</a>
+            <a href="index.html" class="feedback-text-link" data-feedback-repeat data-feedback-repeat-label>repetir sessão</a>
+            <a href="home.html" class="feedback-text-link" data-feedback-home-label>voltar ao início</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p>&copy; 2026 NeuroMedit</p>
+      <div class="footer-links">
+        <a href="about.html" data-i18n="global_footer_about">About</a>
+        <a href="about.html#contact" data-i18n="global_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="global_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script>
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get("source");
+      const practice = params.get("practice");
+      const isSleepFeedback = source === "sleep" && practice === "before-sleep";
+
+      if (source === "index" || practice === "initial-pause") {
+        document.body.classList.add("feedback-from-index", "feedback-atmosphere");
+        document.querySelector("[data-feedback-repeat]")?.setAttribute("href", "index.html");
+      }
+
+      if (isSleepFeedback) {
+        document.body.classList.add("feedback-atmosphere");
+        const repeatLink = document.querySelector("[data-feedback-repeat]");
+        repeatLink?.setAttribute("href", "sleep.html");
+      }
+
+      const question = document.querySelector("[data-feedback-question]");
+      const options = document.querySelector("[data-feedback-options]");
+      const saveStatus = document.querySelector("[data-feedback-save-status]");
+      const feedbackCard = document.querySelector(".complete-card");
+      const feedbackActions = document.querySelector("[data-feedback-actions]");
+      question?.setAttribute("data-i18n", "index_choices_aria");
+
+      if (options) {
+        options.hidden = false;
+        options.querySelectorAll("[data-feedback-completed]").forEach((button) => {
+          button.hidden = false;
+        });
+      }
+
+      function getFeedbackLanguage() {
+        return localStorage.getItem("neuromedit-language")
+          || localStorage.getItem("preferredLanguage")
+          || document.documentElement.lang
+          || "pt";
+      }
+
+      function saveNeuroMeditFeedback(answer) {
+        const key = "neuromeditFeedback";
+        const entry = {
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          source: params.get("source") || "unknown",
+          practice: params.get("practice") || "unknown",
+          status: params.get("status") || "unknown",
+          answer,
+          language: getFeedbackLanguage(),
+          createdAt: new Date().toISOString(),
+          path: window.location.pathname,
+          params: window.location.search,
+        };
+
+        try {
+          const existingRaw = localStorage.getItem(key);
+          const existing = existingRaw ? JSON.parse(existingRaw) : [];
+          const safeExisting = Array.isArray(existing) ? existing : [];
+          safeExisting.push(entry);
+          localStorage.setItem(key, JSON.stringify(safeExisting));
+          return true;
+        } catch (error) {
+          console.warn("Could not save NeuroMedit feedback", error);
+          try {
+            localStorage.setItem(key, JSON.stringify([entry]));
+            return true;
+          } catch (storageError) {
+            console.warn("Could not recreate NeuroMedit feedback storage", storageError);
+          }
+          return false;
+        }
+      }
+
+      options?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-feedback-completed]");
+        if (!button) {
+          return;
+        }
+
+        const saved = saveNeuroMeditFeedback(button.textContent.trim());
+        options.querySelectorAll(".feedback-option").forEach((option) => {
+          option.classList.toggle("is-selected", option === button);
+        });
+
+        document.body.classList.add("feedback-answered");
+        feedbackCard?.classList.add("is-answered");
+        if (question) {
+          question.hidden = true;
+        }
+        if (options) {
+          options.hidden = true;
+        }
+        if (feedbackActions) {
+          feedbackActions.hidden = false;
+        }
+
+        if (saveStatus) {
+          const savedKey = saved ? "feedback_thank_you" : "feedback_saved_fallback";
+          saveStatus.textContent = typeof getTranslation === "function"
+            ? getTranslation(getFeedbackLanguage(), savedKey)
+            : "Obrigado. A tua resposta foi guardada.";
+          saveStatus.hidden = false;
+          requestAnimationFrame(() => {
+            saveStatus.classList.add("is-visible");
+          });
+        }
+
+      });
+    })();
+  </script>
+  <script src="translations.js"></script>
+  <script>
+    (() => {
+      const labels = {
+        pt: {
+          tense: "Mais tenso",
+          repeat: "repetir sessão",
+          home: "voltar ao início",
+        },
+        en: {
+          tense: "More tense",
+          repeat: "repeat session",
+          home: "return home",
+        },
+        es: {
+          tense: "Más tenso",
+          repeat: "repetir sesión",
+          home: "volver al inicio",
+        },
+        it: {
+          tense: "Più teso",
+          repeat: "ripeti sessione",
+          home: "torna all'inizio",
+        },
+        ru: {
+          tense: "Больше напряжения",
+          repeat: "повторить сессию",
+          home: "вернуться в начало",
+        },
+      };
+
+      function getFeedbackLanguage() {
+        return localStorage.getItem("neuromedit-language")
+          || localStorage.getItem("preferredLanguage")
+          || document.documentElement.lang
+          || "pt";
+      }
+
+      function applyFeedbackLabels() {
+        const language = labels[getFeedbackLanguage()] ? getFeedbackLanguage() : "en";
+        const currentLabels = labels[language];
+        const tenseOption = document.querySelector("[data-feedback-tense]");
+        const repeatLink = document.querySelector("[data-feedback-repeat-label]");
+        const homeLink = document.querySelector("[data-feedback-home-label]");
+
+        if (tenseOption) tenseOption.textContent = currentLabels.tense;
+        if (repeatLink) repeatLink.textContent = currentLabels.repeat;
+        if (homeLink) homeLink.textContent = currentLabels.home;
+      }
+
+      applyFeedbackLabels();
+      window.addEventListener("neuromedit:languagechange", applyFeedbackLabels);
+    })();
+  </script>
+  <script src="header-nav.js"></script>
+</body>
+</html>

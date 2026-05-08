@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="states_meta_title">Choose Your State · NeuroMedit</title>
+  <link rel="stylesheet" href="neuro.css">
+  <link rel="stylesheet" href="i18n.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+</head>
+<body class="states-body">
+  <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a href="home.html" class="site-logo">NeuroMedit</a>
+
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" data-i18n="global_nav_home">Home</a>
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" data-i18n="global_nav_library">Library</a>
+        <a href="about.html" class="header-nav-link nav-link" data-nav-key="about" data-i18n="global_nav_about">About</a>
+        <a href="why.html" class="header-nav-link nav-link" data-nav-key="why" data-i18n="global_nav_why">Why</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-language-slot" data-language-host></div>
+        <button type="button" class="header-menu-toggle" data-mobile-toggle aria-controls="states-mobile-nav" aria-expanded="false" aria-label="Open menu" title="Open menu" data-i18n="global_menu_open" data-i18n-attr="aria-label,title">
+          <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
+    <aside id="states-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+      <div class="header-mobile-inner">
+        <div class="header-mobile-top">
+          <p class="header-mobile-brand">NeuroMedit</p>
+          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu" data-i18n="global_menu_close" data-i18n-attr="aria-label,title">
+            <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+          </button>
+        </div>
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home" data-i18n="global_nav_home">Home</a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" data-i18n="global_nav_library">Library</a>
+          <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about" data-i18n="global_nav_about">About</a>
+          <a href="why.html" class="header-mobile-link nav-link" data-nav-key="why" data-i18n="global_nav_why">Why</a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+  <main class="states-page">
+    <section class="states-hero">
+      <div class="states-container">
+        <p class="states-eyebrow" data-i18n="states_eyebrow">Begin gently</p>
+        <h1 data-i18n="states_title">What does your mind need right now?</h1>
+        <p class="states-text" data-i18n="states_subtitle">Choose one simple path and begin with less effort.</p>
+
+        <div class="states-options">
+          <a href="calm.html" class="state-card card-clickable">
+            <div class="state-content">
+              <h2 data-i18n="states_calm_title">Calm</h2>
+              <p data-i18n="states_calm_text">Feeling overwhelmed?</p>
+            </div>
+          </a>
+
+          <a href="focus.html" class="state-card card-clickable">
+            <div class="state-content">
+              <h2 data-i18n="states_focus_title">Focus</h2>
+              <p data-i18n="states_focus_text">Mind distracted?</p>
+            </div>
+          </a>
+
+          <a href="sleep.html" class="state-card card-clickable">
+            <div class="state-content">
+              <h2 data-i18n="states_sleep_title">Sleep</h2>
+              <p data-i18n="states_sleep_text">Body still tense?</p>
+            </div>
+          </a>
+
+          <a href="body.html" class="state-card card-clickable">
+            <div class="state-content">
+              <h2 data-i18n="states_body_title">Body</h2>
+              <p data-i18n="states_body_text">Need to reconnect physically?</p>
+            </div>
+          </a>
+        </div>
+
+        <a href="home.html" class="skip-link" data-i18n="states_skip">Skip to home page</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p>&copy; 2026 NeuroMedit</p>
+      <div class="footer-links">
+        <a href="about.html" data-i18n="global_footer_about">About</a>
+        <a href="about.html#contact" data-i18n="global_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="global_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script src="header-nav.js"></script>
+</body>
+</html>
+
+

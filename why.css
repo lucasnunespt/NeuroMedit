@@ -1,0 +1,607 @@
+/* =========================
+   RESET
+========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =========================
+   TOKENS
+========================= */
+:root {
+  --bg: #f4f4f1;
+  --bg-soft: #f8f8f5;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-strong: rgba(255, 255, 255, 0.88);
+  --text: #1f2326;
+  --text-soft: #66706f;
+  --text-muted: #7b8483;
+  --line: rgba(31, 35, 38, 0.08);
+  --accent: #8aa5a0;
+  --accent-dark: #708f89;
+  --shadow-soft: 0 10px 24px rgba(31, 35, 38, 0.05);
+  --shadow-card: 0 12px 32px rgba(31, 35, 38, 0.05);
+  --radius-lg: 28px;
+  --radius-md: 22px;
+  --radius-sm: 16px;
+  --container: 1120px;
+  --narrow: 760px;
+}
+
+/* =========================
+   BASE
+========================= */
+html {
+  scroll-behavior: smooth;
+}
+
+body.why-body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, var(--bg) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.narrow {
+  max-width: var(--narrow);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.why-page {
+  width: 100%;
+}
+
+.why-page *,
+.why-page *::before,
+.why-page *::after {
+  min-width: 0;
+}
+
+.why-page section {
+  padding: clamp(3.75rem, 6vw, 5rem) 0;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+h1 {
+  font-size: clamp(3rem, 6vw, 5.4rem);
+  line-height: 0.98;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.1;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+p {
+  color: var(--text-soft);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  color: var(--text-soft);
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-heading p {
+  max-width: 54ch;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0.95rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  transition: 0.25s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.primary-button {
+  background-color: var(--accent);
+  color: var(--button-text, #f4e6da);
+  box-shadow: var(--shadow-soft);
+}
+
+.primary-button:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.secondary-button:hover {
+  background-color: rgba(255, 255, 255, 0.72);
+}
+
+/* =========================
+   HEADER
+========================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: transparent;
+  border-bottom: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.header-container {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.main-nav a {
+  position: relative;
+  font-size: 0.98rem;
+  color: var(--text-soft);
+  transition: color 0.2s ease;
+}
+
+.main-nav a:hover,
+.main-nav a[aria-current="page"] {
+  color: var(--text);
+}
+
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  width: 0;
+  height: 1px;
+  background: var(--text);
+  transition: width 0.25s ease;
+}
+
+.main-nav a:hover::after,
+.main-nav a[aria-current="page"]::after {
+  width: 100%;
+}
+
+/* =========================
+   HERO
+========================= */
+.why-hero {
+  padding-top: clamp(4.75rem, 8vw, 6rem);
+  padding-bottom: clamp(3.25rem, 6vw, 4.5rem);
+}
+
+.why-hero-content {
+  max-width: 900px;
+}
+
+.why-hero h1 {
+  max-width: 16ch;
+  font-size: clamp(2.35rem, 4.6vw, 4.35rem);
+  margin-bottom: 1.25rem;
+}
+
+.why-hero h1 span {
+  display: block;
+  color: var(--accent-dark);
+}
+
+.why-hero-text {
+  max-width: 42ch;
+  font-size: 1.12rem;
+  line-height: 1.75;
+  margin-bottom: 2.2rem;
+}
+
+.why-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.why-hero-actions .button {
+  max-width: 100%;
+}
+
+/* =========================
+   TEXT SECTIONS
+========================= */
+.why-intro,
+.why-science,
+.why-resistance,
+.why-steps {
+  text-align: center;
+}
+
+.why-intro p,
+.why-science p,
+.why-resistance p {
+  max-width: 62ch;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.why-intro p + p,
+.why-science p + p,
+.why-resistance p + p {
+  margin-top: 1rem;
+}
+
+.why-science-note {
+  margin-top: 2rem;
+  padding: 1.6rem;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+  cursor: default;
+}
+
+.why-science-note p {
+  color: var(--text);
+}
+
+/* =========================
+   SYSTEMS / BENEFITS
+========================= */
+.why-systems-grid,
+.why-steps-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+}
+
+.why-benefits-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+}
+
+.why-system-card,
+.why-benefit-card,
+.why-feature-card,
+.why-step-card {
+  padding: 1.6rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+  cursor: default;
+}
+
+.why-system-card h3,
+.why-benefit-card h3,
+.why-feature-card h3,
+.why-step-card h3 {
+  margin-bottom: 0.85rem;
+}
+
+.why-system-card p,
+.why-benefit-card p,
+.why-feature-card p,
+.why-step-card p {
+  max-width: 30ch;
+  line-height: 1.7;
+}
+
+.why-system-number {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-dark);
+}
+
+.why-system-card,
+.why-benefit-card,
+.why-feature-card,
+.why-step-card {
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+/* =========================
+   RESISTANCE LIST
+========================= */
+.why-resistance-list {
+  list-style: none;
+  margin-top: 1.8rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.why-resistance-list li {
+  padding: 1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  box-shadow: var(--shadow-soft);
+  line-height: 1.45;
+}
+
+/* =========================
+   WHY NEUROMEDIT
+========================= */
+.why-neuromedit-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.why-neuromedit-copy p {
+  max-width: 54ch;
+  line-height: 1.7;
+}
+
+.why-neuromedit-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.why-feature-card {
+  min-height: auto;
+}
+
+/* =========================
+   STEPS
+========================= */
+.why-steps-grid {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.why-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--text-primary, #f4e6da);
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-soft);
+}
+
+/* =========================
+   CTA
+========================= */
+.why-cta {
+  padding-top: 3rem;
+}
+
+.why-cta-box {
+  width: min(100% - 3rem, 860px);
+  margin: 0 auto;
+  padding: 2.4rem;
+  text-align: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+  cursor: default;
+}
+
+.why-cta-box h2 {
+  margin-bottom: 1rem;
+}
+
+.why-cta-box p {
+  max-width: 54ch;
+  margin: 0 auto 1.6rem;
+  line-height: 1.7;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.site-footer {
+  margin-top: 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-footer p {
+  font-size: 0.96rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 980px) {
+  .why-page section {
+    padding: 3.9rem 0;
+  }
+
+  .why-systems-grid,
+  .why-steps-grid,
+  .why-benefits-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+
+  .why-neuromedit-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .header-container {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.9rem;
+    min-height: auto;
+    padding: 1rem 0;
+  }
+
+  .main-nav {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .why-hero {
+    padding-top: 4.25rem;
+    padding-bottom: 3.25rem;
+  }
+
+  .why-page section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .why-hero h1,
+  .why-hero-text,
+  .why-neuromedit-copy p {
+    max-width: 100%;
+  }
+
+  .why-hero-text {
+    font-size: 1.03rem;
+  }
+
+  .why-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .why-hero-actions .button {
+    width: 100%;
+  }
+
+  .why-systems-grid,
+  .why-steps-grid,
+  .why-benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .why-system-card,
+  .why-benefit-card,
+  .why-feature-card,
+  .why-step-card {
+    min-height: auto;
+  }
+
+  .why-resistance-list li {
+    border-radius: var(--radius-sm);
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .container,
+  .narrow {
+    padding: 0 1rem;
+  }
+
+  .why-page section {
+    padding: 3.5rem 0;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .why-system-card,
+  .why-benefit-card,
+  .why-feature-card,
+  .why-step-card,
+  .why-science-note {
+    padding: 1.3rem;
+  }
+
+  .why-cta-box {
+    width: calc(100% - 2rem);
+    padding: 1.6rem;
+  }
+}

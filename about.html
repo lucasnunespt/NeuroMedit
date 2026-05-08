@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="about_meta_title">About NeuroMedit</title>
+  <link rel="stylesheet" href="about.css">
+  <link rel="stylesheet" href="i18n.css">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+</head>
+<body class="about-body">
+    <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a href="home.html" class="site-logo">NeuroMedit</a>
+
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="about_nav_aria" data-i18n-attr="aria-label">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="about_nav_home" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="about_nav_home">Home</span>
+        </a>
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="about_nav_library" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="about_nav_library">Library</span>
+        </a>
+        <a href="about.html" class="header-nav-link nav-link active" data-nav-key="about" aria-current="page" aria-label="About" title="About" data-i18n="about_nav_about" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="header-nav-text" data-i18n="about_nav_about">About</span>
+        </a>
+        <a href="why.html" class="header-nav-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="about_nav_why" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="header-nav-text" data-i18n="about_nav_why">Why</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-language-slot" data-language-host></div>
+
+        <button
+          type="button"
+          class="header-menu-toggle"
+          data-mobile-toggle
+          aria-controls="about-mobile-nav"
+          aria-expanded="false"
+          aria-label="Open menu"
+          title="Open menu"
+          data-i18n="global_menu_open"
+          data-i18n-attr="aria-label,title"
+        >
+          <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
+
+    <aside id="about-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+      <div class="header-mobile-inner">
+        <div class="header-mobile-top">
+          <p class="header-mobile-brand">NeuroMedit</p>
+
+          <button
+            type="button"
+            class="header-mobile-close"
+            data-mobile-close
+            aria-label="Close menu"
+            title="Close menu"
+            data-i18n="global_menu_close"
+            data-i18n-attr="aria-label,title"
+          >
+            <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+          </button>
+        </div>
+
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="about_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="about_nav_home" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="about_nav_home">Home</span>
+          </a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="about_nav_library" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="about_nav_library">Library</span>
+          </a>
+          <a href="about.html" class="header-mobile-link nav-link active" data-nav-key="about" aria-current="page" aria-label="About" title="About" data-i18n="about_nav_about" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="about_nav_about">About</span>
+          </a>
+          <a href="why.html" class="header-mobile-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="about_nav_why" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="about_nav_why">Why</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+  <main class="about-page">
+    <section class="about-hero">
+      <div class="container hero-content">
+        <p class="eyebrow" data-i18n="about_hero_eyebrow">About NeuroMedit</p>
+        <h1 data-i18n="about_hero_title">A calmer digital space for attention, regulation, and rest.</h1>
+        <p class="hero-text" data-i18n="about_hero_text">NeuroMedit is a meditation experience designed to reduce mental noise, lower friction, and make it easier to pause in a fast and overloaded world.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_what_label">What it is</p>
+          <h2 data-i18n="about_what_title">What is NeuroMedit?</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_what_text_1">NeuroMedit is a digital meditation concept built around short sessions, calm visual rhythm, and low cognitive load.</p>
+          <p data-i18n="about_what_text_2">Instead of overwhelming the user with options, content, or explanation, the experience is designed to offer simple paths for real mental states like stress, mental fatigue, distraction, and the need for rest.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_why_label">Why it exists</p>
+          <h2 data-i18n="about_why_title">Designed for a mind that is already tired.</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_why_text_1">In many digital environments, the user spends more time searching for relief than actually feeling it.</p>
+          <p data-i18n="about_why_text_2">NeuroMedit was created as a response to that friction. It aims to reduce the effort of choosing, navigating, and understanding, so the user can move more directly into a calmer state.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-label" data-i18n="about_how_label">How it works</p>
+          <h2 data-i18n="about_how_title">Simple structure, intentional pacing.</h2>
+          <p class="section-text" data-i18n="about_how_text">The experience is shaped to support fast entry, low effort, and a smoother transition into practice.</p>
+        </div>
+
+        <div class="principles-grid">
+          <div class="principle-card card-static">
+            <h3 data-i18n="about_how_short_title">Short sessions</h3>
+            <p data-i18n="about_how_short_text">Practices are designed to fit moments of real mental fatigue and limited time.</p>
+          </div>
+
+          <div class="principle-card card-static">
+            <h3 data-i18n="about_how_low_title">Low cognitive load</h3>
+            <p data-i18n="about_how_low_text">Navigation, copy, and choices are simplified to reduce friction and decision fatigue.</p>
+          </div>
+
+          <div class="principle-card card-static">
+            <h3 data-i18n="about_how_paths_title">Clear paths</h3>
+            <p data-i18n="about_how_paths_text">The structure helps users move by need and state, not by overthinking where to begin.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_neuro_label">Neuroscience-informed</p>
+          <h2 data-i18n="about_neuro_title">Built with attention and regulation in mind.</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_neuro_text_1">NeuroMedit is informed by principles related to attention, emotional pacing, cognitive overload, and nervous system regulation.</p>
+          <p data-i18n="about_neuro_text_2">The goal is not to make the interface feel technical, but to use that knowledge to support a more humane and effective digital experience.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-label" data-i18n="about_design_label">Design principles</p>
+          <h2 data-i18n="about_design_title">The interface is part of the meditation.</h2>
+          <p class="section-text" data-i18n="about_design_text">The visual and structural decisions are meant to support calm, not compete with it.</p>
+        </div>
+
+        <div class="design-grid">
+          <div class="design-card card-static">
+            <h3 data-i18n="about_design_load_title">Low cognitive load</h3>
+            <p data-i18n="about_design_load_text">Fewer decisions, less mental effort, clearer navigation.</p>
+          </div>
+
+          <div class="design-card card-static">
+            <h3 data-i18n="about_design_quiet_title">Visual quiet</h3>
+            <p data-i18n="about_design_quiet_text">Soft contrast, spacing, and restrained elements reduce visual noise.</p>
+          </div>
+
+          <div class="design-card card-static">
+            <h3 data-i18n="about_design_pacing_title">Gentle pacing</h3>
+            <p data-i18n="about_design_pacing_text">Content is sequenced to feel gradual, not abrupt or demanding.</p>
+          </div>
+
+          <div class="design-card card-static">
+            <h3 data-i18n="about_design_hierarchy_title">Calm hierarchy</h3>
+            <p data-i18n="about_design_hierarchy_text">Clear visual structure guides attention without pressure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_audience_label">Who it is for</p>
+          <h2 data-i18n="about_audience_title">For people who need less noise and faster access to pause.</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_audience_text_1">NeuroMedit is for people who feel mentally overloaded, struggle to slow down, or want a calmer and more direct way to begin meditating.</p>
+          <p data-i18n="about_audience_text_2">It is especially relevant for users who benefit from clarity, simplicity, and environments that support attention without demanding too much from it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_project_label">The project behind it</p>
+          <h2 data-i18n="about_project_title">A design exploration of behavior, calm, and digital experience.</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_project_text_1">NeuroMedit also works as a product design exploration connecting UX, neuroscience, emotional regulation, and calm digital systems.</p>
+          <p data-i18n="about_project_text_2">It is a project that asks how interfaces can do less, guide better, and support the user's internal state more intentionally.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_contact_label">Contact</p>
+          <h2 data-i18n="about_contact_title">Contact channels</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_contact_text">Contact details can be connected here when the project has an active channel.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="social">
+      <div class="container split-layout">
+        <div class="text-block">
+          <p class="section-label" data-i18n="about_social_label">Social</p>
+          <h2 data-i18n="about_social_title">Instagram</h2>
+        </div>
+
+        <div class="content-block">
+          <p data-i18n="about_social_text">The Instagram link can point to the official profile once it is available.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p data-i18n="about_footer_copyright">© 2026 NeuroMedit</p>
+
+      <div class="footer-links">
+        <a href="about.html" data-i18n="about_footer_about">About</a>
+        <a href="about.html#contact" data-i18n="about_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="about_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script src="header-nav.js"></script>
+</body>
+</html>
+
+

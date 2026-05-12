@@ -133,11 +133,11 @@ p {
 .founder-card,
 .contributor-card,
 .contributors-cta-box {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(8px);
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -146,7 +146,7 @@ p {
   grid-template-columns: 0.9fr 0.8fr 1.3fr;
   gap: 1.5rem;
   padding: 1.8rem;
-  background: var(--surface-strong);
+  background: var(--surface-static-bg-strong);
   border-color: rgba(138, 165, 160, 0.16);
 }
 
@@ -186,11 +186,11 @@ p {
 
 .principles-list li {
   padding: 1rem 1.2rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  background: var(--surface-static-pill-bg);
+  border: 1px solid var(--surface-static-pill-border);
+  border-radius: 18px;
   color: var(--text);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--surface-static-pill-shadow);
 }
 
 .contributors-cta {

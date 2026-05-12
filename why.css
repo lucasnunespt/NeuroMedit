@@ -304,11 +304,11 @@ p {
 .why-science-note {
   margin-top: 2rem;
   padding: 1.6rem;
-  background: var(--surface-strong);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(8px);
+  background: var(--surface-static-bg-strong);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -337,11 +337,11 @@ p {
 .why-feature-card,
 .why-step-card {
   padding: 1.6rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(8px);
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -369,13 +369,6 @@ p {
   color: var(--accent-dark);
 }
 
-.why-system-card,
-.why-benefit-card,
-.why-feature-card,
-.why-step-card {
-  transition: border-color 0.25s ease, background-color 0.25s ease;
-}
-
 /* =========================
    RESISTANCE LIST
 ========================= */
@@ -388,11 +381,11 @@ p {
 
 .why-resistance-list li {
   padding: 1rem 1.2rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  background: var(--surface-static-pill-bg);
+  border: 1px solid var(--surface-static-pill-border);
+  border-radius: 18px;
   color: var(--text);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--surface-static-pill-shadow);
   line-height: 1.45;
 }
 
@@ -439,7 +432,7 @@ p {
   background: var(--accent);
   color: var(--text-primary, #f4e6da);
   font-size: 0.95rem;
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
 }
 
 /* =========================
@@ -454,11 +447,11 @@ p {
   margin: 0 auto;
   padding: 2.4rem;
   text-align: center;
-  background: var(--surface-strong);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(8px);
+  background: var(--surface-static-bg-strong);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 22px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 

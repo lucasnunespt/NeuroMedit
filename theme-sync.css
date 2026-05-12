@@ -6,6 +6,22 @@ body {
   --text-subtle: rgba(84, 94, 95, 0.54);
   --button-text: var(--text-primary);
   --link-text: var(--text-primary);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.34)),
+    var(--surface, rgba(255, 255, 255, 0.7));
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.42)),
+    var(--surface-strong, rgba(255, 255, 255, 0.88));
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.3)),
+    var(--surface, rgba(255, 255, 255, 0.7));
+  --surface-static-border: rgba(31, 35, 38, 0.07);
+  --surface-static-pill-border: rgba(31, 35, 38, 0.065);
+  --surface-static-shadow: 0 8px 22px rgba(31, 35, 38, 0.035), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --surface-static-shadow-soft: 0 7px 18px rgba(31, 35, 38, 0.032), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --surface-static-blur: blur(5px);
+  --surface-static-text: var(--text-primary);
 }
 
 html.theme-morning,
@@ -33,6 +49,21 @@ body[data-theme="dawn"] {
   --accent-dark: #9e7042;
   --shadow-soft: 0 12px 28px rgba(94, 66, 34, 0.1);
   --shadow-card: 0 16px 38px rgba(94, 66, 34, 0.12);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(255, 248, 236, 0.8), rgba(247, 222, 188, 0.42)),
+    rgba(255, 247, 232, 0.7);
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(255, 250, 240, 0.88), rgba(248, 224, 190, 0.52)),
+    rgba(255, 248, 236, 0.78);
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(255, 247, 232, 0.68), rgba(239, 206, 164, 0.32)),
+    rgba(255, 244, 225, 0.58);
+  --surface-static-border: rgba(174, 119, 57, 0.16);
+  --surface-static-pill-border: rgba(174, 119, 57, 0.13);
+  --surface-static-shadow: 0 8px 22px rgba(132, 86, 39, 0.055), inset 0 1px 0 rgba(255, 255, 255, 0.54);
+  --surface-static-shadow-soft: 0 7px 18px rgba(132, 86, 39, 0.045), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46);
+  --surface-static-text: #2f261d;
   --header-glass-bg: rgba(255, 245, 226, 0.2);
   --header-glass-bg-scrolled: rgba(255, 248, 236, 0.3);
   --header-bg: var(--header-glass-bg);
@@ -79,6 +110,21 @@ body[data-theme="day"] {
   --accent-dark: #8d704d;
   --shadow-soft: 0 12px 28px rgba(92, 70, 42, 0.09);
   --shadow-card: 0 16px 38px rgba(92, 70, 42, 0.1);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(255, 253, 244, 0.76), rgba(224, 206, 166, 0.34)),
+    rgba(253, 247, 232, 0.68);
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(255, 254, 247, 0.86), rgba(228, 209, 169, 0.44)),
+    rgba(255, 250, 238, 0.76);
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(255, 252, 242, 0.62), rgba(198, 178, 133, 0.28)),
+    rgba(250, 243, 225, 0.55);
+  --surface-static-border: rgba(139, 104, 58, 0.14);
+  --surface-static-pill-border: rgba(139, 104, 58, 0.12);
+  --surface-static-shadow: 0 8px 22px rgba(112, 86, 52, 0.045), inset 0 1px 0 rgba(255, 255, 255, 0.52);
+  --surface-static-shadow-soft: 0 7px 18px rgba(112, 86, 52, 0.038), inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+  --surface-static-text: #2d281f;
   --header-glass-bg: rgba(255, 255, 255, 0.18);
   --header-glass-bg-scrolled: rgba(255, 252, 245, 0.3);
   --header-bg: var(--header-glass-bg);
@@ -125,6 +171,21 @@ body[data-theme="evening"] {
   --accent-dark: #efc08f;
   --shadow-soft: 0 14px 34px rgba(3, 7, 14, 0.2);
   --shadow-card: 0 18px 44px rgba(3, 7, 14, 0.24);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(88, 61, 52, 0.48), rgba(45, 35, 39, 0.34)),
+    rgba(255, 204, 164, 0.07);
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(102, 70, 55, 0.54), rgba(48, 37, 41, 0.38)),
+    rgba(255, 204, 164, 0.1);
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(92, 62, 48, 0.38), rgba(45, 35, 39, 0.28)),
+    rgba(255, 204, 164, 0.06);
+  --surface-static-border: rgba(238, 190, 145, 0.16);
+  --surface-static-pill-border: rgba(238, 190, 145, 0.13);
+  --surface-static-shadow: 0 10px 26px rgba(3, 7, 14, 0.16), inset 0 1px 0 rgba(255, 228, 204, 0.08);
+  --surface-static-shadow-soft: 0 8px 20px rgba(3, 7, 14, 0.14), inset 0 1px 0 rgba(255, 228, 204, 0.07);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(255, 228, 204, 0.07);
+  --surface-static-text: #f7eadd;
   --header-glass-bg: rgba(28, 26, 33, 0.36);
   --header-glass-bg-scrolled: rgba(37, 32, 39, 0.48);
   --header-bg: var(--header-glass-bg);
@@ -187,6 +248,21 @@ body[data-theme="sleep"] {
   --accent-dark: #d09168;
   --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.3);
   --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.34), 0 0 32px var(--night-glow-soft);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(72, 31, 28, 0.5), rgba(31, 16, 18, 0.42)),
+    rgba(199, 122, 74, 0.065);
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(83, 36, 30, 0.58), rgba(35, 17, 19, 0.46)),
+    rgba(199, 122, 74, 0.09);
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(67, 29, 25, 0.42), rgba(30, 15, 16, 0.36)),
+    rgba(199, 122, 74, 0.055);
+  --surface-static-border: rgba(210, 132, 84, 0.17);
+  --surface-static-pill-border: rgba(210, 132, 84, 0.13);
+  --surface-static-shadow: 0 10px 28px rgba(0, 0, 0, 0.19), inset 0 1px 0 rgba(240, 222, 208, 0.07);
+  --surface-static-shadow-soft: 0 8px 22px rgba(0, 0, 0, 0.17), inset 0 1px 0 rgba(240, 222, 208, 0.06);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(240, 222, 208, 0.06);
+  --surface-static-text: #f4e6da;
   --header-glass-bg: rgba(36, 16, 22, 0.46);
   --header-glass-bg-scrolled: rgba(42, 18, 22, 0.58);
   --header-bg: var(--header-glass-bg);
@@ -241,6 +317,21 @@ body[data-theme="late-night"] {
   --accent-dark: #c9855f;
   --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.34);
   --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.36), 0 0 24px var(--night-glow-soft);
+  --surface-static-bg:
+    linear-gradient(145deg, rgba(57, 24, 22, 0.48), rgba(24, 12, 13, 0.44)),
+    rgba(185, 109, 67, 0.052);
+  --surface-static-bg-strong:
+    linear-gradient(145deg, rgba(67, 28, 24, 0.54), rgba(28, 13, 14, 0.48)),
+    rgba(185, 109, 67, 0.076);
+  --surface-static-pill-bg:
+    linear-gradient(145deg, rgba(52, 22, 20, 0.4), rgba(22, 11, 12, 0.38)),
+    rgba(185, 109, 67, 0.048);
+  --surface-static-border: rgba(210, 132, 84, 0.13);
+  --surface-static-pill-border: rgba(210, 132, 84, 0.105);
+  --surface-static-shadow: 0 10px 28px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(236, 216, 202, 0.055);
+  --surface-static-shadow-soft: 0 8px 22px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(236, 216, 202, 0.05);
+  --surface-static-pill-shadow: inset 0 1px 0 rgba(236, 216, 202, 0.05);
+  --surface-static-text: #ecd8ca;
   --header-glass-bg: rgba(24, 11, 14, 0.48);
   --header-glass-bg-scrolled: rgba(32, 14, 16, 0.6);
   --header-bg: var(--header-glass-bg);
@@ -398,6 +489,16 @@ body.theme-late-night .header-language-slot .language-options button.is-active {
   color: var(--button-text);
 }
 
+body.theme-morning :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-afternoon :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-day :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-sunset :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-evening :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-night :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
+body.theme-late-night :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li) {
+  color: var(--surface-static-text);
+}
+
 body.theme-late-night :is(.state-card, .featured-card, .session-card) {
   background: var(--surface);
   border-color: var(--line);
@@ -492,7 +593,7 @@ body.theme-evening .card-static,
 body.theme-night .card-static,
 body.theme-late-night .card-static {
   cursor: default;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--surface-static-shadow);
 }
 
 a.card-clickable,

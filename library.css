@@ -208,7 +208,8 @@ p {
   border-radius: 999px;
   border: 1px solid var(--line);
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
+  box-shadow: none;
+  cursor: pointer;
   transition: 0.25s ease;
 }
 
@@ -230,10 +231,11 @@ p {
 .upcoming-card {
   min-height: 135px;
   padding: 1.05rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  box-shadow: none;
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 18px;
+  box-shadow: var(--surface-static-shadow-soft);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -255,6 +257,11 @@ p {
   transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.9);
   border-color: rgba(138, 165, 160, 0.24);
+}
+
+.filter-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* =========================
@@ -298,7 +305,7 @@ p {
 }
 
 a.session-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   border-color: rgba(138, 165, 160, 0.28);
   box-shadow: 0 16px 36px rgba(31, 35, 38, 0.08);
   background: rgba(255, 255, 255, 0.86);
@@ -342,10 +349,11 @@ a.session-card::after {
 .quick-card {
   min-height: 150px;
   padding: 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 

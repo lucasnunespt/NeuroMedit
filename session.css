@@ -440,11 +440,12 @@ audio {
 }
 
 .session-chip {
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  border: 1px solid var(--surface-static-pill-border);
+  border-radius: 14px;
   padding: 0.42rem 0.72rem;
   color: var(--text-muted, var(--text-soft));
-  background: var(--surface);
+  background: var(--surface-static-pill-bg);
+  box-shadow: var(--surface-static-pill-shadow);
   font-size: 0.9rem;
 }
 

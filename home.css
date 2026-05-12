@@ -298,10 +298,11 @@ p {
   gap: 0.7rem;
   width: min(100%, 520px);
   padding: 0.95rem 1rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--surface-static-bg-strong);
+  border: 1px solid var(--surface-static-border);
   border-radius: 20px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
 }
 
 .progress-intro {
@@ -398,7 +399,14 @@ p {
 .card-static,
 .why-card {
   cursor: default;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--surface-static-shadow);
+}
+
+.why-card {
+  background: var(--surface-static-bg);
+  border-color: var(--surface-static-border);
+  border-radius: 22px;
+  backdrop-filter: var(--surface-static-blur);
 }
 
 .state-signal {
@@ -431,7 +439,7 @@ p {
 
 a.state-card:hover,
 a.featured-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   border-color: rgba(138, 165, 160, 0.28);
   box-shadow: 0 16px 36px rgba(31, 35, 38, 0.08);
   background: rgba(255, 255, 255, 0.85);

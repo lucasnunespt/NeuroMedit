@@ -242,10 +242,11 @@ p {
 .principle-card {
   min-height: 200px;
   padding: 1.6rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -270,10 +271,11 @@ p {
 .design-card {
   min-height: 180px;
   padding: 1.5rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-static-bg);
+  border: 1px solid var(--surface-static-border);
+  border-radius: 20px;
+  box-shadow: var(--surface-static-shadow);
+  backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 

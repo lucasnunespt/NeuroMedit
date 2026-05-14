@@ -217,6 +217,12 @@ p {
   margin-bottom: 0;
 }
 
+.contact-email {
+  color: var(--text);
+  text-decoration-color: rgba(53, 60, 57, 0.28);
+  text-underline-offset: 0.22em;
+}
+
 /* =========================
    SECTION HEADINGS
 ========================= */

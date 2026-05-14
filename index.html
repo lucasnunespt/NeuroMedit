@@ -249,6 +249,30 @@
       background: transparent;
     }
 
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) {
+      --sanctuary-text: #3f2f29;
+      --sanctuary-muted: rgba(63, 47, 41, 0.78);
+      --text-primary: #3f2f29;
+      --text-secondary: rgba(63, 47, 41, 0.78);
+      --text-muted: rgba(63, 47, 41, 0.72);
+      --text-subtle: rgba(63, 47, 41, 0.68);
+      --button-text: #3f2f29;
+      --link-text: rgba(63, 47, 41, 0.76);
+      --sanctuary-dim: rgba(118, 86, 56, 0.24);
+      --shadow-soft: rgba(100, 75, 48, 0.14);
+      color-scheme: light;
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) .video-atmosphere video {
+      filter: blur(10px) brightness(0.88) contrast(0.94) saturate(0.72);
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) .video-atmosphere::after {
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 232, 196, 0.2), transparent 36%),
+        linear-gradient(180deg, rgba(255, 249, 240, 0.28), rgba(238, 218, 196, 0.46));
+    }
+
     body[data-index-phase="meditation-active"],
     body[data-index-phase="meditation-complete"] {
       --sanctuary-bg: #0b0706;
@@ -372,6 +396,11 @@
         transform 700ms ease;
     }
 
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-title {
+      color: var(--sanctuary-text);
+      text-shadow: 0 2px 18px rgba(255, 248, 238, 0.58), 0 14px 36px rgba(84, 59, 37, 0.16);
+    }
+
     .intro-copy {
       max-width: min(82vw, 480px);
       margin: 0 0 1.45rem;
@@ -384,6 +413,10 @@
         color var(--theme-transition-duration) ease,
         opacity 700ms ease,
         transform 700ms ease;
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) :is(.intro-copy, .intro-language, .explore-btn) {
+      color: var(--text-secondary);
     }
 
     .intro-note {
@@ -445,6 +478,14 @@
       z-index: 80;
     }
 
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-language .language-pill {
+      background: rgba(255, 250, 242, 0.42);
+      color: var(--text-secondary);
+      box-shadow:
+        0 12px 34px rgba(100, 75, 48, 0.12),
+        inset 0 0 24px rgba(255, 255, 255, 0.18);
+    }
+
     .intro-language .language-pill.is-open {
       width: 280px;
       border-color: rgba(244, 230, 218, 0.28);
@@ -453,6 +494,15 @@
       box-shadow:
         0 18px 60px rgba(0, 0, 0, 0.30),
         inset 0 0 28px rgba(255, 255, 255, 0.05);
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-language .language-pill.is-open {
+      border-color: rgba(118, 86, 56, 0.28);
+      background: rgba(255, 250, 242, 0.56);
+      color: var(--text-primary);
+      box-shadow:
+        0 16px 48px rgba(100, 75, 48, 0.14),
+        inset 0 0 28px rgba(255, 255, 255, 0.22);
     }
 
     .intro-language .language-trigger {
@@ -511,6 +561,16 @@
         box-shadow:
           0 18px 60px rgba(0, 0, 0, 0.30),
           inset 0 0 28px rgba(255, 255, 255, 0.05);
+      }
+
+      html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-language .language-pill:hover,
+      html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-language .language-pill:focus-within {
+        border-color: rgba(118, 86, 56, 0.28);
+        background: rgba(255, 250, 242, 0.56);
+        color: var(--text-primary);
+        box-shadow:
+          0 16px 48px rgba(100, 75, 48, 0.14),
+          inset 0 0 28px rgba(255, 255, 255, 0.22);
       }
 
       .intro-language .language-pill:hover .language-options,
@@ -618,6 +678,12 @@
       transition: transform 250ms ease, background 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
     }
 
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .start-btn {
+      background: rgba(255, 250, 242, 0.48);
+      color: var(--button-text);
+      box-shadow: 0 18px 48px var(--shadow-soft), 0 0 28px rgba(255, 244, 229, 0.34);
+    }
+
     .intro[data-phase="ready-to-start"] .intro-actions,
     .intro[data-phase="ready-to-start"] .intro-note {
       opacity: 1;
@@ -688,6 +754,11 @@
       color: #F4E6DA;
       outline: none;
       transform: translateY(-1px);
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .explore-btn:hover,
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .explore-btn:focus-visible {
+      color: var(--text-primary);
     }
 
     .audio-error {

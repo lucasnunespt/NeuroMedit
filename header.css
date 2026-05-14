@@ -523,6 +523,9 @@ body.is-meditating .site-footer {
 
   .header-shell {
     min-height: 62px;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr) auto;
     padding-inline: 0.54rem;
     gap: 0.54rem;
   }
@@ -537,12 +540,43 @@ body.is-meditating .site-footer {
     height: 2.3rem;
   }
 
+  .header-actions {
+    min-width: 0;
+    max-width: 100%;
+    justify-self: end;
+  }
+
   .header-mobile-panel {
     top: 0.46rem;
     right: 0.46rem;
     bottom: 0.46rem;
     width: calc(100vw - 0.92rem);
     border-radius: 1.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-shell {
+    padding-inline: 0.48rem;
+    gap: 0.4rem;
+  }
+
+  .header-actions {
+    gap: 0.32rem;
+  }
+
+  .header-language-slot {
+    width: 68px;
+    height: 42px;
+  }
+
+  .header-language-slot .language-pill,
+  .header-language-slot .language-pill.is-open {
+    width: 68px;
+  }
+
+  .header-language-slot .language-trigger {
+    height: 42px;
   }
 }
 

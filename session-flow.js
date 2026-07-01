@@ -14,22 +14,38 @@
 
   if (!prep || !airlock || !practice || !startButton || !exitButton || !audio) return;
 
-  const duration = Number(root.dataset.duration || 240000);
+  // Fallback duration (ms) used ONLY when no narration audio src is provided (generated-audio path).
+  // For audio-backed sessions this value is never used — duration comes from audio.duration instead.
+  const fallbackDurationMs = Number(root.dataset.duration || 240000);
+
   const sessionType = root.dataset.sessionType || "calm";
   const sessionAudioSrc = root.dataset.sessionAudioSrc || "";
   const feedbackSource = root.dataset.feedbackSource || "";
   const feedbackPractice = root.dataset.feedbackPractice || "";
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const timers = new Set();
+
+  // Whether this session is driven by a real narration audio file (true) or generated tones (false).
+  const hasNarrationAudio = Boolean(sessionAudioSrc);
+
+  // For audio-backed sessions: duration is read from audio.duration after metadata loads.
+  // For generated-audio sessions: duration is the fallback value in milliseconds.
+  let sessionDurationMs = hasNarrationAudio ? 0 : fallbackDurationMs; // 0 = not yet known
+
+  // Wall-clock tracking (used only for the generated-audio path).
   let startedAt = 0;
   let elapsedBeforePause = 0;
+
   let progressFrame = 0;
-  let completionTimer = 0;
+  let completionTimer = 0;   // used only for generated-audio path
   let isPaused = false;
   let hasCompleted = false;
   let audioContext = null;
   let masterGain = null;
   let usingGeneratedAudio = false;
+
+  // Whether practice has begun and we are waiting for audio metadata.
+  let pendingPracticeStart = false;
 
   const toneMap = {
     calm: [72, 108, 146],
@@ -47,7 +63,6 @@
     if (typeof window.getTranslation === "function") {
       return window.getTranslation(currentLanguage(), key);
     }
-
     return key;
   }
 
@@ -72,7 +87,6 @@
     if (!feedbackSource || !feedbackPractice) {
       return status === "completed" ? "complete.html" : "feedback.html";
     }
-
     return `feedback.html?source=${encodeURIComponent(feedbackSource)}&practice=${encodeURIComponent(feedbackPractice)}&status=${status}`;
   }
 
@@ -92,6 +106,10 @@
       section.classList.toggle("is-active", active);
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // Generated-audio path (oscillators via Web Audio API)
+  // ---------------------------------------------------------------------------
 
   function makeAmbientWav(type) {
     const sampleRate = 22050;
@@ -122,12 +140,12 @@
     view.setUint32(40, dataBytes, true);
 
     for (let i = 0; i < samples; i += 1) {
-      const t = i / sampleRate;
-      const swell = 0.38 + Math.sin(t * Math.PI * 0.18) * 0.18;
+      const ti = i / sampleRate;
+      const swell = 0.38 + Math.sin(ti * Math.PI * 0.18) * 0.18;
       const tone =
-        Math.sin(2 * Math.PI * frequencies[0] * t) * 0.24 +
-        Math.sin(2 * Math.PI * frequencies[1] * t) * 0.16 +
-        Math.sin(2 * Math.PI * frequencies[2] * t) * 0.08;
+        Math.sin(2 * Math.PI * frequencies[0] * ti) * 0.24 +
+        Math.sin(2 * Math.PI * frequencies[1] * ti) * 0.16 +
+        Math.sin(2 * Math.PI * frequencies[2] * ti) * 0.08;
       const sample = Math.max(-1, Math.min(1, tone * swell * 0.24));
       view.setInt16(44 + i * 2, sample * 32767, true);
     }
@@ -138,15 +156,12 @@
     for (let i = 0; i < bytes.length; i += chunk) {
       binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
     }
-
     return `data:audio/wav;base64,${btoa(binary)}`;
   }
 
   function startGeneratedAudio() {
     try {
-      if (audioContext) {
-        return;
-      }
+      if (audioContext) return;
 
       const frequencies = toneMap[sessionType] || toneMap.calm;
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -169,6 +184,10 @@
       audioContext = null;
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // Audio start / stop
+  // ---------------------------------------------------------------------------
 
   function startAudio() {
     if (sessionAudioSrc && audio.getAttribute("src") !== sessionAudioSrc) {
@@ -209,9 +228,30 @@
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Progress tracking
+  // ---------------------------------------------------------------------------
+
+  /**
+   * For narration-audio sessions: progress = audio.currentTime / audio.duration
+   * For generated-audio sessions: progress = wall-clock elapsed / fallback duration (ms)
+   */
   function updateProgress() {
-    const elapsed = elapsedBeforePause + (isPaused ? 0 : Date.now() - startedAt);
-    const value = Math.min(100, (elapsed / duration) * 100);
+    let value;
+
+    if (hasNarrationAudio && !usingGeneratedAudio) {
+      const dur = audio.duration;
+      if (dur && isFinite(dur) && dur > 0) {
+        value = Math.min(100, (audio.currentTime / dur) * 100);
+      } else {
+        value = 0;
+      }
+    } else {
+      // Generated-audio path: use wall-clock elapsed vs fallback duration.
+      const elapsed = elapsedBeforePause + (isPaused ? 0 : Date.now() - startedAt);
+      value = Math.min(100, (elapsed / sessionDurationMs) * 100);
+    }
+
     if (progress) progress.style.setProperty("--session-progress", `${value}%`);
 
     if (value < 100 && !isPaused) {
@@ -219,29 +259,41 @@
     }
   }
 
-  function scheduleCompletion(remaining = duration) {
+  // ---------------------------------------------------------------------------
+  // Completion (generated-audio path only)
+  // ---------------------------------------------------------------------------
+
+  function scheduleCompletion(remaining = sessionDurationMs) {
     window.clearTimeout(completionTimer);
     completionTimer = window.setTimeout(completeSession, remaining);
   }
 
   function completeSession() {
     if (hasCompleted) return;
-
     hasCompleted = true;
     clearTimers();
     stopAudio();
     window.location.href = getFeedbackUrl("completed");
   }
 
+  // ---------------------------------------------------------------------------
+  // Pause / Resume
+  // ---------------------------------------------------------------------------
+
   function pausePractice() {
     if (!root.classList.contains("is-practicing") || isPaused) return;
 
     isPaused = true;
-    elapsedBeforePause += Date.now() - startedAt;
-    window.clearTimeout(completionTimer);
     window.cancelAnimationFrame(progressFrame);
     audio.pause();
     root.classList.add("is-paused");
+
+    if (!hasNarrationAudio) {
+      // Wall-clock tracking only needed for generated-audio sessions.
+      elapsedBeforePause += Date.now() - startedAt;
+      window.clearTimeout(completionTimer);
+    }
+
     if (pauseButton) {
       pauseButton.textContent = t("global_resume");
       pauseButton.dataset.i18n = "global_resume";
@@ -252,11 +304,16 @@
     if (!root.classList.contains("is-practicing") || !isPaused) return;
 
     isPaused = false;
-    startedAt = Date.now();
+    root.classList.remove("is-paused");
     startAudio();
     updateProgress();
-    scheduleCompletion(Math.max(0, duration - elapsedBeforePause));
-    root.classList.remove("is-paused");
+
+    if (!hasNarrationAudio) {
+      // Restart wall-clock and completion timer for generated-audio sessions.
+      startedAt = Date.now();
+      scheduleCompletion(Math.max(0, sessionDurationMs - elapsedBeforePause));
+    }
+
     if (pauseButton) {
       pauseButton.textContent = t("global_pause");
       pauseButton.dataset.i18n = "global_pause";
@@ -268,8 +325,43 @@
       resumePractice();
       return;
     }
-
     pausePractice();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Practice start — waits for audio metadata when necessary
+  // ---------------------------------------------------------------------------
+
+  function initPracticeSession() {
+    startedAt = Date.now();
+    elapsedBeforePause = 0;
+    isPaused = false;
+    hasCompleted = false;
+
+    if (pauseButton) {
+      pauseButton.hidden = false;
+      pauseButton.textContent = t("global_pause");
+      pauseButton.dataset.i18n = "global_pause";
+    }
+
+    try {
+      window.sessionStorage.setItem(
+        "neuromedit.lastSession",
+        window.location.pathname.split("/").pop() || "calm.html"
+      );
+    } catch (e) {
+      // Session storage is optional; completion still works without it.
+    }
+
+    startAudio();
+    updateProgress();
+
+    // For generated-audio or audio-that-already-has-metadata: schedule completion via timer.
+    // For narration-audio: completion is driven solely by the "ended" event (see listener below).
+    if (!hasNarrationAudio) {
+      scheduleCompletion(sessionDurationMs);
+    }
+    // If narration audio is in use, the "ended" listener handles completion — no timer needed.
   }
 
   function beginPractice() {
@@ -277,24 +369,54 @@
     root.classList.add("is-practicing");
     document.body.classList.add("is-meditating");
     window.dispatchEvent(new CustomEvent("neuromedit:meditationstatechange"));
-    startedAt = Date.now();
-    elapsedBeforePause = 0;
-    isPaused = false;
-    hasCompleted = false;
-    if (pauseButton) {
-      pauseButton.hidden = false;
-      pauseButton.textContent = t("global_pause");
-      pauseButton.dataset.i18n = "global_pause";
+
+    if (hasNarrationAudio) {
+      // Pre-load the audio element so metadata arrives as soon as possible.
+      if (!audio.src || audio.getAttribute("src") !== sessionAudioSrc) {
+        audio.src = sessionAudioSrc;
+        audio.preload = "auto";
+        audio.load();
+      }
+
+      if (audio.readyState >= 1 && isFinite(audio.duration) && audio.duration > 0) {
+        // Metadata already loaded (e.g. from a previous preload).
+        sessionDurationMs = audio.duration * 1000;
+        initPracticeSession();
+      } else {
+        // Wait for metadata before starting the timer/progress loop.
+        pendingPracticeStart = true;
+        // Show that the orb is waiting (progress bar stays at 0) while metadata loads.
+      }
+    } else {
+      initPracticeSession();
     }
-    try {
-      window.sessionStorage.setItem("neuromedit.lastSession", window.location.pathname.split("/").pop() || "calm.html");
-    } catch (error) {
-      // Session storage is optional; completion still works without it.
-    }
-    startAudio();
-    updateProgress();
-    scheduleCompletion(duration);
   }
+
+  // Fires when audio metadata becomes available (including duration).
+  audio.addEventListener("loadedmetadata", () => {
+    if (!hasNarrationAudio) return;
+
+    const dur = audio.duration;
+    if (isFinite(dur) && dur > 0) {
+      sessionDurationMs = dur * 1000;
+    }
+
+    if (pendingPracticeStart) {
+      pendingPracticeStart = false;
+      initPracticeSession();
+    }
+  });
+
+  // Narration ended → complete the session.
+  audio.addEventListener("ended", () => {
+    if (!usingGeneratedAudio && hasNarrationAudio) {
+      completeSession();
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // Airlock
+  // ---------------------------------------------------------------------------
 
   function beginAirlock() {
     showStep(airlock);
@@ -302,6 +424,14 @@
     document.body.classList.add("is-meditating");
     window.dispatchEvent(new CustomEvent("neuromedit:meditationstatechange"));
     exitButton.hidden = false;
+
+    // Pre-load the narration audio during the airlock so metadata is ready by
+    // the time the practice step begins (avoids a visible delay at practice start).
+    if (hasNarrationAudio && (!audio.src || audio.getAttribute("src") !== sessionAudioSrc)) {
+      audio.src = sessionAudioSrc;
+      audio.preload = "auto";
+      audio.load();
+    }
 
     if (breathLabel) {
       breathLabel.textContent = t("global_breathe_in");
@@ -312,6 +442,10 @@
 
     setTimer(beginPractice, prefersReducedMotion ? 900 : 7600);
   }
+
+  // ---------------------------------------------------------------------------
+  // Exit
+  // ---------------------------------------------------------------------------
 
   function exitSession() {
     clearTimers();
@@ -325,19 +459,20 @@
     }, prefersReducedMotion ? 50 : 700);
   }
 
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+
   showStep(prep);
   document.body.classList.remove("is-meditating");
   window.dispatchEvent(new CustomEvent("neuromedit:meditationstatechange"));
   exitButton.hidden = true;
   if (pauseButton) pauseButton.hidden = true;
+
   startButton.addEventListener("click", beginAirlock);
   exitButton.addEventListener("click", exitSession);
   pauseButton?.addEventListener("click", togglePause);
-  audio.addEventListener("ended", () => {
-    if (!usingGeneratedAudio) {
-      completeSession();
-    }
-  });
+
   window.addEventListener("neuromedit:settingschange", () => {
     if (!audio.paused) {
       audio.volume = getSettingsVolume(audio.volume);

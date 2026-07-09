@@ -58,6 +58,10 @@ body.case-study-body {
   --case-glass-blur: blur(18px);
   --case-glow-warm: rgba(215, 151, 76, 0.24);
   --case-glow-cool: rgba(55, 75, 109, 0.14);
+  /* Véus do hero: claros nos temas claros, sobrescritos nos escuros (antes eram hardcoded e viravam névoa cinza no dark) */
+  --case-hero-tint: rgba(255, 247, 231, 0.34);
+  --case-hero-veil: rgba(255, 248, 235, 0.44);
+  --case-hero-halo: rgba(255, 235, 204, 0.34);
   --case-pill-bg:
     linear-gradient(145deg, rgba(255, 249, 237, 0.58), rgba(215, 176, 122, 0.25)),
     rgba(255, 244, 225, 0.5);
@@ -139,6 +143,11 @@ body.case-study-body[data-theme="evening"] {
     rgba(255, 204, 164, 0.06);
   --case-final-smoke-start: #1c1720;
   --case-final-fog: rgba(72, 43, 47, 0.48);
+  --case-hero-tint: rgba(87, 55, 45, 0.3);
+  --case-hero-veil: rgba(42, 34, 41, 0.42);
+  --case-hero-halo: rgba(213, 140, 78, 0.09);
+  --case-glow-warm: rgba(213, 140, 78, 0.16);
+  --case-glow-cool: rgba(30, 50, 80, 0.22);
 }
 
 body.case-study-body.theme-night,
@@ -174,6 +183,11 @@ body.case-study-body[data-theme="warm-night"] {
     rgba(112, 103, 188, 0.052);
   --case-final-smoke-start: #0b0b16;
   --case-final-fog: rgba(10, 13, 30, 0.62);
+  --case-hero-tint: rgba(32, 31, 56, 0.42);
+  --case-hero-veil: rgba(11, 11, 22, 0.5);
+  --case-hero-halo: rgba(112, 103, 188, 0.1);
+  --case-glow-warm: rgba(167, 102, 61, 0.14);
+  --case-glow-cool: rgba(61, 70, 130, 0.16);
 }
 
 /* =========================
@@ -367,14 +381,16 @@ dd {
 }
 
 .primary-button {
-  color: var(--button-text, #f4e6da);
+  /* Fallback escuro: mantém contraste AA (4.9:1) sobre --accent mesmo sem theme-sync.css */
+  color: var(--button-text, #27221d);
   background: var(--accent);
   box-shadow: var(--shadow-soft);
 }
 
 .primary-button:hover {
   transform: translateY(-1px);
-  background: var(--accent-dark);
+  /* Clareia em vez de escurecer: texto escuro sobre --accent-dark falhava WCAG (2.87:1) */
+  background: color-mix(in srgb, var(--accent) 82%, #fff7eb);
   box-shadow: var(--shadow-card);
 }
 
@@ -468,7 +484,7 @@ dd {
   background:
     radial-gradient(circle at 18% 28%, var(--case-glow-warm), transparent 26rem),
     radial-gradient(circle at 74% 12%, var(--case-glow-cool), transparent 34rem),
-    linear-gradient(135deg, rgba(255, 247, 231, 0.34), rgba(30, 42, 61, 0.08) 54%, transparent 82%);
+    linear-gradient(135deg, var(--case-hero-tint), rgba(30, 42, 61, 0.08) 54%, transparent 82%);
 }
 
 .case-hero::before {
@@ -478,8 +494,8 @@ dd {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 248, 235, 0.44), transparent 45%, rgba(42, 31, 40, 0.05)),
-    radial-gradient(ellipse at 46% 18%, rgba(255, 235, 204, 0.34), transparent 58%),
+    linear-gradient(180deg, var(--case-hero-veil), transparent 45%, rgba(42, 31, 40, 0.05)),
+    radial-gradient(ellipse at 46% 18%, var(--case-hero-halo), transparent 58%),
     radial-gradient(ellipse at 85% 65%, rgba(26, 42, 66, 0.12), transparent 48%);
 }
 
@@ -544,7 +560,7 @@ dd {
   border-radius: 999px;
   color: var(--surface-static-text);
   background: var(--case-pill-bg);
-  box-shadow: var(--surface-static-pill-shadow);
+  box-shadow: var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45));
   font-size: 0.9rem;
   line-height: 1;
 }
@@ -561,7 +577,7 @@ dd {
   border-color: color-mix(in srgb, var(--case-glass-border) 78%, var(--accent));
   background: var(--case-pill-bg);
   box-shadow:
-    var(--surface-static-pill-shadow),
+    var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45)),
     0 10px 26px rgba(40, 29, 22, 0.06);
 }
 
@@ -865,7 +881,7 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   border-radius: 999px;
   color: var(--accent-dark);
   background: var(--case-pill-bg);
-  box-shadow: var(--surface-static-pill-shadow);
+  box-shadow: var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45));
   cursor: pointer;
   transition:
     transform 180ms ease,
@@ -891,9 +907,8 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--case-glass-border) 82%, transparent);
   border-radius: 18px;
-  background:
-    linear-gradient(180deg, rgba(255, 252, 246, 0.52), rgba(234, 211, 180, 0.18)),
-    rgba(255, 248, 235, 0.28);
+  /* Antes: gradiente claro hardcoded que virava painel cinza nos temas escuros */
+  background: var(--case-pill-bg);
   touch-action: pan-y;
 }
 
@@ -968,7 +983,7 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   height: 0.5rem;
   border: 0;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-dark) 30%, transparent);
+  background: color-mix(in srgb, var(--accent-dark) 50%, transparent);
   cursor: pointer;
   transition:
     width 220ms ease,
@@ -978,7 +993,8 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
 
 .case-benchmark-dots button[aria-current="true"] {
   width: 1.55rem;
-  background: var(--accent);
+  /* --accent puro tinha 2.71:1 sobre o fundo; --accent-dark garante ≥3:1 (WCAG p/ componentes UI) */
+  background: var(--accent-dark);
 }
 
 .case-benchmark-dots button:is(:hover, :focus-visible) {
@@ -1018,7 +1034,7 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   font-weight: 650;
   line-height: 1.3;
   text-align: center;
-  box-shadow: var(--surface-static-pill-shadow);
+  box-shadow: var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45));
 }
 
 /* =========================
@@ -1041,7 +1057,7 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   background:
     radial-gradient(circle at 50% 50%, var(--accent) 0 18%, transparent 19%),
     var(--case-pill-bg);
-  box-shadow: var(--surface-static-pill-shadow);
+  box-shadow: var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45));
 }
 
 .case-principle-card h3,
@@ -2949,4 +2965,24 @@ body.case-study-body[data-theme="late-night"] .case-final {
   ) {
     transition: none;
   }
+}
+
+
+/* =========================
+   LANGUAGE SWITCHER — NEUTRALIZAÇÃO DO PILL FLUTUANTE (neuro.css)
+   O neuro.css (carregado apenas nesta página) estiliza .language-pill como
+   pill flutuante do index.html. Aqui anulamos SOMENTE esses resíduos que
+   i18n.css/header.css não cobrem; todo o visual do seletor vem dos arquivos
+   compartilhados, exatamente como nas outras páginas.
+========================= */
+.header-language-slot .language-pill {
+  height: auto; /* neuro.css fixa 44px e impede a expansão vertical */
+  justify-content: initial;
+}
+
+.header-language-slot .language-options {
+  position: static; /* neuro.css usa absolute p/ expansão horizontal */
+  left: auto;
+  visibility: visible; /* i18n.css controla exibição via opacity + clip */
+  pointer-events: auto;
 }

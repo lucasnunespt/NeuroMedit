@@ -56,7 +56,7 @@
 
   function currentLanguage() {
     const savedLanguage = window.localStorage.getItem("neuromedit-language");
-    return ["en", "pt", "it", "es"].includes(savedLanguage) ? savedLanguage : "en";
+    return ["en", "pt", "it", "es", "ru"].includes(savedLanguage) ? savedLanguage : "en";
   }
 
   function t(key) {
@@ -386,11 +386,42 @@
         // Wait for metadata before starting the timer/progress loop.
         pendingPracticeStart = true;
         // Show that the orb is waiting (progress bar stays at 0) while metadata loads.
+        // Safety timeout: if metadata still hasn't arrived, fall back to generated audio.
+        setTimer(() => {
+          if (pendingPracticeStart) {
+            fallBackToGeneratedAudio();
+          }
+        }, 8000);
       }
     } else {
       initPracticeSession();
     }
   }
+
+  // Safety net: if the narration file errors out (404, network, codec) or its
+  // metadata never arrives, fall back to the generated-audio path so the user
+  // is never stuck on a frozen practice screen.
+  function fallBackToGeneratedAudio() {
+    if (hasCompleted || usingGeneratedAudio || !hasNarrationAudio) return;
+
+    usingGeneratedAudio = true;
+    audio.pause();
+    sessionDurationMs = fallbackDurationMs;
+
+    if (pendingPracticeStart) {
+      pendingPracticeStart = false;
+      initPracticeSession();
+    }
+
+    startGeneratedAudio();
+    scheduleCompletion(Math.max(0, sessionDurationMs - elapsedBeforePause - (isPaused ? 0 : Date.now() - startedAt)));
+  }
+
+  audio.addEventListener("error", () => {
+    if (pendingPracticeStart || root.classList.contains("is-practicing")) {
+      fallBackToGeneratedAudio();
+    }
+  });
 
   // Fires when audio metadata becomes available (including duration).
   audio.addEventListener("loadedmetadata", () => {

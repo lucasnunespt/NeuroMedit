@@ -1264,7 +1264,7 @@
         introTitle.textContent = translate(phase.title);
         introCopy.textContent = translate(phase.copy);
         introNote.textContent = translate(phase.note);
-        startButton.textContent = hasStarted ? "A decorrer" : translate(phase.cta);
+        startButton.textContent = hasStarted ? translate("index_in_progress") : translate(phase.cta);
         startButton.disabled = false;
         startButton.removeAttribute("aria-disabled");
       }
@@ -1359,12 +1359,14 @@
         }, duration);
       }
 
-      function showAudioError() {
+      function showAudioError(errorMessage) {
         if (!audioError) {
           return;
         }
 
-        audioError.textContent = "Não foi possível iniciar o áudio. Toque novamente.";
+        audioError.textContent = typeof errorMessage === "string" && errorMessage
+          ? errorMessage
+          : translate("index_audio_error");
         audioError.classList.add("is-visible");
       }
 
@@ -1456,8 +1458,8 @@
         window.clearTimeout(introChangeTimer);
         document.body.dataset.indexPhase = "meditation-active";
         document.body.classList.add("airlock-active", "is-meditating");
-        startButton.removeAttribute("data-i18n");
-        startButton.textContent = "A decorrer";
+        startButton.dataset.i18n = "index_in_progress";
+        startButton.textContent = translate("index_in_progress");
         intro.classList.add("hidden");
         exitButton.classList.add("visible");
         setVideoAtmosphereVisible(true);
@@ -1490,8 +1492,8 @@
         window.clearTimeout(introChangeTimer);
         document.body.dataset.indexPhase = "meditation-active";
         document.body.classList.add("airlock-active", "is-meditating");
-        startButton.removeAttribute("data-i18n");
-        startButton.textContent = "A decorrer";
+        startButton.dataset.i18n = "index_in_progress";
+        startButton.textContent = translate("index_in_progress");
         intro.classList.add("hidden");
         exitButton.classList.add("visible");
         setVideoAtmosphereVisible(true);

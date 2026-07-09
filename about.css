@@ -254,6 +254,7 @@ p {
   border-radius: 20px;
   box-shadow: var(--surface-static-shadow);
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -283,6 +284,7 @@ p {
   border-radius: 20px;
   box-shadow: var(--surface-static-shadow);
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 

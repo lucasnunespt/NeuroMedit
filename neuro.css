@@ -97,6 +97,7 @@ p {
 .landing-page {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 2rem;
@@ -288,6 +289,7 @@ p {
   color: var(--button-text, #f4e6da);
   background: var(--accent);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: var(--shadow-soft);
   transition:
     transform 0.25s ease,
@@ -371,6 +373,7 @@ p {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
   transition:
     transform 0.25s ease,
@@ -831,6 +834,7 @@ a.state-card::after {
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.62);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 14px 36px rgba(31, 35, 38, 0.06);
   transition: opacity 280ms ease, transform 280ms ease;
   will-change: opacity, transform;
@@ -871,6 +875,7 @@ a.state-card::after {
   border-radius: 0;
   background: transparent;
   backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow: none;
 }
 
@@ -879,6 +884,7 @@ a.state-card::after {
 .neuromedit-experience .reset-step,
 .neuromedit-experience .checkin-step {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   align-content: center;
   justify-items: center;
@@ -944,6 +950,7 @@ a.state-card::after {
 
 .neuromedit-experience .airlock-step {
   min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at center, rgba(199, 122, 74, 0.12), transparent 34%),
     linear-gradient(180deg, #120b09 0%, #0b0706 100%);
@@ -1036,6 +1043,7 @@ a.state-card::after {
   background: rgba(255, 255, 255, 0.74);
   box-shadow: 0 12px 28px rgba(31, 35, 38, 0.05);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .neuromedit-experience .reset-point h3 {
@@ -1083,6 +1091,7 @@ a.state-card::after {
   font-weight: 500;
   line-height: 1.2;
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 10px 22px rgba(31, 35, 38, 0.05);
   cursor: pointer;
   transition:
@@ -1142,6 +1151,7 @@ body.landing-body.meditation-mode {
 
 .neuromedit-experience .meditation-core {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 32px 20px;
@@ -1343,6 +1353,7 @@ body.landing-body.meditation-mode {
     border-radius: 0;
     background: transparent;
     backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     box-shadow: none;
     padding: 2rem 1.25rem;
   }

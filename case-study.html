@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NeuroMedit UX Case Study</title>
+  <title data-i18n="case_study_meta_title">NeuroMedit UX Case Study</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <meta name="description" content="A UX case study framework for the NeuroMedit meditation experience." />
   <link rel="stylesheet" href="neuro.css" />
@@ -63,8 +63,10 @@
           data-mobile-toggle
           aria-controls="case-study-mobile-nav"
           aria-expanded="false"
-          aria-label="Abrir menu"
-          title="Abrir menu"
+          aria-label="Open menu"
+          title="Open menu"
+          data-i18n="global_menu_open"
+          data-i18n-attr="aria-label,title"
         >
           <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
         </button>
@@ -78,7 +80,7 @@
         <div class="header-mobile-top">
           <p class="header-mobile-brand">NeuroMedit</p>
 
-          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu">
+          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu" data-i18n="global_menu_close" data-i18n-attr="aria-label,title">
             <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
           </button>
         </div>
@@ -123,21 +125,21 @@
     <section class="case-hero" aria-labelledby="case-hero-title">
       <div class="container case-hero-inner">
         <div class="case-hero-card">
-          <p class="case-eyebrow">UX Case Study</p>
-          <h1 id="case-hero-title">NeuroMedit</h1>
-          <p class="case-hero-subtitle">Designing a low cognitive-load meditation experience</p>
-          <p class="case-hero-text">Most meditation platforms ask users to relax while overwhelming them with choices, visual noise, and decision pressure. NeuroMedit explores how emotional design, cognitive psychology, and front-end execution can reduce friction before the first moment of practice.</p>
+          <p class="case-eyebrow" data-i18n="case_study_hero_eyebrow">UX Case Study</p>
+          <h1 id="case-hero-title" data-i18n="case_study_hero_title">NeuroMedit</h1>
+          <p class="case-hero-subtitle" data-i18n="case_study_hero_subtitle">Designing a low cognitive-load meditation experience</p>
+          <p class="case-hero-text" data-i18n="case_study_hero_text">Most meditation platforms ask users to relax while overwhelming them with choices, visual noise, and decision pressure. NeuroMedit explores how emotional design, cognitive psychology, and front-end execution can reduce friction before the first moment of practice.</p>
 
-          <ul class="case-hero-tags" aria-label="Case study disciplines">
-            <li>UX Design</li>
-            <li>Emotional Design</li>
-            <li>Cognitive Load</li>
-            <li>Front-End</li>
+          <ul class="case-hero-tags" aria-label="Case study disciplines" data-i18n="case_study_tags_aria" data-i18n-attr="aria-label">
+            <li data-i18n="case_study_tag_ux">UX Design</li>
+            <li data-i18n="case_study_tag_emotional">Emotional Design</li>
+            <li data-i18n="case_study_tag_cognitive">Cognitive Load</li>
+            <li data-i18n="case_study_tag_frontend">Front-End</li>
           </ul>
 
-          <div class="case-hero-actions" aria-label="Case study actions">
-            <a href="#intro-title" class="button primary-button case-hero-button">Explore the process</a>
-            <a href="index.html" class="button secondary-button case-hero-button">View live project</a>
+          <div class="case-hero-actions" aria-label="Case study actions" data-i18n="case_study_actions_aria" data-i18n-attr="aria-label">
+            <a href="#intro-title" class="button primary-button case-hero-button" data-i18n="case_study_explore_cta">Explore the process</a>
+            <a href="index.html" class="button secondary-button case-hero-button" data-i18n="case_study_view_live_cta">View live project</a>
           </div>
         </div>
       </div>
@@ -148,14 +150,14 @@
       <div class="container">
         <article class="case-reading-card card-static">
           <div class="case-section-heading">
-            <p class="case-eyebrow">01 &mdash; RESEARCH / FRAMING</p>
-            <h2 id="research-title">The experience starts before the meditation.</h2>
+            <p class="case-eyebrow" data-i18n="case_study_research_eyebrow">01 &mdash; RESEARCH / FRAMING</p>
+            <h2 id="research-title" data-i18n="case_study_research_title">The experience starts before the meditation.</h2>
           </div>
 
           <div class="case-text-stack">
-            <p>NeuroMedit started from observing meditation experiences across digital wellness products, mobile apps and content platforms. Many products promised calm, but the entry experience often added friction before the user could begin: content libraries demanded decisions, visual systems competed for attention and the user had to browse before they could regulate.</p>
-            <p>For users arriving tired, anxious or emotionally overloaded, the first task was not meditation. It was choosing, filtering, comparing and navigating. The interface was asking for cognitive effort at the exact moment the user needed relief from it.</p>
-            <p>The research direction became clear: design the moment before meditation as part of the meditation experience itself.</p>
+            <p data-i18n="case_study_research_p1">NeuroMedit started from observing meditation experiences across digital wellness products, mobile apps and content platforms. Many products promised calm, but the entry experience often added friction before the user could begin: content libraries demanded decisions, visual systems competed for attention and the user had to browse before they could regulate.</p>
+            <p data-i18n="case_study_research_p2">For users arriving tired, anxious or emotionally overloaded, the first task was not meditation. It was choosing, filtering, comparing and navigating. The interface was asking for cognitive effort at the exact moment the user needed relief from it.</p>
+            <p data-i18n="case_study_research_p3">The research direction became clear: design the moment before meditation as part of the meditation experience itself.</p>
           </div>
         </article>
       </div>
@@ -165,16 +167,16 @@
     <section class="case-section case-problem" aria-labelledby="problem-title">
       <div class="container case-split">
         <div class="case-section-heading">
-          <p class="case-eyebrow">02 &mdash; RESEARCH SYNTHESIS</p>
-          <h2 id="problem-title">Meditation products often create friction before calm.</h2>
-          <p>The research focused on the relationship between emotional state, decision fatigue and the amount of interface effort required before a user can begin.</p>
+          <p class="case-eyebrow" data-i18n="case_study_synthesis_eyebrow">02 &mdash; RESEARCH SYNTHESIS</p>
+          <h2 id="problem-title" data-i18n="case_study_synthesis_title">Meditation products often create friction before calm.</h2>
+          <p data-i18n="case_study_synthesis_intro">The research focused on the relationship between emotional state, decision fatigue and the amount of interface effort required before a user can begin.</p>
         </div>
 
         <article class="case-problem-panel card-static">
-          <blockquote>People emotionally exhausted do not want to think before resting.</blockquote>
+          <blockquote data-i18n="case_study_synthesis_blockquote">People emotionally exhausted do not want to think before resting.</blockquote>
           <div class="case-text-stack">
-            <p>Meditation apps often ask users to choose between goals, moods, teachers, durations, categories, subscriptions and recommendations before starting. These decisions can be useful when a user wants to explore, but they become friction when the user is already overstimulated.</p>
-            <p>The core UX opportunity was to reduce the number of visible decisions and create a clearer emotional path from arrival into practice.</p>
+            <p data-i18n="case_study_synthesis_p1">Meditation apps often ask users to choose between goals, moods, teachers, durations, categories, subscriptions and recommendations before starting. These decisions can be useful when a user wants to explore, but they become friction when the user is already overstimulated.</p>
+            <p data-i18n="case_study_synthesis_p2">The core UX opportunity was to reduce the number of visible decisions and create a clearer emotional path from arrival into practice.</p>
           </div>
         </article>
       </div>
@@ -184,42 +186,42 @@
     <section class="case-section case-user-states" aria-labelledby="states-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">USER STATES</p>
-          <h2 id="states-title">Designing for emotional and cognitive states.</h2>
-          <p>Instead of generic personas, the project focused on states users may bring into the product. These states shaped hierarchy, pacing and the amount of information shown at each moment.</p>
+          <p class="case-eyebrow" data-i18n="case_study_user_states_eyebrow">USER STATES</p>
+          <h2 id="states-title" data-i18n="case_study_user_states_title">Designing for emotional and cognitive states.</h2>
+          <p data-i18n="case_study_user_states_intro">Instead of generic personas, the project focused on states users may bring into the product. These states shaped hierarchy, pacing and the amount of information shown at each moment.</p>
         </div>
 
         <div class="case-card-grid case-card-grid-4">
           <article class="case-state-card card-static">
             <span class="case-card-index">01</span>
-            <h3>Mentally exhausted after work</h3>
-            <p><strong>Emotional state</strong> Drained, overstimulated and looking for a pause.</p>
-            <p><strong>Cognitive pain point</strong> Low capacity for browsing, comparing or learning a new interface.</p>
-            <p><strong>UX opportunity</strong> Offer decompression through low stimulation, clear hierarchy and immediate direction.</p>
+            <h3 data-i18n="case_study_state1_title">Mentally exhausted after work</h3>
+            <p><strong data-i18n="case_study_state_emotional_label">Emotional state</strong> <span data-i18n="case_study_state1_emotional">Drained, overstimulated and looking for a pause.</span></p>
+            <p><strong data-i18n="case_study_state_pain_label">Cognitive pain point</strong> <span data-i18n="case_study_state1_pain">Low capacity for browsing, comparing or learning a new interface.</span></p>
+            <p><strong data-i18n="case_study_state_opportunity_label">UX opportunity</strong> <span data-i18n="case_study_state1_opportunity">Offer decompression through low stimulation, clear hierarchy and immediate direction.</span></p>
           </article>
 
           <article class="case-state-card card-static">
             <span class="case-card-index">02</span>
-            <h3>Trying to sleep</h3>
-            <p><strong>Emotional state</strong> Tired, restless and sensitive to activation.</p>
-            <p><strong>Cognitive pain point</strong> Bright visuals, dense text or energetic interaction can make rest harder.</p>
-            <p><strong>UX opportunity</strong> Slow the pace, reduce mental activation and support emotional deceleration.</p>
+            <h3 data-i18n="case_study_state2_title">Trying to sleep</h3>
+            <p><strong data-i18n="case_study_state_emotional_label">Emotional state</strong> <span data-i18n="case_study_state2_emotional">Tired, restless and sensitive to activation.</span></p>
+            <p><strong data-i18n="case_study_state_pain_label">Cognitive pain point</strong> <span data-i18n="case_study_state2_pain">Bright visuals, dense text or energetic interaction can make rest harder.</span></p>
+            <p><strong data-i18n="case_study_state_opportunity_label">UX opportunity</strong> <span data-i18n="case_study_state2_opportunity">Slow the pace, reduce mental activation and support emotional deceleration.</span></p>
           </article>
 
           <article class="case-state-card card-static">
             <span class="case-card-index">03</span>
-            <h3>Between work sessions</h3>
-            <p><strong>Emotional state</strong> Fragmented, distracted and trying to regain focus.</p>
-            <p><strong>Cognitive pain point</strong> A crowded experience can extend the feeling of interruption.</p>
-            <p><strong>UX opportunity</strong> Create a short reset through breathing, simple choices and reconnection with attention.</p>
+            <h3 data-i18n="case_study_state3_title">Between work sessions</h3>
+            <p><strong data-i18n="case_study_state_emotional_label">Emotional state</strong> <span data-i18n="case_study_state3_emotional">Fragmented, distracted and trying to regain focus.</span></p>
+            <p><strong data-i18n="case_study_state_pain_label">Cognitive pain point</strong> <span data-i18n="case_study_state3_pain">A crowded experience can extend the feeling of interruption.</span></p>
+            <p><strong data-i18n="case_study_state_opportunity_label">UX opportunity</strong> <span data-i18n="case_study_state3_opportunity">Create a short reset through breathing, simple choices and reconnection with attention.</span></p>
           </article>
 
           <article class="case-state-card card-static">
             <span class="case-card-index">04</span>
-            <h3>Emotionally saturated</h3>
-            <p><strong>Emotional state</strong> Overloaded, reactive and seeking less noise.</p>
-            <p><strong>Cognitive pain point</strong> Too many decisions can become another source of pressure.</p>
-            <p><strong>UX opportunity</strong> Reduce choice density, clarify the next step and avoid competing stimuli.</p>
+            <h3 data-i18n="case_study_state4_title">Emotionally saturated</h3>
+            <p><strong data-i18n="case_study_state_emotional_label">Emotional state</strong> <span data-i18n="case_study_state4_emotional">Overloaded, reactive and seeking less noise.</span></p>
+            <p><strong data-i18n="case_study_state_pain_label">Cognitive pain point</strong> <span data-i18n="case_study_state4_pain">Too many decisions can become another source of pressure.</span></p>
+            <p><strong data-i18n="case_study_state_opportunity_label">UX opportunity</strong> <span data-i18n="case_study_state4_opportunity">Reduce choice density, clarify the next step and avoid competing stimuli.</span></p>
           </article>
         </div>
       </div>
@@ -229,40 +231,40 @@
     <section class="case-section case-benchmark" aria-labelledby="benchmark-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">03 &mdash; BENCHMARK SCREENSHOTS</p>
-          <h2 id="benchmark-title">Learning from Calm and Headspace.</h2>
-          <p>The benchmark explored how established meditation products frame the first contact with the user, how much choice they expose and how their visual systems affect emotional entry.</p>
+          <p class="case-eyebrow" data-i18n="case_study_benchmark_eyebrow">03 &mdash; BENCHMARK SCREENSHOTS</p>
+          <h2 id="benchmark-title" data-i18n="case_study_benchmark_title">Learning from Calm and Headspace.</h2>
+          <p data-i18n="case_study_benchmark_intro">The benchmark explored how established meditation products frame the first contact with the user, how much choice they expose and how their visual systems affect emotional entry.</p>
         </div>
 
         <div class="case-research-grid">
           <div class="case-text-stack">
             <article class="case-content-card card-static">
-              <h3>Calm</h3>
-              <p>Calm creates a premium, atmospheric entry point with strong visual polish. The experience communicates relaxation quickly, but the product still relies on content discovery and multiple paths before the user reaches a session.</p>
+              <h3 data-i18n="case_study_benchmark_calm_title">Calm</h3>
+              <p data-i18n="case_study_benchmark_calm_text">Calm creates a premium, atmospheric entry point with strong visual polish. The experience communicates relaxation quickly, but the product still relies on content discovery and multiple paths before the user reaches a session.</p>
             </article>
 
             <article class="case-content-card card-static">
-              <h3>Headspace</h3>
-              <p>Headspace feels friendly and accessible through illustration, color and a lighter tone. The structure is approachable, but the number of options can still require active decision-making before the user begins.</p>
+              <h3 data-i18n="case_study_benchmark_headspace_title">Headspace</h3>
+              <p data-i18n="case_study_benchmark_headspace_text">Headspace feels friendly and accessible through illustration, color and a lighter tone. The structure is approachable, but the number of options can still require active decision-making before the user begins.</p>
             </article>
 
             <article class="case-hypothesis-card card-static">
-              <span class="case-card-index">Insight</span>
-              <p>What if meditation started before the audio began?</p>
+              <span class="case-card-index" data-i18n="case_study_benchmark_insight_label">Insight</span>
+              <p data-i18n="case_study_benchmark_insight_text">What if meditation started before the audio began?</p>
             </article>
           </div>
 
-          <div class="case-benchmark-carousel card-static" data-benchmark-carousel aria-label="Benchmark screenshots carousel">
+          <div class="case-benchmark-carousel card-static" data-benchmark-carousel aria-label="Benchmark screenshots carousel" data-i18n="case_study_benchmark_carousel_aria" data-i18n-attr="aria-label">
             <div class="case-benchmark-header">
               <div>
-                <span>Benchmark comparison</span>
-                <strong>Entry screens reveal how emotional tone and decision density shape the path into meditation.</strong>
+                <span data-i18n="case_study_benchmark_comparison_label">Benchmark comparison</span>
+                <strong data-i18n="case_study_benchmark_comparison_desc">Entry screens reveal how emotional tone and decision density shape the path into meditation.</strong>
               </div>
-              <div class="case-benchmark-controls" aria-label="Benchmark carousel controls">
-                <button class="case-benchmark-nav" type="button" data-benchmark-prev aria-label="Previous benchmark screenshot">
+              <div class="case-benchmark-controls" aria-label="Benchmark carousel controls" data-i18n="case_study_benchmark_controls_aria" data-i18n-attr="aria-label">
+                <button class="case-benchmark-nav" type="button" data-benchmark-prev aria-label="Previous benchmark screenshot" data-i18n="case_study_benchmark_prev_aria" data-i18n-attr="aria-label">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 6.5L9 12L14.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </button>
-                <button class="case-benchmark-nav" type="button" data-benchmark-next aria-label="Next benchmark screenshot">
+                <button class="case-benchmark-nav" type="button" data-benchmark-next aria-label="Next benchmark screenshot" data-i18n="case_study_benchmark_next_aria" data-i18n-attr="aria-label">
                   <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 6.5L15 12L9.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </button>
               </div>
@@ -272,29 +274,29 @@
               <div class="case-benchmark-track" data-benchmark-track>
                 <figure class="case-benchmark-slide">
                   <div class="case-benchmark-media">
-                    <img src="assets/calm-entry.jpg" alt="Calm app entry screen benchmark" />
+                    <img src="assets/calm-entry.jpg" alt="Calm app entry screen benchmark" data-i18n="case_study_benchmark_calm_img_alt" data-i18n-attr="alt" />
                   </div>
                   <figcaption>
-                    <h3>Calm entry screen</h3>
-                    <p>Strong atmospheric polish and premium calm, with the opportunity to reduce the distance between arrival and practice.</p>
+                    <h3 data-i18n="case_study_benchmark_calm_fig_title">Calm entry screen</h3>
+                    <p data-i18n="case_study_benchmark_calm_fig_text">Strong atmospheric polish and premium calm, with the opportunity to reduce the distance between arrival and practice.</p>
                   </figcaption>
                 </figure>
 
                 <figure class="case-benchmark-slide">
                   <div class="case-benchmark-media">
-                    <img src="assets/headspace-entry.jpg" alt="Headspace app entry screen benchmark" />
+                    <img src="assets/headspace-entry.jpg" alt="Headspace app entry screen benchmark" data-i18n="case_study_benchmark_headspace_img_alt" data-i18n-attr="alt" />
                   </div>
                   <figcaption>
-                    <h3>Headspace entry screen</h3>
-                    <p>Friendly tone and accessible visual language, with more content paths for the user to evaluate before beginning.</p>
+                    <h3 data-i18n="case_study_benchmark_headspace_fig_title">Headspace entry screen</h3>
+                    <p data-i18n="case_study_benchmark_headspace_fig_text">Friendly tone and accessible visual language, with more content paths for the user to evaluate before beginning.</p>
                   </figcaption>
                 </figure>
               </div>
             </div>
 
-            <div class="case-benchmark-dots" role="tablist" aria-label="Benchmark screenshots">
-              <button type="button" data-benchmark-dot aria-label="Show Calm benchmark" aria-current="true"></button>
-              <button type="button" data-benchmark-dot aria-label="Show Headspace benchmark" aria-current="false"></button>
+            <div class="case-benchmark-dots" role="tablist" aria-label="Benchmark screenshots" data-i18n="case_study_benchmark_dots_aria" data-i18n-attr="aria-label">
+              <button type="button" data-benchmark-dot aria-label="Show Calm benchmark" aria-current="true" data-i18n="case_study_benchmark_dot_calm_aria" data-i18n-attr="aria-label"></button>
+              <button type="button" data-benchmark-dot aria-label="Show Headspace benchmark" aria-current="false" data-i18n="case_study_benchmark_dot_headspace_aria" data-i18n-attr="aria-label"></button>
             </div>
           </div>
         </div>
@@ -305,17 +307,17 @@
     <section class="case-section case-principles" aria-labelledby="principles-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">04 &mdash; DESIGN PRINCIPLES</p>
-          <h2 id="principles-title">Principles that shaped the product experience.</h2>
-          <p>The product direction translated research into interface rules focused on reducing cognitive load before the meditation session begins.</p>
+          <p class="case-eyebrow" data-i18n="case_study_principles_eyebrow">04 &mdash; DESIGN PRINCIPLES</p>
+          <h2 id="principles-title" data-i18n="case_study_principles_title">Principles that shaped the product experience.</h2>
+          <p data-i18n="case_study_principles_intro">The product direction translated research into interface rules focused on reducing cognitive load before the meditation session begins.</p>
         </div>
 
         <div class="case-card-grid case-card-grid-5">
-          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3>Reduce cognitive load</h3><p>Limit visible decisions and make the next action obvious.</p></article>
-          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3>Calm before interaction</h3><p>Use spacing, pacing and restraint before asking the user to act.</p></article>
-          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3>Fewer decisions, clearer paths</h3><p>Replace large menus with guided routes based on emotional need.</p></article>
-          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3>Emotional pacing matters</h3><p>Design the transition into meditation as carefully as the session itself.</p></article>
-          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3>Never compete with calm</h3><p>Keep interface elements supportive, quiet and secondary to the user's state.</p></article>
+          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3 data-i18n="case_study_principle1_title">Reduce cognitive load</h3><p data-i18n="case_study_principle1_text">Limit visible decisions and make the next action obvious.</p></article>
+          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3 data-i18n="case_study_principle2_title">Calm before interaction</h3><p data-i18n="case_study_principle2_text">Use spacing, pacing and restraint before asking the user to act.</p></article>
+          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3 data-i18n="case_study_principle3_title">Fewer decisions, clearer paths</h3><p data-i18n="case_study_principle3_text">Replace large menus with guided routes based on emotional need.</p></article>
+          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3 data-i18n="case_study_principle4_title">Emotional pacing matters</h3><p data-i18n="case_study_principle4_text">Design the transition into meditation as carefully as the session itself.</p></article>
+          <article class="case-principle-card card-static"><span class="case-icon-placeholder" aria-hidden="true"></span><h3 data-i18n="case_study_principle5_title">Never compete with calm</h3><p data-i18n="case_study_principle5_text">Keep interface elements supportive, quiet and secondary to the user's state.</p></article>
         </div>
       </div>
     </section>
@@ -324,23 +326,23 @@
     <section class="case-section case-wireframes" aria-labelledby="wireframes-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">05 &mdash; EXPLORATION / WIREFRAMES</p>
-          <h2 id="wireframes-title">Exploring the transition from noise into practice.</h2>
-          <p>The wireframes focused on the emotional bridge before meditation: what the user sees before they choose, breathe and enter a guided session.</p>
+          <p class="case-eyebrow" data-i18n="case_study_wireframes_eyebrow">05 &mdash; EXPLORATION / WIREFRAMES</p>
+          <h2 id="wireframes-title" data-i18n="case_study_wireframes_title">Exploring the transition from noise into practice.</h2>
+          <p data-i18n="case_study_wireframes_intro">The wireframes focused on the emotional bridge before meditation: what the user sees before they choose, breathe and enter a guided session.</p>
         </div>
 
         <div class="case-wireframe-grid">
-          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/before.jpg" alt="Early NeuroMedit exploration before the calm entry state" /><figcaption>Before</figcaption><strong>Initial exploration of the overloaded entry state and the need for a quieter first contact.</strong></figure>
-          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/entry.jpg" alt="NeuroMedit entry wireframe exploration" /><figcaption>Entry</figcaption><strong>A simplified arrival moment that reduces immediate decisions and establishes emotional tone.</strong></figure>
-          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/airlock.jpg" alt="NeuroMedit airlock transition wireframe exploration" /><figcaption>Airlock</figcaption><strong>A transition layer that moves the user from browsing mode into meditation mode.</strong></figure>
+          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/before.jpg" alt="Early NeuroMedit exploration before the calm entry state" data-i18n="case_study_wireframe_before_alt" data-i18n-attr="alt" /><figcaption data-i18n="case_study_wireframe_before_caption">Before</figcaption><strong data-i18n="case_study_wireframe_before_desc">Initial exploration of the overloaded entry state and the need for a quieter first contact.</strong></figure>
+          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/entry.jpg" alt="NeuroMedit entry wireframe exploration" data-i18n="case_study_wireframe_entry_alt" data-i18n-attr="alt" /><figcaption data-i18n="case_study_wireframe_entry_caption">Entry</figcaption><strong data-i18n="case_study_wireframe_entry_desc">A simplified arrival moment that reduces immediate decisions and establishes emotional tone.</strong></figure>
+          <figure class="case-wireframe-card card-static"><img class="case-wireframe-image" src="assets/airlock.jpg" alt="NeuroMedit airlock transition wireframe exploration" data-i18n="case_study_wireframe_airlock_alt" data-i18n-attr="alt" /><figcaption data-i18n="case_study_wireframe_airlock_caption">Airlock</figcaption><strong data-i18n="case_study_wireframe_airlock_desc">A transition layer that moves the user from browsing mode into meditation mode.</strong></figure>
         </div>
 
         <div class="case-decision-notes-wrap case-section-offset">
           <article class="case-content-card card-static">
-            <h3>Decision Notes</h3>
+            <h3 data-i18n="case_study_decision_notes_title">Decision Notes</h3>
             <div class="case-text-stack">
-              <p>The exploration moved away from a content-first layout and toward a transition-first journey. The interface needed to create a sense of arrival before presenting the meditation state.</p>
-              <p>The most important decision was to treat breathing as a UX transition, not as decoration. A single slow breath becomes the bridge between mental noise and guided practice.</p>
+              <p data-i18n="case_study_decision_notes_p1">The exploration moved away from a content-first layout and toward a transition-first journey. The interface needed to create a sense of arrival before presenting the meditation state.</p>
+              <p data-i18n="case_study_decision_notes_p2">The most important decision was to treat breathing as a UX transition, not as decoration. A single slow breath becomes the bridge between mental noise and guided practice.</p>
             </div>
           </article>
         </div>
@@ -351,20 +353,20 @@
     <section class="case-section case-emotional-journey" aria-labelledby="journey-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">06 &mdash; USER FLOW</p>
-          <h2 id="journey-title">From mental noise to emotional regulation.</h2>
-          <p>The experience was designed to reduce decision fatigue and create a smoother transition into meditation.</p>
+          <p class="case-eyebrow" data-i18n="case_study_journey_eyebrow">06 &mdash; USER FLOW</p>
+          <h2 id="journey-title" data-i18n="case_study_journey_title">From mental noise to emotional regulation.</h2>
+          <p data-i18n="case_study_journey_intro">The experience was designed to reduce decision fatigue and create a smoother transition into meditation.</p>
         </div>
 
-        <div class="case-journey-panel" aria-label="Emotional journey timeline from overwhelmed state to calm state">
+        <div class="case-journey-panel" aria-label="Emotional journey timeline from overwhelmed state to calm state" data-i18n="case_study_journey_panel_aria" data-i18n-attr="aria-label">
           <ol class="case-journey-flow">
-            <li class="case-journey-step is-heavy"><span class="case-journey-node">01</span><div class="case-journey-copy"><h3>Overwhelmed</h3><p>User arrives with mental noise, stress or emotional fatigue.</p></div></li>
-            <li class="case-journey-step"><span class="case-journey-node">02</span><div class="case-journey-copy"><h3>Arrival</h3><p>NeuroMedit creates a quiet first contact before asking for decisions.</p></div></li>
-            <li class="case-journey-step"><span class="case-journey-node">03</span><div class="case-journey-copy"><h3>Breath</h3><p>A single slow breath reduces urgency and prepares attention.</p></div></li>
-            <li class="case-journey-step"><span class="case-journey-node">04</span><div class="case-journey-copy"><h3>Airlock</h3><p>A transition layer shifts the user from browsing mode into meditation mode.</p></div></li>
-            <li class="case-journey-step"><span class="case-journey-node">05</span><div class="case-journey-copy"><h3>Meditation</h3><p>The guided session begins with minimal interface noise.</p></div></li>
-            <li class="case-journey-step"><span class="case-journey-node">06</span><div class="case-journey-copy"><h3>Reflection</h3><p>The user gently acknowledges how they feel after the session.</p></div></li>
-            <li class="case-journey-step is-calm"><span class="case-journey-node">07</span><div class="case-journey-copy"><h3>Calm</h3><p>The journey ends with a lighter, steadier emotional state.</p></div></li>
+            <li class="case-journey-step is-heavy"><span class="case-journey-node">01</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step1_title">Overwhelmed</h3><p data-i18n="case_study_journey_step1_text">User arrives with mental noise, stress or emotional fatigue.</p></div></li>
+            <li class="case-journey-step"><span class="case-journey-node">02</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step2_title">Arrival</h3><p data-i18n="case_study_journey_step2_text">NeuroMedit creates a quiet first contact before asking for decisions.</p></div></li>
+            <li class="case-journey-step"><span class="case-journey-node">03</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step3_title">Breath</h3><p data-i18n="case_study_journey_step3_text">A single slow breath reduces urgency and prepares attention.</p></div></li>
+            <li class="case-journey-step"><span class="case-journey-node">04</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step4_title">Airlock</h3><p data-i18n="case_study_journey_step4_text">A transition layer shifts the user from browsing mode into meditation mode.</p></div></li>
+            <li class="case-journey-step"><span class="case-journey-node">05</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step5_title">Meditation</h3><p data-i18n="case_study_journey_step5_text">The guided session begins with minimal interface noise.</p></div></li>
+            <li class="case-journey-step"><span class="case-journey-node">06</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step6_title">Reflection</h3><p data-i18n="case_study_journey_step6_text">The user gently acknowledges how they feel after the session.</p></div></li>
+            <li class="case-journey-step is-calm"><span class="case-journey-node">07</span><div class="case-journey-copy"><h3 data-i18n="case_study_journey_step7_title">Calm</h3><p data-i18n="case_study_journey_step7_text">The journey ends with a lighter, steadier emotional state.</p></div></li>
           </ol>
         </div>
       </div>
@@ -373,23 +375,23 @@
     <section class="case-section case-aesthetic-system" aria-labelledby="aesthetic-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">07 &mdash; AESTHETIC PROCESSING / SYSTEM THINKING</p>
-          <h2 id="aesthetic-title">Turning visual decisions<br />into emotional rules.</h2>
-          <p>The visual system was shaped to reduce stimulation, create trust and support the emotional transition from noise into calm.</p>
+          <p class="case-eyebrow" data-i18n="case_study_aesthetic_eyebrow">07 &mdash; AESTHETIC PROCESSING / SYSTEM THINKING</p>
+          <h2 id="aesthetic-title" data-i18n="case_study_aesthetic_title">Turning visual decisions<br />into emotional rules.</h2>
+          <p data-i18n="case_study_aesthetic_intro">The visual system was shaped to reduce stimulation, create trust and support the emotional transition from noise into calm.</p>
         </div>
 
-        <div class="case-aesthetic-layout" aria-label="NeuroMedit visual identity concept and process">
+        <div class="case-aesthetic-layout" aria-label="NeuroMedit visual identity concept and process" data-i18n="case_study_aesthetic_layout_aria" data-i18n-attr="aria-label">
           <article class="case-aesthetic-card card-static case-brand-meaning">
-            <span class="case-card-index">CONCEPT</span>
-            <h3>Return to calm</h3>
-            <p>The identity is based on a breathing wave, micro transformations and an open circular motion. It avoids the idea of a final destination and represents calm as something users can return to again and again.</p>
+            <span class="case-card-index" data-i18n="case_study_aesthetic_concept_label">CONCEPT</span>
+            <h3 data-i18n="case_study_aesthetic_concept_title">Return to calm</h3>
+            <p data-i18n="case_study_aesthetic_concept_text">The identity is based on a breathing wave, micro transformations and an open circular motion. It avoids the idea of a final destination and represents calm as something users can return to again and again.</p>
           </article>
 
           <article class="case-aesthetic-card card-static case-process-card">
             <div class="case-process-copy">
-              <span class="case-card-index">PROCESS / SYMBOL EXPLORATION</span>
-              <h3>From sketch to system</h3>
-              <p>The symbol was developed through iterative sketching, simplification and symbolic reduction. The final mark emerged from the intersection between breath flow, micro transformations and continuous return.</p>
+              <span class="case-card-index" data-i18n="case_study_aesthetic_process_label">PROCESS / SYMBOL EXPLORATION</span>
+              <h3 data-i18n="case_study_aesthetic_process_title">From sketch to system</h3>
+              <p data-i18n="case_study_aesthetic_process_text">The symbol was developed through iterative sketching, simplification and symbolic reduction. The final mark emerged from the intersection between breath flow, micro transformations and continuous return.</p>
             </div>
 
             <div class="case-process-media">
@@ -401,78 +403,78 @@
         </div>
 
         <article class="case-aesthetic-card card-static case-equation-card">
-          <span class="case-card-index">VISUAL EQUATION</span>
-          <div class="case-equation-flow" aria-label="Breath Flow plus Micro Transformations plus Continuous Return equals NeuroMedit Symbol">
+          <span class="case-card-index" data-i18n="case_study_equation_label">VISUAL EQUATION</span>
+          <div class="case-equation-flow" aria-label="Breath Flow plus Micro Transformations plus Continuous Return equals NeuroMedit Symbol" data-i18n="case_study_equation_aria" data-i18n-attr="aria-label">
             <div class="case-equation-terms">
               <div class="case-equation-term">
-                <strong>Breath Flow</strong>
-                <p>Presence, pause and regulation.</p>
+                <strong data-i18n="case_study_equation_term1_title">Breath Flow</strong>
+                <p data-i18n="case_study_equation_term1_text">Presence, pause and regulation.</p>
               </div>
               <span class="case-equation-operator" aria-hidden="true">+</span>
               <div class="case-equation-term">
-                <strong>Micro Transformations</strong>
-                <p>Small moments of awareness becoming emotional change.</p>
+                <strong data-i18n="case_study_equation_term2_title">Micro Transformations</strong>
+                <p data-i18n="case_study_equation_term2_text">Small moments of awareness becoming emotional change.</p>
               </div>
               <span class="case-equation-operator" aria-hidden="true">+</span>
               <div class="case-equation-term">
-                <strong>Continuous Return</strong>
-                <p>Calm is not a fixed state. It is a path users can revisit.</p>
+                <strong data-i18n="case_study_equation_term3_title">Continuous Return</strong>
+                <p data-i18n="case_study_equation_term3_text">Calm is not a fixed state. It is a path users can revisit.</p>
               </div>
             </div>
             <div class="case-equation-divider" aria-hidden="true"></div>
             <div class="case-equation-result">
-              <strong>NeuroMedit Symbol</strong>
+              <strong data-i18n="case_study_equation_result">NeuroMedit Symbol</strong>
             </div>
           </div>
         </article>
 
-        <div class="case-aesthetic-rules" aria-label="Aesthetic rules">
+        <div class="case-aesthetic-rules" aria-label="Aesthetic rules" data-i18n="case_study_aesthetic_rules_aria" data-i18n-attr="aria-label">
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">01</span>
-            <h3>Low-stimulation color</h3>
-            <p>Warm neutrals and muted gold reduce harsh contrast and create a softer emotional atmosphere.</p>
+            <h3 data-i18n="case_study_aesthetic_rule1_title">Low-stimulation color</h3>
+            <p data-i18n="case_study_aesthetic_rule1_text">Warm neutrals and muted gold reduce harsh contrast and create a softer emotional atmosphere.</p>
           </article>
 
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">02</span>
-            <h3>Soft hierarchy</h3>
-            <p>Large headings, short text blocks and generous spacing help the user scan without effort.</p>
+            <h3 data-i18n="case_study_aesthetic_rule2_title">Soft hierarchy</h3>
+            <p data-i18n="case_study_aesthetic_rule2_text">Large headings, short text blocks and generous spacing help the user scan without effort.</p>
           </article>
 
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">03</span>
-            <h3>Circular motion</h3>
-            <p>Rounded forms reinforce continuity, breath and emotional safety.</p>
+            <h3 data-i18n="case_study_aesthetic_rule3_title">Circular motion</h3>
+            <p data-i18n="case_study_aesthetic_rule3_text">Rounded forms reinforce continuity, breath and emotional safety.</p>
           </article>
 
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">04</span>
-            <h3>Light and depth</h3>
-            <p>Subtle gradients and shadows create calm depth without visual noise.</p>
+            <h3 data-i18n="case_study_aesthetic_rule4_title">Light and depth</h3>
+            <p data-i18n="case_study_aesthetic_rule4_text">Subtle gradients and shadows create calm depth without visual noise.</p>
           </article>
 
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">05</span>
-            <h3>Premium restraint</h3>
-            <p>The interface avoids decoration overload and uses only details that support meaning.</p>
+            <h3 data-i18n="case_study_aesthetic_rule5_title">Premium restraint</h3>
+            <p data-i18n="case_study_aesthetic_rule5_text">The interface avoids decoration overload and uses only details that support meaning.</p>
           </article>
 
           <article class="case-aesthetic-card card-static">
             <span class="case-card-index">06</span>
-            <h3>Emotional consistency</h3>
-            <p>Logo, colors, spacing and interaction patterns all point to the same idea: returning to calm.</p>
+            <h3 data-i18n="case_study_aesthetic_rule6_title">Emotional consistency</h3>
+            <p data-i18n="case_study_aesthetic_rule6_text">Logo, colors, spacing and interaction patterns all point to the same idea: returning to calm.</p>
           </article>
         </div>
 
-        <article class="case-logo-application card-static" aria-label="NeuroMedit identity preview">
+        <article class="case-logo-application card-static" aria-label="NeuroMedit identity preview" data-i18n="case_study_logo_preview_aria" data-i18n-attr="aria-label">
           <div class="case-logo-stage" aria-hidden="true">
             <img src="assets/neuromedit-symbol-vector.svg" alt="" class="case-production-symbol" />
             <span class="case-production-wordmark">NeuroMedit</span>
           </div>
           <div class="case-logo-copy">
-            <span class="case-card-index">FINAL IDENTITY</span>
-            <h3>Symbol and wordmark system</h3>
-            <p>The final identity separates the symbol from the wordmark, allowing the logo to adapt across themes, screen sizes and interface contexts.</p>
+            <span class="case-card-index" data-i18n="case_study_identity_label">FINAL IDENTITY</span>
+            <h3 data-i18n="case_study_identity_title">Symbol and wordmark system</h3>
+            <p data-i18n="case_study_identity_text">The final identity separates the symbol from the wordmark, allowing the logo to adapt across themes, screen sizes and interface contexts.</p>
           </div>
         </article>
 
@@ -483,15 +485,15 @@
     <section class="case-section case-shift" aria-labelledby="shift-title">
       <div class="container case-split">
         <div class="case-section-heading">
-          <p class="case-eyebrow">What Changed During the Process</p>
-          <h2 id="shift-title">The project moved from personal expression to user-centered restraint.</h2>
+          <p class="case-eyebrow" data-i18n="case_study_shift_eyebrow">What Changed During the Process</p>
+          <h2 id="shift-title" data-i18n="case_study_shift_title">The project moved from personal expression to user-centered restraint.</h2>
         </div>
 
         <article class="case-content-card card-static">
           <div class="case-text-stack">
-            <p>The project started with a more self-centered visual direction, where the interface was shaped strongly by personal taste and expressive atmosphere. As the process evolved, the focus shifted toward the emotional needs of the user entering the experience.</p>
-            <p>This became an important design maturity moment. The question changed from "How should this look?" to "What does the user need to feel less friction right now?" That shift made the interface quieter, more intentional, and more focused on reducing cognitive effort.</p>
-            <p>The final direction is less about the creator's expression and more about the user's transition from mental noise into a calmer state of attention.</p>
+            <p data-i18n="case_study_shift_p1">The project started with a more self-centered visual direction, where the interface was shaped strongly by personal taste and expressive atmosphere. As the process evolved, the focus shifted toward the emotional needs of the user entering the experience.</p>
+            <p data-i18n="case_study_shift_p2">This became an important design maturity moment. The question changed from "How should this look?" to "What does the user need to feel less friction right now?" That shift made the interface quieter, more intentional, and more focused on reducing cognitive effort.</p>
+            <p data-i18n="case_study_shift_p3">The final direction is less about the creator's expression and more about the user's transition from mental noise into a calmer state of attention.</p>
           </div>
         </article>
       </div>
@@ -501,16 +503,16 @@
     <section class="case-section case-learnings" aria-labelledby="learnings-title">
       <div class="container">
         <div class="case-section-heading case-centered">
-          <p class="case-eyebrow">Key Learnings</p>
-          <h2 id="learnings-title">What this project clarified about UX and calm.</h2>
+          <p class="case-eyebrow" data-i18n="case_study_learnings_eyebrow">Key Learnings</p>
+          <h2 id="learnings-title" data-i18n="case_study_learnings_title">What this project clarified about UX and calm.</h2>
         </div>
 
         <div class="case-learning-list card-static">
-          <p>Calm can be designed structurally, not only visually.</p>
-          <p>Emotional states affect how users perceive effort and usability.</p>
-          <p>Cognitive overload increases resistance, even when the product intention is positive.</p>
-          <p>UX is also about emotional timing: when the interface asks, guides, pauses, or gets out of the way.</p>
-          <p>Simplicity is not emptiness; it is clarity.</p>
+          <p data-i18n="case_study_learning1">Calm can be designed structurally, not only visually.</p>
+          <p data-i18n="case_study_learning2">Emotional states affect how users perceive effort and usability.</p>
+          <p data-i18n="case_study_learning3">Cognitive overload increases resistance, even when the product intention is positive.</p>
+          <p data-i18n="case_study_learning4">UX is also about emotional timing: when the interface asks, guides, pauses, or gets out of the way.</p>
+          <p data-i18n="case_study_learning5">Simplicity is not emptiness; it is clarity.</p>
         </div>
       </div>
     </section>
@@ -519,20 +521,20 @@
     <section class="case-section case-final" aria-labelledby="final-title">
       <div class="container case-final-inner">
         <div class="case-thank-you-panel">
-          <p class="case-eyebrow">THANK YOU</p>
-          <h2 id="final-title">Thank you for reading this case study.</h2>
+          <p class="case-eyebrow" data-i18n="case_study_final_eyebrow">THANK YOU</p>
+          <h2 id="final-title" data-i18n="case_study_final_title">Thank you for reading this case study.</h2>
 
           <div class="case-text-stack">
-            <p>If you made it this far, I truly appreciate your time, attention, and openness.</p>
-            <p>NeuroMedit represents my intention to design digital experiences that are not only usable, but emotionally considerate, clear, and human.</p>
-            <p>I'm currently open to opportunities where I can grow, collaborate, and contribute through UX/UI design, front-end development, and human-centered thinking.</p>
+            <p data-i18n="case_study_final_p1">If you made it this far, I truly appreciate your time, attention, and openness.</p>
+            <p data-i18n="case_study_final_p2">NeuroMedit represents my intention to design digital experiences that are not only usable, but emotionally considerate, clear, and human.</p>
+            <p data-i18n="case_study_final_p3">I'm currently open to opportunities where I can grow, collaborate, and contribute through UX/UI design, front-end development, and human-centered thinking.</p>
           </div>
 
-          <aside class="case-opportunity-box" aria-label="Availability for opportunities">
-            <p>I would be grateful for the opportunity to bring this mindset into your team.</p>
+          <aside class="case-opportunity-box" aria-label="Availability for opportunities" data-i18n="case_study_opportunity_aria" data-i18n-attr="aria-label">
+            <p data-i18n="case_study_opportunity_text">I would be grateful for the opportunity to bring this mindset into your team.</p>
           </aside>
 
-          <p class="case-signature">With gratitude,<br />Lucas Nunes</p>
+          <p class="case-signature" data-i18n="case_study_signature">With gratitude,<br />Lucas Nunes</p>
         </div>
       </div>
     </section>
@@ -541,8 +543,8 @@
   <!-- Site footer -->
   <footer class="site-footer">
     <div class="container case-footer-inner">
-      <p>NeuroMedit</p>
-      <p>&copy; 2026 NeuroMedit. UX case study framework.</p>
+      <p data-i18n="case_study_footer_brand">NeuroMedit</p>
+      <p data-i18n="case_study_footer_copyright">© 2026 NeuroMedit. UX case study framework.</p>
     </div>
   </footer>
 

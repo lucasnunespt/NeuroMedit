@@ -648,13 +648,13 @@
       }
     });
 
+    // "input" only for live slider feedback (skips cloud sync to avoid a write per drag tick);
+    // "change" is the single source of truth that persists (checkbox/time/range fire it once).
     panel.addEventListener("input", (event) => {
       const control = event.target.closest("[data-setting-key]");
-      if (!control || control.classList.contains("setting-select-group")) return;
+      if (!control || !control.matches('input[type="range"]')) return;
 
-      const key = control.dataset.settingKey;
-      const value = control.matches('input[type="checkbox"]') ? control.checked : control.value;
-      setSettings({ [key]: value });
+      setSettings({ [control.dataset.settingKey]: control.value }, { skipCloudSync: true });
     });
 
     panel.addEventListener("change", (event) => {

@@ -3,7 +3,19 @@
   const START_SELECTOR = "[data-airlock-start]";
   const STOP_SELECTOR = "[data-airlock-stop], [data-exit-meditation]";
   const AIRLOCK_LINK_SELECTOR = "[data-airlock-link]";
-  const AUDIO_ERROR_MESSAGE = "Não foi possível iniciar o áudio. Toque novamente.";
+  const AUDIO_ERROR_FALLBACK = "The audio could not start. Tap again.";
+
+  function getCurrentAirlockLanguage() {
+    const saved = localStorage.getItem("neuromedit-language");
+    return ["pt", "en", "es", "it", "ru"].includes(saved) ? saved : "en";
+  }
+
+  function getAudioErrorMessage() {
+    if (typeof getTranslation === "function") {
+      return getTranslation(getCurrentAirlockLanguage(), "index_audio_error") || AUDIO_ERROR_FALLBACK;
+    }
+    return AUDIO_ERROR_FALLBACK;
+  }
 
   let airlockAudio = null;
   let airlockStartBtn = null;
@@ -36,10 +48,9 @@
     if (!isActive) {
       airlockStartBtn.dataset.i18n = "index_cta";
       if (typeof getTranslation === "function") {
-        const language = localStorage.getItem("neuromedit-language") || "pt";
-        airlockStartBtn.textContent = getTranslation(language, "index_cta") || "Começar";
+        airlockStartBtn.textContent = getTranslation(getCurrentAirlockLanguage(), "index_cta") || "Start";
       } else {
-        airlockStartBtn.textContent = "Começar";
+        airlockStartBtn.textContent = "Start";
       }
     }
   }
@@ -106,15 +117,16 @@
 
   function showFallbackError() {
     const view = getView();
+    const errorMessage = getAudioErrorMessage();
 
     if (typeof view.showError === "function") {
-      view.showError(AUDIO_ERROR_MESSAGE);
+      view.showError(errorMessage);
       return;
     }
 
     const audioError = document.getElementById("audioError");
     if (audioError) {
-      audioError.textContent = AUDIO_ERROR_MESSAGE;
+      audioError.textContent = errorMessage;
       audioError.classList.add("is-visible");
     }
   }

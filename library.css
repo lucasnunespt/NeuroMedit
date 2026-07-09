@@ -237,6 +237,7 @@ p {
   border-radius: 18px;
   box-shadow: var(--surface-static-shadow-soft);
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 
@@ -301,6 +302,7 @@ p {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
@@ -430,6 +432,7 @@ a.session-card::after {
   border-radius: 20px;
   box-shadow: var(--surface-static-shadow);
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
   cursor: default;
 }
 

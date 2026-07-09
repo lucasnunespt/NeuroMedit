@@ -303,6 +303,7 @@ p {
   border-radius: var(--radius-lg, 28px);
   box-shadow: var(--surface-static-shadow);
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
 }
 
 /* 2. Ocultação por Estado (Visitantes) */
@@ -405,6 +406,7 @@ body:not(.is-logged-in) .progress-module {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .card-static,
@@ -418,6 +420,7 @@ body:not(.is-logged-in) .progress-module {
   border-color: var(--surface-static-border);
   border-radius: 22px;
   backdrop-filter: var(--surface-static-blur);
+  -webkit-backdrop-filter: var(--surface-static-blur);
 }
 
 .state-signal {
@@ -532,6 +535,7 @@ a.featured-card:focus-visible {
   padding: 2rem;
   background: rgba(31, 35, 38, 0.38);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 50;
   opacity: 0;
   pointer-events: none;

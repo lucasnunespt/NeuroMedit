@@ -644,3 +644,16 @@ body.is-meditating .site-footer {
     transition: none;
   }
 }
+
+/* ==========================================================
+   ORDEM DOS CONTROLES — menu antes, idioma depois
+   Troca visual (via flex order) dos dois botões do header;
+   só tem efeito no mobile, onde o menu hambúrguer aparece.
+   ========================================================== */
+.header-actions .header-menu-toggle {
+  order: 1;
+}
+
+.header-actions .header-language-slot {
+  order: 2;
+}

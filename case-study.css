@@ -374,10 +374,10 @@ dd {
   line-height: 1;
   white-space: nowrap;
   transition:
-    transform 0.25s ease,
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease;
+    transform 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .primary-button {
@@ -417,33 +417,14 @@ dd {
   backdrop-filter: var(--case-glass-blur);
   -webkit-backdrop-filter: var(--case-glass-blur);
   transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    background-color 0.25s ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
 }
 
-.case-study-page :is(
-  .case-reading-card,
-  .case-problem-panel,
-    .case-state-card,
-    .case-principle-card,
-    .case-decision-card,
-    .case-diagram-placeholder,
-    .case-visual-placeholder,
-    .case-benchmark-carousel,
-    .case-wireframe-card,
-    .case-journey-card,
-    .case-hypothesis-card,
-    .case-aesthetic-card,
-    .case-logo-application,
-    .case-learning-list
-):hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--accent) 34%, var(--case-glass-border));
-  box-shadow: var(--case-card-hover-shadow);
-}
-
+/* Hover-lift removido dos cards estáticos: são superfícies de leitura,
+   não controles — elevação ao hover sinalizava clique inexistente. */
 .case-content-card {
   max-width: var(--narrow);
   min-height: 260px;
@@ -696,7 +677,19 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
 }
 
 .case-card-grid-5 {
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  /* 3 + 2 equilibrado: auto-fit gerava órfãos imprevisíveis (4+1) */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+@media (min-width: 721px) {
+  .case-card-grid-5 > * {
+    grid-column: span 2;
+  }
+
+  .case-card-grid-5 > *:nth-child(4),
+  .case-card-grid-5 > *:nth-child(5) {
+    grid-column: span 3;
+  }
 }
 
 .case-state-card,
@@ -884,10 +877,10 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   box-shadow: var(--surface-static-pill-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.45));
   cursor: pointer;
   transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
+    transform 220ms ease,
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .case-benchmark-nav:is(:hover, :focus-visible) {
@@ -1022,7 +1015,7 @@ body.case-study-body[data-theme="sleep"] .case-hero .case-hero-text {
   gap: clamp(0.8rem, 2vw, 1rem);
 }
 
-.case-flow-strip div {
+.case-flow-strip > div {
   display: grid;
   min-height: 82px;
   place-items: center;
@@ -2344,14 +2337,9 @@ body.case-study-body .case-final .case-thank-you-panel p {
     0 14px 34px rgba(5, 4, 12, 0.18),
     inset 0 1px 0 rgba(255, 243, 226, 0.1);
   transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    background-color 0.25s ease;
-}
-
-.case-opportunity-box:hover {
-  transform: translateY(-1px);
-  border-color: var(--case-thankyou-accent);
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
 }
 
 .case-opportunity-box p {
@@ -2836,7 +2824,7 @@ body.case-study-body[data-theme="late-night"] .case-final {
   }
 
   .case-benchmark-viewport {
-    border-radius: 15px;
+    border-radius: 16px;
   }
 
   .case-benchmark-slide {
@@ -2985,4 +2973,83 @@ body.case-study-body[data-theme="late-night"] .case-final {
   left: auto;
   visibility: visible; /* i18n.css controla exibição via opacity + clip */
   pointer-events: auto;
+}
+
+
+/* =========================
+   CTA FINAL — CONVERSA (Calendly)
+========================= */
+.case-cta-row {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.case-calendly-button {
+  min-height: 48px;
+  padding-inline: 1.9rem;
+}
+
+@media (max-width: 480px) {
+  .case-calendly-button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+
+/* =========================
+   CORREÇÕES DA VISTORIA
+========================= */
+
+/* Jornada: 7 colunas espremiam os textos entre 721–980px;
+   o layout vertical (já existente no mobile) assume nessa faixa. */
+@media (min-width: 721px) and (max-width: 980px) {
+  .case-journey-flow {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .case-journey-flow::before {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    left: 1.7rem;
+    width: 2px;
+    height: auto;
+    background:
+      linear-gradient(180deg, rgba(127, 100, 72, 0.32), rgba(185, 133, 79, 0.58), rgba(185, 133, 79, 0.22));
+  }
+
+  .case-journey-step {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: none;
+    justify-items: start;
+    align-items: start;
+    gap: 0.95rem;
+    text-align: left;
+  }
+
+  .case-journey-copy {
+    max-width: none;
+    grid-template-rows: none;
+    justify-items: start;
+    padding-top: 0.18rem;
+    text-align: left;
+  }
+}
+
+/* Ícones dos princípios: placeholder genérico substituído por
+   ícones de linha específicos, no mesmo traço do sistema. */
+.case-principle-icon {
+  display: inline-grid;
+  place-items: center;
+  background: var(--case-pill-bg);
+  color: var(--accent-dark);
+}
+
+.case-principle-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }

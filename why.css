@@ -129,13 +129,13 @@ p {
 }
 
 .section-heading {
-  text-align: center;
+  text-align: left;
   margin-bottom: 2rem;
 }
 
 .section-heading p {
   max-width: 54ch;
-  margin: 0 auto;
+  margin: 0;
   line-height: 1.7;
 }
 
@@ -283,14 +283,14 @@ p {
 .why-science,
 .why-resistance,
 .why-steps {
-  text-align: center;
+  text-align: left;
 }
 
 .why-intro p,
 .why-science p,
 .why-resistance p {
   max-width: 62ch;
-  margin: 0 auto;
+  margin: 0;
   line-height: 1.7;
 }
 

@@ -368,7 +368,7 @@ a.session-card::after {
 }
 
 /* Hide the arrow that normal cards show */
-.session-card--locked::after {
+a.session-card--locked::after {
   display: none;
 }
 

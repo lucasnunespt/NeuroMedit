@@ -343,7 +343,7 @@ window.NeuroMeditTranslations = {
     why_hero_title: "Você não precisa acreditar na meditação",
     why_hero_title_span: "para sentir seus efeitos.",
     why_hero_text: "Meditar não é forçar a mente a ficar vazia. É uma forma gentil de treinar a atenção, regular o estresse e criar mais espaço entre estímulo e reação.",
-    why_hero_primary_cta: "Iniciar uma sessão",
+    why_hero_primary_cta: "Iniciar sessão de 2 min",
     why_hero_secondary_cta: "Ver a ciência",
     why_intro_title: "Seu cérebro não foi feito para ruído constante",
     why_intro_text_1: "Uma mente cansada salta, antecipa, repete, reage. Isso não é fracasso. É um sistema de proteção funcionando o tempo todo.",

@@ -42,7 +42,7 @@ body.lucas-page {
 }
 
 .lucas-page :focus-visible {
-  outline: 3px solid var(--header-focus, var(--accent-dark, #708f89));
+  outline: 3px solid var(--header-focus, var(--accent-dark, #517067));
   outline-offset: 4px;
 }
 
@@ -86,7 +86,7 @@ body.lucas-page {
 .lucas-kicker,
 .chapter-number {
   margin: 0 0 1rem;
-  color: var(--accent-dark, #708f89);
+  color: var(--accent-dark, #517067);
   font-size: 0.84rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -308,7 +308,7 @@ body.lucas-page {
 }
 
 .node-quote {
-  color: var(--accent-dark, #708f89);
+  color: var(--accent-dark, #517067);
   font-style: italic;
 }
 

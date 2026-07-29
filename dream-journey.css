@@ -309,6 +309,25 @@ body.dream-overlay-open {
   padding: 0 1.35rem;
 }
 
+.dream-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 0.3rem;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  color: rgba(245, 239, 232, 0.68);
+  font: inherit;
+  text-decoration: none;
+  transition: color 350ms ease;
+}
+
+.dream-back:hover,
+.dream-back:focus-visible {
+  color: #fff8f1;
+}
+
 @keyframes dreamStarFloat {
   from {
     transform: translate3d(0, 0, 0);

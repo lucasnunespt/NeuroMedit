@@ -13,14 +13,6 @@
     icon: '<svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M8.2 11.2C10.02 11.2 11.5 9.72 11.5 7.9C11.5 6.08 10.02 4.6 8.2 4.6C6.38 4.6 4.9 6.08 4.9 7.9C4.9 9.72 6.38 11.2 8.2 11.2Z" stroke="currentColor" stroke-width="1.8"></path><path d="M3.6 19.4C4.08 16.72 5.88 15.2 8.2 15.2C10.52 15.2 12.32 16.72 12.8 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M15.8 10.7C17.3 10.7 18.5 9.5 18.5 8C18.5 6.5 17.3 5.3 15.8 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M14.8 15.4C17.35 15.58 19.05 17 19.5 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>'
   };
 
-  const caseStudyNavItem = {
-    href: "case-study.html",
-    key: "case-study",
-    i18n: "nav.case-study", // Adicionado suporte para i18n
-    text: "Estudo de caso",
-    icon: '<svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.2 4.8H17.8C18.68 4.8 19.4 5.52 19.4 6.4V17.6C19.4 18.48 18.68 19.2 17.8 19.2H6.2C5.32 19.2 4.6 18.48 4.6 17.6V6.4C4.6 5.52 5.32 4.8 6.2 4.8Z" stroke="currentColor" stroke-width="1.8"></path><path d="M8 9H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M8 12H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M8 15H12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>'
-  };
-
   function isCurrentPage(item) {
     const escapedHref = item.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return new RegExp(`(?:^|/)${escapedHref}$`, "i").test(window.location.pathname);
@@ -51,45 +43,12 @@
     return link;
   }
 
-  function buildCaseStudyLink(kind) {
-    const link = document.createElement("a");
-    link.href = caseStudyNavItem.href;
-    link.className = kind === "mobile"
-      ? "header-mobile-link nav-link"
-      : "header-nav-link nav-link";
-    link.dataset.navKey = caseStudyNavItem.key;
-    link.setAttribute("aria-label", caseStudyNavItem.text);
-    link.setAttribute("title", caseStudyNavItem.text);
-    link.dataset.i18n = caseStudyNavItem.i18n; // Adicionado data-i18n
-    link.dataset.i18nAttr = "aria-label,title"; // Adicionado data-i18n-attr
-
-    if (isCurrentPage(caseStudyNavItem)) {
-      link.classList.add("active");
-      link.setAttribute("aria-current", "page");
-    }
-
-    link.innerHTML = `
-      <span class="header-nav-icon" aria-hidden="true">${caseStudyNavItem.icon}</span>
-      <span class="${kind === "mobile" ? "header-mobile-text" : "header-nav-text"}" data-i18n="${caseStudyNavItem.i18n}">${caseStudyNavItem.text}</span>
-    `;
-
-    return link;
-  }
-
   function ensureGlobalNavItems() {
     const desktopNav = header.querySelector(".header-nav-desktop");
     const mobileNav = header.querySelector(".header-mobile-nav");
 
-    if (desktopNav && !desktopNav.querySelector('[data-nav-key="case-study"]')) {
-      desktopNav.appendChild(buildCaseStudyLink("desktop"));
-    }
-
     if (desktopNav && !desktopNav.querySelector('[data-nav-key="contributors"]')) {
       desktopNav.appendChild(buildContributorsLink("desktop"));
-    }
-
-    if (mobileNav && !mobileNav.querySelector('[data-nav-key="case-study"]')) {
-      mobileNav.appendChild(buildCaseStudyLink("mobile"));
     }
 
     if (mobileNav && !mobileNav.querySelector('[data-nav-key="contributors"]')) {

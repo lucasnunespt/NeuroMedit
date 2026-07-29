@@ -46,7 +46,7 @@ body[data-theme="dawn"] {
   --link-text: #3f3024;
   --line: rgba(116, 83, 47, 0.13);
   --accent: #c88f53;
-  --accent-dark: #9e7042;
+  --accent-dark: #8a5d34;
   --shadow-soft: 0 12px 28px rgba(94, 66, 34, 0.1);
   --shadow-card: 0 16px 38px rgba(94, 66, 34, 0.12);
   --surface-static-bg:
@@ -107,7 +107,7 @@ body[data-theme="day"] {
   --link-text: #3e3325;
   --line: rgba(112, 86, 52, 0.12);
   --accent: #b9905e;
-  --accent-dark: #8d704d;
+  --accent-dark: #7d6443;
   --shadow-soft: 0 12px 28px rgba(92, 70, 42, 0.09);
   --shadow-card: 0 16px 38px rgba(92, 70, 42, 0.1);
   --surface-static-bg:

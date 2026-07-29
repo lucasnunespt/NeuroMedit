@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tendências de UX em 2026 — Lucas Nunes</title>
+<meta name="description" content="Estudo próprio sobre tendências de UX em 2026: zona do polegar no mobile, padrões de leitura visual no desktop, forma de botões e acessibilidade para pessoas cegas — com aplicação real no portfólio e no NeuroMedit.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tendências de UX em 2026 — Lucas Nunes">
+<meta property="og:description" content="Zona do polegar, padrões de leitura, botões e acessibilidade — pesquisado e aplicado na prática.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%238A4726'/%3E%3Ctext x='50' y='69' font-size='58' font-family='Georgia,serif' fill='%23F7F5F1' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET
+   ============================================================ */
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ overflow-x:hidden; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; background:none; border:none; cursor:pointer; }
+a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+.skip-link{
+  position:absolute; left:1rem; top:-4rem; z-index:999;
+  background:var(--ink); color:var(--bg); font-weight:600; font-size:.92rem;
+  padding:.85rem 1.3rem; border-radius:8px; transition:top .3s var(--ease);
+}
+.skip-link:focus{ top:1rem; }
+.main-nav a:not(.button){ padding:.6rem .3rem; display:inline-flex; align-items:center; min-height:44px; }
+.social-row a{ padding:.5rem .3rem; display:inline-flex; align-items:center; min-height:44px; }
+@media (prefers-contrast:more){
+  .header-inner{ background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; }
+}
+
+/* ============================================================
+   TOKENS — mesma identidade do portfólio
+   ============================================================ */
+:root{
+  --bg:#F7F5F1;
+  --bg-alt:#EFEAE1;
+  --surface:#FFFFFF;
+  --ink:#17140F;
+  --ink-soft:#5B5648;
+  --ink-faint:#726A56;
+  --line:rgba(23,20,15,.12);
+  --accent:#8A4726;
+  --accent-soft:#EEDFCF;
+  --ok:#5C7A52;
+  --bad:#9C4A3C;
+  --header-glass-bg:rgba(255,255,255,.5);
+  --header-glass-bg-scrolled:rgba(255,255,255,.8);
+  --header-border:rgba(23,20,15,.1);
+  --header-glow:0 14px 38px rgba(23,20,15,.09), 0 0 32px rgba(255,255,255,.35);
+  --serif:"Newsreader", Georgia, serif;
+  --sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+
+body{
+  font-family:var(--sans); background:var(--bg); color:var(--ink);
+  line-height:1.5; font-weight:400;
+}
+::selection{ background:var(--accent-soft); }
+
+.container{ max-width:1080px; margin:0 auto; padding:0 1.5rem; }
+.narrow{ max-width:760px; }
+
+h1,h2,h3{ letter-spacing:-0.02em; color:var(--ink); font-weight:500; }
+em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--accent); }
+p{ color:var(--ink-soft); }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.78rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--ink-faint); font-weight:600; margin-bottom:1.1rem;
+}
+.eyebrow::before{ content:""; width:14px; height:1px; background:var(--accent); flex:none; }
+
+.button{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.95rem; font-weight:600; padding:.9rem 1.5rem; min-height:48px;
+  border-radius:999px; transition:.3s var(--ease);
+}
+.button.primary{ background:var(--ink); color:var(--bg); }
+.button.primary:hover{ background:var(--accent); transform:translateY(-1px); }
+.button.ghost{ border:1px solid var(--line); color:var(--ink); }
+.button.ghost:hover{ border-color:var(--ink); background:var(--surface); }
+.link-arrow{ font-weight:600; font-size:.94rem; color:var(--accent); border-bottom:1px solid transparent; transition:border-color .25s; }
+.link-arrow:hover{ border-color:var(--accent); }
+
+.cursor-dot{
+  position:fixed; width:8px; height:8px; border-radius:50%;
+  background:var(--accent); pointer-events:none; z-index:200;
+  transform:translate(-50%,-50%); opacity:0;
+  transition:opacity .3s ease, transform .12s ease-out;
+  mix-blend-mode:multiply;
+}
+.cursor-dot.visible{ opacity:.7; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position:sticky; top:0; z-index:60; background:transparent;
+  padding:.86rem 0 .68rem; transition:padding .42s var(--ease);
+}
+.site-header.scrolled{ padding:.52rem 0 .38rem; }
+.header-inner{
+  min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  border-radius:999px; border:1px solid var(--header-border);
+  padding:.55rem 1.05rem .55rem 1.2rem;
+  background:var(--header-glass-bg);
+  backdrop-filter:blur(22px) saturate(138%) brightness(1.04);
+  -webkit-backdrop-filter:blur(22px) saturate(138%) brightness(1.04);
+  box-shadow:var(--header-glow);
+  transition:background .42s var(--ease), box-shadow .42s var(--ease), padding .42s var(--ease);
+}
+.site-header.scrolled .header-inner{ background:var(--header-glass-bg-scrolled); }
+.wordmark{ font-size:1.05rem; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; display:inline-flex; align-items:baseline; }
+.wordmark .n-fixed{ color:var(--accent); }
+.main-nav{ display:flex; align-items:center; gap:2.2rem; }
+.main-nav a{ font-size:.92rem; color:var(--ink-soft); font-weight:500; transition:color .2s; }
+.main-nav a:hover{ color:var(--ink); }
+.main-nav .button{ padding:.6rem 1.1rem; font-size:.86rem; min-height:auto; }
+
+/* ============================================================
+   SELETOR DE IDIOMA — mesmo componente do portfólio
+   ============================================================ */
+.header-language-slot{
+  display:inline-flex; flex-shrink:0; align-items:center; margin-left:-1rem;
+  position:relative; width:64px; height:38px;
+}
+/* Dentro do header, o pill sai do fluxo — expande por cima sem esticar o header */
+.header-language-slot .language-wrapper{
+  position:absolute; top:0; right:0;
+}
+.language-wrapper{
+  position:relative; display:inline-flex; flex-direction:column;
+  width:64px; max-height:38px; border-radius:999px;
+  background:color-mix(in srgb, var(--surface) 78%, transparent);
+  border:1px solid var(--line);
+  box-shadow:0 6px 18px rgba(23,20,15,.08);
+  overflow:hidden;
+  transition:max-height .42s var(--ease), background .3s ease, border-color .3s ease, box-shadow .3s ease;
+  z-index:80;
+}
+.language-trigger{
+  appearance:none; position:relative; z-index:2; flex:0 0 38px; width:100%; height:38px;
+  border:0; border-radius:0; display:inline-flex; align-items:center; justify-content:center;
+  gap:.28rem; color:var(--ink); background:transparent; cursor:pointer;
+}
+.language-trigger svg{ width:15px; height:15px; }
+.language-current{ font-size:.7rem; letter-spacing:.08em; line-height:1; font-weight:600; }
+.language-trigger:focus-visible{ outline:none; }
+.language-options{
+  width:100%; padding:0 .32rem .5rem; display:grid; align-items:center; gap:.22rem; box-sizing:border-box;
+  opacity:0; transform:translateY(-10px);
+  transition:opacity .3s ease, transform .35s var(--ease);
+}
+.language-wrapper.is-open{
+  max-height:260px;
+  background:var(--surface);
+  border-color:var(--ink-faint);
+  box-shadow:0 14px 34px rgba(23,20,15,.14);
+}
+.language-wrapper.is-open .language-options{ opacity:1; transform:translateY(0); }
+@media (hover:hover) and (pointer:fine){
+  .language-wrapper:hover{ max-height:260px; background:var(--surface); border-color:var(--ink-faint); box-shadow:0 14px 34px rgba(23,20,15,.14); }
+  .language-wrapper:hover .language-options{ opacity:1; transform:translateY(0); }
+}
+.language-options button{
+  appearance:none; min-width:46px; height:30px; border:0; border-radius:999px;
+  color:var(--ink-soft); background:transparent; font:inherit; font-size:.72rem; letter-spacing:.08em;
+  cursor:pointer; transition:background .18s ease, color .18s ease, transform .18s ease;
+}
+.language-options button:hover, .language-options button:focus-visible{
+  color:var(--ink); background:var(--bg-alt); outline:none;
+}
+.language-options button.is-active{ color:#fff; background-color:var(--accent); outline:none; }
+.language-options button:active{ transform:scale(.96); }
+@media (prefers-reduced-motion:reduce){
+  .language-wrapper, .language-trigger, .language-options, .language-options button{ transition:none; }
+}
+@media (max-width:480px){
+  .header-language-slot{ width:58px; height:34px; }
+  .language-wrapper{ width:58px; max-height:34px; }
+  .language-trigger{ flex:0 0 34px; height:34px; }
+  .language-wrapper.is-open{ max-height:240px; }
+}
+
+/* ============================================================
+   ARTIGO
+   ============================================================ */
+.article-hero{ padding:clamp(2.5rem,7vw,4rem) 0 clamp(2rem,5vw,3rem); }
+.article-hero h1{ font-size:clamp(2rem,5vw,3.4rem); line-height:1.1; max-width:18ch; margin-bottom:1.1rem; }
+.article-hero .lede{ font-size:1.1rem; line-height:1.75; max-width:60ch; }
+.article-meta{ display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.4rem; font-size:.85rem; color:var(--ink-faint); }
+.article-meta span{ display:inline-flex; align-items:center; gap:.4rem; }
+.article-meta span::before{ content:"—"; }
+.article-meta span:first-child::before{ content:""; }
+
+article section{ padding:clamp(2.4rem,6vw,3.6rem) 0; border-top:1px solid var(--line); }
+article section:nth-child(even){ background:var(--bg-alt); }
+article h2{ font-size:clamp(1.5rem,3vw,2.1rem); margin-bottom:1rem; }
+article h3{ font-size:1.05rem; margin-bottom:.5rem; margin-top:1.3rem; }
+article p{ font-size:1.02rem; line-height:1.75; margin-bottom:1rem; max-width:70ch; }
+article .lead-quote{
+  font-family:var(--serif); font-style:italic; font-size:1.25rem; color:var(--ink);
+  max-width:56ch; line-height:1.55; margin:1.4rem 0;
+  border-left:3px solid var(--accent); padding-left:1.2rem;
+}
+
+.findings{ list-style:none; display:grid; gap:.7rem; margin:1.2rem 0 1.4rem; max-width:70ch; }
+.findings li{ font-size:1rem; line-height:1.65; padding-left:1.5rem; position:relative; color:var(--ink-soft); }
+.findings li::before{ content:"—"; position:absolute; left:0; color:var(--accent); }
+.findings li strong{ color:var(--ink); }
+
+/* tabela de contraste */
+.contrast-table{ width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:.92rem; }
+.contrast-table th, .contrast-table td{ text-align:left; padding:.75rem .9rem; border-bottom:1px solid var(--line); }
+.contrast-table th{ font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:600; }
+.contrast-table td{ color:var(--ink-soft); }
+.status{ display:inline-flex; align-items:center; gap:.4rem; font-weight:600; font-size:.88rem; }
+.status .sw{ width:9px; height:9px; border-radius:50%; flex:none; }
+.status.pass{ color:var(--ok); } .status.pass .sw{ background:var(--ok); }
+.status.fail{ color:var(--bad); } .status.fail .sw{ background:var(--bad); }
+.table-wrap{ overflow-x:auto; }
+.table-note{ font-size:.85rem; color:var(--ink-faint); font-style:italic; margin-top:.6rem; }
+
+/* fontes */
+.sources{ list-style:none; display:grid; gap:.9rem; margin-top:1rem; max-width:70ch; }
+.sources li{ padding-bottom:.9rem; border-bottom:1px solid var(--line); }
+.sources a{ font-weight:600; color:var(--accent); border-bottom:1px solid transparent; transition:border-color .2s; }
+.sources a:hover{ border-color:var(--accent); }
+.sources span{ display:block; font-size:.85rem; color:var(--ink-faint); margin-top:.2rem; }
+
+.cta-block{ text-align:center; padding:clamp(3rem,7vw,5rem) 0; }
+.cta-block h2{ max-width:22ch; margin:0 auto 1rem; }
+.cta-block p{ max-width:44ch; margin:0 auto 1.8rem; }
+.cta-actions{ display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+
+footer{ border-top:1px solid var(--line); padding:2rem 0; text-align:center; }
+footer p{ font-size:.85rem; color:var(--ink-faint); }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.visible{ opacity:1; transform:none; }
+
+@media (max-width:760px){
+  .main-nav a:not(.button){ display:none; }
+  .contrast-table{ font-size:.84rem; }
+  .contrast-table th, .contrast-table td{ padding:.6rem .5rem; }
+}
+@media (max-width:480px){
+  .container{ padding:0 1.15rem; }
+  .header-inner{ min-height:56px; padding:.4rem .4rem .4rem 1rem; }
+  .wordmark{ font-size:.98rem; }
+  .cta-actions .button{ width:100%; justify-content:center; }
+  .cta-actions{ flex-direction:column; }
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{ opacity:1; transform:none; transition:none; }
+  html{ scroll-behavior:auto; }
+  .cursor-dot{ display:none; }
+}
+@media (hover:none){ .cursor-dot{ display:none; } }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main" data-i18n="common_skip">Pular para o conteúdo</a>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="wordmark" href="index.html">Lucas&nbsp;<span class="n-fixed">Nunes</span></a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="index.html#casos" data-i18n="common_nav_casos">Casos</a>
+      <a href="index.html#sobre" data-i18n="common_nav_sobre">Sobre</a>
+      <a class="button ghost" href="index.html#contato" data-i18n="common_nav_contato">Contato</a>
+      <div class="header-language-slot" data-language-host></div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<article>
+
+  <div class="container article-hero">
+    <span class="eyebrow reveal" data-i18n="tend_eyebrow">Caso 04 · Estudo próprio</span>
+    <h1 class="reveal" data-i18n="tend_h1">Para onde a experiência do usuário vai em 2026</h1>
+    <p class="lede reveal" data-i18n="tend_lede">Onde o dedo alcança melhor no mobile. Para onde o olho vai primeiro no desktop. Que forma de botão converte mais. O que muda de verdade para quem navega com leitor de tela. Pesquisei tudo isso antes de continuar desenhando — e apliquei cada achado nesta página e no NeuroMedit.</p>
+    <div class="article-meta reveal">
+      <span>2026</span>
+      <span>Lucas Nunes</span>
+      <span><a class="link-arrow" href="index.html#case-tendencias" data-i18n="tend_meta_link">Ver resumo no portfólio</a></span>
+    </div>
+  </div>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_1">1. Tendências gerais de UX em 2026</h2>
+      <p class="reveal" data-i18n="tend_1_p1">Design calmo continua sendo a direção dominante: redução de carga cognitiva, fluxos gentis, uma decisão por tela. IA já está em praticamente todas as ferramentas de design (93% dos designers a usam), mas o próprio mercado alerta contra aplicá-la sem propósito — o uso que compensa é em personalização e acessibilidade, não como enfeite.</p>
+      <p class="reveal" data-i18n="tend_1_p2">O vidro fosco (glassmorphism) voltou com força — inclusive adotado pela Apple e Microsoft para 2026 — mas com uma ressalva séria: texto sobre vidro perde contraste com facilidade. A prática recomendada é manter uma camada de texto sempre legível e desligar a transparência quando o sistema do usuário pede mais contraste.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_2">2. A zona do polegar (mobile)</h2>
+      <p class="reveal" data-i18n="tend_2_p1">Cerca de 75% dos toques em smartphones são feitos com o polegar, sem usar a outra mão. O mapa de alcance divide a tela em três zonas: verde (fácil, centro-inferior), amarela (exige esticar) e vermelha (cantos superiores, difícil). Em aparelhos grandes, ações importantes devem ficar no terço inferior da tela.</p>
+      <p class="lead-quote reveal" data-i18n="tend_2_quote">"O botão de câmera do iOS fica centralizado embaixo porque essa é a posição mais fácil de acertar, não importa como você segura o telefone."</p>
+      <h3 class="reveal" data-i18n="tend_h3_applied">Aplicado nesta página</h3>
+      <ul class="findings reveal">
+        <li data-i18n="tend_2_f1" data-i18n-html><strong>CTA flutuante:</strong> um botão "Falar comigo" fixo na zona verde, que só aparece depois que o visitante rola além do hero — sem competir com o botão principal.</li>
+        <li data-i18n="tend_2_f2" data-i18n-html><strong>Alvos de toque:</strong> todos os links pequenos (menu, redes sociais) passaram a ter no mínimo 44px de altura de toque.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_3">3. Para onde o olho vai primeiro (desktop)</h2>
+      <p class="reveal" data-i18n="tend_3_p1" data-i18n-html>Estudos de eye-tracking mostram dois padrões dominantes. O padrão em <strong style="color:var(--ink)">F</strong> aparece em páginas com muito texto: o olhar corre o topo e desce escaneando a lateral esquerda. O padrão em <strong style="color:var(--ink)">Z</strong> aparece em páginas simples, tipo landing pages: do canto superior esquerdo até a chamada para ação no canto inferior direito.</p>
+      <h3 class="reveal" data-i18n="tend_h3_applied">Aplicado nesta página</h3>
+      <ul class="findings reveal">
+        <li data-i18n="tend_3_f1" data-i18n-html><strong>Hero em Z:</strong> poucos elementos — título à esquerda, foto à direita, botões embaixo — guiando o olhar até a ação.</li>
+        <li data-i18n="tend_3_f2" data-i18n-html><strong>Casos em F:</strong> cada bloco de caso começa com rótulo e título alinhados à esquerda, ancorando o olhar no mesmo ponto de partida a cada seção.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_4">4. Forma de botões e alvos de toque</h2>
+      <p class="reveal" data-i18n="tend_4_p1" data-i18n-html>Retângulos arredondados (8–12px) e formatos em pílula dominam 2026. Botões com cantos arredondados recebem entre 17% e 55% mais cliques que os de cantos retos. O alvo mínimo de toque recomendado é 44×44px — e desde 28 de junho de 2025 o <em>European Accessibility Act</em> exige, por lei na União Europeia, no mínimo 24×24px (WCAG 2.5.8).</p>
+      <h3 class="reveal" data-i18n="tend_h3_applied">Aplicado nesta página</h3>
+      <ul class="findings reveal">
+        <li data-i18n="tend_4_f1" data-i18n-html><strong>Botões:</strong> raio aumentado de 2px para 10px em toda a página — mais próximo da tendência que mais converte.</li>
+        <li data-i18n="tend_4_f2" data-i18n-html><strong>Cabeçalho:</strong> a cápsula do menu é 100% arredondada, seguindo a mesma linguagem do NeuroMedit.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_5">5. Acessibilidade para pessoas cegas</h2>
+      <p class="reveal" data-i18n="tend_5_p1">A WCAG 2.2 se apoia em quatro princípios: Perceptível, Operável, Compreensível e Robusto. Para quem usa leitor de tela, o que mais importa é: texto alternativo em imagens, navegação inteira por teclado, rótulos claros e contraste adequado. Desde junho de 2025, o European Accessibility Act tornou a WCAG 2.2 nível AA obrigatória por lei na UE — incluindo, pela primeira vez, tamanho mínimo de alvo de toque.</p>
+      <h3 class="reveal" data-i18n="tend_h3_applied">Aplicado nesta página</h3>
+      <ul class="findings reveal">
+        <li data-i18n="tend_5_f1" data-i18n-html><strong>"Pular para o conteúdo":</strong> primeiro elemento focável, permite pular o menu sem precisar ouvir/tabular por ele toda vez.</li>
+        <li data-i18n="tend_5_f2" data-i18n-html><strong>Landmark &lt;main&gt;:</strong> todo o conteúdo principal está dentro de uma região navegável por leitores de tela.</li>
+        <li data-i18n="tend_5_f3" data-i18n-html><strong>Ícones decorativos silenciados:</strong> setas e pontos puramente visuais receberam <code>aria-hidden="true"</code>.</li>
+        <li data-i18n="tend_5_f4" data-i18n-html><strong>Contraste corrigido:</strong> as cores de texto mais claras da paleta foram escurecidas — ver tabela abaixo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_6">6. Auditoria de contraste — calculado, não estimado</h2>
+      <p class="reveal" data-i18n="tend_6_p1">Antes de mudar qualquer cor, calculei o contraste real pela fórmula oficial de luminância relativa do WCAG. O mínimo exigido é 4.5:1 para texto normal e 3:1 para texto grande (24px+) ou elementos de interface.</p>
+      <div class="table-wrap reveal">
+        <table class="contrast-table">
+          <thead>
+            <tr><th data-i18n="tend_th_combo">Combinação</th><th data-i18n="tend_th_contrast">Contraste</th><th data-i18n="tend_th_result">Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td data-i18n="tend_row1">Portfólio — cinza claro antigo (#948D7C)</td><td>3.03:1</td><td><span class="status fail"><span class="sw"></span><span data-i18n="tend_status_fail">Falhava</span></span></td></tr>
+            <tr><td data-i18n="tend_row2">Portfólio — cinza claro corrigido (#726A56)</td><td>4.93:1</td><td><span class="status pass"><span class="sw"></span><span data-i18n="tend_status_pass">Aprovado</span></span></td></tr>
+            <tr><td data-i18n="tend_row3">Portfólio — terracota antigo (#B4633A)</td><td>4.03:1</td><td><span class="status fail"><span class="sw"></span><span data-i18n="tend_status_fail_normal">Falhava em texto normal</span></span></td></tr>
+            <tr><td data-i18n="tend_row4">Portfólio — terracota corrigido (#8A4726)</td><td>6.41:1</td><td><span class="status pass"><span class="sw"></span><span data-i18n="tend_status_pass">Aprovado</span></span></td></tr>
+            <tr><td data-i18n="tend_row5">NeuroMedit — sage escuro antigo (#708f89)</td><td>3.19:1</td><td><span class="status fail"><span class="sw"></span><span data-i18n="tend_status_fail">Falhava</span></span></td></tr>
+            <tr><td data-i18n="tend_row6">NeuroMedit — sage escuro corrigido (#517067)</td><td>4.93:1</td><td><span class="status pass"><span class="sw"></span><span data-i18n="tend_status_pass">Aprovado</span></span></td></tr>
+            <tr><td data-i18n="tend_row7">NeuroMedit — âmbar antigo (#9e7042)</td><td>3.83:1</td><td><span class="status fail"><span class="sw"></span><span data-i18n="tend_status_fail">Falhava</span></span></td></tr>
+            <tr><td data-i18n="tend_row8">NeuroMedit — âmbar corrigido (#8a5d34)</td><td>5.03:1</td><td><span class="status pass"><span class="sw"></span><span data-i18n="tend_status_pass">Aprovado</span></span></td></tr>
+          </tbody>
+        </table>
+        <p class="table-note" data-i18n="tend_table_note">12 correções foram aplicadas em 10 arquivos CSS do NeuroMedit em produção — os temas escuros (sunset, night) já passavam com folga e não foram alterados.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container narrow">
+      <h2 class="reveal" data-i18n="tend_h2_7">7. Referências</h2>
+      <p class="reveal" data-i18n="tend_7_intro">As fontes consultadas nesta pesquisa, por tema:</p>
+      <ul class="sources reveal">
+        <li><a href="https://codewave.com/insights/ux-design-trends-future/" target="_blank" rel="noopener">Top 10 UX Design Trends to Watch in 2026 — Codewave</a><span data-i18n="tend_topic_general">Tendências gerais de UX</span></li>
+        <li><a href="https://elements.envato.com/learn/ux-ui-design-trends" target="_blank" rel="noopener">UX/UI design trends for 2026 — Envato Elements</a><span data-i18n="tend_topic_general">Tendências gerais de UX</span></li>
+        <li><a href="https://uxpilot.ai/blogs/product-design-trends" target="_blank" rel="noopener">12 Product Design Trends for 2026 — UX Pilot</a><span data-i18n="tend_topic_general">Tendências gerais de UX</span></li>
+        <li><a href="https://inkbotdesign.com/mobile-ux/" target="_blank" rel="noopener">Mobile UX Best Practices: Designing For Thumbs In 2026 — Inkbot Design</a><span data-i18n="tend_topic_thumb">Zona do polegar</span></li>
+        <li><a href="https://parachutedesign.ca/blog/thumb-zone-ux/" target="_blank" rel="noopener">Mastering the Thumb Zone: Mobile UX & UI Design Guide — Parachute Design</a><span data-i18n="tend_topic_thumb">Zona do polegar</span></li>
+        <li><a href="https://medium.com/design-bootcamp/f-patterns-vs-z-patterns-228104ec2be1" target="_blank" rel="noopener">F Patterns Vs. Z Patterns — Medium</a><span data-i18n="tend_topic_reading">Padrões de leitura visual</span></li>
+        <li><a href="https://acclaim.agency/blog/the-science-of-eye-tracking-where-users-really-look-on-your-website" target="_blank" rel="noopener">The Science of Eye Tracking — Acclaim</a><span data-i18n="tend_topic_reading">Padrões de leitura visual</span></li>
+        <li><a href="https://specificit.com.au/button-design-trends-2026/" target="_blank" rel="noopener">What Are the Trends in Button Design for 2026? — Specific IT</a><span data-i18n="tend_topic_buttons">Design de botões</span></li>
+        <li><a href="https://www.weweb.io/blog/best-button-design-ideas-ux-accessibility-conversions" target="_blank" rel="noopener">Best Button Design: 15 Ideas for UX & Conversions — WeWeb</a><span data-i18n="tend_topic_buttons">Design de botões</span></li>
+        <li><a href="https://www.webability.io/blog/wcag-2-2-accessibility-standards-complete-2026-compliance-guide" target="_blank" rel="noopener">WCAG 2.2 Accessibility Standards: Complete 2026 Guide — WebAbility</a><span data-i18n="tend_topic_a11y">Acessibilidade</span></li>
+        <li><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum" target="_blank" rel="noopener">Understanding SC 2.5.8: Target Size (Minimum) — W3C WAI</a><span data-i18n="tend_topic_a11y_target">Acessibilidade / alvo de toque</span></li>
+        <li><a href="https://www.allaccessible.org/blog/wcag-258-target-size-minimum-implementation-guide" target="_blank" rel="noopener">WCAG 2.5.8 Target Size Minimum Implementation Guide — AllAccessible</a><span data-i18n="tend_topic_a11y_target">Acessibilidade / alvo de toque</span></li>
+        <li><a href="https://axesslab.com/glassmorphism-meets-accessibility-can-frosted-glass-be-inclusive/" target="_blank" rel="noopener">Glassmorphism Meets Accessibility — Axess Lab</a><span data-i18n="tend_topic_glass">Vidro fosco e acessibilidade</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="container cta-block">
+    <span class="eyebrow reveal" style="justify-content:center;" data-i18n="tend_cta_eyebrow">Gostou do processo?</span>
+    <h2 class="reveal" data-i18n="tend_cta_h2">É assim que eu penso cada projeto — pesquisa antes, opinião depois.</h2>
+    <p class="reveal" data-i18n="tend_cta_p">Se você quer esse tipo de rigor no seu produto, escreva.</p>
+    <div class="cta-actions reveal">
+      <a class="button primary" href="index.html#contato" data-i18n="idx_hero_cta_contato">Falar comigo</a>
+      <a class="button ghost" href="index.html" data-i18n="tend_cta_back">Voltar ao portfólio</a>
+    </div>
+  </div>
+
+</article>
+</main>
+
+<footer>
+  <div class="container">
+    <p data-i18n="common_footer">© 2026 Lucas Nunes · Lisboa, Portugal.</p>
+  </div>
+</footer>
+
+<script src="i18n-portfolio.js"></script>
+<script>
+(function(){
+  "use strict";
+  var header = document.getElementById("siteHeader");
+  var onScrollHeader = function(){
+    if(window.scrollY > 8) header.classList.add("scrolled");
+    else header.classList.remove("scrolled");
+  };
+  window.addEventListener("scroll", onScrollHeader, { passive:true });
+  onScrollHeader();
+
+  var canHover = window.matchMedia("(hover:hover)").matches;
+  if(canHover){
+    var dot = document.getElementById("cursorDot");
+    window.addEventListener("mousemove", function(e){
+      dot.style.left = e.clientX + "px";
+      dot.style.top = e.clientY + "px";
+      dot.classList.add("visible");
+    }, { passive:true });
+    document.addEventListener("mouseleave", function(){ dot.classList.remove("visible"); });
+  }
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var els = document.querySelectorAll(".reveal");
+  if(reduce || !("IntersectionObserver" in window)){
+    els.forEach(function(e){ e.classList.add("visible"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("visible"); io.unobserve(en.target); }
+      });
+    }, { threshold:.12 });
+    els.forEach(function(e){ io.observe(e); });
+  }
+})();
+</script>
+</body>
+</html>

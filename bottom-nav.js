@@ -18,7 +18,6 @@
     about: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg>',
     why: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg>',
     contributors: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M8.2 11.2C10.02 11.2 11.5 9.72 11.5 7.9C11.5 6.08 10.02 4.6 8.2 4.6C6.38 4.6 4.9 6.08 4.9 7.9C4.9 9.72 6.38 11.2 8.2 11.2Z" stroke="currentColor" stroke-width="1.8"></path><path d="M3.6 19.4C4.08 16.72 5.88 15.2 8.2 15.2C10.52 15.2 12.32 16.72 12.8 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M15.8 10.7C17.3 10.7 18.5 9.5 18.5 8C18.5 6.5 17.3 5.3 15.8 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M14.8 15.4C17.35 15.58 19.05 17 19.5 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>',
-    caseStudy: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M6.2 4.8H17.8C18.68 4.8 19.4 5.52 19.4 6.4V17.6C19.4 18.48 18.68 19.2 17.8 19.2H6.2C5.32 19.2 4.6 18.48 4.6 17.6V6.4C4.6 5.52 5.32 4.8 6.2 4.8Z" stroke="currentColor" stroke-width="1.8"></path><path d="M8 9H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M8 12H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M8 15H12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>',
     search: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M15.8 15.8L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>'
   };
 
@@ -26,7 +25,7 @@
   const LIBRARY_PAGES = [
     "library.html", "calm.html", "focus.html", "sleep.html", "states.html",
     "healing-return-to-yourself.html", "healing-remember-your-value.html",
-    "complete.html", "body.html"
+    "complete.html", "body.html", "dream.html"
   ];
   const activeTab = (page === "" || page === "home.html") ? "home"
     : LIBRARY_PAGES.includes(page) ? "library"
@@ -98,12 +97,6 @@
           <span data-i18n="nav.contributors">Contributors</span>
         </a>
       </li>
-      <li>
-        <a href="case-study.html" class="bottom-sheet-link">
-          <span class="bottom-nav-icon">${ICONS.caseStudy}</span>
-          <span data-i18n="nav.case-study">Case study</span>
-        </a>
-      </li>
     </ul>`;
 
   document.body.appendChild(overlay);
@@ -172,8 +165,7 @@
     const PAGES = [
       { href: "about.html", key: "global_nav_about", fallback: "About", icon: ICONS.about, kw: "sobre projeto missao historia neuromedit about project mission story" },
       { href: "why.html", key: "global_nav_why", fallback: "Why", icon: ICONS.why, kw: "por que porque ciencia neurociencia cerebro mente psicologia evidencia beneficios why science neuroscience brain mind evidence benefits scienza neurociencia ciencia наука мозг" },
-      { href: "contributors.html", key: "nav.contributors", fallback: "Contributors", icon: ICONS.contributors, kw: "colaboradores equipe creditos pessoas contributors team credits people" },
-      { href: "case-study.html", key: "nav.case-study", fallback: "Case study", icon: ICONS.caseStudy, kw: "estudo de caso design ux ui processo pesquisa case study process research" }
+      { href: "contributors.html", key: "nav.contributors", fallback: "Contributors", icon: ICONS.contributors, kw: "colaboradores equipe creditos pessoas contributors team credits people" }
     ];
 
     const dock = document.createElement("form");

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroMedit — UX Case Study · Lucas Nunes</title>
+<meta name="description" content="How NeuroMedit was designed: research, benchmark, design principles, wireframes, user flow, and the aesthetic system behind a low cognitive-load meditation app.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NeuroMedit — UX Case Study · Lucas Nunes">
+<meta property="og:description" content="Designing a meditation app that treats calm as a structural problem, not a visual one.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%238A4726'/%3E%3Ctext x='50' y='69' font-size='58' font-family='Georgia,serif' fill='%23F7F5F1' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET
+   ============================================================ */
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ overflow-x:hidden; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; background:none; border:none; cursor:pointer; }
+a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+.skip-link{
+  position:absolute; left:1rem; top:-4rem; z-index:999;
+  background:var(--ink); color:var(--bg); font-weight:600; font-size:.92rem;
+  padding:.85rem 1.3rem; border-radius:8px; transition:top .3s var(--ease);
+}
+.skip-link:focus{ top:1rem; }
+
+@media (prefers-contrast:more){
+  .header-inner{ background:var(--bg); backdrop-filter:none; -webkit-backdrop-filter:none; }
+}
+
+/* ============================================================
+   TOKENS — mesma identidade do portfólio
+   ============================================================ */
+:root{
+  --bg:#F7F5F1;
+  --bg-alt:#EFEAE1;
+  --surface:#FFFFFF;
+  --ink:#17140F;
+  --ink-soft:#5B5648;
+  --ink-faint:#726A56;
+  --line:rgba(23,20,15,.12);
+  --accent:#8A4726;
+  --accent-soft:#EEDFCF;
+  --ok:#5C7A52;
+  --header-glass-bg:rgba(255,255,255,.5);
+  --header-glass-bg-scrolled:rgba(255,255,255,.8);
+  --header-border:rgba(23,20,15,.1);
+  --header-glow:0 14px 38px rgba(23,20,15,.09), 0 0 32px rgba(255,255,255,.35);
+  --serif:"Newsreader", Georgia, serif;
+  --sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+
+body{ font-family:var(--sans); background:var(--bg); color:var(--ink); line-height:1.5; font-weight:400; }
+::selection{ background:var(--accent-soft); }
+
+.container{ max-width:1080px; margin:0 auto; padding:0 1.5rem; }
+.container.narrow{ max-width:760px; }
+section{ padding:clamp(3.5rem,9vw,7rem) 0; }
+
+h1,h2,h3{ letter-spacing:-0.02em; color:var(--ink); font-weight:500; }
+em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--accent); }
+p{ color:var(--ink-soft); }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.78rem; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--ink-faint); font-weight:600; margin-bottom:1.1rem;
+}
+.eyebrow::before{ content:""; width:14px; height:1px; background:var(--accent); flex:none; }
+
+.button{
+  display:inline-flex; align-items:center; gap:.5rem;
+  font-size:.95rem; font-weight:600; padding:.9rem 1.5rem; min-height:48px;
+  border-radius:999px; transition:.3s var(--ease);
+}
+.button.primary{ background:var(--ink); color:var(--bg); }
+.button.primary:hover{ background:var(--accent); transform:translateY(-1px); }
+.button.ghost{ border:1px solid var(--line); color:var(--ink); }
+.button.ghost:hover{ border-color:var(--ink); background:var(--surface); }
+.link-arrow{ font-weight:600; font-size:.94rem; color:var(--accent); border-bottom:1px solid transparent; transition:border-color .25s; }
+.link-arrow:hover{ border-color:var(--accent); }
+
+/* ============================================================
+   HEADER — idêntico ao portfólio
+   ============================================================ */
+.site-header{ position:sticky; top:0; z-index:60; background:transparent; padding:.86rem 0 .68rem; transition:padding .42s var(--ease); }
+.site-header.scrolled{ padding:.52rem 0 .38rem; }
+.header-inner{
+  min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  border-radius:999px; border:1px solid var(--header-border);
+  padding:.55rem 1.05rem .55rem 1.2rem;
+  background:var(--header-glass-bg);
+  backdrop-filter:blur(22px) saturate(138%) brightness(1.04);
+  -webkit-backdrop-filter:blur(22px) saturate(138%) brightness(1.04);
+  box-shadow:var(--header-glow);
+  transition:background .42s var(--ease), box-shadow .42s var(--ease), padding .42s var(--ease);
+}
+.site-header.scrolled .header-inner{ background:var(--header-glass-bg-scrolled); }
+.wordmark{ font-size:1.05rem; font-weight:700; letter-spacing:-0.02em; white-space:nowrap; }
+.wordmark .accent{ color:var(--accent); }
+.main-nav{ display:flex; align-items:center; gap:2.2rem; }
+.main-nav a{ font-size:.92rem; color:var(--ink-soft); font-weight:500; transition:color .2s; }
+.main-nav a:hover{ color:var(--ink); }
+.main-nav .button{ padding:.6rem 1.1rem; font-size:.86rem; min-height:auto; }
+.main-nav a:not(.button){ padding:.6rem .3rem; display:inline-flex; align-items:center; min-height:44px; }
+@media (max-width:760px){ .main-nav a:not(.button){ display:none; } }
+
+/* ============================================================
+   SELETOR DE IDIOMA — mesmo componente do portfólio
+   ============================================================ */
+.header-language-slot{
+  display:inline-flex; flex-shrink:0; align-items:center; margin-left:-1rem;
+  position:relative; width:64px; height:38px;
+}
+/* Dentro do header, o pill sai do fluxo — expande por cima sem esticar o header */
+.header-language-slot .language-wrapper{
+  position:absolute; top:0; right:0;
+}
+.language-wrapper{
+  position:relative; display:inline-flex; flex-direction:column;
+  width:64px; max-height:38px; border-radius:999px;
+  background:color-mix(in srgb, var(--surface) 78%, transparent);
+  border:1px solid var(--line);
+  box-shadow:0 6px 18px rgba(23,20,15,.08);
+  overflow:hidden;
+  transition:max-height .42s var(--ease), background .3s ease, border-color .3s ease, box-shadow .3s ease;
+  z-index:80;
+}
+.language-trigger{
+  appearance:none; position:relative; z-index:2; flex:0 0 38px; width:100%; height:38px;
+  border:0; border-radius:0; display:inline-flex; align-items:center; justify-content:center;
+  gap:.28rem; color:var(--ink); background:transparent; cursor:pointer;
+}
+.language-trigger svg{ width:15px; height:15px; }
+.language-current{ font-size:.7rem; letter-spacing:.08em; line-height:1; font-weight:600; }
+.language-trigger:focus-visible{ outline:none; }
+.language-options{
+  width:100%; padding:0 .32rem .5rem; display:grid; align-items:center; gap:.22rem; box-sizing:border-box;
+  opacity:0; transform:translateY(-10px);
+  transition:opacity .3s ease, transform .35s var(--ease);
+}
+.language-wrapper.is-open{
+  max-height:260px;
+  background:var(--surface);
+  border-color:var(--ink-faint);
+  box-shadow:0 14px 34px rgba(23,20,15,.14);
+}
+.language-wrapper.is-open .language-options{ opacity:1; transform:translateY(0); }
+@media (hover:hover) and (pointer:fine){
+  .language-wrapper:hover{ max-height:260px; background:var(--surface); border-color:var(--ink-faint); box-shadow:0 14px 34px rgba(23,20,15,.14); }
+  .language-wrapper:hover .language-options{ opacity:1; transform:translateY(0); }
+}
+.language-options button{
+  appearance:none; min-width:46px; height:30px; border:0; border-radius:999px;
+  color:var(--ink-soft); background:transparent; font:inherit; font-size:.72rem; letter-spacing:.08em;
+  cursor:pointer; transition:background .18s ease, color .18s ease, transform .18s ease;
+}
+.language-options button:hover, .language-options button:focus-visible{
+  color:var(--ink); background:var(--bg-alt); outline:none;
+}
+.language-options button.is-active{ color:#fff; background-color:var(--accent); outline:none; }
+.language-options button:active{ transform:scale(.96); }
+@media (prefers-reduced-motion:reduce){
+  .language-wrapper, .language-trigger, .language-options, .language-options button{ transition:none; }
+}
+@media (max-width:480px){
+  .header-language-slot{ width:58px; height:34px; }
+  .language-wrapper{ width:58px; max-height:34px; }
+  .language-trigger{ flex:0 0 34px; height:34px; }
+  .language-wrapper.is-open{ max-height:240px; }
+}
+
+/* ============================================================
+   HERO DO ESTUDO
+   ============================================================ */
+.cs-hero{ padding-top:clamp(2.5rem,7vw,4rem); padding-bottom:clamp(2.5rem,5vw,3.5rem); border-bottom:1px solid var(--line); }
+.cs-back{ display:inline-flex; align-items:center; gap:.4rem; font-size:.86rem; color:var(--ink-faint); font-weight:500; margin-bottom:1.6rem; transition:color .2s; }
+.cs-back:hover{ color:var(--accent); }
+.cs-hero h1{ font-size:clamp(2.2rem,5.5vw,3.6rem); line-height:1.08; max-width:16ch; margin-bottom:1.1rem; }
+.cs-hero .subtitle{ font-family:var(--serif); font-style:italic; color:var(--accent); font-size:clamp(1.1rem,2.2vw,1.35rem); margin-bottom:1.2rem; max-width:32ch; }
+.cs-hero-body{ max-width:60ch; font-size:1.05rem; line-height:1.75; margin-bottom:1.8rem; }
+.cs-tags{ display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:2rem; }
+.cs-tags span{
+  font-size:.8rem; font-weight:600; color:var(--ink-soft);
+  padding:.4rem .85rem; border:1px solid var(--line); border-radius:999px; background:var(--surface);
+}
+.cs-hero-actions{ display:flex; gap:.9rem; flex-wrap:wrap; }
+
+/* ============================================================
+   BLOCOS DE TEXTO — pesquisa, síntese, mudanças, aprendizados
+   ============================================================ */
+.cs-section{ border-top:1px solid var(--line); }
+.cs-section:nth-child(even){ background:var(--bg-alt); }
+.cs-section h2{ font-size:clamp(1.6rem,3.6vw,2.4rem); max-width:22ch; margin-bottom:1.4rem; }
+.cs-section > .container > p, .cs-body p{ max-width:64ch; font-size:1.02rem; line-height:1.75; margin-bottom:1.1rem; }
+.cs-body p:last-child{ margin-bottom:0; }
+
+blockquote.cs-quote{
+  border-left:3px solid var(--accent); padding:.3rem 0 .3rem 1.5rem; margin:1.8rem 0;
+  font-family:var(--serif); font-style:italic; font-size:clamp(1.15rem,2.4vw,1.4rem); color:var(--ink); max-width:52ch;
+}
+
+/* estados do usuário */
+.cs-states-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.3rem; margin-top:2rem; }
+.cs-state-card{ background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:1.5rem; }
+.cs-state-card .idx{ font-size:.78rem; color:var(--ink-faint); font-weight:600; margin-bottom:.6rem; }
+.cs-state-card h3{ font-size:1.05rem; margin-bottom:.9rem; }
+.cs-state-card .row{ margin-bottom:.7rem; }
+.cs-state-card .row:last-child{ margin-bottom:0; }
+.cs-state-card .row h4{ font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); font-weight:600; margin-bottom:.2rem; }
+.cs-state-card .row p{ font-size:.9rem; line-height:1.55; margin-bottom:0; }
+@media (max-width:900px){ .cs-states-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:560px){ .cs-states-grid{ grid-template-columns:1fr; } }
+
+/* benchmark */
+.cs-benchmark-grid{ display:grid; grid-template-columns:.9fr 1.1fr; gap:2.5rem; align-items:start; margin-top:2rem; }
+.cs-bench-card{ background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:1.5rem; margin-bottom:1.2rem; }
+.cs-bench-card:last-child{ margin-bottom:0; }
+.cs-bench-card h4{ font-size:1rem; margin-bottom:.5rem; }
+.cs-bench-card p{ font-size:.92rem; line-height:1.6; margin-bottom:0; }
+.cs-bench-card.insight{ background:var(--accent-soft); border-color:transparent; }
+.cs-bench-card.insight h4{ color:var(--accent); }
+
+.cs-carousel{ position:relative; border-radius:6px; overflow:hidden; border:1px solid var(--line); background:var(--surface); user-select:none; }
+.cs-carousel-track{ display:flex; transition:transform .5s var(--ease); touch-action:pan-y; cursor:grab; }
+.cs-carousel-track.dragging{ transition:none; cursor:grabbing; }
+.cs-carousel-slide{ flex:0 0 100%; }
+.cs-carousel-slide img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; pointer-events:none; }
+.cs-carousel-cap{ padding:.9rem 1.1rem; font-size:.86rem; color:var(--ink-faint); border-top:1px solid var(--line); }
+.cs-carousel-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.85);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  font-size:1rem; color:var(--ink); transition:background .2s, transform .2s;
+}
+.cs-carousel-nav:hover{ background:var(--surface); }
+.cs-carousel-nav.prev{ left:.8rem; }
+.cs-carousel-nav.next{ right:.8rem; }
+.cs-carousel-dots{ display:flex; gap:.5rem; justify-content:center; padding:.9rem 0; }
+.cs-carousel-dots button{ width:8px; height:8px; border-radius:50%; background:var(--line); transition:background .2s, transform .2s; }
+.cs-carousel-dots button[aria-current="true"]{ background:var(--accent); transform:scale(1.2); }
+@media (max-width:900px){ .cs-benchmark-grid{ grid-template-columns:1fr; } }
+
+/* princípios */
+.cs-principles-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:1.1rem; margin-top:2rem;
+}
+.cs-principle-card{
+  display:flex; flex-direction:column; align-items:flex-start;
+  background:var(--surface); border:1px solid var(--line); border-radius:8px;
+  padding:1.5rem 1.3rem;
+}
+.cs-principle-card .icon{
+  width:30px; height:30px; color:var(--accent); margin-bottom:1rem; flex:none;
+}
+.cs-principle-card .icon svg{ width:100%; height:100%; }
+.cs-principle-card h4{
+  font-size:1rem; font-weight:600; letter-spacing:-0.01em; line-height:1.3;
+  color:var(--ink); margin-bottom:.55rem; flex:none;
+}
+.cs-principle-card p{ font-size:.88rem; line-height:1.6; margin-bottom:0; }
+@media (max-width:560px){
+  .cs-principles-grid{ grid-template-columns:1fr 1fr; gap:.9rem; }
+  .cs-principle-card{ padding:1.25rem 1.1rem; }
+}
+@media (max-width:380px){ .cs-principles-grid{ grid-template-columns:1fr; } }
+
+/* wireframes / exploração */
+.cs-wireframe-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; margin-top:2rem; }
+.cs-wireframe-card{ background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.cs-wireframe-card img{ width:100%; aspect-ratio:3/4; object-fit:cover; }
+.cs-wireframe-card .meta{ padding:1.1rem 1.2rem; }
+.cs-wireframe-card h4{ font-size:.94rem; margin-bottom:.4rem; }
+.cs-wireframe-card p{ font-size:.85rem; line-height:1.55; margin-bottom:0; }
+.cs-decision-card{ margin-top:1.4rem; background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:1.6rem 1.8rem; }
+.cs-decision-card h4{ font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:600; margin-bottom:.8rem; }
+@media (max-width:820px){ .cs-wireframe-grid{ grid-template-columns:1fr; } }
+
+/* fluxo do usuário — reaproveita padrão flow-step do portfólio */
+.flow-strip{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin:2rem 0 0; }
+.flow-step{
+  font-size:.82rem; font-weight:600; color:var(--ink); background:var(--surface);
+  border:1px solid var(--line); border-radius:999px; padding:.45rem .9rem; white-space:nowrap;
+}
+.flow-step.is-heavy{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.flow-step.is-calm{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+.flow-sep{ color:var(--ink-faint); font-size:.85rem; }
+.cs-flow-detail{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.1rem; margin-top:1.6rem; }
+.cs-flow-detail .step{ background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:1.1rem 1.2rem; }
+.cs-flow-detail .step .n{ font-size:.75rem; color:var(--accent); font-weight:700; margin-bottom:.4rem; }
+.cs-flow-detail .step h5{ font-size:.92rem; font-weight:600; margin-bottom:.3rem; color:var(--ink); }
+.cs-flow-detail .step p{ font-size:.84rem; line-height:1.5; margin-bottom:0; }
+
+/* processamento estético / sistema */
+.cs-aesthetic-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.6rem; margin-top:2rem; align-items:start; }
+.cs-concept-card{ background:var(--ink); color:var(--bg); border-radius:6px; padding:2rem; display:flex; flex-direction:column; justify-content:center; min-height:260px; }
+.cs-concept-card .k{ font-size:.78rem; text-transform:uppercase; letter-spacing:.12em; color:rgba(247,245,241,.6); font-weight:600; margin-bottom:.9rem; }
+.cs-concept-card h3{ font-family:var(--serif); font-style:italic; color:var(--bg); font-size:clamp(1.5rem,3vw,2rem); font-weight:400; }
+.cs-process-card{ background:var(--surface); border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.cs-process-card video{ width:100%; display:block; background:#000; }
+.cs-process-card .meta{ padding:1.3rem 1.4rem; }
+.cs-process-card h4{ font-size:.95rem; margin-bottom:.5rem; }
+.cs-process-card p{ font-size:.88rem; line-height:1.6; margin-bottom:0; }
+@media (max-width:820px){ .cs-aesthetic-grid{ grid-template-columns:1fr; } }
+
+.cs-equation{
+  margin-top:2rem; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:1rem;
+  padding:2rem 1.5rem; background:var(--surface); border:1px solid var(--line); border-radius:6px; text-align:center;
+}
+.cs-equation .term{ font-size:.92rem; font-weight:600; color:var(--ink); padding:.7rem 1.1rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+.cs-equation .op{ font-size:1.2rem; color:var(--ink-faint); }
+.cs-equation .result{ font-size:.92rem; font-weight:700; color:var(--bg); background:var(--accent); padding:.7rem 1.2rem; border-radius:8px; }
+
+.cs-rules-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:1.6rem; }
+.cs-rule-card{ padding:1.2rem 1.3rem; background:var(--bg-alt); border-radius:6px; }
+.cs-rule-card h5{ font-size:.9rem; margin-bottom:.35rem; color:var(--ink); }
+.cs-rule-card p{ font-size:.84rem; line-height:1.5; margin-bottom:0; }
+@media (max-width:820px){ .cs-rules-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:520px){ .cs-rules-grid{ grid-template-columns:1fr; } }
+
+.cs-logo-block{
+  margin-top:2rem; display:flex; flex-direction:column; align-items:center; text-align:center; gap:1rem;
+  padding:3rem 1.5rem; background:var(--surface); border:1px solid var(--line); border-radius:6px;
+}
+.cs-logo-block img{ width:64px; height:64px; }
+.cs-logo-block .word{ font-size:1.3rem; font-weight:700; letter-spacing:-0.02em; }
+.cs-logo-block .word .accent{ color:var(--accent); }
+.cs-logo-block p{ max-width:44ch; font-size:.92rem; margin-bottom:0; }
+
+/* aprendizados */
+.learnings{ list-style:none; margin-top:1.6rem; display:grid; gap:.7rem; max-width:64ch; }
+.learnings li{ font-size:.98rem; line-height:1.6; padding-left:1.4rem; position:relative; color:var(--ink-soft); }
+.learnings li::before{ content:"—"; position:absolute; left:0; color:var(--accent); }
+
+/* encerramento */
+.cs-final{ text-align:center; }
+.cs-final .container.narrow{ margin:0 auto; }
+.cs-final h2{ font-size:clamp(1.7rem,4vw,2.6rem); margin-bottom:1.3rem; }
+.cs-final p{ font-size:1.02rem; line-height:1.75; margin-bottom:1.1rem; }
+.cs-opportunity{
+  margin:1.8rem auto; max-width:52ch; text-align:left; padding:1.5rem 1.7rem;
+  background:var(--accent-soft); border-radius:6px;
+}
+.cs-opportunity p{ font-size:.95rem; color:var(--ink); margin-bottom:0; }
+.cs-final-actions{ display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin:1.6rem 0 2rem; }
+.cs-sign{ font-family:var(--serif); font-style:italic; color:var(--accent); font-size:1.15rem; }
+
+footer{ border-top:1px solid var(--line); padding:2rem 0; text-align:center; }
+footer p{ font-size:.85rem; color:var(--ink-faint); }
+
+/* reveal */
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.visible{ opacity:1; transform:none; }
+
+@media (max-width:480px){
+  .container{ padding:0 1.15rem; }
+  .cs-hero-actions .button, .cs-final-actions .button{ width:100%; justify-content:center; }
+  .cs-hero-actions, .cs-final-actions{ flex-direction:column; }
+  .header-inner{ min-height:56px; padding:.4rem .4rem .4rem 1rem; }
+  .wordmark{ font-size:.98rem; }
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{ opacity:1; transform:none; transition:none; }
+  html{ scroll-behavior:auto; }
+  .cs-carousel-track{ transition:none; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main" data-i18n="common_skip">Skip to content</a>
+
+<!-- ================= HEADER ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="wordmark" href="index.html">Lucas&nbsp;<span class="accent">Nunes</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html#casos" data-i18n="common_nav_casos">Casos</a>
+      <a href="index.html#sobre" data-i18n="common_nav_sobre">Sobre</a>
+      <a class="button ghost" href="index.html#contato" data-i18n="common_nav_contato">Contato</a>
+      <div class="header-language-slot" data-language-host></div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ================= HERO ================= -->
+<section class="cs-hero">
+  <div class="container">
+    <a class="cs-back reveal" href="index.html#case-neuromedit" data-i18n="cs_back">← Back to portfolio</a>
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_hero">UX Case Study</span>
+    <h1 class="reveal">NeuroMedit</h1>
+    <p class="subtitle reveal" data-i18n="cs_subtitle">Designing a low cognitive-load meditation experience.</p>
+    <p class="cs-hero-body reveal" data-i18n="cs_hero_body">Most meditation apps ask you to relax — and overload you with choices before you get there. This is the process behind an app that treats the moment before meditation as part of the meditation itself.</p>
+    <div class="cs-tags reveal">
+      <span data-i18n="cs_tag_ux">UX Design</span>
+      <span data-i18n="cs_tag_emotional">Emotional Design</span>
+      <span data-i18n="cs_tag_cognitive">Cognitive Load</span>
+      <span data-i18n="cs_tag_frontend">Front-End</span>
+    </div>
+    <div class="cs-hero-actions reveal">
+      <a class="button primary" href="#research" data-i18n="cs_cta_explore">Explore the process ↓</a>
+      <a class="button ghost" href="https://neuromedit.com" target="_blank" rel="noopener" data-i18n="cs_cta_live">View live project ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 01 RESEARCH / FRAMING ================= -->
+<section class="cs-section" id="research">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_01">01 · Research &amp; Framing</span>
+    <h2 class="reveal" data-i18n="cs_h2_01">Starting with the wrong question</h2>
+    <div class="cs-body reveal">
+      <p data-i18n="cs_01_p1">Meditation apps are usually judged by their content library — how many sessions, how many voices, how many themes. I started there too, and it was the wrong place to start.</p>
+      <p data-i18n="cs_01_p2">The real friction wasn't the content. It was everything a stressed person has to do before reaching it: open the app, read a menu, compare categories, make a decision. For someone who opened the app because they were already overwhelmed, that sequence is a second source of overwhelm.</p>
+      <p data-i18n="cs_01_p3">So I reframed the problem. Instead of asking "what content should this app have," I asked "what does someone in a dysregulated state need from an interface in the first ten seconds." That question shaped everything that followed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 RESEARCH SYNTHESIS ================= -->
+<section class="cs-section" id="synthesis">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_02">02 · Research Synthesis</span>
+    <h2 class="reveal" data-i18n="cs_h2_02">Calm is a structural problem, not a visual one</h2>
+    <div class="cs-body reveal">
+      <p data-i18n="cs_02_p1">Soft colors and slow animations can suggest calm, but they don't produce it if the person still has to think, choose, and navigate before their first breath. Visual calm and cognitive calm are different things, and most meditation products only design for the first one.</p>
+      <blockquote class="cs-quote" data-i18n="cs_quote">Calm isn't a color palette. It's the absence of unnecessary decisions.</blockquote>
+      <p data-i18n="cs_02_p2">That insight became the design thesis for NeuroMedit: reduce the number of decisions between "I opened the app" and "I am breathing," and treat every screen in between as a transition, not a destination.</p>
+      <p data-i18n="cs_02_p3">This meant looking past aesthetics and mapping the emotional and cognitive state of the person on the other side of the screen — before designing a single component.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USER STATES ================= -->
+<section class="cs-section">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_states">User States</span>
+    <h2 class="reveal" data-i18n="cs_h2_states">Who is actually opening this app</h2>
+    <p class="reveal" style="max-width:64ch;font-size:1.02rem;line-height:1.75;" data-i18n="cs_states_intro">Four recurring states kept surfacing in research — each with a different emotional entry point, a different cognitive pain point, and a different opportunity for the interface to help rather than add friction.</p>
+    <div class="cs-states-grid">
+      <div class="cs-state-card reveal">
+        <div class="idx">01</div>
+        <h3 data-i18n="cs_state1_title">Overwhelmed</h3>
+        <div class="row"><h4 data-i18n="cs_label_emotional">Emotional state</h4><p data-i18n="cs_state1_emotional">Anxious, scattered, mentally "loud."</p></div>
+        <div class="row"><h4 data-i18n="cs_label_cognitive">Cognitive pain point</h4><p data-i18n="cs_state1_cognitive">Any menu feels like one more demand.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_opportunity">UX opportunity</h4><p data-i18n="cs_state1_opportunity">Remove choice entirely at entry — offer one obvious next step.</p></div>
+      </div>
+      <div class="cs-state-card reveal">
+        <div class="idx">02</div>
+        <h3 data-i18n="cs_state2_title">Depleted</h3>
+        <div class="row"><h4 data-i18n="cs_label_emotional">Emotional state</h4><p data-i18n="cs_state2_emotional">Tired, low energy, little patience.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_cognitive">Cognitive pain point</h4><p data-i18n="cs_state2_cognitive">Reading and comparing options costs effort they don't have.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_opportunity">UX opportunity</h4><p data-i18n="cs_state2_opportunity">Short, low-effort interactions with generous whitespace.</p></div>
+      </div>
+      <div class="cs-state-card reveal">
+        <div class="idx">03</div>
+        <h3 data-i18n="cs_state3_title">Skeptical</h3>
+        <div class="row"><h4 data-i18n="cs_label_emotional">Emotional state</h4><p data-i18n="cs_state3_emotional">Curious but guarded, unsure it will help.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_cognitive">Cognitive pain point</h4><p data-i18n="cs_state3_cognitive">Overly clinical or overly mystical language breaks trust.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_opportunity">UX opportunity</h4><p data-i18n="cs_state3_opportunity">Plain, grounded language and visible transparency about the method.</p></div>
+      </div>
+      <div class="cs-state-card reveal">
+        <div class="idx">04</div>
+        <h3 data-i18n="cs_state4_title">Returning</h3>
+        <div class="row"><h4 data-i18n="cs_label_emotional">Emotional state</h4><p data-i18n="cs_state4_emotional">Familiar with the app, seeking routine.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_cognitive">Cognitive pain point</h4><p data-i18n="cs_state4_cognitive">Friction in getting back to what worked before.</p></div>
+        <div class="row"><h4 data-i18n="cs_label_opportunity">UX opportunity</h4><p data-i18n="cs_state4_opportunity">Fast re-entry to recent or favorite sessions.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 BENCHMARK ================= -->
+<section class="cs-section" id="benchmark">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_03">03 · Benchmark</span>
+    <h2 class="reveal" data-i18n="cs_h2_03">Looking at Calm and Headspace with a critical eye</h2>
+    <p class="reveal" style="max-width:64ch;font-size:1.02rem;line-height:1.75;" data-i18n="cs_03_intro">Both are well-crafted products with strong visual systems. The gap I found wasn't in polish — it was in what happens before the first breath.</p>
+    <div class="cs-benchmark-grid">
+      <div class="reveal">
+        <div class="cs-bench-card">
+          <h4 data-i18n="cs_bench_calm_h">Calm</h4>
+          <p data-i18n="cs_bench_calm_p">A rich, editorial home screen with multiple content rails. Beautiful, but it asks for a decision before any practice begins — the entry point is a library, not a breath.</p>
+        </div>
+        <div class="cs-bench-card">
+          <h4 data-i18n="cs_bench_headspace_h">Headspace</h4>
+          <p data-i18n="cs_bench_headspace_p">Friendlier and more guided than Calm, with onboarding that nudges toward a first session. Still, the main navigation surfaces categories and courses before any calming action.</p>
+        </div>
+        <div class="cs-bench-card insight">
+          <h4 data-i18n="cs_bench_insight_h">Insight</h4>
+          <p data-i18n="cs_bench_insight_p">Neither product treats the pre-session moment as part of the emotional arc. Both optimize the library. NeuroMedit optimizes the threshold.</p>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="cs-carousel" id="benchCarousel">
+          <div class="cs-carousel-track" id="benchTrack">
+            <div class="cs-carousel-slide"><img src="assets/calm-entry.jpg" alt="Calm app home screen, showing multiple content rails and categories" data-i18n="cs_carousel_alt_calm" data-i18n-attr="alt"></div>
+            <div class="cs-carousel-slide"><img src="assets/headspace-entry.jpg" alt="Headspace app home screen, showing onboarding and course categories" data-i18n="cs_carousel_alt_headspace" data-i18n-attr="alt"></div>
+          </div>
+          <button class="cs-carousel-nav prev" id="benchPrev" aria-label="Previous image" data-i18n="cs_carousel_prev_label" data-i18n-attr="aria-label">‹</button>
+          <button class="cs-carousel-nav next" id="benchNext" aria-label="Next image" data-i18n="cs_carousel_next_label" data-i18n-attr="aria-label">›</button>
+          <p class="cs-carousel-cap" id="benchCap" data-i18n="cs_carousel_cap_calm">Calm — entry screen</p>
+          <div class="cs-carousel-dots" id="benchDots"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 04 DESIGN PRINCIPLES ================= -->
+<section class="cs-section" id="principles">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_04">04 · Design Principles</span>
+    <h2 class="reveal" data-i18n="cs_h2_04">Five rules that shaped every screen</h2>
+    <div class="cs-principles-grid">
+      <div class="cs-principle-card reveal">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg></span>
+        <h4 data-i18n="cs_p1_title">One decision per screen</h4>
+        <p data-i18n="cs_p1_desc">Never ask for two choices when one will do.</p>
+      </div>
+      <div class="cs-principle-card reveal">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.2 20 8.6 12 13 4 8.6 12 4.2z"/><path d="M4 12.4l8 4.4 8-4.4"/><path d="M4 16.2l8 4.4 8-4.4"/></svg></span>
+        <h4 data-i18n="cs_p2_title">Progressive disclosure</h4>
+        <p data-i18n="cs_p2_desc">Reveal complexity only when the user is ready for it.</p>
+      </div>
+      <div class="cs-principle-card reveal">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 13c1.8-4.5 3.6-4.5 5.4 0s3.6 4.5 5.4 0 3.6-4.5 5.4 0 3.6-4.5 5.4 0"/></svg></span>
+        <h4 data-i18n="cs_p3_title">Breath as transition</h4>
+        <p data-i18n="cs_p3_desc">Loading and navigation moments double as regulation cues.</p>
+      </div>
+      <div class="cs-principle-card reveal">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="4"/></svg></span>
+        <h4 data-i18n="cs_p4_title">Generous whitespace</h4>
+        <p data-i18n="cs_p4_desc">Space is a feature for a depleted nervous system, not decoration.</p>
+      </div>
+      <div class="cs-principle-card reveal">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 5.5h15v10h-8.2l-3.8 3.6v-3.6h-3z"/><path d="M8.2 10.2h7.6M8.2 12.9h5"/></svg></span>
+        <h4 data-i18n="cs_p5_title">Honest language</h4>
+        <p data-i18n="cs_p5_desc">No clinical jargon, no mystical overreach — just plain, grounded words.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 EXPLORATION / WIREFRAMES ================= -->
+<section class="cs-section" id="exploration">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_05">05 · Exploration</span>
+    <h2 class="reveal" data-i18n="cs_h2_05">From dense wireframes to a single threshold</h2>
+    <div class="cs-wireframe-grid">
+      <div class="cs-wireframe-card reveal">
+        <img src="assets/before.jpg" alt="Early wireframe with a dense grid of categories and filters" data-i18n="cs_wf1_alt" data-i18n-attr="alt">
+        <div class="meta"><h4 data-i18n="cs_wf1_title">Before</h4><p data-i18n="cs_wf1_desc">The first pass mirrored the category-first pattern of Calm and Headspace — familiar, but still frontloaded with decisions.</p></div>
+      </div>
+      <div class="cs-wireframe-card reveal">
+        <img src="assets/entry.jpg" alt="Simplified entry screen wireframe with a single primary action" data-i18n="cs_wf2_alt" data-i18n-attr="alt">
+        <div class="meta"><h4 data-i18n="cs_wf2_title">Entry</h4><p data-i18n="cs_wf2_desc">Stripped down to one action: begin. Categories moved a layer deeper, reachable but not mandatory.</p></div>
+      </div>
+      <div class="cs-wireframe-card reveal">
+        <img src="assets/airlock.jpg" alt="Wireframe of the airlock breathing transition screen" data-i18n="cs_wf3_alt" data-i18n-attr="alt">
+        <div class="meta"><h4 data-i18n="cs_wf3_title">Airlock</h4><p data-i18n="cs_wf3_desc">A new screen type: a breathing transition between "arriving" and "practicing," instead of a menu.</p></div>
+      </div>
+    </div>
+    <div class="cs-decision-card reveal">
+      <h4 data-i18n="cs_decision_h">Decision Notes</h4>
+      <p data-i18n="cs_decision_p">The biggest shift wasn't visual — it was structural. I removed an entire navigation layer and replaced it with a single guided step. Early testers consistently described the airlock screen as "the moment I actually started to relax," which confirmed the transition itself needed to be designed, not skipped.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 06 USER FLOW ================= -->
+<section class="cs-section" id="flow">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_06">06 · User Flow</span>
+    <h2 class="reveal" data-i18n="cs_h2_06">Seven steps, one continuous arc</h2>
+    <p class="reveal" style="max-width:64ch;font-size:1.02rem;line-height:1.75;" data-i18n="cs_06_intro">Every step was designed as part of the same emotional curve — from overwhelmed to calm — rather than as separate features.</p>
+    <div class="flow-strip reveal">
+      <span class="flow-step is-heavy" data-i18n="idx_flow_1">Overwhelmed</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step" data-i18n="idx_flow_2">Arrival</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step" data-i18n="idx_flow_3">Breath</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step" data-i18n="idx_flow_4">Airlock</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step" data-i18n="idx_flow_5">Meditation</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step" data-i18n="idx_flow_6">Reflection</span><span class="flow-sep" aria-hidden="true">→</span>
+      <span class="flow-step is-calm" data-i18n="idx_flow_7">Calm</span>
+    </div>
+    <div class="cs-flow-detail reveal">
+      <div class="step"><div class="n">01</div><h5 data-i18n="idx_flow_1">Overwhelmed</h5><p data-i18n="cs_flowd1_desc">The state the person arrives in — before opening the app.</p></div>
+      <div class="step"><div class="n">02</div><h5 data-i18n="idx_flow_2">Arrival</h5><p data-i18n="cs_flowd2_desc">One clear surface, one obvious next step. No menu.</p></div>
+      <div class="step"><div class="n">03</div><h5 data-i18n="idx_flow_3">Breath</h5><p data-i18n="cs_flowd3_desc">A guided breath begins immediately, before any content choice.</p></div>
+      <div class="step"><div class="n">04</div><h5 data-i18n="idx_flow_4">Airlock</h5><p data-i18n="cs_flowd4_desc">The transition screen — pacing the shift from navigating to practicing.</p></div>
+      <div class="step"><div class="n">05</div><h5 data-i18n="idx_flow_5">Meditation</h5><p data-i18n="cs_flowd5_desc">The guided session itself, free of interface noise.</p></div>
+      <div class="step"><div class="n">06</div><h5 data-i18n="idx_flow_6">Reflection</h5><p data-i18n="cs_flowd6_desc">A brief, optional moment to notice what shifted.</p></div>
+      <div class="step"><div class="n">07</div><h5 data-i18n="idx_flow_7">Calm</h5><p data-i18n="cs_flowd7_desc">The intended end state — and the app's only real success metric.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 AESTHETIC PROCESSING ================= -->
+<section class="cs-section" id="aesthetic">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_07">07 · Aesthetic Processing</span>
+    <h2 class="reveal" data-i18n="cs_h2_07">Turning a principle into a symbol</h2>
+    <div class="cs-aesthetic-grid">
+      <div class="cs-concept-card reveal">
+        <span class="k" data-i18n="cs_concept_k">Concept</span>
+        <h3 data-i18n="cs_concept_h3">Return to calm</h3>
+      </div>
+      <div class="cs-process-card reveal">
+        <video src="assets/processo.mp4" class="brand-process-video" autoplay muted loop playsinline></video>
+        <div class="meta">
+          <h4 data-i18n="cs_process_h4">Symbol exploration</h4>
+          <p data-i18n="cs_process_p">The visual identity started from the same breathing curve used in the airlock transition — a single continuous line that widens and settles, echoing an inhale and exhale.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-equation reveal">
+      <span class="term" data-i18n="cs_eq_term1">Breath curve</span>
+      <span class="op" aria-hidden="true">+</span>
+      <span class="term" data-i18n="cs_eq_term2">Circular calm</span>
+      <span class="op" aria-hidden="true">+</span>
+      <span class="term" data-i18n="cs_eq_term3">Negative space</span>
+      <span class="op" aria-hidden="true">=</span>
+      <span class="result" data-i18n="cs_eq_result">NeuroMedit Symbol</span>
+    </div>
+
+    <div class="cs-rules-grid">
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule1_h">No sharp corners</h5><p data-i18n="cs_rule1_p">Every shape resolves into a curve — nothing in the system reads as abrupt.</p></div>
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule2_h">Single accent per screen</h5><p data-i18n="cs_rule2_p">Color is used to guide attention, never to decorate.</p></div>
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule3_h">Motion is slow by default</h5><p data-i18n="cs_rule3_p">Transitions run long enough to be felt, not just seen.</p></div>
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule4_h">Typography breathes</h5><p data-i18n="cs_rule4_p">Generous line-height throughout — text is never dense.</p></div>
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule5_h">Silence is allowed</h5><p data-i18n="cs_rule5_p">Empty space is a valid, intentional state — not a gap to fill.</p></div>
+      <div class="cs-rule-card reveal"><h5 data-i18n="cs_rule6_h">Consistency over novelty</h5><p data-i18n="cs_rule6_p">Familiar patterns reduce the cognitive cost of returning.</p></div>
+    </div>
+
+    <div class="cs-logo-block reveal">
+      <img src="assets/neuromedit-symbol-vector.svg" alt="NeuroMedit symbol — a continuous breathing curve" data-i18n="cs_logo_alt" data-i18n-attr="alt">
+      <span class="word">Neuro<span class="accent">Medit</span></span>
+      <p data-i18n="cs_logo_p">Final identity: a mark built from the same principle as the product — one continuous, unhurried line.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT CHANGED ================= -->
+<section class="cs-section" id="shift">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_shift">What Changed During the Process</span>
+    <h2 class="reveal" data-i18n="cs_h2_shift">From feature list to emotional arc</h2>
+    <div class="cs-body reveal">
+      <p data-i18n="cs_shift_p1">The project started as a fairly conventional content-app brief: build a library, add a player, ship categories. The shift happened when I stopped designing screens and started designing a sequence — treating the whole first-time experience as one continuous emotional arc rather than a set of independent features.</p>
+      <p data-i18n="cs_shift_p2">That reframing cut scope in places (a full content-discovery system was postponed) and added scope in others (the airlock transition didn't exist in the original plan at all). Both decisions came directly from watching where people actually needed help.</p>
+      <p data-i18n="cs_shift_p3">By the end, the interface had fewer screens than the first draft, not more — and testers reached their first guided breath in roughly a third of the taps.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KEY LEARNINGS ================= -->
+<section class="cs-section" id="learnings">
+  <div class="container">
+    <span class="eyebrow reveal" data-i18n="cs_eyebrow_learnings">Key Learnings</span>
+    <h2 class="reveal" data-i18n="cs_h2_learnings">What this project taught me</h2>
+    <ul class="learnings reveal">
+      <li data-i18n="cs_learn1">Calm can be designed structurally, not just visually — the sequence of steps matters as much as any color.</li>
+      <li data-i18n="cs_learn2">Cognitive overload increases resistance even when the underlying intention is good.</li>
+      <li data-i18n="cs_learn3">Simplicity isn't emptiness — it's clarity achieved by removing what doesn't serve the moment.</li>
+      <li data-i18n="cs_learn4">A transition screen can do more emotional work than a feature screen, if it's designed with the same care.</li>
+      <li data-i18n="cs_learn5">Testing with people in an actual stressed state reveals friction that usability testing in a neutral mood never will.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= THANK YOU ================= -->
+<section class="cs-final">
+  <div class="container narrow">
+    <span class="eyebrow reveal" style="justify-content:center;" data-i18n="cs_eyebrow_thanks">Thank You</span>
+    <h2 class="reveal" data-i18n="cs_h2_thanks">For reading this far</h2>
+    <p class="reveal" data-i18n="cs_thanks_p1">This case study is as much about a design process as it is about a personal one — learning to treat restraint as a design decision, not a limitation.</p>
+    <p class="reveal" data-i18n="cs_thanks_p2">NeuroMedit is live today, built and shipped solo: research, visual system, and front-end. It's still growing, and every session it guides is a small test of whether the original thesis holds.</p>
+    <div class="cs-opportunity reveal">
+      <p data-i18n="cs_opportunity_p">If you're building a product where the first few seconds matter — onboarding, wellness, or anything where someone arrives overwhelmed — I'd like to hear about it.</p>
+    </div>
+    <div class="cs-final-actions reveal">
+      <a class="button primary" href="https://calendly.com/kaullyano/30min?back=1&month=2026-07" target="_blank" rel="noopener" data-i18n="cs_cta_talk">Let's talk</a>
+      <a class="button ghost" href="index.html#contato" data-i18n="cs_cta_contact">Contact via portfolio</a>
+    </div>
+    <p class="cs-sign reveal" data-i18n="cs_sign" data-i18n-html>With gratitude,<br>Lucas Nunes</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p data-i18n="cs_footer">© 2026 Lucas Nunes · UX case study, adapted from the original NeuroMedit design documentation.</p>
+  </div>
+</footer>
+
+<script src="i18n-portfolio.js"></script>
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* header scrolled state */
+  var header = document.getElementById("siteHeader");
+  function onScroll(){
+    if(window.scrollY > 40) header.classList.add("scrolled");
+    else header.classList.remove("scrolled");
+  }
+  document.addEventListener("scroll", onScroll, { passive:true });
+  onScroll();
+
+  /* reveal on scroll */
+  var revealEls = document.querySelectorAll(".reveal");
+  if(reduceMotion || !("IntersectionObserver" in window)){
+    revealEls.forEach(function(el){ el.classList.add("visible"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add("visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold:.12, rootMargin:"0px 0px -40px 0px" });
+    revealEls.forEach(function(el){ io.observe(el); });
+  }
+
+  /* pause background video under reduced motion */
+  if(reduceMotion){
+    document.querySelectorAll(".brand-process-video").forEach(function(v){
+      v.removeAttribute("autoplay");
+      v.pause();
+    });
+  }
+
+  /* benchmark carousel */
+  var track = document.getElementById("benchTrack");
+  var dotsWrap = document.getElementById("benchDots");
+  var prevBtn = document.getElementById("benchPrev");
+  var nextBtn = document.getElementById("benchNext");
+  var cap = document.getElementById("benchCap");
+  if(track){
+    var slides = track.querySelectorAll(".cs-carousel-slide");
+    var captionKeys = ["cs_carousel_cap_calm", "cs_carousel_cap_headspace"];
+    var index = 0;
+
+    slides.forEach(function(_, i){
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("aria-label", "Go to image " + (i + 1));
+      dot.setAttribute("aria-current", i === 0 ? "true" : "false");
+      dot.addEventListener("click", function(){ goTo(i); });
+      dotsWrap.appendChild(dot);
+    });
+    var dots = dotsWrap.querySelectorAll("button");
+
+    function render(){
+      track.style.transform = "translateX(-" + (index * 100) + "%)";
+      dots.forEach(function(d, i){ d.setAttribute("aria-current", i === index ? "true" : "false"); });
+      cap.textContent = (window.PortfolioI18n && window.PortfolioI18n.t) ? window.PortfolioI18n.t(captionKeys[index]) : cap.textContent;
+    }
+    function goTo(i){
+      index = (i + slides.length) % slides.length;
+      render();
+    }
+    prevBtn.addEventListener("click", function(){ goTo(index - 1); });
+    nextBtn.addEventListener("click", function(){ goTo(index + 1); });
+    window.addEventListener("portfolio:languagechange", render);
+
+    /* pointer-based swipe */
+    var startX = 0, deltaX = 0, dragging = false;
+    track.addEventListener("pointerdown", function(e){
+      dragging = true; startX = e.clientX; deltaX = 0;
+      track.classList.add("dragging");
+      track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener("pointermove", function(e){
+      if(!dragging) return;
+      deltaX = e.clientX - startX;
+      track.style.transform = "translateX(calc(-" + (index * 100) + "% + " + deltaX + "px))";
+    });
+    function endDrag(){
+      if(!dragging) return;
+      dragging = false;
+      track.classList.remove("dragging");
+      if(Math.abs(deltaX) > 40){
+        goTo(index + (deltaX < 0 ? 1 : -1));
+      } else {
+        render();
+      }
+      deltaX = 0;
+    }
+    track.addEventListener("pointerup", endDrag);
+    track.addEventListener("pointercancel", endDrag);
+    track.addEventListener("pointerleave", function(){ if(dragging) endDrag(); });
+
+    render();
+  }
+})();
+</script>
+</body>
+</html>

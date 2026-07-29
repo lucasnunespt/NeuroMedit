@@ -19,7 +19,7 @@
   --text-soft: #66706f;
   --line: rgba(31, 35, 38, 0.08);
   --accent: #8aa5a0;
-  --accent-dark: #708f89;
+  --accent-dark: #517067;
   --shadow-soft: 0 10px 24px rgba(31, 35, 38, 0.05);
   --shadow-card: 0 14px 34px rgba(31, 35, 38, 0.06);
   --radius-lg: 28px;
@@ -142,7 +142,7 @@ body.theme-morning.feedback-atmosphere {
   --link-text: #3f3024;
   --line: rgba(116, 83, 47, 0.13);
   --accent: #c88f53;
-  --accent-dark: #9e7042;
+  --accent-dark: #8a5d34;
   --button-text: #2d261f;
   background: #f8f0e4;
 }
@@ -160,7 +160,7 @@ body.theme-day.feedback-atmosphere {
   --link-text: #3e3325;
   --line: rgba(112, 86, 52, 0.12);
   --accent: #b9905e;
-  --accent-dark: #8d704d;
+  --accent-dark: #7d6443;
   --button-text: #2a2620;
   background: #fbf6eb;
 }

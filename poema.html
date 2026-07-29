@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A árvore — Lucas</title>
+<meta name="description" content="O poema que guarda a raiz do NeuroMedit.">
+<link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+
+:root{
+  --bg:#f8f0e4;
+  --bg-soft:#fff8ed;
+  --text:#2d261f;
+  --text-soft:rgba(74,60,45,.75);
+  --text-faint:rgba(74,60,45,.32);
+  --line:rgba(116,83,47,.13);
+  --accent:#c88f53;
+  --accent-dark:#9e7042;
+  --button-text:#2d261f;
+  --shadow-soft:0 12px 28px rgba(94,66,34,.1);
+  --ease-premium:cubic-bezier(0.22,1,0.36,1);
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,ui-sans-serif,Arial,sans-serif;
+  background:linear-gradient(to bottom, var(--bg) 0%, var(--bg-soft) 100%);
+  color:var(--text);
+  line-height:1.6;
+}
+::selection{ background:rgba(200,143,83,.28); }
+
+/* fundo — mesmos blobs do portfólio */
+.bg-blobs{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+.blob{ position:absolute; border-radius:50%; filter:blur(80px); }
+.blob-amber{ width:560px; height:560px; top:-160px; left:-140px; opacity:.4; background:radial-gradient(circle, rgba(200,143,83,.55), transparent 70%); animation:driftA 40s ease-in-out infinite; }
+.blob-sage{ width:480px; height:480px; bottom:-140px; right:-100px; opacity:.28; background:radial-gradient(circle, rgba(138,165,160,.5), transparent 70%); animation:driftB 46s ease-in-out infinite; }
+@keyframes driftA{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(46px,-34px) scale(1.08); } }
+@keyframes driftB{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-40px,28px) scale(1.05); } }
+
+/* voltar — discreto, sem header pesado */
+.back-link{
+  position:fixed; top:1.5rem; left:1.5rem; z-index:20;
+  display:flex; align-items:center; gap:.5rem;
+  padding:.6rem 1.1rem; border-radius:999px;
+  background:rgba(255,252,245,.55); border:1px solid var(--line);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  font-size:.88rem; font-weight:600; color:var(--text-soft);
+  box-shadow:0 8px 20px rgba(94,66,34,.06);
+  transition:.25s var(--ease-premium);
+}
+.back-link:hover{ color:var(--text); background:rgba(255,252,245,.8); transform:translateY(-1px); }
+
+/* abertura */
+.opening{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:6rem 1.5rem 2rem; position:relative;
+}
+.brand-watermark{ position:absolute; width:360px; opacity:.1; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+.eyebrow{
+  font-size:.8rem; text-transform:uppercase; letter-spacing:.1em; font-weight:600;
+  color:var(--accent-dark); margin-bottom:1.1rem; position:relative; z-index:1;
+}
+.opening h1{
+  font-size:clamp(2.1rem,5vw,3.4rem); font-weight:500; letter-spacing:-0.02em;
+  line-height:1.15; max-width:16ch; margin-bottom:1.2rem; position:relative; z-index:1;
+}
+.opening .lede{
+  max-width:42ch; font-size:1.05rem; color:var(--text-soft); line-height:1.7;
+  margin-bottom:2.6rem; position:relative; z-index:1;
+}
+.scroll-hint{
+  font-size:.82rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint);
+  position:relative; z-index:1;
+}
+.scroll-hint::after{
+  content:""; display:block; width:1px; height:44px; margin:14px auto 0;
+  background:linear-gradient(var(--text-faint), transparent);
+  animation:drip 2.8s ease-in-out infinite;
+}
+@keyframes drip{ 0%,100%{ opacity:.3; transform:scaleY(.7); transform-origin:top; } 50%{ opacity:1; transform:scaleY(1); } }
+
+/* poema — um "respiro" por vez */
+.poem{ position:relative; z-index:1; }
+.beat{
+  min-height:76vh; display:flex; align-items:center; justify-content:center;
+  padding:3rem 1.5rem;
+}
+.beat p{
+  max-width:38ch; text-align:center;
+  font-size:clamp(1.3rem,2.6vw,1.85rem); line-height:1.65; font-weight:400;
+  color:var(--text-faint);
+  transition:opacity .9s var(--ease-premium), color .9s var(--ease-premium), transform .9s var(--ease-premium);
+  transform:translateY(14px);
+}
+.beat.active p{ color:var(--text); transform:translateY(0); }
+.beat.active-past p{ color:var(--text-soft); }
+
+/* fecho */
+.closing{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:2rem 1.5rem 6rem; position:relative; z-index:1;
+}
+.closing .quote{
+  max-width:34ch; font-size:clamp(1.4rem,3vw,2rem); font-weight:500; letter-spacing:-0.01em;
+  line-height:1.4; color:var(--text); margin-bottom:1rem;
+}
+.closing .quote-note{
+  max-width:44ch; font-size:1rem; color:var(--text-soft); line-height:1.7; margin-bottom:2.4rem;
+}
+.closing-actions{ display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+.button{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:50px; padding:.95rem 1.7rem; border-radius:999px;
+  border:1px solid transparent; font-size:1rem; font-weight:600;
+  cursor:pointer; white-space:nowrap; transition:.25s var(--ease-premium);
+}
+.primary-button{ background:var(--accent); color:var(--button-text); box-shadow:var(--shadow-soft); }
+.primary-button:hover{ background:var(--accent-dark); transform:translateY(-1px); }
+.secondary-button{ background:transparent; color:var(--text); border:1px solid var(--line); }
+.secondary-button:hover{ background:rgba(255,255,255,.5); }
+
+@media (max-width:600px){
+  .back-link{ top:1rem; left:1rem; padding:.5rem .9rem; font-size:.82rem; }
+  .beat{ min-height:64vh; padding:2rem 1.2rem; }
+}
+@media (prefers-reduced-motion:reduce){
+  .blob{ animation:none; }
+  .scroll-hint::after{ animation:none; }
+  .beat p{ transition:none; }
+  html{ scroll-behavior:auto; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob blob-amber"></div>
+  <div class="blob blob-sage"></div>
+</div>
+
+<a class="back-link" href="lucas-site.html#jornada">← Voltar ao portfólio</a>
+
+<section class="opening">
+  <img class="brand-watermark" src="assets/neuromedit-symbol-vector.svg" alt="" aria-hidden="true">
+  <span class="eyebrow">Antes do NeuroMedit</span>
+  <h1>Uma árvore, uma casa, uma meditação</h1>
+  <p class="lede">Antes de qualquer método, houve uma árvore no quintal. Este é o poema que guarda a raiz do NeuroMedit.</p>
+  <span class="scroll-hint">Role devagar</span>
+</section>
+
+<div class="poem" id="poem">
+  <section class="beat"><p>Tudo começou numa árvore, em frente no quintal da casa onde eu morava.</p></section>
+  <section class="beat"><p>Eu encontrei a minha casa, nela tinha uma cama, uma cozinha, e muita paz,</p></section>
+  <section class="beat"><p>a meditação era estar ali presente, ouvindo o vento entrar em casa pelas folhas,</p></section>
+  <section class="beat"><p>o movimento da árvore era natural, eu sentia — me movia junto com a árvore, eu e ela éramos apenas um.</p></section>
+
+  <section class="beat"><p>A meditação sempre existiu, nesta casa que eu encontrei ela,</p></section>
+  <section class="beat"><p>a música dos galhos, o conforto com a natureza, o movimento, o ar fresco,</p></section>
+  <section class="beat"><p>dentro dela, abrigado do sol, fui crescendo, eu ela, cada galho era uma parte de mim,</p></section>
+  <section class="beat"><p>quando chovia, eu ficava escorregadio, galhos molhados, abrigo úmido, eu tinha que me ver por fora.</p></section>
+
+  <section class="beat"><p>Verde musgo, os insetos que habitavam em mim picavam sem saber onde ir, eu estava numa estação diferente, folhas molhadas,</p></section>
+  <section class="beat"><p>quando eu me balançava, uma outra chuva caía sobre o chão e molhava a terra,</p></section>
+  <section class="beat"><p>alimentando cada vez mais as minhas raízes, mais por fora do que por dentro,</p></section>
+  <section class="beat"><p>a chuva era outra parte de mim regressando e me ajudando a crescer.</p></section>
+</div>
+
+<section class="closing">
+  <p class="quote">Isso é o que tento devolver com o NeuroMedit — presença.</p>
+  <p class="quote-note">A árvore virou casa, a casa virou método. O resto do caminho está no meu portfólio.</p>
+  <div class="closing-actions">
+    <a class="button primary-button" href="https://neuromedit.com" target="_blank" rel="noopener">Visitar o NeuroMedit ↗</a>
+    <a class="button secondary-button" href="lucas-site.html#jornada">Voltar ao portfólio</a>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var beats = document.querySelectorAll(".beat");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if(reduce || !("IntersectionObserver" in window)){
+    beats.forEach(function(b){ b.classList.add("active"); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var el = entry.target;
+      if(entry.isIntersecting){
+        el.classList.add("active");
+        el.classList.remove("active-past");
+      } else {
+        el.classList.remove("active");
+        var rect = el.getBoundingClientRect();
+        if(rect.top < 0) el.classList.add("active-past");
+        else el.classList.remove("active-past");
+      }
+    });
+  }, { threshold:.55 });
+
+  beats.forEach(function(b){ io.observe(b); });
+})();
+</script>
+</body>
+</html>

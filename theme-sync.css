@@ -39,8 +39,8 @@ body[data-theme="dawn"] {
   --text: #2d261f;
   --text-primary: #2d261f;
   --text-secondary: rgba(74, 60, 45, 0.78);
-  --text-soft: rgba(74, 60, 45, 0.72);
-  --text-muted: rgba(89, 70, 48, 0.62);
+  --text-soft: rgba(74, 60, 45, 0.74);
+  --text-muted: rgba(89, 70, 48, 0.8);
   --text-subtle: rgba(89, 70, 48, 0.48);
   --button-text: #2d261f;
   --link-text: #3f3024;
@@ -100,8 +100,8 @@ body[data-theme="day"] {
   --text: #2a2620;
   --text-primary: #2a2620;
   --text-secondary: rgba(74, 64, 50, 0.76);
-  --text-soft: rgba(74, 64, 50, 0.7);
-  --text-muted: rgba(96, 79, 55, 0.62);
+  --text-soft: rgba(74, 64, 50, 0.74);
+  --text-muted: rgba(96, 79, 55, 0.82);
   --text-subtle: rgba(96, 79, 55, 0.48);
   --button-text: #2a2620;
   --link-text: #3e3325;

@@ -14,8 +14,9 @@
   };
 
   function isCurrentPage(item) {
-    const escapedHref = item.href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    return new RegExp(`(?:^|/)${escapedHref}$`, "i").test(window.location.pathname);
+    const basename = (path) =>
+      path.replace(/[?#].*$/, "").replace(/\/+$/, "").split("/").pop().replace(/\.html$/i, "");
+    return basename(window.location.pathname) === basename(item.href);
   }
 
   function buildContributorsLink(kind) {

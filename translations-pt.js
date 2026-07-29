@@ -327,7 +327,7 @@ window.NeuroMeditTranslations = {
     library_upcoming_3_title: "Ritual de Início de Estudos / Trabalho",
     library_upcoming_3_text: "Um início curto e intencional antes de estudar ou entrar em trabalho profundo.",
     library_upcoming_4_meta: "5 min",
-    library_upcoming_4_title: "Break Work 5 min",
+    library_upcoming_4_title: "Pausa Ativa · 5 min",
     library_upcoming_4_text: "Uma pausa rápida no meio do dia para aliviar fadiga mental e recuperar foco.",
     library_footer_copyright: "© 2026 NeuroMedit",
     library_footer_about: "Sobre",

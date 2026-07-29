@@ -46,7 +46,7 @@
   };
 
   const TEMPLATE = `
-<button type="button" id="settings-fab" class="settings-fab" aria-label="Open settings" title="Settings">
+<button type="button" id="settings-fab" class="settings-fab" aria-label="Abrir configurações" title="Configurações">
   <svg class="settings-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <line x1="4" y1="7" x2="20" y2="7"></line>
     <line x1="4" y1="12" x2="20" y2="12"></line>
@@ -59,10 +59,10 @@
 
 <div id="settings-overlay" class="settings-overlay" aria-hidden="true"></div>
 
-<aside id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-label="Settings" aria-hidden="true">
+<aside id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-label="Configurações" aria-hidden="true">
   <div class="settings-header">
-    <h2 class="settings-title">Settings</h2>
-    <button type="button" id="settings-close" class="settings-close" aria-label="Close settings" title="Close">
+    <h2 class="settings-title">Configurações</h2>
+    <button type="button" id="settings-close" class="settings-close" aria-label="Fechar configurações" title="Fechar">
       <svg class="settings-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M6.5 6.5L17.5 17.5"></path>
         <path d="M17.5 6.5L6.5 17.5"></path>
@@ -72,103 +72,103 @@
 
   <div class="settings-body">
     <section class="settings-section" aria-labelledby="settings-section-audio">
-      <p class="settings-section-label" id="settings-section-audio">Immersion &amp; Audio</p>
+      <p class="settings-section-label" id="settings-section-audio">Imersão e áudio</p>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Vocal Isolation</p>
-          <p class="setting-hint">Prioritizes the guided voice when available.</p>
+          <p class="setting-label">Isolamento vocal</p>
+          <p class="setting-hint">Prioriza a voz guiada quando disponível.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="vocalIsolation" id="toggle-vocal-isolation" aria-label="Vocal Isolation">
+        <input type="checkbox" class="setting-toggle" data-setting-key="vocalIsolation" id="toggle-vocal-isolation" aria-label="Isolamento vocal">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Ambient Volume</p>
+          <p class="setting-label">Volume ambiente</p>
         </div>
         <div class="setting-slider-wrap">
-          <input type="range" class="setting-slider" data-setting-key="ambientVolume" id="slider-ambient-volume" min="0" max="100" step="1" aria-label="Ambient Volume">
+          <input type="range" class="setting-slider" data-setting-key="ambientVolume" id="slider-ambient-volume" min="0" max="100" step="1" aria-label="Volume ambiente">
           <span class="setting-slider-value" aria-live="polite">40%</span>
         </div>
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Smooth Transition</p>
-          <p class="setting-hint">Uses extended fades at the end of sessions.</p>
+          <p class="setting-label">Transição suave</p>
+          <p class="setting-hint">Usa transições mais longas ao fim das sessões.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Smooth Transition">
+        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Transição suave">
       </div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-visual">
-      <p class="settings-section-label" id="settings-section-visual">Visual Comfort</p>
+      <p class="settings-section-label" id="settings-section-visual">Conforto visual</p>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Theme</p>
+          <p class="setting-label">Tema</p>
         </div>
-        <div class="setting-select-group" data-setting-key="visualTheme" role="group" aria-label="Theme">
-          <button type="button" class="setting-select-option" data-value="auto" aria-pressed="false">Auto</button>
-          <button type="button" class="setting-select-option" data-value="light" aria-pressed="false">Light</button>
-          <button type="button" class="setting-select-option" data-value="dark" aria-pressed="false">Dark</button>
-          <button type="button" class="setting-select-option" data-value="low-contrast" aria-pressed="false">Low Contrast</button>
+        <div class="setting-select-group" data-setting-key="visualTheme" role="group" aria-label="Tema">
+          <button type="button" class="setting-select-option" data-value="auto" aria-pressed="false">Automático</button>
+          <button type="button" class="setting-select-option" data-value="light" aria-pressed="false">Claro</button>
+          <button type="button" class="setting-select-option" data-value="dark" aria-pressed="false">Escuro</button>
+          <button type="button" class="setting-select-option" data-value="low-contrast" aria-pressed="false">Baixo contraste</button>
         </div>
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Focus Mode</p>
-          <p class="setting-hint">Softly hides chrome after a few seconds of inactivity.</p>
+          <p class="setting-label">Modo foco</p>
+          <p class="setting-hint">Oculta suavemente a interface após alguns segundos de inatividade.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="focusMode" id="toggle-focus-mode" aria-label="Focus Mode">
+        <input type="checkbox" class="setting-toggle" data-setting-key="focusMode" id="toggle-focus-mode" aria-label="Modo foco">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Mute Animations</p>
-          <p class="setting-hint">Reduces visual motion for a quieter experience.</p>
+          <p class="setting-label">Reduzir animações</p>
+          <p class="setting-hint">Reduz o movimento visual para uma experiência mais calma.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Mute Animations">
+        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
       </div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-attention">
-      <p class="settings-section-label" id="settings-section-attention">Attention Protection</p>
+      <p class="settings-section-label" id="settings-section-attention">Proteção da atenção</p>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Deep Silence Hours</p>
-          <p class="setting-hint">Marks the quiet window for the experience.</p>
+          <p class="setting-label">Horário de silêncio profundo</p>
+          <p class="setting-hint">Define a janela de silêncio da experiência.</p>
         </div>
         <div class="setting-time-group">
-          <input type="time" class="setting-time-input" data-setting-key="silenceStart" id="input-silence-start" aria-label="Silence start time">
-          <span class="setting-time-sep">to</span>
-          <input type="time" class="setting-time-input" data-setting-key="silenceEnd" id="input-silence-end" aria-label="Silence end time">
+          <input type="time" class="setting-time-input" data-setting-key="silenceStart" id="input-silence-start" aria-label="Início do silêncio">
+          <span class="setting-time-sep">às</span>
+          <input type="time" class="setting-time-input" data-setting-key="silenceEnd" id="input-silence-end" aria-label="Fim do silêncio">
         </div>
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Hide Metrics</p>
-          <p class="setting-hint">Hides streaks and progress counters when present.</p>
+          <p class="setting-label">Ocultar métricas</p>
+          <p class="setting-hint">Oculta sequências e contadores de progresso quando existirem.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Hide Metrics">
+        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Ocultar métricas">
       </div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-autonomy">
-      <p class="settings-section-label" id="settings-section-autonomy">Autonomy</p>
+      <p class="settings-section-label" id="settings-section-autonomy">Autonomia</p>
 
       <div class="setting-row">
         <a href="#account-data" class="setting-link" id="settings-account-link">
-          Manage Account Data
+          Gerenciar dados da conta
           <span class="setting-link-arrow" aria-hidden="true">&rarr;</span>
         </a>
       </div>
 
       <button type="button" class="setting-ghost-btn" id="btn-disconnect">
-        Reset Local Preferences
+        Redefinir preferências locais
       </button>
       <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
 
@@ -356,7 +356,7 @@
     if (!auth) {
       container.innerHTML = `
         <div class="setting-row">
-          <p class="setting-hint">Loading authentication...</p>
+          <p class="setting-hint">Carregando autenticação...</p>
         </div>
       `;
       return;
@@ -367,11 +367,11 @@
       container.innerHTML = `
         <div class="setting-row auth-user-row">
           <div class="setting-info" style="max-width: 60%;">
-            <p class="setting-label">Account</p>
+            <p class="setting-label">Conta</p>
             <p class="setting-hint" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${user.email}">${user.email}</p>
           </div>
           <button type="button" class="setting-ghost-btn" id="btn-signout" style="margin: 0; min-height: 38px; padding: 0.5rem 1rem;">
-            Sign Out
+            Sair
           </button>
         </div>
       `;
@@ -386,8 +386,8 @@
       container.innerHTML = `
         <div class="setting-row auth-login-row" style="flex-direction: column; align-items: stretch; gap: 0.75rem; width: 100%;">
           <div class="setting-info" style="margin-bottom: 0.25rem;">
-            <p class="setting-label">Cloud Sync</p>
-            <p class="setting-hint">Sync your preferences across all your devices using your Google account.</p>
+            <p class="setting-label">Sincronização na nuvem</p>
+            <p class="setting-hint">Sincronize suas preferências em todos os seus dispositivos usando sua conta Google.</p>
           </div>
           <button type="button" class="google-signin-btn" id="btn-signin">
             <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -396,7 +396,7 @@
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.16l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            <span>Sign in with Google</span>
+            <span>Entrar com o Google</span>
           </button>
         </div>
       `;

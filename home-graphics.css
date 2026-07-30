@@ -1,0 +1,116 @@
+/* =====================================================
+   NEUROMEDIT — ELEMENTOS GRÁFICOS (fora do hero)
+   Mesma linguagem de partículas do logo, em formas
+   diferentes e pontos estratégicos. Vivo e humano,
+   sem virar ruído: baixa opacidade, tudo respira.
+   Escopo: só home (não toca home.css / home.html).
+===================================================== */
+
+/* Cor-base das partículas por horário (nível de página) */
+:is(html, body).theme-morning .home-page,
+:is(html, body).theme-dawn .home-page { --nm-aura: #d2a15c; }
+:is(html, body).theme-afternoon .home-page,
+:is(html, body).theme-day .home-page { --nm-aura: #be9a66; }
+:is(html, body).theme-sunset .home-page,
+:is(html, body).theme-evening .home-page { --nm-aura: #e1a46c; }
+:is(html, body).theme-night .home-page,
+:is(html, body).theme-warm-night .home-page,
+:is(html, body).theme-sleep .home-page { --nm-aura: #d08a57; }
+:is(html, body).theme-late-night .home-page { --nm-aura: #c57b4c; }
+.home-page { --nm-aura: #b4925c; }   /* fallback */
+
+/* ---------------------------------------------------
+   1. CARTÕES DE ESTADO — acento de canto, cor por estado
+   Calma = sage · Foco = dourado · Sono = terracota
+--------------------------------------------------- */
+.home-states .state-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-states .state-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 118px;
+  height: 118px;
+  background-color: var(--card-accent, #b4925c);
+  -webkit-mask: url("assets/nm-particles-corner.svg") top right / contain no-repeat;
+  mask: url("assets/nm-particles-corner.svg") top right / contain no-repeat;
+  opacity: 0.42;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.home-states .state-card:hover::before {
+  opacity: 0.68;
+  transform: translate(2px, -2px) scale(1.04);
+}
+
+.home-states .state-card:nth-of-type(1) { --card-accent: #8aa5a0; } /* Calma  */
+.home-states .state-card:nth-of-type(2) { --card-accent: #b4925c; } /* Foco   */
+.home-states .state-card:nth-of-type(3) { --card-accent: #c77a4a; } /* Sono   */
+
+/* mantém o texto acima do grafismo */
+.home-states .state-card > * { position: relative; z-index: 1; }
+
+/* ---------------------------------------------------
+   2. ONDA-RESPIRO — transição suave entre seções
+   (não é uma linha: é um sopro esparso de partículas)
+--------------------------------------------------- */
+.nm-wave-band {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 1.5rem;
+}
+
+.nm-wave {
+  width: min(62%, 440px);
+  height: 74px;
+  background-color: var(--nm-aura, #b4925c);
+  -webkit-mask: url("assets/nm-particles-wave.svg") center / contain no-repeat;
+  mask: url("assets/nm-particles-wave.svg") center / contain no-repeat;
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nm-wave { animation: nmDrift 12s ease-in-out infinite; }
+  @keyframes nmDrift {
+    0%, 100% { transform: translateY(0); opacity: 0.36; }
+    50%      { transform: translateY(-5px); opacity: 0.46; }
+  }
+}
+
+/* ---------------------------------------------------
+   3. FECHO — onda de partículas full-width (a expiração)
+--------------------------------------------------- */
+.closing-philosophy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+.closing-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(150px, 22vw, 240px);
+  background-color: var(--nm-aura, #b4925c);
+  -webkit-mask: url("assets/nm-particles-wave-wide.svg") center bottom / 100% 100% no-repeat;
+  mask: url("assets/nm-particles-wave-wide.svg") center bottom / 100% 100% no-repeat;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.closing-philosophy .container {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .closing-wave { animation: nmDrift 14s ease-in-out infinite; }
+}

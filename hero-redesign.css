@@ -1,0 +1,251 @@
+/* =====================================================
+   HERO REDESIGN — calm / minimal / breathing
+   Escopo: aplica-se apenas a .home-hero.hero-redesign
+   Não altera o restante da home.css nem o home.html original.
+===================================================== */
+
+.home-hero.hero-redesign {
+  position: relative;
+  isolation: isolate;
+  text-align: left;                   /* alinhado à esquerda, como as demais páginas */
+  background: transparent;            /* deixa o gradiente contínuo do body passar — sem emendas */
+  padding-top: clamp(1.25rem, 3vw, 2.5rem);
+  padding-bottom: clamp(3.5rem, 7vw, 5.5rem);
+  /* padrão (fallback antes do tema carregar) */
+  --hero-aura-color: #b4925c;
+  --hero-aura-opacity: 0.34;
+  /* deslocamento sutil do hero para a direita (desktop) */
+  --hero-shift: clamp(0px, 6vw, 110px);
+}
+
+/* Aura de respiração — fundo sutil atrás do título */
+.hero-redesign .hero-aura {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;            /* centralizada atrás do bloco centralizado */
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-redesign .hero-aura svg {
+  width: min(100vw, 640px);
+  height: auto;
+  opacity: var(--hero-aura-opacity, 0.34);   /* bem sutil, calibrado por tema */
+  transform: translate(var(--hero-shift, 0px), -4%);
+}
+
+/* cor das partículas segue o horário do dia (CSS vence o atributo fill do SVG) */
+.hero-redesign .hero-aura-breathe {
+  fill: var(--hero-aura-color, #b4925c);
+}
+
+/* Igual à library: bloco centralizado na página (margin:0 auto do
+   .container), com texto alinhado à esquerda dentro dele. */
+.hero-redesign .hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  transform: translateX(var(--hero-shift, 0px));   /* leve deslocamento à direita */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-aura-breathe {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: heroAuraBreathe 9s ease-in-out infinite;
+  }
+  @keyframes heroAuraBreathe {
+    0%, 100% { transform: scale(0.985); opacity: 0.9; }
+    50%      { transform: scale(1.03);  opacity: 1; }
+  }
+}
+
+/* Overline pequeno, cinza suave */
+.hero-redesign .eyebrow {
+  margin-bottom: 1.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-muted, #9b968c);
+}
+
+/* Título: três linhas, peso REGULAR, entrelinha generosa */
+.hero-redesign h1 {
+  max-width: 9ch;                      /* empilha em ~3 linhas */
+  margin: 0 0 2rem;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--text, #1a1712);
+}
+
+/* Subtítulo leve */
+.hero-redesign .hero-text {
+  max-width: 34ch;
+  margin: 0 0 2.5rem;
+  font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--text-soft, #6e6a61);
+}
+
+/* Ações lado a lado, alinhadas à esquerda (quebram só se faltar espaço) */
+.hero-redesign .hero-actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+/* Botão primário — dourado terroso */
+.hero-redesign .primary-button {
+  background-color: #a88a5c;
+  color: #fbf8f1;
+  padding: 1.05rem 2.4rem;
+  border-color: transparent;
+  box-shadow: 0 10px 26px rgba(168, 138, 92, 0.25);
+}
+
+.hero-redesign .primary-button:hover {
+  background-color: #9a7c4e;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 32px rgba(168, 138, 92, 0.3);
+}
+
+/* "Explorar a biblioteca" — botão SECUNDÁRIO (outline), menor que o primário.
+   Affordance clara: contorno + formato de pílula = obviamente clicável. */
+.hero-redesign .hero-textlink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.58rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text, #1a1712);
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--text, #1a1712) 26%, transparent);
+  border-radius: 999px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-redesign .hero-textlink:hover {
+  background: color-mix(in srgb, var(--text, #1a1712) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text, #1a1712) 44%, transparent);
+  transform: translateY(-1px);
+}
+
+.hero-redesign .hero-textlink:focus-visible {
+  outline: 2px solid var(--accent, #a88a5c);
+  outline-offset: 3px;
+}
+
+/* Microcopy discreta com ícone de fones */
+.hero-redesign .hero-sensory-hint {
+  justify-content: flex-start;
+  margin-top: 3.25rem;
+  margin-bottom: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  color: var(--text-muted, #9b968c);
+}
+
+/* substitui o emoji 🎧 por um ícone desenhado (mask), mais discreto */
+.hero-redesign .hero-sensory-hint::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-color: currentColor;
+  -webkit-mask: var(--headphone-icon) center / contain no-repeat;
+  mask: var(--headphone-icon) center / contain no-repeat;
+}
+
+.hero-redesign {
+  --headphone-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.7'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M4%2014v-2a8%208%200%200%201%2016%200v2'/%3E%3Crect%20x='2.5'%20y='14'%20width='4'%20height='6'%20rx='1.4'/%3E%3Crect%20x='17.5'%20y='14'%20width='4'%20height='6'%20rx='1.4'/%3E%3C/svg%3E");
+}
+
+/* =====================================================
+   AURA POR HORÁRIO DO DIA
+   A cor e a intensidade das partículas acompanham o tema
+   ativado por theme-sync.js. Nos temas claros a aura fica
+   discreta; nos escuros vira um brilho quente mais presente.
+===================================================== */
+
+/* Manhã (5–12) — luz âmbar/mel */
+:is(html, body).theme-morning .hero-redesign,
+:is(html, body).theme-dawn .hero-redesign {
+  --hero-aura-color: #d2a15c;
+  --hero-aura-opacity: 0.32;
+}
+
+/* Tarde/Dia (12–17) — dourado neutro e sereno */
+:is(html, body).theme-afternoon .hero-redesign,
+:is(html, body).theme-day .hero-redesign {
+  --hero-aura-color: #be9a66;
+  --hero-aura-opacity: 0.30;
+}
+
+/* Pôr do sol / Entardecer (17–21) — laranja quente sobre fundo escuro */
+:is(html, body).theme-sunset .hero-redesign,
+:is(html, body).theme-evening .hero-redesign {
+  --hero-aura-color: #e1a46c;
+  --hero-aura-opacity: 0.52;
+}
+
+/* Noite (21+) — terracota em brasa */
+:is(html, body).theme-night .hero-redesign,
+:is(html, body).theme-warm-night .hero-redesign,
+:is(html, body).theme-sleep .hero-redesign {
+  --hero-aura-color: #d08a57;
+  --hero-aura-opacity: 0.55;
+}
+
+/* Madrugada (0–5) — o mais profundo e silencioso */
+:is(html, body).theme-late-night .hero-redesign {
+  --hero-aura-color: #c57b4c;
+  --hero-aura-opacity: 0.46;
+}
+
+/* ENTRADA — o movimento de entrada do hero agora é compartilhado
+   pelo design system em hero-motion.css (classe html.nm-anim). */
+
+/* =========================
+   RESPONSIVO — mobile com bottom nav (≤940px)
+   Compacta o hero e reserva a faixa da nav inferior,
+   para o CTA subir acima do shell (zona do polegar).
+========================= */
+@media (max-width: 940px) {
+  .home-hero.hero-redesign {
+    padding-top: clamp(0.75rem, 4vw, 1.75rem);
+    /* espaço para a barra inferior fixa não cobrir o botão */
+    padding-bottom: calc(var(--bottom-bar-h, 66px) + 1.5rem);
+    --hero-shift: 0px;               /* sem deslocamento no mobile */
+  }
+
+  .hero-redesign .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .hero-redesign h1 {
+    max-width: 12ch;
+    font-size: clamp(2.1rem, 8.5vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero-redesign .hero-text {
+    margin-bottom: 1.4rem;
+  }
+
+  .hero-redesign .hero-actions {
+    gap: 0.75rem;
+  }
+
+  .hero-redesign .hero-sensory-hint {
+    margin-top: 1.6rem;
+  }
+}

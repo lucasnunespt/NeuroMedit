@@ -1,4 +1,8 @@
 (() => {
+  // Habilita o movimento de entrada do hero antes da pintura (evita flash).
+  // Se o JS não rodar, a classe não é adicionada e nada fica escondido.
+  try { document.documentElement.classList.add("nm-anim"); } catch (e) {}
+
   // Lista com exatamente os 10 termos do contrato CSS
   const themes = ["morning", "dawn", "afternoon", "day", "sunset", "evening", "night", "warm-night", "sleep", "late-night"];
   const themeClasses = themes.map((theme) => `theme-${theme}`);

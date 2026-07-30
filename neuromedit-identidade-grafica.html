@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroMedit — Identidade gráfica</title>
+<style>
+  :root{
+    --bg:#F7F4EC;
+    --ink:#1A1712;
+    --soft:#6E6A61;
+    --muted:#9B968C;
+    --gold:#A88A5C;
+    --gold-2:#C9B48C;
+    --sand:#E6D9BE;
+    --sage:#8AA5A0;
+    --sage-dk:#517067;
+    --line:rgba(26,23,18,.10);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',-apple-system,system-ui,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:72px 28px 120px;}
+  header.intro{max-width:640px;margin-bottom:72px;}
+  .eyebrow{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1.4rem;}
+  h1{font-weight:400;font-size:clamp(2rem,4.5vw,2.9rem);line-height:1.15;letter-spacing:-.01em;margin-bottom:1.2rem;}
+  .lede{color:var(--soft);font-size:1.05rem;max-width:52ch;}
+
+  section.block{margin-top:64px;padding-top:48px;border-top:1px solid var(--line);}
+  .block-head{display:flex;align-items:baseline;gap:.9rem;margin-bottom:.4rem;flex-wrap:wrap;}
+  .num{font-size:.72rem;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;}
+  h2{font-weight:500;font-size:1.5rem;letter-spacing:-.01em;}
+  .desc{color:var(--soft);max-width:56ch;margin:.6rem 0 2.2rem;font-size:.98rem;}
+
+  .stage{
+    display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;
+    padding:44px 28px;border-radius:26px;
+    background:linear-gradient(180deg,#FBF9F3,#F5F1E7);
+    border:1px solid var(--line);
+  }
+  .cap{font-size:.78rem;color:var(--muted);text-align:center;margin-top:14px;}
+  .item{display:flex;flex-direction:column;align-items:center;}
+
+  .usage{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:22px;}
+  .use-card{
+    background:#FBF9F3;border:1px solid var(--line);border-radius:20px;
+    padding:22px;display:flex;flex-direction:column;gap:14px;min-height:150px;overflow:hidden;position:relative;
+  }
+  .use-card .k{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+  .use-card p{font-size:.9rem;color:var(--soft);}
+
+  .palette{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;}
+  .sw{display:flex;flex-direction:column;gap:6px;align-items:center;font-size:.7rem;color:var(--muted);}
+  .chip{width:56px;height:56px;border-radius:14px;border:1px solid var(--line);}
+
+  /* Respiração — animação lenta, respeita reduced-motion */
+  @media (prefers-reduced-motion: no-preference){
+    .breathe{transform-box:fill-box;transform-origin:center;animation:breathe 8s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{transform:scale(.97);opacity:.9;}50%{transform:scale(1.03);opacity:1;}}
+    .drift{animation:drift 11s ease-in-out infinite;}
+    @keyframes drift{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  }
+  footer{margin-top:80px;padding-top:40px;border-top:1px solid var(--line);color:var(--soft);font-size:.95rem;max-width:60ch;}
+  code{background:#EFEADD;padding:1px 7px;border-radius:6px;font-size:.85em;color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="intro">
+    <p class="eyebrow">NeuroMedit · Sistema gráfico</p>
+    <h1>Uma única forma que respira.</h1>
+    <p class="lede">Toda a identidade nasce de <strong>um seixo orgânico</strong> — a mesma curva, nunca perfeita, nunca simétrica. Ela aparece de quatro modos. Nada pisca, nada compete: cada forma tem função e todas respiram no mesmo ritmo.</p>
+  </header>
+
+  <!-- ============ DEFS: a forma única ============ -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <path id="seixo" d="M104 18
+        C150 14 186 40 190 82
+        C193 116 178 140 150 160
+        C126 177 92 184 62 172
+        C34 161 16 132 16 100
+        C16 66 34 40 60 28
+        C74 21 86 20 104 18 Z"/>
+      <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E6D9BE"/>
+        <stop offset="1" stop-color="#A88A5C"/>
+      </linearGradient>
+      <radialGradient id="gAura" cx="50%" cy="50%" r="60%">
+        <stop offset="0" stop-color="#EBDCB8"/>
+        <stop offset="1" stop-color="#A88A5C"/>
+      </radialGradient>
+      <linearGradient id="gSage" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#B7C9C4"/>
+        <stop offset="1" stop-color="#517067"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============ 1. CONTORNO ============ -->
+  <section class="block">
+    <div class="block-head"><span class="num">Modo 01</span><h2>Contorno · o traço</h2></div>
+    <p class="desc">A forma reduzida a uma linha fina. É o grau mais silencioso — serve como divisória de seção, moldura discreta de um título ou assinatura de rodapé. Mesma linguagem do site atual (só texto e traço), agora com uma forma própria.</p>
+    <div class="stage">
+      <div class="item">
+        <svg width="220" height="200" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <use href="#seixo" class="breathe" stroke="#A88A5C" stroke-width="1.3"/>
+        </svg>
+        <span class="cap">contorno único</span>
+      </div>
+      <div class="item">
+        <svg width="220" height="200" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <use href="#seixo" stroke="#C9B48C" stroke-width="1" opacity=".55" transform="translate(100,100) scale(1.12) translate(-100,-100)"/>
+          <use href="#seixo" class="breathe" stroke="#A88A5C" stroke-width="1.3"/>
+          <circle cx="100" cy="22" r="2.4" fill="#A88A5C"/>
+        </svg>
+        <span class="cap">com ponto de respiração</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. AURA ============ -->
+  <section class="block">
+    <div class="block-head"><span class="num">Modo 02</span><h2>Aura · o ambiente</h2></div>
+    <p class="desc">A mesma curva repetida para fora, em camadas quentes e de baixíssimo contraste. É um fundo atmosférico — fica atrás do texto no hero ou marca o fim de uma jornada. Expande e contrai lentamente, como uma inspiração longa.</p>
+    <div class="stage" style="background:linear-gradient(180deg,#F7F4EC,#F1ECDF)">
+      <div class="item">
+        <svg width="340" height="240" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <g class="breathe">
+            <use href="#seixo" fill="url(#gAura)" opacity=".10" transform="translate(100,100) scale(1.55) translate(-100,-100)"/>
+            <use href="#seixo" fill="url(#gAura)" opacity=".14" transform="translate(100,100) scale(1.30) translate(-100,-100)"/>
+            <use href="#seixo" fill="url(#gAura)" opacity=".18" transform="translate(100,100) scale(1.08) translate(-100,-100)"/>
+            <use href="#seixo" fill="url(#gAura)" opacity=".22" transform="translate(100,100) scale(.86) translate(-100,-100)"/>
+            <use href="#seixo" fill="url(#gAura)" opacity=".28" transform="translate(100,100) scale(.62) translate(-100,-100)"/>
+          </g>
+        </svg>
+        <span class="cap">aura de respiração (fundo do hero)</span>
+      </div>
+      <div class="item">
+        <svg width="300" height="240" viewBox="0 0 200 200" fill="none" aria-hidden="true">
+          <g class="breathe">
+            <use href="#seixo" stroke="#A88A5C" stroke-width=".8" opacity=".22" transform="translate(100,100) scale(1.5) translate(-100,-100)"/>
+            <use href="#seixo" stroke="#A88A5C" stroke-width=".8" opacity=".30" transform="translate(100,100) scale(1.25) translate(-100,-100)"/>
+            <use href="#seixo" stroke="#A88A5C" stroke-width=".8" opacity=".40" transform="translate(100,100) scale(1.0) translate(-100,-100)"/>
+            <use href="#seixo" stroke="#A88A5C" stroke-width=".8" opacity=".55" transform="translate(100,100) scale(.72) translate(-100,-100)"/>
+            <use href="#seixo" stroke="#A88A5C" stroke-width=".9" opacity=".7" transform="translate(100,100) scale(.42) translate(-100,-100)"/>
+          </g>
+        </svg>
+        <span class="cap">variante topográfica (linhas)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. FORMA CHEIA ============ -->
+  <section class="block">
+    <div class="block-head"><span class="num">Modo 03</span><h2>Forma cheia · o recipiente</h2></div>
+    <p class="desc">A curva preenchida. Vira máscara para uma imagem calma, campo de cor para um cartão de estado (Calma, Foco, Sono) ou selo de conclusão. Suaviza qualquer canto reto do grid — nunca um retângulo frio.</p>
+    <div class="stage">
+      <div class="item">
+        <svg width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
+          <use href="#seixo" fill="url(#gGold)" class="breathe"/>
+        </svg>
+        <span class="cap">campo de cor</span>
+      </div>
+      <div class="item">
+        <svg width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
+          <clipPath id="clipSeixo"><use href="#seixo"/></clipPath>
+          <g clip-path="url(#clipSeixo)">
+            <rect width="200" height="200" fill="#E6D9BE"/>
+            <circle cx="70" cy="150" r="70" fill="#C9B48C" opacity=".7"/>
+            <circle cx="150" cy="70" r="60" fill="#8AA5A0" opacity=".45"/>
+          </g>
+          <use href="#seixo" fill="none" stroke="#fff" stroke-width="2"/>
+        </svg>
+        <span class="cap">máscara de imagem</span>
+      </div>
+      <div class="item">
+        <svg width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
+          <use href="#seixo" fill="url(#gSage)" class="breathe"/>
+        </svg>
+        <span class="cap">variante sage (paleta do site)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. RITMO ============ -->
+  <section class="block">
+    <div class="block-head"><span class="num">Modo 04</span><h2>Ritmo · o pulso</h2></div>
+    <p class="desc">O elemento de apoio: três pontos e uma linha de fôlego. Marca progresso sem números agressivos, separa blocos e dá cadência — inspiração, pausa, expiração. Nunca um streak, nunca uma barra de urgência.</p>
+    <div class="stage">
+      <div class="item">
+        <svg width="240" height="80" viewBox="0 0 240 80" fill="none" aria-hidden="true">
+          <path d="M20 40 C70 10 100 70 140 40 C170 18 200 52 220 40" stroke="#A88A5C" stroke-width="1.4" class="drift"/>
+          <circle cx="140" cy="40" r="3.4" fill="#A88A5C" class="drift"/>
+        </svg>
+        <span class="cap">linha de fôlego</span>
+      </div>
+      <div class="item">
+        <svg width="140" height="80" viewBox="0 0 140 80" fill="none" aria-hidden="true">
+          <circle cx="38" cy="40" r="5" fill="#A88A5C"/>
+          <circle cx="70" cy="40" r="5" fill="#A88A5C" opacity=".55"/>
+          <circle cx="102" cy="40" r="5" fill="#A88A5C" opacity=".28"/>
+        </svg>
+        <span class="cap">ritmo de pontos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PALETA ============ -->
+  <section class="block">
+    <div class="block-head"><span class="num">Base</span><h2>Paleta</h2></div>
+    <p class="desc">Quentes e terrosos para a marca; o sage já existente permanece como voz secundária. Contraste sempre suave.</p>
+    <div class="palette">
+      <div class="sw"><span class="chip" style="background:#F7F4EC"></span>#F7F4EC</div>
+      <div class="sw"><span class="chip" style="background:#E6D9BE"></span>#E6D9BE</div>
+      <div class="sw"><span class="chip" style="background:#C9B48C"></span>#C9B48C</div>
+      <div class="sw"><span class="chip" style="background:#A88A5C"></span>#A88A5C</div>
+      <div class="sw"><span class="chip" style="background:#8AA5A0"></span>#8AA5A0</div>
+      <div class="sw"><span class="chip" style="background:#517067"></span>#517067</div>
+      <div class="sw"><span class="chip" style="background:#1A1712"></span>#1A1712</div>
+    </div>
+  </section>
+
+  <footer>
+    Tudo isto é <strong>uma forma só</strong> (<code>&lt;path id="seixo"&gt;</code>) reaproveitada — leve, vetorial e escalável, sem imagens embutidas. Se você escolher uma direção, eu integro no <code>home.html</code> como camada de fundo do hero e componentes reutilizáveis, mantendo tudo respirando no mesmo compasso.
+  </footer>
+
+</div>
+</body>
+</html>

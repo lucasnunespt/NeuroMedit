@@ -1,0 +1,57 @@
+/* =====================================================
+   NEUROMEDIT — TIPOGRAFIA & ALINHAMENTO DO HERO (design system)
+   Replica o hero da home (home) nas demais páginas:
+   • bloco centralizado (720px) com leve deslocamento à direita
+   • texto alinhado à esquerda
+   • título peso REGULAR e os mesmos tamanhos da home
+   Deve ser carregado DEPOIS do CSS específico da página.
+===================================================== */
+
+[class*="-hero"] > .container {
+  --hero-shift: clamp(0px, 6vw, 110px);
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  transform: translateX(var(--hero-shift, 0px));
+}
+
+/* Overline */
+[class*="-hero"] > .container .eyebrow {
+  display: inline-block;
+  margin-bottom: 1.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+}
+
+/* Título — peso regular, mesmo tamanho da home */
+[class*="-hero"] > .container h1 {
+  margin: 0 0 2rem;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+/* Subtítulo (cobre .hero-text e .why-hero-text) */
+[class*="-hero"] > .container :is(.hero-text, .why-hero-text) {
+  margin: 0 0 2.5rem;
+  max-width: 46ch;
+  font-weight: 400;
+  font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+  line-height: 1.75;
+  color: var(--text-soft);
+}
+
+@media (max-width: 940px) {
+  [class*="-hero"] > .container {
+    --hero-shift: 0px;
+  }
+  [class*="-hero"] > .container h1 {
+    font-size: clamp(2.1rem, 8.5vw, 3rem);
+  }
+}

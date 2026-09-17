@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fechar o Verão em Paz — um ritual de 5 dias | NeuroMedit</title>
+<meta name="description" content="Um ritual de 5 dias, 10 minutos por dia, para atravessares a transição de setembro com mais calma. Ebook de bem-estar com base neurocientífica, por €7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --areia: #F1E6D2;
+    --areia-deep: #E6D6B8;
+    --terracota: #C1602E;
+    --terracota-deep: #9A4A22;
+    --verde: #4B5A3F;
+    --verde-pale: #6E7D5E;
+    --verde-deep: #232C1D;
+    --dourado: #C9A046;
+    --dourado-soft: #E4C878;
+    --ink: #2A2018;
+    --ink-soft: #55483A;
+    --ink-deep: #1B1710;
+    --paper: #FBF6EC;
+    --line: rgba(42, 32, 24, 0.14);
+    --max: 720px;
+    --gutter: clamp(24px, 6vw, 64px);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--areia);
+    color: var(--ink);
+    font-family: 'Karla', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--ink);
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  p { margin: 0 0 1em; }
+  p:last-child { margin-bottom: 0; }
+
+  a { color: inherit; }
+
+  ::selection { background: var(--dourado-soft); color: var(--ink); }
+
+  :focus-visible {
+    outline: 2px solid var(--terracota);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  .wrap-wide {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  section { padding: clamp(56px, 9vw, 100px) 0; }
+
+  /* ---------- Header ---------- */
+  header.site {
+    padding: 28px var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  .logo-word {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding-top: clamp(24px, 5vw, 48px);
+    padding-bottom: clamp(64px, 10vw, 110px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(32px, 6vw, 64px);
+    align-items: center;
+  }
+
+  @media (max-width: 760px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { order: -1; width: 60%; margin: 0 auto; }
+  }
+
+  .eyebrow {
+    font-size: 14px;
+    color: var(--terracota-deep);
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 5.4vw, 54px);
+    line-height: 1.12;
+    max-width: 13ch;
+  }
+
+  .hero-sub {
+    margin-top: 22px;
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    line-height: 1.65;
+  }
+
+  .cta-block { margin-top: 34px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--terracota);
+    color: var(--paper);
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 28px;
+    border-radius: 3px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .btn:hover { background: var(--terracota-deep); transform: translateY(-1px); }
+
+  .trust-line {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wave-orb {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+  }
+
+  .wave-orb circle.pulse {
+    transform-origin: center;
+    animation: breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.55; r: 2.6; }
+    50% { opacity: 1; r: 4.2; }
+  }
+
+  /* ---------- Pain section ---------- */
+  .pain {
+    background: var(--areia-deep);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .pain h2 { font-size: clamp(26px, 3.6vw, 34px); max-width: 18ch; }
+
+  .pain-list {
+    margin-top: 32px;
+    display: grid;
+    gap: 0;
+  }
+
+  .pain-list li {
+    list-style: none;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    font-size: 17px;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 14px;
+  }
+  .pain-list li:last-child { border-bottom: 1px solid var(--line); }
+
+  .pain-list li::before {
+    content: "";
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--terracota);
+    margin-top: 9px;
+  }
+
+  .pain-note {
+    margin-top: 30px;
+    font-size: 17px;
+    color: var(--ink);
+    max-width: 52ch;
+  }
+
+  .pain-note strong { color: var(--terracota-deep); font-weight: 600; }
+
+  /* ---------- Promise ---------- */
+  .promise h2 { font-size: clamp(26px, 3.6vw, 34px); max-width: 20ch; }
+  .promise-intro { margin-top: 18px; font-size: 17px; color: var(--ink-soft); max-width: 54ch; }
+
+  .outcome-list { margin-top: 32px; display: grid; gap: 22px; }
+
+  .outcome-item {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .outcome-item svg { margin-top: 4px; }
+
+  /* ---------- Ritual / includes ---------- */
+  .ritual {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+
+  .ritual-head { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  .ritual h2 { font-size: clamp(26px, 3.6vw, 34px); }
+  .ritual-sub { margin-top: 14px; color: var(--ink-soft); font-size: 16px; }
+
+  .day-list {
+    max-width: 800px;
+    margin: 44px auto 0;
+    padding: 0 var(--gutter);
+    display: grid;
+    gap: 2px;
+  }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .day-row:last-child { border-bottom: 1px solid var(--line); }
+
+  .day-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 26px;
+    color: var(--dourado);
+    font-weight: 400;
+  }
+
+  .day-title { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; margin-bottom: 4px; }
+  .day-desc { color: var(--ink-soft); font-size: 15.5px; max-width: 52ch; }
+
+  .also-includes {
+    max-width: 800px;
+    margin: 48px auto 0;
+    padding: 28px var(--gutter) 0;
+    border-top: 1px dashed var(--line);
+    display: grid;
+    gap: 6px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- Guarantee banner ---------- */
+  .guarantee {
+    background: var(--verde);
+    color: var(--paper);
+    padding: clamp(36px, 6vw, 52px) 0;
+  }
+
+  .guarantee-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .guarantee h3 { color: var(--paper); font-size: 20px; margin-bottom: 6px; }
+  .guarantee p { color: rgba(251, 246, 236, 0.82); font-size: 15.5px; }
+
+  /* ---------- Price ---------- */
+  .price {
+    background: var(--areia-deep);
+    text-align: center;
+  }
+
+  .price h2 { font-size: clamp(24px, 3.4vw, 30px); max-width: 24ch; margin: 0 auto; }
+
+  .price-tag {
+    margin: 30px 0 8px;
+    font-family: 'Fraunces', serif;
+    font-size: clamp(48px, 9vw, 72px);
+    color: var(--terracota-deep);
+    line-height: 1;
+  }
+
+  .price-note { color: var(--ink-soft); font-size: 15px; margin-bottom: 30px; }
+
+  .price-compare {
+    max-width: 46ch;
+    margin: 0 auto 30px;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+  }
+
+  /* ---------- For whom ---------- */
+  .whom {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+
+  .whom-grid {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 5vw, 48px);
+  }
+
+  @media (max-width: 640px) {
+    .whom-grid { grid-template-columns: 1fr; }
+    .whom { padding-bottom: 44px; }
+  }
+
+  .whom h2 { font-size: clamp(26px, 3.6vw, 34px); }
+
+  .whom-col h3 {
+    font-size: 15px;
+    text-transform: none;
+    color: var(--ink-soft);
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .whom-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .whom-col li { font-size: 15.5px; padding-left: 18px; position: relative; }
+  .whom-col li::before { content: "—"; position: absolute; left: 0; color: var(--ink-soft); }
+
+  /* ---------- FAQ ---------- */
+  .faq { background: var(--areia-deep); border-top: 1px solid var(--line); }
+  .faq h2 { font-size: clamp(26px, 3.6vw, 34px); margin-bottom: 30px; }
+
+  details {
+    border-top: 1px solid var(--line);
+    padding: 18px 0;
+  }
+  details:last-of-type { border-bottom: 1px solid var(--line); }
+
+  summary {
+    cursor: pointer;
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  summary::after {
+    content: "+";
+    font-family: 'Karla', sans-serif;
+    font-size: 20px;
+    color: var(--terracota);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+
+  details p { margin-top: 14px; color: var(--ink-soft); font-size: 15.5px; max-width: 56ch; }
+
+  /* ---------- Final CTA ---------- */
+  .final-cta {
+    background: var(--ink-deep);
+    color: var(--paper);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-cta h2 {
+    color: var(--paper);
+    font-size: clamp(28px, 4.4vw, 40px);
+    max-width: 18ch;
+    margin: 0 auto;
+    line-height: 1.25;
+  }
+
+  .final-cta .btn { margin-top: 30px; background: var(--dourado); color: var(--ink-deep); }
+  .final-cta .btn:hover { background: var(--dourado-soft); }
+
+  .final-trust { margin-top: 18px; font-size: 14px; color: rgba(251, 246, 236, 0.6); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: var(--ink-deep);
+    color: rgba(251, 246, 236, 0.55);
+    padding: 30px var(--gutter) 44px;
+    text-align: center;
+    font-size: 13.5px;
+    border-top: 1px solid rgba(251, 246, 236, 0.1);
+  }
+
+  footer a { text-decoration: underline; text-underline-offset: 3px; color: rgba(251, 246, 236, 0.8); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="20" cy="20" r="18" stroke="#C9A046" stroke-width="1.2" opacity="0.5"/>
+    <circle cx="20" cy="20" r="4" fill="#C9A046"/>
+  </svg>
+  <span class="logo-word">NeuroMedit</span>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow">Um guia curto de bem-estar para o fim do verão europeu</p>
+      <h1>Setembro está a chegar mais depressa do que estás pronto para ele.</h1>
+      <p class="hero-sub">Não é falta de força de vontade — é o teu cérebro a reagir a uma mudança real. Um ritual de 5 dias, 10 minutos por dia, para fechares o verão com calma em vez de o veres simplesmente acabar.</p>
+      <div class="cta-block">
+        <a class="btn" href="#preco">Quero o meu ritual de 5 dias — €7</a>
+        <p class="trust-line">Acesso imediato ao material · garantia de 7 dias</p>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <svg class="wave-orb" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="150" cy="150" r="110" stroke="#C1602E" stroke-width="1" opacity="0.25"/>
+        <circle cx="150" cy="150" r="80" stroke="#C9A046" stroke-width="1" opacity="0.35"/>
+        <path d="M60 150 C 90 100, 210 100, 240 150 C 210 200, 90 200, 60 150 Z" stroke="#4B5A3F" stroke-width="1.2" opacity="0.5" fill="none"/>
+        <circle class="pulse" cx="150" cy="150" r="3" fill="#C9A046"/>
+        <circle class="pulse" cx="95" cy="140" r="2.4" fill="#C1602E" style="animation-delay: 1.2s"/>
+        <circle class="pulse" cx="205" cy="140" r="2.4" fill="#4B5A3F" style="animation-delay: 2.4s"/>
+        <circle class="pulse" cx="150" cy="105" r="2.2" fill="#C9A046" style="animation-delay: 3.6s"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="pain">
+  <div class="wrap">
+    <h2>Reconheces alguma coisa disto?</h2>
+    <ul class="pain-list">
+      <li>Sentes o verão a escapar-te por entre os dedos, e uma ansiedade vaga sempre que pensas em setembro</li>
+      <li>A ideia de voltar a horários, prazos e rotina já pesa — antes mesmo de o primeiro dia chegar</li>
+      <li>Tentaste "aproveitar os últimos dias", mas isso só te deixou mais cansado, não mais em paz</li>
+      <li>Sentes que o verão vai simplesmente acabar, sem espaço para processar o que viveste</li>
+    </ul>
+    <p class="pain-note">Se te revês nalgum destes pontos, o problema não és tu. <strong>É biologia previsível</strong> — a queda de dopamina da novidade, o stress antecipatório do cortisol, e a falta de um encerramento real. Os três estão explicados no ebook, em linguagem simples.</p>
+  </div>
+</section>
+
+<section class="promise">
+  <div class="wrap">
+    <h2>O que muda depois destes 5 dias</h2>
+    <p class="promise-intro">Não prometemos prolongar o verão — isso não é possível, nem é o objetivo. O que este ritual faz é dar-lhe um final processado, em vez de um corte abrupto.</p>
+    <div class="outcome-list">
+      <div class="outcome-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#C9A046" stroke-width="1.3"/></svg>
+        <p>Vais entender por que setembro pesa tanto — e que não é falha tua</p>
+      </div>
+      <div class="outcome-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#C9A046" stroke-width="1.3"/></svg>
+        <p>Vais ter um pequeno ritual guiado, dia a dia, para processar o verão com intenção</p>
+      </div>
+      <div class="outcome-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#C9A046" stroke-width="1.3"/></svg>
+        <p>Vais escolher uma âncora concreta para levar contigo para a rotina de setembro</p>
+      </div>
+      <div class="outcome-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#C9A046" stroke-width="1.3"/></svg>
+        <p>Vais ficar com três micro-hábitos simples para manter o sistema nervoso regulado</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ritual">
+  <div class="ritual-head">
+    <h2>Dentro do ebook</h2>
+    <p class="ritual-sub">9 páginas, formato A5. Um capítulo sobre a ciência da transição, o ritual de 5 dias, e três micro-hábitos para a rotina.</p>
+  </div>
+  <div class="day-list">
+    <div class="day-row">
+      <span class="day-num">01</span>
+      <div>
+        <div class="day-title">Corpo</div>
+        <div class="day-desc">Agradecer ao corpo pelo verão, com atenção real — não com palavras vagas.</div>
+      </div>
+    </div>
+    <div class="day-row">
+      <span class="day-num">02</span>
+      <div>
+        <div class="day-title">Memória</div>
+        <div class="day-desc">Escolher conscientemente os momentos que queres guardar, em vez de deixar isso ao acaso.</div>
+      </div>
+    </div>
+    <div class="day-row">
+      <span class="day-num">03</span>
+      <div>
+        <div class="day-title">Libertar</div>
+        <div class="day-desc">Um gesto simbólico para marcar o que ficou pesado e o vais deixar para trás.</div>
+      </div>
+    </div>
+    <div class="day-row">
+      <span class="day-num">04</span>
+      <div>
+        <div class="day-title">Intenção</div>
+        <div class="day-desc">Escolher uma âncora única para levar do verão para a rotina de setembro.</div>
+      </div>
+    </div>
+    <div class="day-row">
+      <span class="day-num">05</span>
+      <div>
+        <div class="day-title">Integração</div>
+        <div class="day-desc">O encerramento final — corpo, memória, libertação e âncora, todos juntos.</div>
+      </div>
+    </div>
+  </div>
+  <div class="also-includes">
+    <p>+ A ciência por trás da "queda" de setembro: dopamina, cortisol antecipatório e falta de encerramento</p>
+    <p>+ Três micro-hábitos para os primeiros dias de rotina: respiração-âncora, desligar de fim de tarde, hora sem agenda</p>
+  </div>
+</section>
+
+<section class="guarantee">
+  <div class="guarantee-inner">
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="22" cy="22" r="19" stroke="#FBF6EC" stroke-width="1.2" opacity="0.6"/>
+      <path d="M14 22.5L19.5 28L30 16" stroke="#FBF6EC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <h3>Risco zero, garantido</h3>
+      <p>Se sentires que este ritual não é para ti, tens 7 dias para pedir reembolso — sem perguntas.</p>
+    </div>
+  </div>
+</section>
+
+<section class="price" id="preco">
+  <div class="wrap">
+    <h2>Quanto vale um fim de verão em paz?</h2>
+    <div class="price-tag">€7</div>
+    <p class="price-note">Pagamento único · acesso vitalício ao material</p>
+    <p class="price-compare">Um café e um pastel custam, facilmente, €5 em qualquer esplanada — e desaparecem em 15 minutos. Este ritual fica contigo durante toda a transição para setembro, e podes voltar a ele sempre que precisares.</p>
+    <a class="btn" href="#">Quero começar o meu ritual — €7</a>
+  </div>
+</section>
+
+<section class="whom">
+  <div class="wrap">
+    <h2>Para quem é</h2>
+    <div class="whom-grid">
+      <div class="whom-col">
+        <h3>É para ti se</h3>
+        <ul>
+          <li>Sentes ansiedade ou peso sempre que pensas no regresso à rotina</li>
+          <li>Gostas de entender o porquê antes do "faz isto"</li>
+          <li>Preferes um ritual pequeno e guiado a mais uma lista de propósitos por cumprir</li>
+        </ul>
+      </div>
+      <div class="whom-col">
+        <h3>Não é para ti se</h3>
+        <ul>
+          <li>Procuras um curso longo ou um programa de meses</li>
+          <li>Já tens uma prática de encerramento sazonal que funciona bem para ti</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <h2>Perguntas frequentes</h2>
+
+    <details>
+      <summary>É preciso experiência com meditação ou mindfulness?</summary>
+      <p>Não. As práticas são guiadas passo a passo, sem jargão.</p>
+    </details>
+
+    <details>
+      <summary>Quanto tempo demora?</summary>
+      <p>10 a 15 minutos por dia, durante 5 dias. Podes fazer em dias seguidos, ou espalhado pela última semana de agosto e primeira de setembro.</p>
+    </details>
+
+    <details>
+      <summary>Como recebo o ebook?</summary>
+      <p>O material chega por email, imediatamente após a compra. Confirma bem o teu email no checkout para não perderes o acesso.</p>
+    </details>
+
+    <details>
+      <summary>E se eu não gostar?</summary>
+      <p>Garantia incondicional de 7 dias — reembolso total, sem perguntas.</p>
+    </details>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Setembro vai chegar de qualquer forma. A pergunta é como.</h2>
+    <a class="btn" href="#preco">Quero o meu ritual de 5 dias — €7</a>
+    <p class="final-trust">Acesso imediato · garantia de 7 dias · pagamento seguro</p>
+  </div>
+</section>
+
+<footer>
+  <p>NeuroMedit · Lisboa. Continua a prática em <a href="https://neuromedit.com">neuromedit.com</a></p>
+</footer>
+
+</body>
+</html>

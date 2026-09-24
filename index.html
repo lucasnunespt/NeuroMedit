@@ -456,6 +456,29 @@
       color: var(--text-secondary);
     }
 
+    .intro-headphones {
+      margin: -0.2rem 0 0.4rem;
+      color: rgba(244, 230, 218, 0.72);
+      font-size: 0.82rem;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    .intro-language-note {
+      max-width: min(82vw, 34ch);
+      margin: -0.2rem auto 0.4rem;
+      color: rgba(244, 230, 218, 0.72);
+      font-size: 0.82rem;
+      font-weight: 300;
+      line-height: 1.5;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    html[lang="pt"] .intro-language-note {
+      display: none;
+    }
+
     .intro-note {
       max-width: min(82vw, 360px);
       margin: -0.45rem 0 0.55rem;
@@ -1139,11 +1162,13 @@
       <p class="intro-copy" data-i18n="index_welcome_copy">Before you continue, pause for a moment. Breathe slowly and let your body arrive here.</p>
       
       <p class="intro-note" data-i18n="index_intro_copy">Take one slow breath before you begin.</p>
+      <p class="intro-headphones" data-i18n="home_headphones">Melhor com fones de ouvido.</p>
       
       <div class="intro-language" aria-live="polite">
         <span data-i18n="index_language_note">Detected language</span>
         <div data-language-host></div>
       </div>
+      <p class="audio-language-note intro-language-note" data-audio-lang-note data-i18n="global_audio_pt_only">Por enquanto, as meditações guiadas estão disponíveis apenas em português.</p>
       <div class="intro-actions">
         <button id="airlockStartBtn" class="start-btn" type="button" data-airlock-start data-i18n="index_cta">Começar</button>
         <button class="explore-btn" type="button" data-explore-instead data-i18n="index_explore_cta">Explore instead</button>

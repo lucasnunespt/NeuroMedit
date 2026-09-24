@@ -317,3 +317,18 @@ html[lang="ru"] .meditation-label {
   height: 30px;
   font-size: 0.72rem;
 }
+
+/* Aviso: meditações guiadas só em português (escondido quando o site está em PT) */
+.audio-language-note {
+  max-width: 34ch;
+  margin: 0.2rem auto 0;
+  color: var(--text-soft, rgba(84, 94, 95, 0.92));
+  font-size: 0.82rem;
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: balance;
+}
+
+html[lang="pt"] [data-audio-lang-note] {
+  display: none;
+}

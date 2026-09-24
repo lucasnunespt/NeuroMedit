@@ -1,0 +1,122 @@
+/* NeuroMedit · Botão de compartilhar (ver share-button.js) */
+
+.share-button {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line, rgba(31, 35, 38, 0.1));
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-soft, #66706f);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  /* Aparece/desaparece no ritmo de uma expiração lenta */
+  transition:
+    opacity 1.2s ease-in-out,
+    color 400ms ease,
+    border-color 400ms ease,
+    visibility 0s linear 0s;
+}
+
+.share-button:hover {
+  color: var(--text, #1f2326);
+  border-color: currentColor;
+}
+
+.share-button:focus-visible {
+  outline: 2px solid var(--accent-dark, #517067);
+  outline-offset: 3px;
+}
+
+.share-button svg {
+  display: block;
+}
+
+/* Escondido durante a reprodução: sai da tela e da ordem do Tab */
+.share-button.is-concealed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 1.2s ease-in-out,
+    visibility 0s linear 1.2s;
+}
+
+/* Linha do play: o play continua centrado; a partilha fica à direita, menor */
+.session-play-row {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.session-play-row > .share-button {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.6rem);
+  transform: translateY(-50%);
+}
+
+/* Versão que acompanha o botão Retomar (posição calculada no JS) */
+.share-button--paused {
+  position: fixed;
+  z-index: 30;
+  background: var(--surface, rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (max-width: 720px) {
+  .session-play-row {
+    width: min(100% - 6.5rem, 280px);
+  }
+
+  .session-play-row .session-start-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* "Link copiado" */
+.share-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 6rem);
+  z-index: 60;
+  margin: 0;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--surface-strong, rgba(255, 255, 255, 0.92));
+  color: var(--text, #1f2326);
+  font-size: 0.86rem;
+  box-shadow: var(--shadow-soft, 0 10px 24px rgba(31, 35, 38, 0.05));
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  pointer-events: none;
+  transition: opacity 600ms ease-in-out, transform 600ms ease-in-out;
+}
+
+.share-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-button,
+  .share-button.is-concealed,
+  .share-toast {
+    transition: none;
+  }
+}
+
+/* Tela de fim de sessão (feedback.html) */
+.share-button.feedback-share {
+  display: grid;
+  margin: 0 auto clamp(0.65rem, 1.6vh, 1rem);
+}
+
+.share-button[hidden] {
+  display: none;
+}

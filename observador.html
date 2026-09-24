@@ -6,6 +6,7 @@
   <title>Consciência, Mente e Corpo &middot; NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="session.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
@@ -105,6 +106,7 @@
         <span data-i18n="global_exit">Exit</span>
       </button>
       <button class="session-pause" type="button" data-session-pause hidden data-i18n="global_pause">Pause</button>
+      <button type="button" class="share-button share-button--paused is-concealed" data-share-button data-share-when="paused" aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
 
       <section class="session-step" data-session-step="prep">
         <p class="session-kicker">Observador</p>
@@ -114,7 +116,10 @@
           <span class="session-chip">Meditação guiada</span>
           <span class="session-chip">Observação consciente</span>
         </div>
-        <button class="session-start-button" type="button" data-session-start>Começar meditação</button>
+        <div class="session-play-row">
+          <button class="session-start-button" type="button" data-session-start>Começar meditação</button>
+          <button type="button" class="share-button" data-share-button aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
+        </div>
         <a class="session-secondary-link" href="library.html">Voltar à biblioteca</a>
       </section>
 
@@ -157,6 +162,7 @@
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
   <script src="settings-panel.js"></script>
+  <script src="share-button.js"></script>
   <script src="session-flow.js"></script>
 </body>
 </html>

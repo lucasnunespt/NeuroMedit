@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consciência, Mente e Corpo &middot; NeuroMedit</title>
+  <title data-i18n="observador_meta_title">Consciência, Mente e Corpo &middot; NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="session.css">
   <link rel="stylesheet" href="share-button.css">
@@ -109,33 +109,34 @@
       <button type="button" class="share-button share-button--paused is-concealed" data-share-button data-share-when="paused" aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
 
       <section class="session-step" data-session-step="prep">
-        <p class="session-kicker">Observador</p>
-        <h1>Consciência, Mente e Corpo</h1>
-        <p class="session-intent">Uma meditação guiada para observar a mente, sentir o corpo e retornar à presença.</p>
-        <div class="session-meta-row" aria-label="Session details">
-          <span class="session-chip">Meditação guiada</span>
-          <span class="session-chip">Observação consciente</span>
+        <p class="session-kicker" data-i18n="observador_kicker">Observador</p>
+        <h1 data-i18n="observador_title">Consciência, Mente e Corpo</h1>
+        <p class="session-intent" data-i18n="observador_text">Uma meditação guiada para observar a mente, sentir o corpo e retornar à presença.</p>
+        <div class="session-meta-row" aria-label="Session details" data-i18n="global_session_details" data-i18n-attr="aria-label">
+          <span class="session-chip" data-i18n="observador_meta">Meditação guiada</span>
+          <span class="session-chip" data-i18n="observador_chip">Observação consciente</span>
         </div>
+        <p class="audio-language-note" data-audio-lang-note data-i18n="global_audio_pt_only">Por enquanto, as meditações guiadas estão disponíveis apenas em português.</p>
         <div class="session-play-row">
-          <button class="session-start-button" type="button" data-session-start>Começar meditação</button>
+          <button class="session-start-button" type="button" data-session-start data-i18n="observador_start">Começar meditação</button>
           <button type="button" class="share-button" data-share-button aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
         </div>
-        <a class="session-secondary-link" href="library.html">Voltar à biblioteca</a>
+        <a class="session-secondary-link" href="library.html" data-i18n="observador_back_cta">Voltar à biblioteca</a>
       </section>
 
       <section class="session-step" data-session-step="airlock" hidden>
         <div class="airlock-orb" aria-hidden="true"><span data-breath-label data-i18n="global_breathe_in">Breathe in</span></div>
-        <h2>Chegue devagar.</h2>
-        <p class="session-instruction">Permita-se estar aqui, sem pressa.</p>
+        <h2 data-i18n="observador_airlock_title">Chegue devagar.</h2>
+        <p class="session-instruction" data-i18n="observador_airlock_text">Permita-se estar aqui, sem pressa.</p>
       </section>
 
       <section class="session-step" data-session-step="practice" hidden>
         <div class="practice-orb" aria-hidden="true">
           <div class="session-progress" data-session-progress></div>
-          <span>Observar</span>
+          <span data-i18n="observador_practice_label">Observar</span>
         </div>
-        <h2>Observe sem julgar.</h2>
-        <p class="session-instruction">Perceba os pensamentos, as sensações e a respiração, um de cada vez.</p>
+        <h2 data-i18n="observador_practice_title">Observe sem julgar.</h2>
+        <p class="session-instruction" data-i18n="observador_practice_text">Perceba os pensamentos, as sensações e a respiração, um de cada vez.</p>
         <audio class="session-audio" data-session-audio preload="auto"></audio>
       </section>
     </div>

@@ -1,4 +1,13 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "ratings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "meditationId", "order": "ASCENDING" },
+        { "fieldPath": "stars", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }

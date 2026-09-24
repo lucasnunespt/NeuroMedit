@@ -1,8 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Perfil de cada pessoa com login Google (botão já existente)
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Avaliações das meditações
+    match /ratings/{ratingId} {
+      // Qualquer pessoa pode ler (para calcular a média)
+      allow read: if true;
+
+      // Qualquer pessoa pode CRIAR, desde que a avaliação seja válida
+      allow create: if isValidRating(request.resource.data);
+
+      // Ninguém pode editar nem apagar
+      allow update, delete: if false;
+    }
+
+    function isValidRating(data) {
+      return data.keys().hasAll(['meditationId', 'stars', 'createdAt'])
+        && data.keys().hasOnly(['meditationId', 'stars', 'comment', 'createdAt'])
+        && data.meditationId is string
+        && data.meditationId.size() > 0
+        && data.meditationId.size() <= 80
+        && data.stars is int
+        && data.stars >= 1
+        && data.stars <= 5
+        && (!('comment' in data) || (data.comment is string && data.comment.size() <= 500))
+        // createdAt tem de ser o relógio do servidor (serverTimestamp)
+        && data.createdAt == request.time;
     }
   }
 }

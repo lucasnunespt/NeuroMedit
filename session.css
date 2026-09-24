@@ -479,6 +479,22 @@ audio {
 .session-secondary-link {
   color: var(--text-soft);
   padding: 0.7rem 1rem;
+  background: transparent;
+  border: none;
+}
+
+.session-secondary-link:hover,
+.session-secondary-link:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.session-secondary-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem 0.6rem;
 }
 
 .session-start-button:hover,
@@ -694,5 +710,117 @@ body.theme-night .session-start-button {
   .airlock-orb::before,
   .practice-orb::before {
     animation: none !important;
+  }
+
+  .session-about-dialog,
+  .session-about-dialog::backdrop {
+    transition: none !important;
+  }
+}
+
+/* =========================
+   ABOUT-THIS-MEDITATION DIALOG
+   A quiet, on-demand "floating page" opened from the prep step — the
+   deeper context (structure, neuroscience, thinkers) lives here instead
+   of competing for space on the session card or during the practice.
+========================= */
+.session-about-dialog {
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+  width: min(92vw, 620px);
+  max-height: min(86vh, 720px);
+  margin: auto;
+  overflow: hidden;
+  transition: opacity 380ms ease, transform 380ms ease, display 380ms allow-discrete, overlay 380ms allow-discrete;
+}
+
+.session-about-dialog::backdrop {
+  background: rgba(20, 20, 22, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 380ms ease, display 380ms allow-discrete, overlay 380ms allow-discrete;
+}
+
+@starting-style {
+  .session-about-dialog[open] {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+
+  .session-about-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.session-about-close {
+  position: sticky;
+  top: 0.9rem;
+  left: 100%;
+  transform: translateX(-0.9rem);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.session-about-close:hover,
+.session-about-close:focus-visible {
+  color: var(--text);
+  background: var(--surface-strong);
+  outline: none;
+}
+
+.session-about-content {
+  max-height: min(86vh, 720px);
+  overflow-y: auto;
+  padding: 0.5rem clamp(1.4rem, 5vw, 2.4rem) clamp(1.6rem, 4vw, 2.2rem);
+  margin-top: -2.4rem;
+}
+
+.session-about-content h2 {
+  margin: 0 0 1.1rem;
+  padding-right: 2.2rem;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  max-width: none;
+}
+
+.session-about-content h3 {
+  margin: 1.4rem 0 0.5rem;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.session-about-content h3:first-of-type {
+  margin-top: 0;
+}
+
+.session-about-content p {
+  margin-bottom: 0.6rem;
+  max-width: 62ch;
+  line-height: 1.75;
+  font-size: 0.98rem;
+  text-align: left;
+}
+
+.session-about-content p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .session-about-content {
+    padding: 0.5rem 1.15rem 1.4rem;
   }
 }

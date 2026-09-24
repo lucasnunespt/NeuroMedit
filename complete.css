@@ -1188,3 +1188,100 @@ body[data-theme="low-contrast"] .feedback-ghost-link:hover {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
+/* =========================
+   SHARE BUTTON
+   Revealed at the same moment as the feedback thank-you and next-step
+   actions — the "peak" of the completed session, before the person
+   moves on. Quiet by design: icon + label, no color competing for
+   attention, no badge or counter.
+========================= */
+.feedback-share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  margin: 0 auto clamp(0.65rem, 1.6vh, 1rem);
+  padding: 0.55rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: background 220ms ease, border-color 220ms ease, color 220ms ease, transform 220ms ease;
+}
+
+.feedback-share-button[hidden] {
+  display: none;
+}
+
+.feedback-share-button:hover,
+.feedback-share-button:focus-visible {
+  border-color: var(--accent);
+  background: rgba(138, 165, 160, 0.16);
+  color: var(--text);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.feedback-share-button:active {
+  transform: scale(0.98);
+}
+
+.feedback-share-icon {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.feedback-share-status {
+  min-height: 1.2em;
+  margin: 0 0 clamp(0.5rem, 1.3vh, 0.8rem);
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.feedback-share-status.is-visible {
+  opacity: 1;
+}
+
+body.complete-body.feedback-atmosphere .feedback-share-button {
+  border-color: rgba(126, 83, 55, 0.18);
+  background: rgba(255, 250, 243, 0.5);
+  color: var(--text);
+}
+
+body.complete-body.feedback-atmosphere .feedback-share-button:hover,
+body.complete-body.feedback-atmosphere .feedback-share-button:focus-visible {
+  border-color: rgba(128, 80, 58, 0.32);
+  background: rgba(169, 109, 79, 0.14);
+}
+
+body.settings-low-contrast .feedback-share-button,
+body[data-theme="low-contrast"] .feedback-share-button {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.settings-low-contrast .feedback-share-button:hover,
+body[data-theme="low-contrast"] .feedback-share-button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.settings-low-contrast .feedback-share-status,
+body[data-theme="low-contrast"] .feedback-share-status {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feedback-share-button {
+    transition: none !important;
+  }
+}
+

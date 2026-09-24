@@ -739,3 +739,10 @@ body.contributors-body .empty-card-text {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Aviso: livro disponível só em português (mesmo padrão do aviso de áudio) */
+.author-profile-content .author-language-note {
+  margin: 0.9rem 0 0;
+  max-width: 34rem;
+  text-align: left;
+}

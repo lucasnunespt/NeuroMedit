@@ -329,6 +329,7 @@ html[lang="ru"] .meditation-label {
   text-wrap: balance;
 }
 
-html[lang="pt"] [data-audio-lang-note] {
+html[lang="pt"] [data-audio-lang-note],
+html[lang="pt"] [data-pt-only-note] {
   display: none;
 }

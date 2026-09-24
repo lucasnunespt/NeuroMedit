@@ -6,6 +6,7 @@
   <title data-i18n="feedback_meta_title">Feedback &middot; NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="complete.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
@@ -74,27 +75,7 @@
 
           <p class="feedback-thank-you" data-feedback-save-status data-feedback-thank-you data-i18n="feedback_thank_you" role="status" aria-live="polite" hidden>Thank you. Your response has been saved.</p>
 
-          <button
-            type="button"
-            class="feedback-share-button"
-            data-feedback-share
-            hidden
-            aria-label="Share NeuroMedit"
-            title="Share"
-            data-i18n="feedback_share_aria"
-            data-i18n-attr="aria-label,title"
-          >
-            <span class="feedback-share-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" focusable="false">
-                <circle cx="6" cy="12" r="2.3" stroke="currentColor" stroke-width="1.6"></circle>
-                <circle cx="17.2" cy="5.8" r="2.3" stroke="currentColor" stroke-width="1.6"></circle>
-                <circle cx="17.2" cy="18.2" r="2.3" stroke="currentColor" stroke-width="1.6"></circle>
-                <path d="M8.05 10.85L15.15 6.95M8.05 13.15L15.15 17.05" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-              </svg>
-            </span>
-            <span data-i18n="feedback_share_cta">Share</span>
-          </button>
-          <p class="feedback-share-status" data-feedback-share-status role="status" aria-live="polite" hidden></p>
+          <button type="button" class="share-button feedback-share" data-share-button data-share-source="last-session" data-feedback-share hidden aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
 
           <div class="complete-actions" data-feedback-actions hidden>
             <a href="home.html" class="feedback-btn primary-button" data-i18n="home_continue_cta">Continuar</a>
@@ -146,7 +127,6 @@
       const feedbackCard = document.querySelector(".complete-card");
       const feedbackActions = document.querySelector("[data-feedback-actions]");
       const shareButton = document.querySelector("[data-feedback-share]");
-      const shareStatus = document.querySelector("[data-feedback-share-status]");
       question?.setAttribute("data-i18n", "index_choices_aria");
 
       if (options) {
@@ -234,71 +214,10 @@
         }
 
       });
-
-      async function copyTextToClipboard(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-          try {
-            await navigator.clipboard.writeText(text);
-            return true;
-          } catch (error) {
-            // fall through to legacy fallback below
-          }
-        }
-
-        try {
-          const helper = document.createElement("textarea");
-          helper.value = text;
-          helper.setAttribute("readonly", "");
-          helper.style.position = "fixed";
-          helper.style.top = "-1000px";
-          helper.style.opacity = "0";
-          document.body.appendChild(helper);
-          helper.focus();
-          helper.select();
-          const copied = document.execCommand("copy");
-          document.body.removeChild(helper);
-          return copied;
-        } catch (error) {
-          return false;
-        }
-      }
-
-      function announceShareStatus(key, fallback) {
-        if (!shareStatus) return;
-        shareStatus.textContent = typeof getTranslation === "function"
-          ? getTranslation(getFeedbackLanguage(), key)
-          : fallback;
-        shareStatus.hidden = false;
-        requestAnimationFrame(() => {
-          shareStatus.classList.add("is-visible");
-        });
-      }
-
-      shareButton?.addEventListener("click", async () => {
-        const language = getFeedbackLanguage();
-        const shareText = typeof getTranslation === "function"
-          ? getTranslation(language, "feedback_share_text")
-          : "I just took a mindful break with NeuroMedit.";
-        const shareUrl = `${window.location.origin}/library.html`;
-
-        if (navigator.share) {
-          try {
-            await navigator.share({ title: "NeuroMedit", text: shareText, url: shareUrl });
-          } catch (error) {
-            // User cancelled the native share sheet or it failed silently — no need to alarm them.
-          }
-          return;
-        }
-
-        const copied = await copyTextToClipboard(`${shareText} ${shareUrl}`);
-        announceShareStatus(
-          copied ? "feedback_share_copied" : "feedback_share_copy_failed",
-          copied ? "Link copied." : "Couldn't copy the link."
-        );
-      });
     })();
   </script>
   <script src="translations.js"></script>
+  <script src="share-button.js"></script>
   <script>
     (() => {
       const labels = {

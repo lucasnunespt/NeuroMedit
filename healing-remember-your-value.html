@@ -6,6 +6,7 @@
   <title data-i18n="healing_remember_meta_title">Remember Your Value · NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="session.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
@@ -105,6 +106,7 @@
         <span data-i18n="global_exit">Exit</span>
       </button>
       <button class="session-pause" type="button" data-session-pause hidden data-i18n="global_pause">Pause</button>
+      <button type="button" class="share-button share-button--paused is-concealed" data-share-button data-share-when="paused" aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
 
       <section class="session-step" data-session-step="prep">
         <p class="session-kicker" data-i18n="healing_remember_kicker">Emotional Healing</p>
@@ -114,7 +116,10 @@
           <span class="session-chip" data-i18n="healing_remember_duration">5 min · Emotional healing</span>
           <span class="session-chip" data-i18n="healing_remember_chip">Self-worth</span>
         </div>
-        <button class="session-start-button" type="button" data-session-start data-i18n="healing_remember_start">Begin meditation</button>
+        <div class="session-play-row">
+          <button class="session-start-button" type="button" data-session-start data-i18n="healing_remember_start">Begin meditation</button>
+          <button type="button" class="share-button" data-share-button aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
+        </div>
         <a class="session-secondary-link" href="library.html" data-i18n="healing_remember_back_cta">Back to library</a>
       </section>
 
@@ -157,6 +162,7 @@
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
   <script src="settings-panel.js"></script>
+  <script src="share-button.js"></script>
   <script src="session-flow.js"></script>
 </body>
 </html>

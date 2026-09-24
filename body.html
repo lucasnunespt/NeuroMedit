@@ -6,6 +6,7 @@
   <title data-i18n="body_meta_title">Body Scan &middot; NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="session.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
@@ -79,7 +80,10 @@
           <span class="session-chip" data-i18n="body_meta">6 min - Body awareness</span>
           <span class="session-chip" data-i18n="body_chip">Somatic reset</span>
         </div>
-        <button class="session-start-button" type="button" data-session-start data-i18n="body_start">Begin body scan</button>
+        <div class="session-play-row">
+          <button class="session-start-button" type="button" data-session-start data-i18n="body_start">Begin body scan</button>
+          <button type="button" class="share-button" data-share-button aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
+        </div>
         <a class="session-secondary-link" href="library.html" data-i18n="body_back_cta">Back to library</a>
       </section>
 
@@ -122,6 +126,7 @@
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
   <script src="settings-panel.js"></script>
+  <script src="share-button.js"></script>
   <script src="session-flow.js"></script>
 </body>
 </html>

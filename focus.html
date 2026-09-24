@@ -6,6 +6,7 @@
   <title data-i18n="focus_meta_title">Deep Focus &middot; NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="session.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
@@ -113,7 +114,10 @@
           <span class="session-chip" data-i18n="focus_meta">4 min - Attention reset</span>
           <span class="session-chip" data-i18n="focus_chip">Attention anchor</span>
         </div>
-        <button class="session-start-button" type="button" data-session-start data-i18n="focus_start">Focus session</button>
+        <div class="session-play-row">
+          <button class="session-start-button" type="button" data-session-start data-i18n="focus_start">Focus session</button>
+          <button type="button" class="share-button" data-share-button aria-label="Compartilhar esta meditação" title="Compartilhar esta meditação" data-i18n="share_meditation_aria" data-i18n-attr="aria-label,title"></button>
+        </div>
         <a class="session-secondary-link" href="library.html" data-i18n="focus_back_cta">Back to library</a>
       </section>
 
@@ -156,6 +160,7 @@
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
   <script src="settings-panel.js"></script>
+  <script src="share-button.js"></script>
   <script src="session-flow.js"></script>
 </body>
 </html>

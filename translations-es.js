@@ -569,6 +569,8 @@ window.NeuroMeditTranslations = {
     feedback_share_text: "Acabo de tomarme una pausa consciente con NeuroMedit.",
     feedback_share_copied: "Enlace copiado.",
     feedback_share_copy_failed: "No se pudo copiar el enlace.",
+    share_meditation_aria: "Compartir esta meditación",
+    share_link_copied: "Enlace copiado",
     feedback_repeat_cta: "Hacer la pausa de nuevo",
     feedback_choose_cta: "Elegir otra práctica",
     feedback_home_cta: "Ir al inicio",

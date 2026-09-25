@@ -564,9 +564,6 @@ a.session-card--locked::after {
     gap: 0.55rem;
   }
 
-  .filter-pill {
-    width: 100%;
-  }
 
   .session-card,
   .quick-card {
@@ -574,3 +571,76 @@ a.session-card--locked::after {
   }
 }
 
+
+/* Aviso de idioma alinhado ao resto do texto do hero */
+.library-hero .audio-language-note {
+  max-width: 54ch;
+  margin: 0.75rem 0 0;
+  text-align: left;
+}
+
+/* =========================
+   REDESIGN MOBILE — primeira tela com título, aviso e atalhos
+   (chips compactos, ritmo de espaçamento 8/16/24/40)
+========================= */
+@media (max-width: 720px) {
+  .library-page section {
+    padding: 2.5rem 0;
+  }
+
+  .library-hero .eyebrow {
+    margin-bottom: 0.6rem;
+  }
+
+  .library-hero h1 {
+    max-width: 14ch;
+    margin-bottom: 0.75rem;
+    font-size: clamp(2rem, 8.6vw, 2.6rem);
+    line-height: 1.08;
+  }
+
+  .library-hero .hero-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .library-page .library-filter {
+    padding: 0.25rem 0 0.5rem;
+  }
+
+  /* Atalhos: uma linha de chips pequenos, desliza na horizontal se precisar */
+  .filter-pills {
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-inline: -1rem;
+    padding: 0.25rem 1rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 40px;
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .category-heading {
+    margin-bottom: 1.25rem;
+  }
+
+  .session-grid {
+    gap: 1rem;
+  }
+
+  #calm {
+    padding-top: 2.5rem;
+  }
+}

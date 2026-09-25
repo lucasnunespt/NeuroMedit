@@ -526,3 +526,153 @@
     background: var(--surface-strong, #ffffff);
   }
 }
+
+
+/* ==========================================================
+   REDESIGN — BARRA COMPACTA (inspirada nas apps atuais)
+   Pílula flutuante só com ícones; o nome de cada destino fica
+   para leitores de ecrã. Alvos de toque ≥ 44px.
+   Na Biblioteca, a busca vira um círculo ao lado da pílula.
+   ========================================================== */
+@media (max-width: 940px) {
+  :root {
+    --bottom-bar-h: 56px;
+    --nav-pill-w: 204px;
+    --search-dot: 56px;
+    --nav-gap: 10px;
+  }
+
+  .bottom-header-shell {
+    width: var(--nav-pill-w);
+    max-width: none;
+    margin: 0;
+    min-height: var(--bottom-bar-h);
+    padding: 0.3rem;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .bottom-nav {
+    justify-content: space-between;
+  }
+
+  .bottom-nav-item {
+    flex: 0 0 auto;
+    min-width: 0;
+    width: 60px;
+    min-height: 46px;
+    padding: 0;
+    gap: 0;
+  }
+
+  .bottom-nav-item svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bottom-nav-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Biblioteca: pílula + círculo de busca, centrados juntos */
+  body.has-search-dock .bottom-header {
+    transform: translateX(calc((var(--search-dot) + var(--nav-gap)) / -2));
+    transition: opacity var(--breath-mid) var(--breath-ease), visibility var(--breath-mid);
+  }
+
+  body.search-expanded .bottom-header {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .library-search-dock {
+    left: calc(50% + (var(--nav-pill-w) - var(--search-dot) - var(--nav-gap)) / 2 + var(--nav-gap));
+    transform: none;
+    bottom: 0.75rem;
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+    z-index: 91;
+    width: var(--search-dot);
+    max-width: none;
+    min-height: var(--search-dot);
+    height: var(--search-dot);
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition:
+      left var(--breath-mid) var(--breath-ease),
+      width var(--breath-mid) var(--breath-ease),
+      padding var(--breath-mid) var(--breath-ease),
+      border-color var(--breath-mid) var(--breath-ease);
+  }
+
+  .library-search-dock svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .library-search-dock input {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  .library-search-dock.is-expanded {
+    left: 16px;
+    width: calc(100% - 32px);
+    justify-content: flex-start;
+    gap: 0.55rem;
+    padding: 0 1rem;
+    cursor: text;
+  }
+
+  .library-search-dock.is-expanded input {
+    flex: 1 1 auto;
+    width: auto;
+    opacity: 1;
+  }
+
+  .library-search-results {
+    bottom: calc(0.75rem + var(--search-dot) + 0.6rem);
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem + var(--search-dot) + 0.6rem);
+  }
+
+  body.has-search-dock {
+    padding-bottom: calc(var(--bottom-bar-h) + 1.75rem);
+    padding-bottom: calc(var(--bottom-bar-h) + env(safe-area-inset-bottom) + 1.75rem);
+  }
+
+  /* O conteúdo já começa abaixo do header: basta um respiro curto */
+  body .library-page .library-hero {
+    padding-top: 1.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  body .library-page .library-hero .eyebrow {
+    margin-bottom: 0.6rem;
+  }
+
+  body .library-page .library-hero .hero-text {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 940px) and (prefers-reduced-motion: reduce) {
+  .library-search-dock,
+  body.has-search-dock .bottom-header {
+    transition: none;
+  }
+}

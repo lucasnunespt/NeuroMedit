@@ -7,6 +7,7 @@ window.NeuroMeditTranslations = {
     global_nav_aria: "Основная навигация",
     global_nav_home: "Главная",
     nav_profile: "Профиль",
+    nav_menu: "Меню",
     library_search_placeholder: "Поиск сессий",
     library_search_noresults: "Ничего не найдено — попробуйте «сон», «фокус» или «спокойствие».",
     case_study_calendly_cta: "Поговорим",

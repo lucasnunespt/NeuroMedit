@@ -1285,3 +1285,62 @@ body[data-theme="low-contrast"] .feedback-share-status {
   }
 }
 
+
+
+/* =========================
+   FEEDBACK — CORES DO TEMA
+   O cartão e os botões usavam bege fixo (rgba(255,250,243,…)); à noite
+   o texto claro ficava sobre botão claro (contraste ≈1,5:1). Agora tudo
+   vem das variáveis do tema, como no resto do site:
+   · cartão = superfície do tema · opções = contorno discreto
+   · escolhido/hover = tom de destaque · "Continuar" = botão principal
+   (4 classes no body para vencer as regras antigas por tema)
+========================= */
+body.complete-body.feedback-minimal.feedback-atmosphere .complete-card {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.14);
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-minimal-question,
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-thank-you {
+  color: var(--text);
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option:hover,
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option:focus-visible,
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option.is-selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--text);
+  outline: none;
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-btn.primary-button {
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: var(--button-text);
+  box-shadow: none;
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-btn.primary-button:hover,
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-btn.primary-button:focus-visible {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+}
+
+body.complete-body.feedback-minimal.feedback-atmosphere .feedback-ghost-link {
+  color: var(--text-soft, var(--text));
+}

@@ -24,6 +24,8 @@ window.NeuroMeditTranslations = {
     index_audio_error: "Não foi possível iniciar o áudio. Toque novamente.",
     global_pause: "Pausar",
     global_resume: "Retomar",
+    session_resume_cta: "Continuar de onde parei",
+    session_restart_cta: "Começar do início",
     global_breathe_in: "Inspire",
     global_breathe_out: "Expire",
     global_footer_brand: "© 2026 NeuroMedit",

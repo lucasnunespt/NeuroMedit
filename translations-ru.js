@@ -24,6 +24,8 @@ window.NeuroMeditTranslations = {
     index_audio_error: "Не удалось запустить аудио. Нажмите ещё раз.",
     global_pause: "Пауза",
     global_resume: "Продолжить",
+    session_resume_cta: "Продолжить с того же места",
+    session_restart_cta: "Начать сначала",
     index_prepare_body: "Подготовьте тело.",
     index_breathe_slowly: "Дышите медленно.",
     index_close_eyes: "закройте глаза",

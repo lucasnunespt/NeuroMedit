@@ -858,11 +858,13 @@ a.featured-card:focus-visible {
    "Inspire / Expire" passa a ser o foco visual no lugar do título.
 ========================= */
 .home-page .home-hero h1.home-tagline {
-  max-width: 22ch;
+  max-width: none;
   margin: 0;
   color: var(--text-soft, var(--text));
   font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-  font-size: clamp(1.2rem, 3.6vw, 1.55rem);
+  /* numa linha só em todos os idiomas, até 320px de largura */
+  white-space: nowrap;
+  font-size: clamp(0.92rem, 3.9vw, 1.2rem);
   font-style: italic;
   font-weight: 400;
   line-height: 1.35;

@@ -600,3 +600,68 @@ p {
     padding: 1.6rem;
   }
 }
+
+
+/* =========================
+   FILOSOFIA — leitura confortável
+   Uma ideia por bloco: rótulo · título · 2–3 frases · fonte
+========================= */
+.philo-page .philo-block {
+  padding-block: clamp(2.5rem, 7vw, 4.5rem);
+}
+
+.philo-page .philo-block .narrow {
+  max-width: 62ch;
+}
+
+.philo-page .philo-block h2 {
+  margin-bottom: 0.9rem;
+  text-wrap: balance;
+}
+
+.philo-page .philo-block p {
+  font-size: clamp(1.02rem, 2.4vw, 1.12rem);
+  line-height: 1.7;
+}
+
+.philo-source {
+  margin-top: 0.9rem;
+  color: var(--text-muted, currentColor);
+  font-size: 0.8rem !important;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+}
+
+.philo-quote {
+  margin: 2rem 0 0;
+  padding: 0.2rem 0 0.2rem 1.25rem;
+  border-left: 2px solid var(--accent, currentColor);
+}
+
+.philo-quote p {
+  font-size: clamp(1.1rem, 3vw, 1.3rem) !important;
+  font-style: italic;
+  line-height: 1.55 !important;
+}
+
+.philo-quote cite {
+  display: block;
+  margin-top: 0.6rem;
+  color: var(--text-muted, currentColor);
+  font-size: 0.82rem;
+  font-style: normal;
+}
+
+.philo-block--quiet h2 {
+  font-size: clamp(1.35rem, 4vw, 1.7rem);
+}
+
+.philo-page .why-hero h1 {
+  max-width: 14ch;
+}
+
+
+/* Âncoras (#science, #contact) não ficam escondidas sob a barra do topo */
+.philo-page section[id] {
+  scroll-margin-top: 110px;
+}

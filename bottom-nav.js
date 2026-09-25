@@ -191,13 +191,31 @@
 
     /* Sinônimos por destino (pt · en · es · it · ru) */
     const SYNONYMS = {
-      "sleep.html": "sono dormir adormecer insonia descanso descansar noite noturno relaxar cansaco sleep insomnia rest night tired dormire sonno riposo sueno dormirse descanso noche сон спать отдых ночь",
-      "calm.html": "calma calmo ansiedade estresse stress respiracao respirar acalmar tranquilidade paz nervoso panico calm anxiety breath breathing relax peace ansia respiro calma ansiedad respirar paz спокойствие дыхание тревога",
-      "focus.html": "foco concentracao atencao estudo estudar trabalho produtividade clareza mente focus concentration attention study work clarity concentrazione attenzione concentracion atencion фокус внимание учеба",
-      "body.html": "corpo tensao relaxamento muscular escaneamento soltar ombros body scan tension muscles release corpo tensione cuerpo tension тело напряжение",
-      "healing-return-to-yourself.html": "cura curar emocional psicologia psicologico autocompaixao acolhimento culpa perdao voltar para si sentimentos emocoes healing emotional self-compassion guilt feelings emotions guarigione emozioni sanacion emociones исцеление эмоции",
-      "healing-remember-your-value.html": "valor autoestima confianca merecimento amor proprio psicologia autoimagem worth self-esteem confidence self-worth autostima valore autoestima confianza самооценка ценность уверенность"
+      "sleep.html": "sono dormir adormecer insonia descanso descansar noite noturno relaxar cansaco desacelerar a noite sleep insomnia rest night tired bedtime wind down dormire sonno riposo notte sueno dormirse descanso noche insomnio сон спать бессонница отдых ночь",
+      "calm.html": "calma calmo ansiedade ansioso estresse stress respiracao respirar acalmar tranquilidade paz nervoso panico sobrecarregado respiracao calma calm anxiety anxious breath breathing relax peace overwhelmed ansia respiro calma ansiedad respirar paz agobiado спокойствие дыхание тревога стресс",
+      "focus.html": "foco profundo concentracao atencao estudo estudar trabalho produtividade clareza mente deep focus concentration attention study work clarity productivity concentrazione attenzione lavoro concentracion atencion trabajo фокус внимание учеба работа",
+      "voltar.html": "voltar retornar foco distracao distraido disperso dispersao atencao concentracao mente inquieta pensamentos estudo come back return focus distraction distracted wandering mind attention thoughts volver distraccion disperso atencion tornare distrazione distratto attenzione вернуться отвлечение рассеянность внимание мысли",
+      "observador.html": "observar observador consciencia presenca presente mindfulness atencao plena mente corpo pensamentos sensacoes aqui agora awareness observer presence present mind body thoughts sensations here now presencia observar cuerpo consapevolezza presenza osservare corpo mente осознанность присутствие наблюдать тело ум",
+      "body.html": "corpo tensao tenso relaxamento muscular escaneamento soltar ombros reinicio corporal body scan tension tense muscles release shoulders body reset corpo tensione cuerpo tension hombros тело напряжение мышцы",
+      "healing-return-to-yourself.html": "cura curar emocional psicologia autocompaixao acolhimento culpa perdao passado regresso a si voltar para si sentimentos emocoes healing emotional self-compassion guilt past forgiveness feelings emotions guarigione emozioni colpa passato sanacion emociones culpa pasado исцеление эмоции вина прошлое",
+      "healing-remember-your-value.html": "valor autoestima confianca merecimento amor proprio autoimagem insegura inseguranca lembre o seu valor worth self-esteem confidence self-worth insecure self-love autostima valore autoestima confianza valor самооценка ценность уверенность"
     };
+
+    /* Sugestões ao abrir a busca vazia, conforme a hora do dia */
+    const SUGGESTIONS = {
+      morning: ["voltar.html", "focus.html", "calm.html"],
+      afternoon: ["calm.html", "body.html", "observador.html"],
+      evening: ["healing-return-to-yourself.html", "healing-remember-your-value.html", "body.html"],
+      night: ["sleep.html", "calm.html", "observador.html"]
+    };
+
+    function momentOfDay() {
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) return "morning";
+      if (hour >= 12 && hour < 18) return "afternoon";
+      if (hour >= 18 && hour < 22) return "evening";
+      return "night";
+    }
 
     /* Páginas do site também entram na busca */
     const PAGES = [
@@ -234,33 +252,73 @@
       return (dict[lang] && dict[lang][key]) || (dict.en && dict.en[key]) || fallback;
     }
 
-    function cardHaystack(card) {
-      const href = (card.getAttribute("href") || "").split("/").pop();
-      return normalize(card.textContent + " " + (SYNONYMS[href] || ""));
+    const hrefOf = (card) => (card.getAttribute("href") || "").split("/").pop();
+
+    /* Busca por início de palavra ("dorm" encontra "dormir", mas
+       "ciencia" não encontra "consciencia"). Palavras com menos de 3
+       letras ("de", "a") são ignoradas. */
+    const asWords = (value) => " " + normalize(value).replace(/[^a-z0-9\u0400-\u04ff]+/g, " ") + " ";
+    const hasWord = (words, token) => words.includes(" " + token);
+    const queryTokens = (query) => query.split(/\s+/).filter((token) => token.length >= 3 || /^\d+$/.test(token));
+
+    /* Pontua cada card: título (3) > texto do card (2) > sinónimos (1).
+       Mais palavras encontradas = mais acima. */
+    function scoreCard(card, query) {
+      const tokens = queryTokens(query);
+      if (!tokens.length) return 0;
+      const titleEl = card.querySelector("h3");
+      const title = asWords(titleEl ? titleEl.textContent : "");
+      const text = asWords(card.textContent);
+      const synonyms = asWords(SYNONYMS[hrefOf(card)] || "");
+      let score = 0;
+      for (const token of tokens) {
+        // cada palavra encontrada vale 100; o lugar onde aparece desempata
+        if (hasWord(title, token)) score += 130;
+        else if (hasWord(text, token)) score += 120;
+        else if (hasWord(synonyms, token)) score += 110;
+      }
+      return score;
     }
 
-    function buildResults(query) {
-      const rows = [];
+    const openCards = () => cards.filter((card) => !card.classList.contains("session-card--locked"));
 
-      cards
-        .filter((card) => !card.classList.contains("session-card--locked"))
-        .filter((card) => cardHaystack(card).includes(query))
-        .slice(0, 5)
-        .forEach((card) => {
-          const titleEl = card.querySelector("h3");
-          const metaEl = card.querySelector(".session-meta");
-          const title = titleEl ? titleEl.textContent.trim() : "";
-          const meta = metaEl ? metaEl.textContent.trim() : "";
-          rows.push(`
+    function sessionRow(card) {
+      const titleEl = card.querySelector("h3");
+      const metaEl = card.querySelector(".session-meta");
+      const title = titleEl ? titleEl.textContent.trim() : "";
+      const meta = metaEl ? metaEl.textContent.trim() : "";
+      return `
             <a href="${card.getAttribute("href")}" class="search-result">
               <span class="bottom-nav-icon">${ICONS.library}</span>
               <span class="search-result-text">${title}</span>
               <span class="search-result-meta">${meta}</span>
-            </a>`);
-        });
+            </a>`;
+    }
 
+    function buildSuggestions() {
+      const wanted = SUGGESTIONS[momentOfDay()];
+      const rows = wanted
+        .map((href) => openCards().find((card) => hrefOf(card) === href))
+        .filter(Boolean)
+        .map(sessionRow);
+      if (!rows.length) return "";
+      return `<p class="search-result-label" data-i18n="library_search_suggest">${t("library_search_suggest", "Suggested for now")}</p>` + rows.join("");
+    }
+
+    function buildResults(query) {
+      const rows = openCards()
+        .map((card) => ({ card, score: scoreCard(card, query) }))
+        .filter((item) => item.score > 0)
+        .sort((x, y) => y.score - x.score)
+        .slice(0, 5)
+        .map((item) => sessionRow(item.card));
+
+      const tokens = queryTokens(query);
       const pageRows = PAGES
-        .filter((p) => normalize(p.kw + " " + p.fallback).includes(query))
+        .filter((p) => {
+          const haystack = asWords(p.kw + " " + p.fallback + " " + t(p.key, p.fallback));
+          return tokens.some((token) => hasWord(haystack, token));
+        })
         .map((p) => `
           <a href="${p.href}" class="search-result search-result--page">
             <span class="bottom-nav-icon">${p.icon}</span>
@@ -283,7 +341,9 @@
       const query = normalize(input.value.trim());
 
       cards.forEach((card) => {
-        const match = !query || cardHaystack(card).includes(query);
+        const match = !query || card.classList.contains("session-card--locked")
+          ? !query
+          : scoreCard(card, query) > 0;
         card.style.display = match ? "" : "none";
       });
       sections.forEach((section) => {
@@ -295,10 +355,18 @@
       if (query) {
         results.innerHTML = buildResults(query);
         results.classList.add("open");
+      } else if (dock.classList.contains("is-expanded")) {
+        showSuggestions();
       } else {
         results.classList.remove("open");
         results.innerHTML = "";
       }
+    }
+
+    function showSuggestions() {
+      const html = buildSuggestions();
+      results.innerHTML = html;
+      results.classList.toggle("open", Boolean(html));
     }
 
     input.addEventListener("input", filterLibrary);
@@ -308,7 +376,16 @@
     function setSearchExpanded(open) {
       dock.classList.toggle("is-expanded", open);
       document.body.classList.toggle("search-expanded", open);
+      if (open && !input.value.trim()) {
+        showSuggestions();
+      } else if (!open) {
+        results.classList.remove("open");
+      }
     }
+
+    // Tocar num resultado não deve fechar a busca antes de o link abrir
+    let pointerInResults = false;
+    results.addEventListener("pointerdown", () => { pointerInResults = true; });
 
     dock.addEventListener("click", () => {
       if (!dock.classList.contains("is-expanded")) {
@@ -320,7 +397,7 @@
     input.addEventListener("blur", () => {
       window.setTimeout(() => {
         const active = document.activeElement;
-        if (!input.value.trim() && !dock.contains(active) && !results.contains(active)) {
+        if (!pointerInResults && !input.value.trim() && !dock.contains(active) && !results.contains(active)) {
           setSearchExpanded(false);
         }
       }, 150);

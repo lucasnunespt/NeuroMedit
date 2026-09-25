@@ -1370,6 +1370,25 @@
       background: color-mix(in srgb, var(--accent) 86%, #fff);
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
     }
+
+    /* Configurações → Reduzir animações: versão estática de Inspire · Expire */
+    body.settings-muted-motion .intro-breath {
+      display: flex;
+      justify-content: center;
+      gap: 0.3em;
+      height: auto;
+    }
+
+    body.settings-muted-motion .intro-breath-word {
+      animation: none !important;
+      opacity: 1;
+      transform: none;
+      font-size: clamp(1.6rem, 6vw, 2.2rem);
+    }
+
+    body.settings-muted-motion .intro-breath-in::after {
+      content: " · ";
+    }
   </style>
 </head>
 <body class="video-atmosphere-active">

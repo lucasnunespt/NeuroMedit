@@ -1089,3 +1089,18 @@ body.theme-late-night .auth-modal-close:hover {
     padding: 1rem 0;
   }
 }
+
+
+/* Botão flutuante de Configurações (tablet na horizontal e desktop):
+   segue a mão dominante — canto direito para destros, esquerdo para canhotos */
+body.settings-hand-left .settings-fab {
+  right: auto;
+  left: 1.75rem;
+}
+
+@media (max-width: 620px) {
+  body.settings-hand-left .settings-fab {
+    right: auto;
+    left: 1.25rem;
+  }
+}

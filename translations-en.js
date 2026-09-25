@@ -8,6 +8,7 @@ window.NeuroMeditTranslations = {
     global_nav_home: "Home",
     nav_profile: "Profile",
     nav_menu: "Menu",
+    nav_back: "Back",
     library_search_placeholder: "Search sessions",
     library_search_noresults: "No results — try 'sleep', 'focus' or 'calm'.",
     case_study_calendly_cta: "Let’s talk",

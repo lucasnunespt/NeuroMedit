@@ -1351,6 +1351,25 @@
       .start-btn { padding: 0.7rem 1.4rem; }
       .intro-meta .intro-headphones, .intro-language-note { font-size: 0.72rem; }
     }
+
+    /* Botão principal igual ao resto do site: cor de destaque do tema,
+       texto escuro (antes: vidro translúcido só nesta página) */
+    .intro .start-btn,
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro .start-btn {
+      min-height: 50px;
+      border-color: transparent;
+      background: var(--accent);
+      color: #1a120d;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      backdrop-filter: none;
+    }
+
+    .intro .start-btn:hover,
+    .intro .start-btn:focus-visible {
+      border-color: transparent;
+      background: color-mix(in srgb, var(--accent) 86%, #fff);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+    }
   </style>
 </head>
 <body class="video-atmosphere-active">

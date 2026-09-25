@@ -86,12 +86,6 @@
         </a>
       </li>
       <li>
-        <a href="why.html" class="bottom-sheet-link">
-          <span class="bottom-nav-icon">${ICONS.why}</span>
-          <span data-i18n="global_nav_why">Why</span>
-        </a>
-      </li>
-      <li>
         <a href="contributors.html" class="bottom-sheet-link">
           <span class="bottom-nav-icon">${ICONS.contributors}</span>
           <span data-i18n="nav.contributors">Contributors</span>
@@ -163,8 +157,7 @@
 
     /* Páginas do site também entram na busca */
     const PAGES = [
-      { href: "about.html", key: "global_nav_about", fallback: "About", icon: ICONS.about, kw: "sobre projeto missao historia neuromedit about project mission story" },
-      { href: "why.html", key: "global_nav_why", fallback: "Why", icon: ICONS.why, kw: "por que porque ciencia neurociencia cerebro mente psicologia evidencia beneficios why science neuroscience brain mind evidence benefits scienza neurociencia ciencia наука мозг" },
+      { href: "about.html", key: "global_nav_about", fallback: "About", icon: ICONS.about, kw: "sobre projeto missao historia neuromedit contato about project mission story contact por que porque ciencia neurociencia cerebro mente psicologia evidencia beneficios why science neuroscience brain mind evidence benefits scienza neurociencia ciencia наука мозг" },
       { href: "contributors.html", key: "nav.contributors", fallback: "Contributors", icon: ICONS.contributors, kw: "colaboradores equipe creditos pessoas contributors team credits people" }
     ];
 

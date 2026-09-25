@@ -35,10 +35,6 @@
           <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
           <span class="header-nav-text" data-i18n="home_nav_about">About</span>
         </a>
-        <a href="why.html" class="header-nav-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="home_nav_why" data-i18n-attr="aria-label,title">
-          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
-          <span class="header-nav-text" data-i18n="home_nav_why">Why</span>
-        </a>
       </nav>
 
       <div class="header-actions">
@@ -92,10 +88,6 @@
           <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about" aria-label="About" title="About" data-i18n="home_nav_about" data-i18n-attr="aria-label,title">
             <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
             <span class="header-mobile-text" data-i18n="home_nav_about">About</span>
-          </a>
-          <a href="why.html" class="header-mobile-link nav-link" data-nav-key="why" aria-label="Why" title="Why" data-i18n="home_nav_why" data-i18n-attr="aria-label,title">
-            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg></span>
-            <span class="header-mobile-text" data-i18n="home_nav_why">Why</span>
           </a>
         </nav>
       </div>
@@ -362,7 +354,12 @@
       <div class="container hero-content">
         <p class="eyebrow fade" data-i18n="home_eyebrow">Neuroscience-informed meditation</p>
         <h1 class="fade" data-i18n="home_title">Pause. Breathe. Reset.</h1>
-        <p class="hero-text fade" data-i18n="home_subtitle">A calm space to reduce mental noise, return attention, and regulate your pace.</p>
+        <p class="hero-text fade" data-i18n="home_subtitle">A calm space to quiet mental noise.</p>
+
+        <div class="home-breath" aria-hidden="true">
+          <span class="home-breath-word home-breath-in" data-i18n="index_breath_in">Breathe in</span>
+          <span class="home-breath-word home-breath-out" data-i18n="index_breath_out">Breathe out</span>
+        </div>
 
         <div class="hero-actions fade">
           <a href="index.html#airlock" class="button primary-button" data-airlock-link data-i18n="home_primary_cta">Start a 2-min session</a>
@@ -373,34 +370,11 @@
       </div>
     </section>
 
-    <section class="continue-section">
-      <div class="container">
-        <p class="reflection-text" data-i18n="home_reflection_quote">You don't need to do more. You need to slow down.</p>
 
-        <div class="progress-module card-static">
-          <div class="progress-intro">
-            <p class="section-label" data-i18n="home_rhythm_label">Your rhythm</p>
-            <h2 data-i18n="home_rhythm_title">3 sessions this week</h2>
-            <p class="section-support-text" data-i18n="home_rhythm_text">A small practice still counts. Consistency matters more than intensity.</p>
-          </div>
-
-          <div class="continue-card card-static">
-            <div class="continue-text">
-              <p class="card-label" data-i18n="home_continue_label">Last session &middot; 2 days ago</p>
-              <h3 data-i18n="home_continue_title">Calm Breath</h3>
-              <p data-i18n="home_continue_meta">3 min &middot; A short breathing practice to settle the nervous system.</p>
-            </div>
-
-            <a href="calm.html" class="button primary-button" data-i18n="home_continue_cta">Continue</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <section class="home-states">
       <div class="container">
         <h2 data-i18n="home_states_title">What does your mind need right now?</h2>
-        <p class="section-support-text" data-i18n="home_states_text">Choose the state that feels closest to what you need today.</p>
 
         <div class="states-grid">
           <a href="calm.html" class="state-card card-clickable">
@@ -420,58 +394,6 @@
             <h3 data-i18n="home_sleep_title">Sleep</h3>
             <p data-i18n="home_sleep_text">Gentle sessions to slow the body down and prepare for deeper rest.</p>
           </a>
-        </div>
-      </div>
-    </section>
-
-    <div class="nm-wave-band" aria-hidden="true">
-      <div class="nm-wave"></div>
-    </div>
-
-    <section class="featured-section">
-      <div class="container">
-        <h2 data-i18n="home_featured_title">Start with something simple</h2>
-        <p class="section-support-text" data-i18n="home_featured_text">Short, clear entry points for different moments of the day.</p>
-
-        <div class="featured-grid">
-          <a href="calm.html" class="featured-card card-clickable">
-            <h3 data-i18n="home_featured_morning_title">Morning Reset</h3>
-            <p data-i18n="home_featured_morning_text">Start the day with less tension and more clarity.</p>
-          </a>
-
-          <a href="focus.html" class="featured-card card-clickable">
-            <h3 data-i18n="home_featured_focus_title">Deep Focus</h3>
-            <p data-i18n="home_featured_focus_text">A short session to settle the mind before work.</p>
-          </a>
-
-          <a href="sleep.html" class="featured-card card-clickable">
-            <h3 data-i18n="home_featured_night_title">Night Wind Down</h3>
-            <p data-i18n="home_featured_night_text">Slow breathing and release before sleep.</p>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section class="why-section">
-      <div class="container">
-        <h2 data-i18n="home_why_title">Designed for a tired mind</h2>
-        <p class="section-support-text" data-i18n="home_why_text">Built to reduce friction, support regulation, and make calm easier to access.</p>
-
-        <div class="why-grid">
-          <div class="why-card card-static">
-            <h3 data-i18n="home_why_friction_title">Less friction</h3>
-            <p data-i18n="home_why_friction_text">Clear choices and simple paths reduce decision fatigue.</p>
-          </div>
-
-          <div class="why-card card-static">
-            <h3 data-i18n="home_why_calm_title">Calm by design</h3>
-            <p data-i18n="home_why_calm_text">Spacing, rhythm, and visual quiet support attention and ease.</p>
-          </div>
-
-          <div class="why-card card-static">
-            <h3 data-i18n="home_why_intention_title">Built with intention</h3>
-            <p data-i18n="home_why_intention_text">Every session is shaped around focus, regulation, and mental recovery.</p>
-          </div>
         </div>
       </div>
     </section>

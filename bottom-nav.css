@@ -879,3 +879,57 @@
     background: var(--surface-strong, #ffffff);
   }
 }
+
+
+/* ==========================================================
+   TABLET (601–940px) — barra junto à borda do polegar
+   Num ecrã largo, o centro fica longe dos polegares: o conjunto
+   Voltar · pílula · busca encosta à direita (destros) ou à
+   esquerda (canhotos, Configurações → Mão dominante).
+   ========================================================== */
+@media (min-width: 601px) and (max-width: 940px) {
+  body {
+    --edge: 24px;
+    --search-space: 0px;
+  }
+
+  body.has-search-dock {
+    --search-space: calc(var(--search-dot) + var(--nav-gap));
+  }
+
+  .bottom-header,
+  body.has-search-dock .bottom-header {
+    justify-content: flex-end;
+    padding-left: var(--edge);
+    padding-right: calc(var(--edge) + var(--search-space));
+    transform: none;
+  }
+
+  .library-search-dock:not(.is-expanded) {
+    left: auto;
+    right: var(--edge);
+  }
+
+  .bottom-sheet {
+    left: auto;
+    right: calc(var(--edge) + var(--search-space));
+  }
+
+  body.settings-hand-left .bottom-header,
+  body.settings-hand-left.has-search-dock .bottom-header {
+    justify-content: flex-start;
+    padding-left: calc(var(--edge) + var(--search-space));
+    padding-right: var(--edge);
+    transform: none;
+  }
+
+  body.settings-hand-left .library-search-dock:not(.is-expanded) {
+    left: var(--edge);
+    right: auto;
+  }
+
+  body.settings-hand-left .bottom-sheet {
+    left: calc(var(--edge) + var(--search-space));
+    right: auto;
+  }
+}

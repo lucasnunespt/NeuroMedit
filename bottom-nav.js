@@ -70,7 +70,6 @@
   sheet.dataset.i18n = "nav_menu";
   sheet.dataset.i18nAttr = "aria-label";
   sheet.innerHTML = `
-    <div class="bottom-sheet-handle" aria-hidden="true"></div>
     <p class="bottom-sheet-title" data-i18n="nav_menu">Menu</p>
     <ul class="bottom-sheet-list">
       <li>

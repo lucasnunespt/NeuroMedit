@@ -599,7 +599,7 @@
   }
 
   .library-search-dock {
-    left: calc(50% + (var(--nav-pill-w) - var(--search-dot) - var(--nav-gap)) / 2 + var(--nav-gap));
+    left: calc(50% + (var(--back-w) + var(--nav-pill-w) - var(--search-dot) - var(--nav-gap)) / 2 + var(--nav-gap));
     transform: none;
     bottom: 0.75rem;
     bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
@@ -699,7 +699,7 @@
 
   .bottom-sheet {
     left: auto;
-    right: calc(50% - var(--nav-pill-w) / 2 + var(--nav-shift));
+    right: calc(50% - (var(--back-w) + var(--nav-pill-w)) / 2 + var(--nav-shift));
     bottom: calc(0.75rem + var(--bottom-bar-h) + 8px);
     bottom: calc(env(safe-area-inset-bottom) + 0.75rem + var(--bottom-bar-h) + 8px);
     width: 232px;
@@ -799,12 +799,83 @@
   }
 
   body.settings-hand-left .library-search-dock:not(.is-expanded) {
-    left: calc(50% - (var(--nav-pill-w) + var(--nav-gap) + var(--search-dot)) / 2);
+    left: calc(50% - (var(--back-w) + var(--nav-pill-w) + var(--nav-gap) + var(--search-dot)) / 2);
   }
 
   body.settings-hand-left .bottom-sheet {
     right: auto;
-    left: calc(50% - var(--nav-pill-w) / 2 + var(--nav-shift));
+    left: calc(50% - (var(--back-w) + var(--nav-pill-w)) / 2 + var(--nav-shift));
     transform-origin: bottom left;
+  }
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR — círculo igual ao da busca, do outro lado da
+   pílula (esquerda para destros; direita no modo canhoto).
+   Não aparece no Início. --back-w entra nas contas de posição
+   da busca e do menu para o conjunto continuar centrado.
+   ========================================================== */
+.bottom-back {
+  display: none;
+}
+
+@media (max-width: 940px) {
+  :root {
+    --back-w: 0px;
+  }
+
+  body.has-back-btn {
+    --back-w: calc(var(--search-dot) + var(--nav-gap));
+  }
+
+  .bottom-header {
+    gap: var(--nav-gap);
+    align-items: center;
+  }
+
+  .bottom-back {
+    pointer-events: auto;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: var(--search-dot);
+    height: var(--search-dot);
+    padding: 0;
+    border: 1px solid var(--header-border, var(--line));
+    border-radius: 999px;
+    background: var(--header-glass-bg, var(--surface-strong));
+    -webkit-backdrop-filter: blur(22px) saturate(138%);
+    backdrop-filter: blur(22px) saturate(138%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    color: var(--header-link, var(--text-soft));
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--breath-mid) var(--breath-ease);
+  }
+
+  .bottom-back svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bottom-back:active {
+    color: var(--header-text, var(--text));
+  }
+
+  .bottom-back:focus-visible {
+    outline: 2px solid var(--header-focus, var(--accent-dark));
+    outline-offset: 2px;
+  }
+
+  body.settings-hand-left .bottom-back {
+    order: 2;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bottom-back {
+    background: var(--surface-strong, #ffffff);
   }
 }

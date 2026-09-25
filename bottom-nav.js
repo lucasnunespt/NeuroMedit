@@ -19,6 +19,7 @@
     about: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg>',
     why: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg>',
     contributors: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M8.2 11.2C10.02 11.2 11.5 9.72 11.5 7.9C11.5 6.08 10.02 4.6 8.2 4.6C6.38 4.6 4.9 6.08 4.9 7.9C4.9 9.72 6.38 11.2 8.2 11.2Z" stroke="currentColor" stroke-width="1.8"></path><path d="M3.6 19.4C4.08 16.72 5.88 15.2 8.2 15.2C10.52 15.2 12.32 16.72 12.8 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M15.8 10.7C17.3 10.7 18.5 9.5 18.5 8C18.5 6.5 17.3 5.3 15.8 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M14.8 15.4C17.35 15.58 19.05 17 19.5 19.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
     search: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M15.8 15.8L20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>'
   };
 
@@ -26,7 +27,8 @@
   const LIBRARY_PAGES = [
     "library.html", "calm.html", "focus.html", "sleep.html", "states.html",
     "healing-return-to-yourself.html", "healing-remember-your-value.html",
-    "complete.html", "body.html", "dream.html"
+    "complete.html", "body.html", "dream.html",
+    "voltar.html", "observador.html"
   ];
   const activeTab = (page === "" || page === "home.html") ? "home"
     : LIBRARY_PAGES.includes(page) ? "library"
@@ -56,6 +58,48 @@
       </nav>
     </div>`;
   document.body.appendChild(bar);
+
+  /* --- Voltar: em todas as páginas menos o Início ---
+     Volta para a página anterior do site. Sem página anterior (link
+     externo, página aberta direto) ou vindo da entrada, vai para a
+     página "de cima": sessão → Biblioteca; resto → Início.
+     No feedback vai sempre à Biblioteca, para não reabrir a sessão. */
+  if (activeTab !== "home") {
+    const parentPage = (LIBRARY_PAGES.includes(page) && page !== "library.html") || page === "feedback.html"
+      ? "library.html"
+      : "home.html";
+
+    const back = document.createElement("button");
+    back.type = "button";
+    back.className = "bottom-back";
+    back.setAttribute("aria-label", "Back");
+    back.dataset.i18n = "nav_back";
+    back.dataset.i18nAttr = "aria-label,title";
+    back.innerHTML = ICONS.back;
+    bar.insertBefore(back, bar.firstChild);
+    document.body.classList.add("has-back-btn");
+
+    back.addEventListener("click", () => {
+      let usableHistory = false;
+      try {
+        const ref = document.referrer ? new URL(document.referrer) : null;
+        const refPage = ref ? (ref.pathname.split("/").pop() || "index.html").toLowerCase() : "";
+        usableHistory = Boolean(ref) &&
+          ref.origin === window.location.origin &&
+          ref.pathname !== window.location.pathname &&
+          refPage !== "index.html" &&
+          window.history.length > 1;
+      } catch (e) {
+        usableHistory = false;
+      }
+
+      if (usableHistory && page !== "feedback.html") {
+        window.history.back();
+      } else {
+        window.location.href = parentPage;
+      }
+    });
+  }
 
   /* --- Folha "Menu": Configurações + páginas de vitrine --- */
   const overlay = document.createElement("div");

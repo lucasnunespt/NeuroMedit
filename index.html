@@ -1147,6 +1147,210 @@
         transform: scale(1);
       }
     }
+
+    /* ===== Redesign da entrada (NN/g: hierarquia clara, minimalismo, ação primária em destaque) ===== */
+    .intro {
+      gap: clamp(0.7rem, 1.8vh, 1.1rem);
+      width: min(90vw, 680px);
+    }
+
+    .intro-title {
+      font-size: clamp(1.75rem, 5.2vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .intro-copy {
+      max-width: min(84vw, 26ch);
+      margin: 0;
+      font-size: clamp(0.98rem, 2.6vw, 1.15rem);
+    }
+
+    /* Palavra de respiração: Inspire (4s) → Expire (4s), em ciclo */
+    .intro-breath {
+      display: grid;
+      place-items: center;
+      height: clamp(4.6rem, 14vh, 7rem);
+      margin: clamp(0.4rem, 2vh, 1.2rem) 0;
+    }
+
+    .intro-breath-word {
+      grid-area: 1 / 1;
+      color: #F4E6DA;
+      font-size: clamp(2.6rem, 11vw, 4.4rem);
+      font-weight: 200;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      opacity: 0;
+      text-shadow: 0 0 40px var(--orb-glow, rgba(180, 92, 48, 0.25));
+      animation: 8s ease-out infinite both;
+      will-change: opacity, transform;
+    }
+
+    .intro-breath-in { animation-name: intro-breathe-in; }
+    .intro-breath-out { animation-name: intro-breathe-out; animation-delay: 4s; }
+
+    @keyframes intro-breathe-in {
+      0%   { opacity: 0; transform: scale(0.94); }
+      8%   { opacity: 1; }
+      50%  { opacity: 0; transform: scale(1.06); }
+      100% { opacity: 0; transform: scale(1.06); }
+    }
+
+    @keyframes intro-breathe-out {
+      0%   { opacity: 0; transform: scale(1.06); }
+      8%   { opacity: 1; }
+      50%  { opacity: 0; transform: scale(0.94); }
+      100% { opacity: 0; transform: scale(0.94); }
+    }
+
+    .intro.hidden .intro-breath-word {
+      animation-play-state: paused;
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) .intro-breath-word {
+      color: var(--sanctuary-text);
+      text-shadow: 0 2px 18px rgba(255, 248, 238, 0.58);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .intro-breath-word {
+        animation: none;
+        opacity: 1;
+        font-size: clamp(1.6rem, 6vw, 2.2rem);
+      }
+      .intro-breath-in::after { content: " · "; }
+      .intro-breath {
+        display: flex;
+        justify-content: center;
+        gap: 0.3em;
+        height: auto;
+      }
+    }
+
+    .intro-actions {
+      gap: 0.35rem;
+    }
+
+    /* Informação secundária agrupada numa linha discreta */
+    .intro-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: clamp(0.4rem, 2vh, 1.4rem);
+    }
+
+    .intro-meta .intro-language {
+      margin: 0;
+    }
+
+    .intro-meta .intro-headphones {
+      margin: 0;
+      font-size: 0.78rem;
+    }
+
+    .intro-meta-dot {
+      color: rgba(244, 230, 218, 0.5);
+      font-size: 0.8rem;
+    }
+
+    .intro-language-note {
+      margin: 0 auto;
+      font-size: 0.76rem;
+    }
+
+    html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) :is(.intro-headphones, .intro-meta-dot, .intro-language-note) {
+      color: var(--text-secondary);
+    }
+
+    /* Seletor de idioma compacto: pílula horizontal (globo + código) */
+    .intro-language {
+      gap: 0;
+    }
+
+    .intro-language .language-pill,
+    .intro-language .language-trigger {
+      height: 32px;
+    }
+
+    .intro-language .language-pill {
+      width: 62px;
+    }
+
+    .intro-language .language-trigger {
+      flex: 0 0 62px;
+      width: 62px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    .intro-language .language-trigger svg {
+      width: 13px;
+      height: 13px;
+      order: -1;
+      opacity: 0.8;
+    }
+
+    .intro-language .language-current {
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+    }
+
+    .intro-language .language-options {
+      right: 62px;
+      left: 6px;
+    }
+
+    .intro-language .language-options button {
+      min-width: 32px;
+      height: 26px;
+      font-size: 0.66rem;
+    }
+
+    /* Toque (telemóvel): alvo maior, mantendo o visual discreto */
+    @media (pointer: coarse), (max-width: 768px) {
+      .intro-language .language-pill,
+      .intro-language .language-trigger {
+        height: 40px;
+      }
+
+      .intro-language .language-pill {
+        width: 68px;
+      }
+
+      .intro-language .language-trigger {
+        flex-basis: 68px;
+        width: 68px;
+      }
+
+      .intro-language .language-pill.is-open {
+        width: min(290px, calc(100vw - 2rem));
+      }
+
+      .intro-language .language-options {
+        right: 68px;
+      }
+
+      .intro-language .language-options button {
+        height: 32px;
+        min-width: clamp(32px, 10vw, 38px);
+      }
+    }
+
+    /* Ecrãs baixos (telemóvel na horizontal, portáteis pequenos) */
+    @media (max-height: 640px) {
+      .intro-breath { height: 3.8rem; margin: 0.2rem 0; }
+      .intro-breath-word { font-size: clamp(2rem, 8vw, 3rem); }
+      .intro-meta { margin-top: 0.3rem; }
+      .intro { gap: 0.4rem; }
+      .intro-title { font-size: clamp(1.4rem, 4vw, 1.9rem); }
+      .intro-copy { font-size: 0.9rem; }
+      .start-btn { padding: 0.7rem 1.4rem; }
+      .intro-meta .intro-headphones, .intro-language-note { font-size: 0.72rem; }
+    }
   </style>
 </head>
 <body class="video-atmosphere-active">
@@ -1158,21 +1362,28 @@
 
   <main class="experience" id="experience" aria-live="polite">
     <section class="intro" id="intro" aria-labelledby="introTitle" data-phase="ready-to-start">
-      <h1 class="intro-title" id="introTitle" data-i18n="index_welcome_title">Welcome to NeuroMedit.</h1>
-      <p class="intro-copy" data-i18n="index_welcome_copy">Before you continue, pause for a moment. Breathe slowly and let your body arrive here.</p>
-      
-      <p class="intro-headphones" data-i18n="home_headphones">Melhor com fones de ouvido.</p>
-      
-      <div class="intro-language" aria-live="polite">
-        <span data-i18n="index_language_note">Detected language</span>
-        <div data-language-host></div>
+      <h1 class="intro-title" id="introTitle" data-i18n="index_welcome_title">Bem-vindo ao NeuroMedit.</h1>
+      <p class="intro-copy" data-i18n="index_welcome_copy">Antes de começar, acompanhe a sua respiração.</p>
+
+      <div class="intro-breath" aria-hidden="true">
+        <span class="intro-breath-word intro-breath-in" data-i18n="index_breath_in">Inspire</span>
+        <span class="intro-breath-word intro-breath-out" data-i18n="index_breath_out">Expire</span>
       </div>
-      <p class="audio-language-note intro-language-note" data-audio-lang-note data-i18n="global_audio_pt_only">Por enquanto, as meditações guiadas estão disponíveis apenas em português.</p>
+
       <div class="intro-actions">
         <button id="airlockStartBtn" class="start-btn" type="button" data-airlock-start data-i18n="index_cta">Começar</button>
-        <button class="explore-btn" type="button" data-explore-instead data-i18n="index_explore_cta">Explore instead</button>
+        <button class="explore-btn" type="button" data-explore-instead data-i18n="index_explore_cta">Explorar antes</button>
       </div>
       <p class="audio-error" id="audioError" role="status" aria-live="polite"></p>
+
+      <div class="intro-meta">
+        <p class="intro-headphones" data-i18n="home_headphones">Melhor com fones de ouvido.</p>
+        <span class="intro-meta-dot" aria-hidden="true">·</span>
+        <div class="intro-language" aria-live="polite">
+          <div data-language-host></div>
+        </div>
+      </div>
+      <p class="audio-language-note intro-language-note" data-audio-lang-note data-i18n="global_audio_pt_only">Por enquanto, as meditações guiadas estão disponíveis apenas em português.</p>
     </section>
 
     <button class="exit-btn" type="button" aria-label="Exit meditation" data-exit-meditation data-airlock-stop data-i18n="index_exit_aria" data-i18n-attr="aria-label">
@@ -1211,7 +1422,6 @@
       const videoAtmosphere = document.querySelector(".video-atmosphere");
       const introTitle = document.getElementById("introTitle");
       const introCopy = intro.querySelector(".intro-copy");
-      const introNote = intro.querySelector(".intro-note");
       const startButton = document.getElementById("airlockStartBtn");
       const exploreButton = document.querySelector("[data-explore-instead]");
       const exitButton = document.querySelector("[data-exit-meditation]");
@@ -1282,11 +1492,9 @@
         document.body.dataset.indexPhase = introPhase;
         introTitle.dataset.i18n = phase.title;
         introCopy.dataset.i18n = phase.copy;
-        introNote.dataset.i18n = phase.note;
         startButton.dataset.i18n = phase.cta;
         introTitle.textContent = translate(phase.title);
         introCopy.textContent = translate(phase.copy);
-        introNote.textContent = translate(phase.note);
         startButton.textContent = hasStarted ? translate("index_in_progress") : translate(phase.cta);
         startButton.disabled = false;
         startButton.removeAttribute("aria-disabled");

@@ -47,6 +47,47 @@
   // Whether practice has begun and we are waiting for audio metadata.
   let pendingPracticeStart = false;
 
+  // ---------------------------------------------------------------------------
+  // Continuar de onde parou — sem relógio nem contagem na tela.
+  // Guarda o ponto da narração ao sair, pausar ou fechar a página; na volta,
+  // o botão principal oferece "Continuar de onde parou" e há um link discreto
+  // "Começar do início". Retoma 5s antes do ponto salvo, para reorientar.
+  // ---------------------------------------------------------------------------
+  const RESUME_KEY = `neuromedit.resume.${window.location.pathname.split("/").pop() || sessionType}`;
+  const RESUME_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+  const RESUME_MIN_S = 20;
+  let pendingResumeS = 0;
+  let lastResumeSave = 0;
+
+  function readResume() {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(RESUME_KEY));
+      if (!saved || Date.now() - saved.at > RESUME_MAX_AGE_MS) return 0;
+      return saved.t > RESUME_MIN_S ? saved.t : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function clearResume() {
+    try { window.localStorage.removeItem(RESUME_KEY); } catch (e) { /* opcional */ }
+  }
+
+  function saveResume() {
+    if (!hasNarrationAudio || usingGeneratedAudio || hasCompleted) return;
+    // Ao sair, o áudio já foi zerado: não sobrescrever o ponto já guardado
+    if (!root.classList.contains("is-practicing") || root.classList.contains("is-leaving")) return;
+    const position = audio.currentTime;
+    const duration = audio.duration;
+    if (!(position > RESUME_MIN_S) || (isFinite(duration) && duration - position < RESUME_MIN_S)) {
+      clearResume();
+      return;
+    }
+    try {
+      window.localStorage.setItem(RESUME_KEY, JSON.stringify({ t: position, at: Date.now() }));
+    } catch (e) { /* opcional */ }
+  }
+
   const toneMap = {
     calm: [72, 108, 146],
     focus: [96, 144, 192],
@@ -204,6 +245,10 @@
     }
 
     audio.volume = getSettingsVolume(sessionAudioSrc ? 1 : 0.16);
+    if (pendingResumeS > 0) {
+      try { audio.currentTime = Math.max(0, pendingResumeS - 5); } catch (e) { /* começa do início */ }
+      pendingResumeS = 0;
+    }
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === "function") {
       attempt.catch(startGeneratedAudio);
@@ -271,6 +316,7 @@
   function completeSession() {
     if (hasCompleted) return;
     hasCompleted = true;
+    clearResume();
     clearTimers();
     stopAudio();
     window.location.href = getFeedbackUrl("completed");
@@ -286,6 +332,7 @@
     isPaused = true;
     window.cancelAnimationFrame(progressFrame);
     audio.pause();
+    saveResume();
     root.classList.add("is-paused");
 
     if (!hasNarrationAudio) {
@@ -438,6 +485,15 @@
     }
   });
 
+  // Guarda o ponto com calma durante a prática (a cada ~5s) e ao sair da página
+  audio.addEventListener("timeupdate", () => {
+    if (Date.now() - lastResumeSave > 5000) {
+      lastResumeSave = Date.now();
+      saveResume();
+    }
+  });
+  window.addEventListener("pagehide", saveResume);
+
   // Narration ended → complete the session.
   audio.addEventListener("ended", () => {
     if (!usingGeneratedAudio && hasNarrationAudio) {
@@ -479,6 +535,7 @@
   // ---------------------------------------------------------------------------
 
   function exitSession() {
+    saveResume();
     clearTimers();
     stopAudio();
     if (pauseButton) pauseButton.hidden = true;
@@ -499,6 +556,27 @@
   window.dispatchEvent(new CustomEvent("neuromedit:meditationstatechange"));
   exitButton.hidden = true;
   if (pauseButton) pauseButton.hidden = true;
+
+  // Havia uma sessão interrompida? Oferece continuar, sem mostrar tempo.
+  const savedResumeS = hasNarrationAudio ? readResume() : 0;
+  if (savedResumeS) {
+    pendingResumeS = savedResumeS;
+    startButton.dataset.i18n = "session_resume_cta";
+    startButton.textContent = t("session_resume_cta");
+
+    const restartButton = document.createElement("button");
+    restartButton.type = "button";
+    restartButton.className = "session-secondary-link session-restart-link";
+    restartButton.dataset.i18n = "session_restart_cta";
+    restartButton.textContent = t("session_restart_cta");
+    (startButton.closest(".session-play-row") || startButton).after(restartButton);
+
+    restartButton.addEventListener("click", () => {
+      clearResume();
+      pendingResumeS = 0;
+      beginAirlock();
+    });
+  }
 
   startButton.addEventListener("click", beginAirlock);
   exitButton.addEventListener("click", exitSession);

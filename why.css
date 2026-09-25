@@ -665,3 +665,21 @@ p {
 .philo-page section[id] {
   scroll-margin-top: 110px;
 }
+
+/* Rodapé igual ao das outras páginas (© + Filosofia · Contato · Instagram) */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.footer-links a {
+  font-size: 0.96rem;
+  color: var(--text-soft);
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}

@@ -876,3 +876,23 @@ a.featured-card:focus-visible {
   font-size: clamp(3.2rem, 15vw, 5.5rem);
   font-weight: 200;
 }
+
+/* Configurações → Reduzir animações: a animação era cortada a ~0s e
+   as palavras terminavam invisíveis. Mostra a versão estática. */
+body.settings-muted-motion .home-breath {
+  display: flex;
+  gap: 0.3em;
+  height: auto;
+}
+
+body.settings-muted-motion .home-page .home-hero .home-breath-word,
+body.settings-muted-motion .home-breath-word {
+  animation: none !important;
+  opacity: 0.9;
+  transform: none;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+body.settings-muted-motion .home-breath-in::after {
+  content: " · ";
+}

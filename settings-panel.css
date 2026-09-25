@@ -596,7 +596,6 @@ body.settings-hide-metrics :is(
 }
 
 body.settings-focus-mode .site-header,
-body.settings-focus-mode .site-footer,
 body.settings-focus-mode .settings-fab {
   transition:
     opacity 0.36s ease,
@@ -605,7 +604,6 @@ body.settings-focus-mode .settings-fab {
 }
 
 body.settings-focus-idle:not(.settings-open) .site-header,
-body.settings-focus-idle:not(.settings-open) .site-footer,
 body.settings-focus-idle:not(.settings-open) .settings-fab,
 body.settings-focus-idle:not(.settings-open) .bottom-header,
 body.settings-focus-idle:not(.settings-open) .library-search-dock {
@@ -618,7 +616,6 @@ body.settings-focus-idle:not(.settings-open) .site-header {
   transform: translateY(-12px);
 }
 
-body.settings-focus-idle:not(.settings-open) .site-footer,
 body.settings-focus-idle:not(.settings-open) .settings-fab {
   transform: translateY(12px);
 }
@@ -1103,4 +1100,12 @@ body.settings-hand-left .settings-fab {
     right: auto;
     left: 1.25rem;
   }
+}
+
+/* Modo foco esconde só as barras flutuantes; o rodapé faz parte da página */
+body.settings-focus-idle:not(.settings-open) .site-footer {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
 }

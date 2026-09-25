@@ -25,6 +25,7 @@
     silenceStart: "22:00",
     silenceEnd: "07:00",
     hideMetrics: false,
+    handedness: "right",
   };
 
   const KEY_ALIASES = {
@@ -130,6 +131,17 @@
           <p class="setting-hint">Reduz o movimento visual para uma experiência mais calma.</p>
         </div>
         <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-label">Mão dominante</p>
+          <p class="setting-hint">Coloca o menu e a busca do lado do seu polegar.</p>
+        </div>
+        <div class="setting-select-group" data-setting-key="handedness" role="group" aria-label="Mão dominante">
+          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
+          <button type="button" class="setting-select-option" data-value="left" aria-pressed="false">Esquerda</button>
+        </div>
       </div>
     </section>
 
@@ -425,6 +437,10 @@
           : "auto";
     }
 
+    if (!["right", "left"].includes(normalized.handedness)) {
+      normalized.handedness = "right";
+    }
+
     return normalized;
   }
 
@@ -455,7 +471,8 @@
             muteAnimations: state.muteAnimations,
             silenceStart: state.silenceStart,
             silenceEnd: state.silenceEnd,
-            hideMetrics: state.hideMetrics
+            hideMetrics: state.hideMetrics,
+            handedness: state.handedness
           }
         }, { merge: true });
       }
@@ -523,6 +540,7 @@
     body.classList.toggle("settings-focus-mode", state.focusMode);
     body.classList.toggle("settings-muted-motion", state.muteAnimations);
     body.classList.toggle("settings-hide-metrics", state.hideMetrics);
+    body.classList.toggle("settings-hand-left", state.handedness === "left");
     body.classList.toggle("settings-low-contrast", state.visualTheme === "low-contrast");
     body.dataset.silenceStart = state.silenceStart;
     body.dataset.silenceEnd = state.silenceEnd;

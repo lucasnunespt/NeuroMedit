@@ -780,3 +780,31 @@
     transition: opacity 120ms linear, visibility 0s;
   }
 }
+
+
+/* ==========================================================
+   CANHOTOS (Configurações → Mão dominante → Esquerda)
+   Espelha só o que se alcança com o polegar: o botão Menu vai
+   para a ponta esquerda, a busca fica à esquerda da pílula e o
+   menu abre alinhado à esquerda. Início e Biblioteca mantêm a
+   ordem, para não quebrar a memória de uso.
+   ========================================================== */
+@media (max-width: 940px) {
+  body.settings-hand-left .bottom-nav-item[data-profile-toggle] {
+    order: -1;
+  }
+
+  body.settings-hand-left.has-search-dock .bottom-header {
+    transform: translateX(var(--nav-shift));
+  }
+
+  body.settings-hand-left .library-search-dock:not(.is-expanded) {
+    left: calc(50% - (var(--nav-pill-w) + var(--nav-gap) + var(--search-dot)) / 2);
+  }
+
+  body.settings-hand-left .bottom-sheet {
+    right: auto;
+    left: calc(50% - var(--nav-pill-w) / 2 + var(--nav-shift));
+    transform-origin: bottom left;
+  }
+}

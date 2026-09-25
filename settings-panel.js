@@ -111,8 +111,8 @@
           <p class="setting-hint">Põe o menu e a busca do lado do seu polegar.</p>
         </div>
         <div class="setting-select-group setting-select-group--grid" data-setting-key="handedness" role="group" aria-label="Mão dominante">
-          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
           <button type="button" class="setting-select-option" data-value="left" aria-pressed="false">Esquerda</button>
+          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
         </div>
       </div>
 

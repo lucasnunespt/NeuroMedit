@@ -11,6 +11,7 @@ window.NeuroMeditTranslations = {
     nav_back: "Back",
     library_search_placeholder: "Search sessions",
     library_search_noresults: "No results — try 'sleep', 'focus' or 'calm'.",
+    library_search_suggest: "Suggested for now",
     case_study_calendly_cta: "Let’s talk",
     global_nav_library: "Library",
     global_nav_about: "Philosophy",

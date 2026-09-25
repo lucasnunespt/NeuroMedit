@@ -933,3 +933,30 @@
     right: auto;
   }
 }
+
+
+/* Rótulo das sugestões iniciais da busca */
+.search-result-label {
+  margin: 0;
+  padding: 0.55rem 0.65rem 0.3rem;
+  color: var(--text-soft);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* Painel de resultados/sugestões: fundo quase sólido, como o menu,
+   para o texto da página por trás não competir com a leitura */
+@media (max-width: 940px) {
+  .library-search-results {
+    background: var(--bg, #fbf8f2);
+    background:
+      linear-gradient(var(--header-glass-bg, transparent), var(--header-glass-bg, transparent)),
+      color-mix(in srgb, var(--bg, #fbf8f2) 90%, transparent);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    backdrop-filter: blur(28px) saturate(140%);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}

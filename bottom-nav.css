@@ -583,8 +583,12 @@
   }
 
   /* Biblioteca: pílula + círculo de busca, centrados juntos */
+  body.has-search-dock {
+    --nav-shift: calc((var(--search-dot) + var(--nav-gap)) / 2);
+  }
+
   body.has-search-dock .bottom-header {
-    transform: translateX(calc((var(--search-dot) + var(--nav-gap)) / -2));
+    transform: translateX(calc(var(--nav-shift) * -1));
     transition: opacity var(--breath-mid) var(--breath-ease), visibility var(--breath-mid);
   }
 
@@ -674,5 +678,105 @@
   .library-search-dock,
   body.has-search-dock .bottom-header {
     transition: none;
+  }
+}
+
+
+/* ==========================================================
+   MENU FLUTUANTE — substitui a folha que subia de baixo.
+   Padrão de "menu de contexto" (iOS / Material 3): pequeno,
+   ancorado ao botão que o abriu, cantos arredondados, linhas
+   de 44px, fecha ao tocar fora ou com Esc.
+   ========================================================== */
+@media (max-width: 940px) {
+  :root {
+    --nav-shift: 0px;
+  }
+
+  .bottom-sheet-overlay {
+    background: transparent;
+  }
+
+  .bottom-sheet {
+    left: auto;
+    right: calc(50% - var(--nav-pill-w) / 2 + var(--nav-shift));
+    bottom: calc(0.75rem + var(--bottom-bar-h) + 8px);
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem + var(--bottom-bar-h) + 8px);
+    width: 232px;
+    max-width: calc(100vw - 32px);
+    padding: 6px;
+    /* Fundo quase sólido: o texto por trás não deve competir com o menu */
+    background: var(--bg, #fbf8f2);
+    background:
+      linear-gradient(var(--header-glass-bg, transparent), var(--header-glass-bg, transparent)),
+      color-mix(in srgb, var(--bg, #fbf8f2) 90%, transparent);
+    -webkit-backdrop-filter: blur(28px) saturate(140%);
+    backdrop-filter: blur(28px) saturate(140%);
+    border: 1px solid var(--header-border, var(--line));
+    border-radius: 18px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: bottom right;
+    transition:
+      opacity 180ms ease,
+      transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 220ms;
+  }
+
+  .bottom-sheet.open {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 180ms ease,
+      transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s;
+  }
+
+  .bottom-sheet-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .bottom-sheet-link {
+    width: 100%;
+    gap: 0.7rem;
+    min-height: 44px;
+    padding: 0 0.75rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+  }
+
+  .bottom-sheet-link .bottom-nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .bottom-sheet-link svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .bottom-sheet-link:hover,
+  .bottom-sheet-link:focus-visible {
+    background: var(--mist, rgba(255, 255, 255, 0.1));
+    outline: none;
+  }
+
+  .bottom-sheet-divider {
+    margin: 4px 0.6rem;
+  }
+}
+
+@media (max-width: 940px) and (prefers-reduced-motion: reduce) {
+  .bottom-sheet,
+  .bottom-sheet.open {
+    transform: none;
+    transition: opacity 120ms linear, visibility 0s;
   }
 }

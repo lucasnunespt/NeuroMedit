@@ -657,3 +657,14 @@ body.is-meditating .site-footer {
 .header-actions .header-language-slot {
   order: 2;
 }
+
+
+/* Mobile: a barra do topo mantém sempre a mesma distância das bordas.
+   (O ".scrolled" usava o atalho "padding: … 0 …", que zerava as
+   margens laterais e fazia a barra alargar e colar às bordas.) */
+@media (max-width: 620px) {
+  .site-header,
+  .site-header.scrolled {
+    padding: 12px 16px 8px;
+  }
+}

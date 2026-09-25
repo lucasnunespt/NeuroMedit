@@ -851,3 +851,26 @@ a.featured-card:focus-visible {
     margin: 1rem 0 0;
   }
 }
+
+/* =========================
+   HERO DO INÍCIO — uma frase só + respiração
+   A frase (h1 para leitores de ecrã e SEO) em itálico, sem maiúsculas;
+   "Inspire / Expire" passa a ser o foco visual no lugar do título.
+========================= */
+.home-page .home-hero h1.home-tagline {
+  max-width: 22ch;
+  margin: 0;
+  color: var(--text-soft, var(--text));
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  font-size: clamp(1.2rem, 3.6vw, 1.55rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.home-page .home-hero .home-breath-word {
+  font-size: clamp(3.2rem, 15vw, 5.5rem);
+  font-weight: 200;
+}

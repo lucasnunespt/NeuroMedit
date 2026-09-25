@@ -85,9 +85,7 @@ body.complete-body.feedback-atmosphere {
   --text-secondary: rgba(64, 51, 43, 0.78);
   --link-text: #6f4933;
   --line: rgba(113, 77, 53, 0.18);
-  --accent: #a96d4f;
-  --accent-dark: #80503a;
-  --button-text: #fff9f2;
+  /* --accent, --accent-dark e --button-text vêm do tema (theme-sync.css) */
   --shadow-soft: 0 18px 52px rgba(72, 45, 28, 0.15), 0 0 34px rgba(255, 244, 229, 0.28);
   --shadow-card: 0 22px 62px rgba(54, 35, 24, 0.18);
   background: #f4eadf;
@@ -195,9 +193,8 @@ body.theme-late-night.feedback-atmosphere {
   --text-secondary: rgba(247, 234, 221, 0.82);
   --link-text: rgba(247, 234, 221, 0.9);
   --line: rgba(226, 168, 123, 0.2);
-  --accent: rgba(206, 132, 86, 0.72);
+  /* --accent e --button-text vêm do tema (theme-sync.css), como no resto do site */
   --accent-dark: rgba(247, 234, 221, 0.92);
-  --button-text: #fff6ed;
   --shadow-soft: 0 22px 70px rgba(0, 0, 0, 0.28), 0 0 34px rgba(180, 92, 48, 0.12);
   --shadow-card: 0 24px 80px rgba(0, 0, 0, 0.3);
   background: var(--night-bg-1, #120b09);
@@ -1330,9 +1327,12 @@ body.complete-body.feedback-minimal.feedback-atmosphere .feedback-option:focus-v
 }
 
 body.complete-body.feedback-minimal.feedback-atmosphere .feedback-btn.primary-button {
+  min-height: 50px;
   border: 1px solid transparent;
+  border-radius: 999px;
   background: var(--accent);
   color: var(--button-text);
+  font-weight: 400;
   box-shadow: none;
 }
 

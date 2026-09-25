@@ -1,7 +1,7 @@
 /* ==========================================================
    NEUROMEDIT — NAVEGAÇÃO INFERIOR (THUMB ZONE)
-   Injeta a barra de 3 destinos (Início · Biblioteca · Perfil),
-   a folha "Perfil" (Configurações + páginas de vitrine) e a
+   Injeta a barra de 3 destinos (Início · Biblioteca · Menu),
+   a folha "Menu" (Configurações + páginas de vitrine) e a
    busca ancorada embaixo na Biblioteca. Mesmo padrão de injeção
    de header-nav.js / settings-panel.js. Ícones reusados do
    header — comportamento deliberadamente previsível.
@@ -14,6 +14,7 @@
     home: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
     library: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
     profile: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="8.6" r="3.6" stroke="currentColor" stroke-width="1.8"></circle><path d="M5.4 19.6C6 16.4 8.6 14.6 12 14.6C15.4 14.6 18 16.4 18.6 19.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>',
+    menu: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M4.5 7.5H19.5M4.5 12H19.5M4.5 16.5H19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>',
     settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>',
     about: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg>',
     why: '<svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.7 9.7C9.7 8.43 10.73 7.4 12 7.4C13.27 7.4 14.3 8.43 14.3 9.7C14.3 10.53 13.86 11.13 13.09 11.57C12.38 11.98 12 12.41 12 13.15V13.45" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="16.5" r="0.8" fill="currentColor"></circle></svg>',
@@ -36,7 +37,7 @@
     return `
       <a href="${href}" class="bottom-nav-item${activeTab === tab ? " active" : ""}" data-nav-key="${tab}"${current}>
         <span class="bottom-nav-icon">${icon}</span>
-        <span data-i18n="${i18nKey}">${fallback}</span>
+        <span class="bottom-nav-label" data-i18n="${i18nKey}">${fallback}</span>
       </a>`;
   }
 
@@ -49,14 +50,14 @@
         ${navItem({ href: "home.html", tab: "home", i18nKey: "global_nav_home", fallback: "Home", icon: ICONS.home })}
         ${navItem({ href: "library.html", tab: "library", i18nKey: "global_nav_library", fallback: "Library", icon: ICONS.library })}
         <button type="button" class="bottom-nav-item" data-profile-toggle aria-haspopup="dialog" aria-expanded="false" aria-controls="bottom-profile-sheet">
-          <span class="bottom-nav-icon">${ICONS.profile}</span>
-          <span data-i18n="nav_profile">Profile</span>
+          <span class="bottom-nav-icon">${ICONS.menu}</span>
+          <span class="bottom-nav-label" data-i18n="nav_menu">Menu</span>
         </button>
       </nav>
     </div>`;
   document.body.appendChild(bar);
 
-  /* --- Folha "Perfil": Configurações + páginas de vitrine --- */
+  /* --- Folha "Menu": Configurações + páginas de vitrine --- */
   const overlay = document.createElement("div");
   overlay.className = "bottom-sheet-overlay";
 
@@ -65,12 +66,12 @@
   sheet.id = "bottom-profile-sheet";
   sheet.setAttribute("role", "dialog");
   sheet.setAttribute("aria-modal", "true");
-  sheet.setAttribute("aria-label", "Profile");
-  sheet.dataset.i18n = "nav_profile";
+  sheet.setAttribute("aria-label", "Menu");
+  sheet.dataset.i18n = "nav_menu";
   sheet.dataset.i18nAttr = "aria-label";
   sheet.innerHTML = `
     <div class="bottom-sheet-handle" aria-hidden="true"></div>
-    <p class="bottom-sheet-title" data-i18n="nav_profile">Profile</p>
+    <p class="bottom-sheet-title" data-i18n="nav_menu">Menu</p>
     <ul class="bottom-sheet-list">
       <li>
         <button type="button" class="bottom-sheet-link" data-sheet-settings>
@@ -266,6 +267,29 @@
 
     input.addEventListener("input", filterLibrary);
 
+    /* Busca recolhida num círculo ao lado da barra (padrão das apps
+       atuais): abre ao tocar, fecha ao sair se estiver vazia */
+    function setSearchExpanded(open) {
+      dock.classList.toggle("is-expanded", open);
+      document.body.classList.toggle("search-expanded", open);
+    }
+
+    dock.addEventListener("click", () => {
+      if (!dock.classList.contains("is-expanded")) {
+        setSearchExpanded(true);
+        input.focus();
+      }
+    });
+    input.addEventListener("focus", () => setSearchExpanded(true));
+    input.addEventListener("blur", () => {
+      window.setTimeout(() => {
+        const active = document.activeElement;
+        if (!input.value.trim() && !dock.contains(active) && !results.contains(active)) {
+          setSearchExpanded(false);
+        }
+      }, 150);
+    });
+
     dock.addEventListener("submit", (event) => {
       event.preventDefault();
       const first = results.querySelector("a.search-result");
@@ -273,9 +297,14 @@
     });
 
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && input.value) {
-        input.value = "";
-        filterLibrary();
+      if (event.key === "Escape") {
+        if (input.value) {
+          input.value = "";
+          filterLibrary();
+        } else {
+          input.blur();
+          setSearchExpanded(false);
+        }
       }
     });
 

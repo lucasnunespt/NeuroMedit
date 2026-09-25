@@ -644,3 +644,43 @@ a.session-card--locked::after {
     padding-top: 2.5rem;
   }
 }
+
+
+/* =========================
+   DESKTOP — uma só margem esquerda
+   hero-type.css centra o hero num bloco de 720px deslocado à direita;
+   aqui o conteúdo abaixo (chips, cards) usa a largura toda, por isso o
+   hero segue o mesmo container. Menos altura: chips visíveis ao abrir.
+========================= */
+@media (min-width: 941px) {
+  .library-page .library-hero > .container {
+    max-width: var(--container);
+    transform: none;
+  }
+
+  .library-page .library-hero {
+    padding-top: clamp(2.5rem, 6vh, 4rem);
+    padding-bottom: 0.5rem;
+  }
+
+  .library-page .library-hero > .container .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .library-page .library-hero > .container h1 {
+    max-width: 16ch;
+    margin-bottom: 1rem;
+  }
+
+  .library-page .library-hero > .container .hero-text {
+    margin-bottom: 0;
+  }
+
+  .library-page .library-hero > .container .audio-language-note {
+    margin-top: 0.5rem;
+  }
+
+  .library-page .library-filter {
+    padding: 1.5rem 0 0.5rem;
+  }
+}

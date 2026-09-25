@@ -606,7 +606,9 @@ body.settings-focus-mode .settings-fab {
 
 body.settings-focus-idle:not(.settings-open) .site-header,
 body.settings-focus-idle:not(.settings-open) .site-footer,
-body.settings-focus-idle:not(.settings-open) .settings-fab {
+body.settings-focus-idle:not(.settings-open) .settings-fab,
+body.settings-focus-idle:not(.settings-open) .bottom-header,
+body.settings-focus-idle:not(.settings-open) .library-search-dock {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1005,3 +1007,85 @@ body.theme-late-night .auth-modal-close:hover {
 }
 
 
+
+
+/* =========================
+   REDESIGN — encaixe de texto e alvos de toque
+   · Opções com botões (Tema, Mão dominante) ficam por baixo do
+     nome, em grelha de colunas iguais: nada aperta nem transborda.
+   · Rótulos e dicas quebram linha livremente; interruptores fixos.
+   · Botões com pelo menos 44px (fechar, opções, restaurar).
+========================= */
+.setting-row--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
+}
+
+.setting-select-group--grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+}
+
+.setting-select-group--grid .setting-select-option {
+  min-height: 40px;
+  padding: 0.4rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  line-height: 1.2;
+  white-space: normal;
+  text-align: center;
+}
+
+.setting-label,
+.setting-hint {
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.setting-row:not(.setting-row--stacked) .setting-info {
+  padding-right: 0.25rem;
+}
+
+.settings-close {
+  width: 44px;
+  height: 44px;
+}
+
+.settings-section-label {
+  margin-bottom: 0.4rem;
+}
+
+.settings-auth-container:empty {
+  display: none;
+}
+
+.setting-ghost-btn {
+  min-height: 44px;
+}
+
+/* Tema tem 4 opções: em ecrãs estreitos vira grelha 2 × 2 */
+@media (max-width: 420px) {
+  .setting-select-group--grid[data-setting-key="visualTheme"] {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .settings-header {
+    padding: calc(env(safe-area-inset-top) + 1rem) 1.25rem 0.5rem;
+  }
+
+  .settings-body {
+    padding: 0 1.25rem calc(env(safe-area-inset-bottom) + 2rem);
+  }
+
+  .settings-section {
+    padding: 1rem 0;
+  }
+}

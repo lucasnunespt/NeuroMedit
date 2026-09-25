@@ -72,44 +72,20 @@
   </div>
 
   <div class="settings-body">
-    <section class="settings-section" aria-labelledby="settings-section-audio">
-      <p class="settings-section-label" id="settings-section-audio">Imersão e áudio</p>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <p class="setting-label">Isolamento vocal</p>
-          <p class="setting-hint">Prioriza a voz guiada quando disponível.</p>
-        </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="vocalIsolation" id="toggle-vocal-isolation" aria-label="Isolamento vocal">
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <p class="setting-label">Volume ambiente</p>
-        </div>
-        <div class="setting-slider-wrap">
-          <input type="range" class="setting-slider" data-setting-key="ambientVolume" id="slider-ambient-volume" min="0" max="100" step="1" aria-label="Volume ambiente">
-          <span class="setting-slider-value" aria-live="polite">40%</span>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <p class="setting-label">Transição suave</p>
-          <p class="setting-hint">Usa transições mais longas ao fim das sessões.</p>
-        </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Transição suave">
-      </div>
-    </section>
-
+    <!--
+      Só aparecem aqui as opções que já funcionam. Ficam guardadas em
+      DEFAULTS, prontas para voltar quando existirem:
+      - vocalIsolation / ambientVolume → quando houver música ambiente
+      - silenceStart / silenceEnd      → quando houver horário de silêncio
+    -->
     <section class="settings-section" aria-labelledby="settings-section-visual">
-      <p class="settings-section-label" id="settings-section-visual">Conforto visual</p>
+      <p class="settings-section-label" id="settings-section-visual">Aparência</p>
 
-      <div class="setting-row">
+      <div class="setting-row setting-row--stacked">
         <div class="setting-info">
           <p class="setting-label">Tema</p>
         </div>
-        <div class="setting-select-group" data-setting-key="visualTheme" role="group" aria-label="Tema">
+        <div class="setting-select-group setting-select-group--grid" data-setting-key="visualTheme" role="group" aria-label="Tema">
           <button type="button" class="setting-select-option" data-value="auto" aria-pressed="false">Automático</button>
           <button type="button" class="setting-select-option" data-value="light" aria-pressed="false">Claro</button>
           <button type="button" class="setting-select-option" data-value="dark" aria-pressed="false">Escuro</button>
@@ -119,72 +95,61 @@
 
       <div class="setting-row">
         <div class="setting-info">
+          <p class="setting-label">Reduzir animações</p>
+          <p class="setting-hint">Menos movimento na tela.</p>
+        </div>
+        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
+      </div>
+    </section>
+
+    <section class="settings-section" aria-labelledby="settings-section-use">
+      <p class="settings-section-label" id="settings-section-use">Uso</p>
+
+      <div class="setting-row setting-row--stacked">
+        <div class="setting-info">
+          <p class="setting-label">Mão dominante</p>
+          <p class="setting-hint">Põe o menu e a busca do lado do seu polegar.</p>
+        </div>
+        <div class="setting-select-group setting-select-group--grid" data-setting-key="handedness" role="group" aria-label="Mão dominante">
+          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
+          <button type="button" class="setting-select-option" data-value="left" aria-pressed="false">Esquerda</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
           <p class="setting-label">Modo foco</p>
-          <p class="setting-hint">Oculta suavemente a interface após alguns segundos de inatividade.</p>
+          <p class="setting-hint">Esconde as barras após 7 segundos sem mexer.</p>
         </div>
         <input type="checkbox" class="setting-toggle" data-setting-key="focusMode" id="toggle-focus-mode" aria-label="Modo foco">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Reduzir animações</p>
-          <p class="setting-hint">Reduz o movimento visual para uma experiência mais calma.</p>
+          <p class="setting-label">Ocultar progresso</p>
+          <p class="setting-hint">Esconde o bloco de progresso no Início.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
+        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Ocultar progresso">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Mão dominante</p>
-          <p class="setting-hint">Coloca o menu e a busca do lado do seu polegar.</p>
+          <p class="setting-label">Final suave</p>
+          <p class="setting-hint">O som diminui devagar ao terminar a sessão.</p>
         </div>
-        <div class="setting-select-group" data-setting-key="handedness" role="group" aria-label="Mão dominante">
-          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
-          <button type="button" class="setting-select-option" data-value="left" aria-pressed="false">Esquerda</button>
-        </div>
+        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Final suave">
       </div>
     </section>
 
-    <section class="settings-section" aria-labelledby="settings-section-attention">
-      <p class="settings-section-label" id="settings-section-attention">Proteção da atenção</p>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <p class="setting-label">Horário de silêncio profundo</p>
-          <p class="setting-hint">Define a janela de silêncio da experiência.</p>
-        </div>
-        <div class="setting-time-group">
-          <input type="time" class="setting-time-input" data-setting-key="silenceStart" id="input-silence-start" aria-label="Início do silêncio">
-          <span class="setting-time-sep">às</span>
-          <input type="time" class="setting-time-input" data-setting-key="silenceEnd" id="input-silence-end" aria-label="Fim do silêncio">
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <p class="setting-label">Ocultar métricas</p>
-          <p class="setting-hint">Oculta sequências e contadores de progresso quando existirem.</p>
-        </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Ocultar métricas">
-      </div>
-    </section>
-
-    <section class="settings-section" aria-labelledby="settings-section-autonomy">
-      <p class="settings-section-label" id="settings-section-autonomy">Autonomia</p>
-
-      <div class="setting-row">
-        <a href="#account-data" class="setting-link" id="settings-account-link">
-          Gerenciar dados da conta
-          <span class="setting-link-arrow" aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
-
-      <button type="button" class="setting-ghost-btn" id="btn-disconnect">
-        Redefinir preferências locais
-      </button>
-      <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
+    <section class="settings-section" aria-labelledby="settings-section-account">
+      <p class="settings-section-label" id="settings-section-account">Conta</p>
 
       <div id="settings-auth-container" class="settings-auth-container"></div>
+
+      <button type="button" class="setting-ghost-btn" id="btn-disconnect">
+        Restaurar configurações padrão
+      </button>
+      <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
     </section>
   </div>
 </aside>`;
@@ -508,7 +473,9 @@
     const volume = state.ambientVolume / 100;
     document.documentElement.style.setProperty("--settings-ambient-volume", String(volume));
 
-    document.querySelectorAll("audio, video").forEach((media) => {
+    // Só mexe em mídias marcadas como ambiente (ainda não existem).
+    // Antes afetava todo <audio>/<video>, incluindo a voz guiada.
+    document.querySelectorAll("audio[data-ambient], video[data-ambient]").forEach((media) => {
       if (media.dataset.settingsVolume === "ignore") return;
       media.volume = volume;
       media.dataset.settingsManagedVolume = "true";
@@ -695,7 +662,7 @@
     resetBtn?.addEventListener("click", () => {
       resetSettings();
       if (status) {
-        status.textContent = "Preferences reset on this device.";
+        status.textContent = "Configurações restauradas.";
         window.setTimeout(() => {
           status.textContent = "";
         }, 2400);
@@ -788,7 +755,11 @@
     set: (patch) => setSettings(patch),
     reset: resetSettings,
     apply: () => applySettings({ notify: true }),
-    getVolume: () => state.ambientVolume / 100,
+    // Volume da voz guiada. O antigo slider "Volume ambiente" (40% por
+    // padrão) baixava a narração por engano; a voz fica sempre a 100%.
+    // ambientVolume continua guardado para a futura música ambiente.
+    getVolume: () => 1,
+    getAmbientVolume: () => state.ambientVolume / 100,
   };
 
   if (document.readyState === "loading") {

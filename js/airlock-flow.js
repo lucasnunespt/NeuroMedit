@@ -263,12 +263,36 @@
     });
   }
 
-  function focusAirlockFromHash() {
+  /* Quem chega por um botão "Iniciar sessão" (index.html#airlock) já
+     escolheu começar: a sessão arranca sozinha, sem pedir um segundo
+     toque em "Começar". Se o navegador bloquear o áudio sem um toque
+     nesta página (ex.: Safari no iPhone), fica tudo como antes: o botão
+     Começar aparece em foco. */
+  async function autoStartFromHash() {
     if (window.location.hash !== "#airlock") {
       return;
     }
 
-    airlockStartBtn?.focus({ preventScroll: false });
+    // Tira o #airlock do endereço para recarregar/voltar não reiniciar
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+
+    if (!airlockAudio || isStarting || isActive) {
+      airlockStartBtn?.focus({ preventScroll: false });
+      return;
+    }
+
+    try {
+      airlockAudio.volume = 0;
+      await airlockAudio.play();
+      airlockAudio.pause();
+      airlockAudio.currentTime = 0;
+    } catch (error) {
+      console.log("[Airlock] autoplay bloqueado; aguardando toque em Começar");
+      airlockStartBtn?.focus({ preventScroll: false });
+      return;
+    }
+
+    startAirlockFlow();
   }
 
   function bindAirlockControls() {
@@ -325,7 +349,7 @@
     resetAirlockFlow();
     bindAirlockControls();
     bindGenericMeditationCTAs();
-    focusAirlockFromHash();
+    autoStartFromHash();
   }
 
   window.startAirlockFlow = startAirlockFlow;

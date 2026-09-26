@@ -614,6 +614,7 @@ window.NeuroMeditTranslations = {
     feedback_share_copied: "Ссылка скопирована.",
     feedback_share_copy_failed: "Не удалось скопировать ссылку.",
     share_meditation_aria: "Поделиться этой медитацией",
+    share_page_aria: "Поделиться этой страницей",
     share_link_copied: "Ссылка скопирована",
     observador_meta_title: "Осознанность, ум и тело · NeuroMedit",
     observador_kicker: "Наблюдатель",

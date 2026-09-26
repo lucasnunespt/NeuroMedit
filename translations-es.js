@@ -612,6 +612,7 @@ window.NeuroMeditTranslations = {
     feedback_share_copied: "Enlace copiado.",
     feedback_share_copy_failed: "No se pudo copiar el enlace.",
     share_meditation_aria: "Compartir esta meditación",
+    share_page_aria: "Compartir esta página",
     share_link_copied: "Enlace copiado",
     observador_meta_title: "Conciencia, Mente y Cuerpo · NeuroMedit",
     observador_kicker: "Observador",

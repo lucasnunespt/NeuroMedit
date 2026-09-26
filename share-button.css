@@ -120,3 +120,31 @@
 .share-button[hidden] {
   display: none;
 }
+
+
+/* Botão de partilhar nas páginas (Início, Biblioteca, Filosofia,
+   Colaboradores): redondo, discreto, alinhado aos botões ao lado */
+.share-button--page {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.filter-pills .share-button--page {
+  margin-left: auto;
+}
+
+.contributors-hero .share-button--page {
+  display: grid;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 720px) {
+  .hero-actions .share-button--page,
+  .why-hero-actions .share-button--page {
+    align-self: flex-start;
+  }
+
+  .filter-pills .share-button--page {
+    margin-left: 0;
+  }
+}

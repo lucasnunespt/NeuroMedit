@@ -817,3 +817,27 @@ body.settings-muted-motion .philo-share {
 .philo-page .why-contact {
   padding-bottom: 13rem;
 }
+
+
+/* Telemóvel: "Ver a ciência" e o botão de partilhar na mesma linha */
+@media (max-width: 720px) {
+  .philo-page .why-hero-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .philo-page .why-hero-actions .primary-button {
+    flex: 1 1 100%;
+  }
+
+  .philo-page .why-hero-actions .secondary-button {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  .philo-page .why-hero-actions .share-button--page {
+    align-self: center;
+  }
+}

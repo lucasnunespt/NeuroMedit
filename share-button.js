@@ -71,6 +71,10 @@
       }
       return { title: "NeuroMedit", url: `${window.location.origin}/library.html` };
     }
+    // Páginas (Início, Biblioteca, Filosofia…): título completo, com a marca
+    if (button.classList.contains("share-button--page")) {
+      return { title: document.title.trim() || "NeuroMedit", url: pageUrl() };
+    }
     return { title: meditationTitle(), url: pageUrl() };
   }
 

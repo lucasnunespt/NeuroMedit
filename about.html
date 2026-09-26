@@ -171,6 +171,9 @@
       </div>
     </section>
 
+    <!-- Fim da leitura: marcador que faz aparecer o convite para indicar -->
+    <div class="philo-end-marker" data-philo-end aria-hidden="true"></div>
+
     <section class="why-cta">
       <div class="why-cta-box card-static">
         <h2 data-i18n="why_cta_title">You do not need to understand everything first.</h2>
@@ -186,6 +189,18 @@
       </div>
     </section>
   </main>
+
+  <aside class="philo-share" data-philo-share role="complementary" aria-labelledby="philo-share-thanks" hidden>
+    <button type="button" class="philo-share-close" data-philo-share-close aria-label="Close" data-i18n="philo_share_close" data-i18n-attr="aria-label,title">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M7 7L17 17M17 7L7 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <p class="philo-share-thanks" id="philo-share-thanks" data-i18n="philo_share_thanks">Thank you for reading this far.</p>
+    <p class="philo-share-invite" data-i18n="philo_share_invite">Know someone who needs a pause?</p>
+    <button type="button" class="philo-share-button" data-philo-share-button>
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><circle cx="18" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.5" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="18.5" r="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M8.2 10.8L15.8 6.7M8.2 13.2L15.8 17.3" stroke="currentColor" stroke-width="1.7"/></svg>
+      <span data-philo-share-label data-i18n="philo_share_cta">Recommend to a friend</span>
+    </button>
+  </aside>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -205,6 +220,7 @@
   <script src="translations-es.js"></script>
   <script src="translations-ru.js"></script>
   <script src="translations.js"></script>
+  <script src="philosophy-share.js"></script>
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
   <script src="settings-panel.js"></script>

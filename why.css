@@ -683,3 +683,137 @@ p {
 .footer-links a:hover {
   color: var(--text);
 }
+
+
+/* =========================
+   CONVITE PARA INDICAR — cartão flutuante no fim da Filosofia
+========================= */
+.philo-end-marker {
+  height: 1px;
+}
+
+.philo-share {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  bottom: calc(env(safe-area-inset-bottom) + 1.5rem);
+  z-index: 88;
+  width: min(340px, calc(100vw - 32px));
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg, #fbf8f2);
+  background: color-mix(in srgb, var(--bg, #fbf8f2) 92%, transparent);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  color: var(--text);
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  transition: opacity 420ms ease, transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.philo-share.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.philo-share-thanks {
+  margin: 0 1.5rem 0.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.philo-share-invite {
+  margin: 0 0 0.85rem;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.philo-share-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 1.2rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--button-text);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.philo-share-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.philo-share-button:hover,
+.philo-share-button:focus-visible {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+}
+
+.philo-share-button:focus-visible,
+.philo-share-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.philo-share-button:active {
+  transform: scale(0.98);
+}
+
+.philo-share-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.philo-share-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Telemóvel e tablet: acima da barra inferior */
+@media (max-width: 940px) {
+  .philo-share {
+    bottom: calc(0.75rem + var(--bottom-bar-h, 50px) + 12px);
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem + var(--bottom-bar-h, 50px) + 12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .philo-share {
+    transition: opacity 150ms linear;
+    transform: translate(-50%, 0);
+  }
+}
+
+body.settings-muted-motion .philo-share {
+  transition: none;
+}
+
+
+/* Espaço no fim para o contacto não ficar por baixo do cartão */
+.philo-page .why-contact {
+  padding-bottom: 13rem;
+}

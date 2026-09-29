@@ -122,6 +122,12 @@
           <span data-i18n="mobile_menu_settings">Settings</span>
         </button>
       </li>
+      <li class="bottom-sheet-lang">
+        <p class="bottom-sheet-lang-label" data-i18n="nav_language">Language</p>
+        <div class="bottom-sheet-lang-options" role="group" aria-label="Language" data-i18n="nav_language" data-i18n-attr="aria-label">
+          ${["pt", "en", "es", "it", "ru"].map((code) => `<button type="button" data-sheet-lang="${code}" lang="${code}">${code.toUpperCase()}</button>`).join("")}
+        </div>
+      </li>
       <li class="bottom-sheet-divider" role="separator" aria-hidden="true"></li>
       <li>
         <a href="about.html" class="bottom-sheet-link">
@@ -174,6 +180,28 @@
       window.NeuroMeditSettings.open();
     }
   });
+
+  /* --- Idioma dentro do Menu (visível só no relógio, onde o
+     seletor do topo não cabe no círculo — ver watch.css) --- */
+  const langButtons = Array.from(sheet.querySelectorAll("[data-sheet-lang]"));
+  function markLanguage() {
+    const current = document.documentElement.lang || "en";
+    langButtons.forEach((button) => {
+      const active = button.dataset.sheetLang === current;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+  langButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (typeof window.setLanguage === "function") {
+        window.setLanguage(button.dataset.sheetLang);
+      }
+      markLanguage();
+    });
+  });
+  window.addEventListener("neuromedit:languagechange", markLanguage);
+  markLanguage();
 
   /* --- Biblioteca: busca com índice de todo o conteúdo ---
      Além de filtrar os cards, a busca entende sinônimos

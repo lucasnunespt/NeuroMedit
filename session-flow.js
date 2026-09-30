@@ -319,6 +319,8 @@
     clearResume();
     clearTimers();
     stopAudio();
+    // Versão alternativa do design: a luz fica até a pessoa escolher sair
+    if (window.NeuroMeditLuz?.handleEnd?.(getFeedbackUrl("completed"))) return;
     window.location.href = getFeedbackUrl("completed");
   }
 
@@ -541,6 +543,7 @@
     if (pauseButton) pauseButton.hidden = true;
     document.body.classList.remove("is-meditating");
     window.dispatchEvent(new CustomEvent("neuromedit:meditationstatechange"));
+    if (window.NeuroMeditLuz?.leave?.(getFeedbackUrl("exited"))) return;
     root.classList.add("is-leaving");
     setTimer(() => {
       window.location.href = getFeedbackUrl("exited");

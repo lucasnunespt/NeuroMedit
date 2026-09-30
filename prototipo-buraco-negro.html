@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NeuroMedit — De dentro</title>
+<style>
+:root{
+  --bg:#07080a;
+  --ink:#efe9dc;
+  --ink-soft:#a39e92;
+  --gold:#e9c46a;
+  --gold-soft:rgba(233,196,106,.28);
+  --card:rgba(255,255,255,.035);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body{overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* Scroll track: a altura define quanto tempo dura a viagem */
+.scrolly{position:relative;height:460vh}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#field{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.content{position:absolute;left:0;right:0;top:0;max-width:980px;margin:0 auto;padding:clamp(20px,6vh,64px) 16px 0}
+.brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:clamp(12px,3vh,28px)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(28px,5.2vw,58px);line-height:1.08;letter-spacing:-.01em;max-width:15ch;margin-bottom:clamp(14px,3.5vh,32px)}
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;will-change:transform,opacity}
+
+.guide{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--gold-soft);border-radius:999px;padding:14px 22px;margin-bottom:12px;background:var(--card);will-change:transform,opacity}
+.guide b{font-weight:500}
+.guide span{color:var(--ink-soft);font-size:14px}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{border:1px solid rgba(239,233,220,.1);background:var(--card);border-radius:20px;padding:16px 18px;will-change:transform,opacity,filter}
+.card i{display:block;width:20px;height:20px;border-radius:50%;margin-bottom:12px;background:radial-gradient(circle at 35% 35%,var(--c),transparent 72%);box-shadow:0 0 18px var(--c)}
+.card h3{font-weight:500;font-size:16px;margin-bottom:4px}
+.card p{font-size:13px;color:var(--ink-soft)}
+
+.meditator{position:absolute;left:50%;bottom:24vh;width:clamp(120px,19vh,210px);transform:translateX(-50%);will-change:transform}
+.meditator svg{display:block;width:100%;height:auto;overflow:visible}
+.meditator path,.meditator circle{fill:none;stroke:var(--gold);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.meditator #head{fill:rgba(233,196,106,0)}
+
+.finale{position:absolute;left:0;right:0;bottom:clamp(20px,5vh,56px);text-align:center;padding:0 16px;opacity:0;pointer-events:none}
+.finale p{color:var(--ink-soft);font-size:14px;letter-spacing:.04em;margin-bottom:6px}
+.finale h2{font-family:var(--serif);font-weight:400;font-size:clamp(22px,3.4vw,34px);margin-bottom:18px}
+.cta{display:inline-block;color:var(--ink);text-decoration:none;font-family:var(--serif);font-size:clamp(18px,2.4vw,22px);padding:14px 38px;border:1px solid var(--gold);border-radius:50%/60%;transition:background .6s ease,color .6s ease}
+.cta:hover,.cta:focus-visible{background:var(--gold);color:var(--bg);outline:none}
+
+.hint{position:absolute;right:20px;bottom:18px;text-align:center;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-soft)}
+.hint::after{content:"";display:block;width:1px;height:28px;margin:10px auto 0;background:linear-gradient(var(--ink-soft),transparent);animation:drip 3.2s ease-in-out infinite}
+@keyframes drip{0%,100%{opacity:.2;transform:scaleY(.6);transform-origin:top}50%{opacity:1;transform:scaleY(1)}}
+
+@media (max-width:640px){
+  .cards{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card{padding:12px 14px;border-radius:16px}
+  .card i{margin-bottom:8px}
+  .guide{padding:12px 18px}
+  .guide span{display:none}
+  .meditator{bottom:26vh}
+}
+
+/* Movimento reduzido: tudo estático e legível, sem viagem */
+.rm .scrolly{height:auto}
+.rm .stage{position:relative;height:auto;min-height:100svh;display:flex;flex-direction:column;align-items:center;gap:40px;padding-bottom:48px}
+.rm .content,.rm .meditator,.rm .finale{position:relative;left:auto;bottom:auto;transform:none;opacity:1;pointer-events:auto}
+.rm .content{width:100%}
+.rm .hint{display:none}
+</style>
+</head>
+<body>
+
+<div class="scrolly" id="scrolly">
+  <section class="stage" id="stage">
+    <canvas id="field" aria-hidden="true"></canvas>
+
+    <div class="content">
+      <p class="brand">NeuroMedit</p>
+      <h1 id="title">Tudo o que você procura já está acontecendo em algum lugar.</h1>
+
+      <div class="guide absorb"><b>Guias</b><span>respiração · atenção · sono · cura</span></div>
+
+      <div class="cards">
+        <article class="card absorb" style="--c:#8aa5a0"><i></i><h3>Calma</h3><p>8 min · respiração</p></article>
+        <article class="card absorb" style="--c:#e9c46a"><i></i><h3>Foco</h3><p>10 min · atenção</p></article>
+        <article class="card absorb" style="--c:#7d8fd6"><i></i><h3>Sono</h3><p>15 min · desaceleração</p></article>
+        <article class="card absorb" style="--c:#b48ce0"><i></i><h3>Sonhos</h3><p>12 min · imaginação</p></article>
+        <article class="card absorb" style="--c:#e39b7b"><i></i><h3>Cura</h3><p>11 min · autocompaixão</p></article>
+        <article class="card absorb" style="--c:#9fd3c7"><i></i><h3>Observador</h3><p>9 min · consciência</p></article>
+      </div>
+    </div>
+
+    <figure class="meditator" id="meditator" aria-hidden="true">
+      <svg viewBox="0 0 200 180">
+        <circle id="head" cx="100" cy="38" r="15"/>
+        <path d="M86 60 Q100 54 114 60"/>
+        <path d="M86 60 C72 64 66 80 64 98 L60 122 C58 132 48 139 40 145"/>
+        <path d="M114 60 C128 64 134 80 136 98 L140 122 C142 132 152 139 160 145"/>
+        <path d="M78 98 C80 114 84 126 92 134 Q100 140 108 134 C116 126 120 114 122 98"/>
+        <path d="M36 150 C52 138 76 142 100 156 C124 142 148 138 164 150 C168 160 150 170 128 168 C116 167 106 162 100 156 C94 162 84 167 72 168 C50 170 32 160 36 150 Z"/>
+      </svg>
+    </figure>
+
+    <div class="finale" id="finale">
+      <p>Tudo o que você viu veio de um lugar só.</p>
+      <h2>De dentro de alguém.</h2>
+      <a class="cta" href="home.html">Vamos meditar?</a>
+    </div>
+
+    <div class="hint" id="hint">role devagar</div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrolly = document.getElementById('scrolly');
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  const fig = document.getElementById('meditator');
+  const headEl = document.getElementById('head');
+  const finale = document.getElementById('finale');
+  const hint = document.getElementById('hint');
+  const title = document.getElementById('title');
+
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // --- Divide o título em letras (cada uma é sugada individualmente) ---
+  const text = title.textContent.trim();
+  title.textContent = '';
+  title.setAttribute('aria-label', text);
+  text.split(' ').forEach((word, i, arr) => {
+    const w = document.createElement('span');
+    w.className = 'w'; w.setAttribute('aria-hidden', 'true');
+    for (const c of word) { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; w.appendChild(s); }
+    title.appendChild(w);
+    if (i < arr.length - 1) title.appendChild(document.createTextNode(' '));
+  });
+
+  const items = [
+    ...[...document.querySelectorAll('.ch')].map(el => ({ el, kind: 'ch' })),
+    ...[...document.querySelectorAll('.absorb')].map(el => ({ el, kind: el.classList.contains('card') ? 'card' : 'guide' })),
+  ];
+
+  if (reduce) { document.documentElement.classList.add('rm'); }
+
+  // --- Medidas ---
+  let W = 0, H = 0, DPR = 1, headBase = { x: 0, y: 0 }, headR = 15, riseMax = 0;
+  function measure() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = stage.clientWidth; H = stage.clientHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    items.forEach(it => { it.el.style.transform = ''; it.el.style.opacity = ''; it.el.style.filter = ''; it.css = ''; });
+    fig.style.transform = 'translateX(-50%)';
+    const s = stage.getBoundingClientRect();
+    const h = headEl.getBoundingClientRect();
+    headBase = { x: h.left + h.width / 2 - s.left, y: h.top + h.height / 2 - s.top };
+    headR = h.width / 2;
+    riseMax = H * 0.36;
+
+    let dMin = Infinity, dMax = 0;
+    items.forEach(it => {
+      const r = it.el.getBoundingClientRect();
+      it.cx = r.left + r.width / 2 - s.left;
+      it.cy = r.top + r.height / 2 - s.top;
+      it.d = Math.hypot(it.cx - headBase.x, it.cy - (headBase.y + riseMax * 0.5));
+      dMin = Math.min(dMin, it.d); dMax = Math.max(dMax, it.d);
+    });
+    // O mais próximo cai primeiro — como num horizonte de eventos
+    items.forEach(it => {
+      const n = (it.d - dMin) / Math.max(1, dMax - dMin);
+      it.start = 0.1 + n * 0.46 + Math.random() * 0.04;
+      it.dur = it.kind === 'ch' ? 0.18 : 0.24;
+      it.pe = 0;
+    });
+    seedStars();
+  }
+
+  // --- Campo de estrelas (escala do "espaço" à volta da mente) ---
+  let stars = [];
+  function seedStars() {
+    const n = Math.round(Math.min(650, (W * H) / 2600));
+    const R = Math.hypot(W, H) * 0.75;
+    stars = Array.from({ length: n }, () => {
+      const r = Math.sqrt(Math.random()) * R + 20;
+      return { r, a: Math.random() * Math.PI * 2, s: 0.4 + Math.random() * 1.2, warm: Math.random() < 0.35, px: null, py: null };
+    });
+  }
+
+  // Partículas que saem dos cards quando se desfazem
+  let bits = [];
+  function emit(x, y, color, n, head) {
+    for (let i = 0; i < n; i++) {
+      const dx = x - head.x, dy = y - head.y, d = Math.hypot(dx, dy) || 1;
+      const sp = 90 + Math.random() * 160;
+      bits.push({
+        x: x + (Math.random() - .5) * 40, y: y + (Math.random() - .5) * 24,
+        vx: (-dy / d) * sp + (Math.random() - .5) * 40,
+        vy: (dx / d) * sp + (Math.random() - .5) * 40,
+        c: color, life: 0, px: null, py: null, s: 0.6 + Math.random() * 1.4,
+      });
+    }
+  }
+
+  // --- Loop ---
+  let sp = 0, last = performance.now(), lastSp = 0;
+  const SWIRL = 2.4;
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+
+    // leitura (antes de qualquer escrita)
+    const rect = scrolly.getBoundingClientRect();
+    const p = reduce ? 0 : clamp(-rect.top / Math.max(1, rect.height - innerHeight));
+
+    // o scroll é suavizado: o movimento "respira" em vez de saltar
+    sp += (p - sp) * Math.min(1, dt * 3.2);
+    const vel = Math.abs(sp - lastSp) / Math.max(dt, 1e-3); lastSp = sp;
+
+    const I = smooth(0.06, 0.3, sp) * (1 - smooth(0.72, 0.92, sp));   // intensidade do buraco negro
+    const A = smooth(0.1, 0.8, sp);                                    // quanto já foi absorvido
+    const rise = reduce ? 0 : (1 - smooth(0, 0.42, sp)) * riseMax;
+    const head = { x: headBase.x, y: headBase.y + rise };
+
+    // --- elementos a serem sugados ---
+    if (!reduce) for (const it of items) {
+      const e = clamp((sp - it.start) / it.dur);
+      const ee = Math.pow(e, 2.2);                   // acelera ao aproximar (gravidade)
+      let css;
+      if (ee <= 0) { css = ''; }
+      else {
+        const vx = it.cx - head.x, vy = it.cy - head.y;
+        const th = SWIRL * ee, k = 1 - ee;
+        const nx = head.x + (vx * Math.cos(th) - vy * Math.sin(th)) * k;
+        const ny = head.y + (vx * Math.sin(th) + vy * Math.cos(th)) * k;
+        const sc = Math.max(0.001, Math.pow(1 - ee, 1.4));
+        const rot = th * 57.3 * (it.kind === 'ch' ? 1.6 : 0.5);
+        css = `translate3d(${(nx - it.cx).toFixed(1)}px,${(ny - it.cy).toFixed(1)}px,0) rotate(${rot.toFixed(1)}deg) scale(${sc.toFixed(3)})`;
+        if (it.pe < 0.45 && ee >= 0.45) {
+          const col = it.kind === 'card' ? getComputedStyle(it.el).getPropertyValue('--c').trim() : '#e9c46a';
+          emit(nx, ny, col, it.kind === 'ch' ? 3 : 36, head);
+        }
+        it.op = 1 - smooth(0.7, 1, ee);
+        it.blur = it.kind === 'card' ? ee * 8 : 0;
+      }
+      it.pe = ee;
+      if (css !== it.css) {
+        it.css = css;
+        it.el.style.transform = css;
+        it.el.style.opacity = css ? it.op : '';
+        it.el.style.filter = it.blur > 0.2 && css ? `blur(${it.blur.toFixed(1)}px)` : '';
+        it.el.style.pointerEvents = css ? 'none' : '';
+      }
+    }
+
+    // --- figura, final e dica ---
+    const breathe = 0.5 + 0.5 * Math.sin((now / 10000) * Math.PI * 2);   // ~6 respirações/min
+    if (!reduce) {
+      fig.style.transform = `translateX(-50%) translateY(${rise.toFixed(1)}px)`;
+      const f = smooth(0.8, 0.95, sp);
+      finale.style.opacity = f;
+      finale.style.transform = `translateY(${((1 - f) * 16).toFixed(1)}px)`;
+      finale.style.pointerEvents = f > 0.6 ? 'auto' : 'none';
+      hint.style.opacity = 1 - smooth(0.01, 0.06, sp);
+    }
+    headEl.style.fill = `rgba(233,196,106,${(A * (0.12 + 0.1 * breathe)).toFixed(3)})`;
+    fig.style.filter = `drop-shadow(0 0 ${(4 + I * 18 + A * 6 * breathe).toFixed(1)}px rgba(233,196,106,${(0.25 + I * 0.5).toFixed(2)}))`;
+
+    draw(dt, now, head, I, A, vel, breathe);
+    requestAnimationFrame(frame);
+  }
+
+  function draw(dt, now, head, I, A, vel, breathe) {
+    // rastro: o fundo apaga devagar, criando caudas de movimento
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = `rgba(7,8,10,${(0.2 + (1 - I) * 0.45).toFixed(3)})`;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+
+    const R = Math.hypot(W, H) * 0.75;
+    const v = Math.min(vel, 1.2);
+
+    // estrelas
+    for (const s of stars) {
+      const w = (0.03 + I * 1.5 + v * 5) * (120 / (s.r + 80));
+      s.a += w * dt;
+      s.r -= (I * 70 + v * 900) * (1 + 160 / (s.r + 30)) * dt;
+      if (s.r < headR * 0.6) {                 // atravessou o horizonte → renasce longe
+        s.r = R * (0.55 + Math.random() * 0.45); s.a = Math.random() * Math.PI * 2; s.px = null;
+      }
+      const flat = lerp(1, 0.32 + 0.68 * smooth(0, 280, s.r), I);   // perto da cabeça vira disco
+      const x = head.x + Math.cos(s.a) * s.r;
+      const y = head.y + Math.sin(s.a) * s.r * flat;
+      const fade = clamp((s.r - headR) / 60);
+      const alpha = (0.25 + 0.55 * I + 0.2 * breathe * (1 - I)) * fade;
+      ctx.strokeStyle = s.warm ? `rgba(233,196,106,${alpha.toFixed(3)})` : `rgba(239,233,220,${(alpha * 0.8).toFixed(3)})`;
+      ctx.lineWidth = s.s;
+      ctx.beginPath();
+      if (s.px === null) { ctx.moveTo(x, y); ctx.lineTo(x + 0.5, y + 0.5); }
+      else { ctx.moveTo(s.px, s.py); ctx.lineTo(x, y); }
+      ctx.stroke();
+      s.px = x; s.py = y;
+    }
+
+    // partículas dos cards
+    for (let i = bits.length - 1; i >= 0; i--) {
+      const b = bits[i];
+      const dx = head.x - b.x, dy = head.y - b.y, d = Math.hypot(dx, dy) || 1;
+      const acc = Math.min(4000, 1.1e6 / (d * d + 3000));
+      b.vx += (dx / d) * acc * dt; b.vy += (dy / d) * acc * dt;
+      b.vx *= 0.992; b.vy *= 0.992;
+      b.x += b.vx * dt; b.y += b.vy * dt; b.life += dt;
+      if (d < headR * 0.7 || b.life > 6) { bits.splice(i, 1); continue; }
+      ctx.strokeStyle = b.c; ctx.globalAlpha = clamp(d / 50) * 0.9; ctx.lineWidth = b.s;
+      ctx.beginPath();
+      if (b.px === null) ctx.moveTo(b.x, b.y); else ctx.moveTo(b.px, b.py);
+      ctx.lineTo(b.x, b.y); ctx.stroke();
+      b.px = b.x; b.py = b.y;
+    }
+    ctx.globalAlpha = 1;
+
+    // disco de acreção à volta da cabeça
+    if (I > 0.01) {
+      ctx.save(); ctx.translate(head.x, head.y); ctx.rotate(-0.14);
+      for (let k = 0; k < 3; k++) {
+        ctx.strokeStyle = `rgba(233,196,106,${(I * (0.5 - k * 0.14)).toFixed(3)})`;
+        ctx.lineWidth = 1.4 - k * 0.3;
+        ctx.beginPath(); ctx.ellipse(0, 0, headR * (2.4 + k * 1.3), headR * (0.62 + k * 0.32), 0, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // brilho da mente: cresce com o que foi absorvido e, no fim, respira
+    const gr = headR * (1.6 + A * 3.2 + I * 1.6) * (1 + 0.12 * breathe * A);
+    const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, gr);
+    g.addColorStop(0, `rgba(255,244,214,${(0.07 + 0.2 * A + 0.14 * I).toFixed(3)})`);
+    g.addColorStop(0.35, `rgba(233,196,106,${(0.05 + 0.12 * A + 0.1 * I).toFixed(3)})`);
+    g.addColorStop(1, 'rgba(233,196,106,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(head.x, head.y, gr, 0, Math.PI * 2); ctx.fill();
+  }
+
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(measure, 150); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    measure();
+    requestAnimationFrame(t => { last = t; frame(t); });
+  });
+})();
+</script>
+</body>
+</html>

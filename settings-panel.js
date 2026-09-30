@@ -26,6 +26,8 @@
     silenceEnd: "07:00",
     hideMetrics: false,
     handedness: "right",
+    altDesign: false,
+    captions: false,
   };
 
   const KEY_ALIASES = {
@@ -100,6 +102,14 @@
         </div>
         <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
       </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-label">Versão alternativa do design</p>
+          <p class="setting-hint">Experimental. Ao começar uma meditação, tudo se dissolve numa pessoa feita de luz.</p>
+        </div>
+        <input type="checkbox" class="setting-toggle" data-setting-key="altDesign" id="toggle-alt-design" aria-label="Versão alternativa do design">
+      </div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-use">
@@ -138,6 +148,14 @@
           <p class="setting-hint">O som diminui devagar ao terminar a sessão.</p>
         </div>
         <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Final suave">
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-label">Legendas</p>
+          <p class="setting-hint">Mostra o texto da voz guiada, para meditar lendo.</p>
+        </div>
+        <input type="checkbox" class="setting-toggle" data-setting-key="captions" id="toggle-captions" aria-label="Legendas">
       </div>
     </section>
 
@@ -437,7 +455,9 @@
             silenceStart: state.silenceStart,
             silenceEnd: state.silenceEnd,
             hideMetrics: state.hideMetrics,
-            handedness: state.handedness
+            handedness: state.handedness,
+            altDesign: Boolean(state.altDesign),
+            captions: Boolean(state.captions)
           }
         }, { merge: true });
       }
@@ -509,6 +529,7 @@
     body.classList.toggle("settings-hide-metrics", state.hideMetrics);
     body.classList.toggle("settings-hand-left", state.handedness === "left");
     body.classList.toggle("settings-low-contrast", state.visualTheme === "low-contrast");
+    body.classList.toggle("settings-alt-design", Boolean(state.altDesign));
     body.dataset.silenceStart = state.silenceStart;
     body.dataset.silenceEnd = state.silenceEnd;
     applyVolume();
@@ -648,7 +669,9 @@
 
       const key = control.dataset.settingKey;
       const value = control.matches('input[type="checkbox"]') ? control.checked : control.value;
+      const wasAltDesign = Boolean(state.altDesign);
       setSettings({ [key]: value });
+      if (key === "altDesign" && value === true && !wasAltDesign) welcomeAltDesign();
     });
 
     panel.querySelectorAll(".setting-select-group").forEach((group) => {
@@ -699,6 +722,85 @@
     }, true);
   }
 
+  // Versão alternativa do design e legendas: carregamos só onde fazem sentido.
+  // A pessoa de luz e o feedback de luz só agem se a opção estiver ligada.
+  function loadAltDesignForAirlocks() {
+    const add = (src, next) => {
+      if (document.querySelector(`script[src="${src}"]`)) { next && next(); return; }
+      const el = document.createElement("script");
+      el.src = src;
+      el.onload = () => { el.dataset.loaded = "1"; next && next(); };
+      document.head.appendChild(el);
+    };
+    if (document.querySelector("[data-session-flow]")) {
+      add("js/luz-figure.js", () => add("js/luz-dust.js", () => add("js/luz-airlock.js")));
+    }
+    if (document.body.classList.contains("home-body") && !document.body.classList.contains("bh-body")) {
+      add("js/luz-convite.js");
+    }
+    if (document.querySelector("#airlockAudio, [data-session-audio]")) {
+      add("js/legendas.js");
+    }
+    if (document.querySelector("[data-feedback-options]")) {
+      add("js/luz-figure.js", () => add("js/feedback-luz.js"));
+    }
+  }
+
+  // Boas-vindas ao ligar a versão alternativa: o site vira poeira de luz,
+  // forma a pessoa meditando e convida para meditar.
+  function welcomeAltDesign() {
+    const status = document.getElementById("settings-status");
+    const reduced = state.muteAnimations || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+    if (reduced) {
+      if (status) {
+        status.textContent = "Versão alternativa ligada. Ela aparece quando “Reduzir animações” estiver desligado.";
+        window.setTimeout(() => { status.textContent = ""; }, 5000);
+      }
+      return;
+    }
+    const add = (src, next) => {
+      const found = document.querySelector(`script[src="${src}"]`);
+      if (found) { if (found.dataset.loaded) next(); else found.addEventListener("load", next, { once: true }); return; }
+      const el = document.createElement("script");
+      el.src = src;
+      el.addEventListener("load", () => { el.dataset.loaded = "1"; next(); }, { once: true });
+      document.head.appendChild(el);
+    };
+    add("js/luz-figure.js", () => add("js/luz-dust.js", () => add("js/luz-pause.js", () => add("js/luz-welcome.js", () => window.NeuroMeditLuzWelcome?.start()))));
+  }
+
+  // A versão de luz tem o seu próprio airlock (luz.html), separado do antigo
+  // (index.html). Com ela ligada, tudo o que levaria ao airlock antigo leva
+  // direto ao novo — nunca passam os dois.
+  function altDesignActive() {
+    return Boolean(state.altDesign) && !state.muteAnimations
+      && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function routeToLuzAirlock() {
+    if (document.getElementById("airlockStartBtn") && altDesignActive()) {
+      window.location.replace("luz.html");
+      return true;
+    }
+    document.addEventListener("click", (event) => {
+      if (!altDesignActive() || event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;
+      const trigger = event.target.closest?.("[data-airlock-link], a[href]");
+      if (!trigger || trigger.target === "_blank") return;
+      let toOldAirlock = trigger.hasAttribute("data-airlock-link");
+      if (!toOldAirlock && trigger.tagName === "A") {
+        try {
+          const url = new URL(trigger.getAttribute("href"), window.location.href);
+          toOldAirlock = url.origin === window.location.origin && (/\/index\.html$/i.test(url.pathname) || url.pathname === "/");
+        } catch (e) {}
+      }
+      if (!toOldAirlock) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      window.location.href = "luz.html";
+    }, true);
+    return false;
+  }
+
   function init() {
     if (!document.body) return;
 
@@ -741,6 +843,8 @@
       mobileNav.appendChild(settingsBtn);
     }
 
+    if (routeToLuzAirlock()) return;
+    loadAltDesignForAirlocks();
     bindControls();
     bindGlobalSettingsEvents();
     syncPanelControls();
@@ -760,6 +864,12 @@
     // ambientVolume continua guardado para a futura música ambiente.
     getVolume: () => 1,
     getAmbientVolume: () => state.ambientVolume / 100,
+    // usado pelo convite da home: liga a versão de luz e mostra as boas-vindas
+    enableAltDesign: () => {
+      const was = Boolean(state.altDesign);
+      setSettings({ altDesign: true });
+      if (!was) welcomeAltDesign();
+    },
   };
 
   if (document.readyState === "loading") {

@@ -1,0 +1,105 @@
+/* NeuroMedit — Home "buraco negro" */
+body.bh-body{
+  --bh-bg:#07080a;
+  --bh-ink:#efe9dc;
+  --bh-ink-soft:#a39e92;
+  --bh-gold:#e9c46a;
+  --bh-gold-soft:rgba(233,196,106,.28);
+  --bh-card:rgba(255,255,255,.035);
+  --bh-serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  background:var(--bh-bg) !important;
+  color:var(--bh-ink);
+  overflow-x:hidden;
+}
+/* o header fica por cima do palco fixo */
+body.bh-body .site-header{position:fixed;left:0;right:0;top:0}
+
+.bh-scrolly{position:relative;height:300vh}
+.bh-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#bh-field{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+.bh-content{position:absolute;left:0;right:0;top:0;max-width:1000px;margin:0 auto;padding:clamp(104px,15vh,140px) 16px 0}
+.bh-body .bh-title{font-family:var(--bh-serif);font-weight:400;font-size:clamp(30px,5.4vw,60px);line-height:1.08;letter-spacing:-.01em;max-width:16ch;margin:0 0 clamp(14px,3vh,28px);color:var(--bh-ink) !important;text-transform:none}
+.bh-w{display:inline-block;white-space:nowrap}
+.bh-ch{display:inline-block;will-change:transform,opacity}
+
+.bh-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid var(--bh-gold-soft);border-radius:999px;padding:10px 12px 10px 10px;margin-bottom:clamp(18px,4vh,36px);background:var(--bh-card);width:max-content;max-width:100%;will-change:transform,opacity}
+.bh-body a.bh-primary{display:inline-block;background:var(--bh-gold) !important;color:var(--bh-bg) !important;border-radius:999px;padding:12px 22px;font-weight:600;font-size:15px;text-decoration:none}
+.bh-body a.bh-textlink{color:var(--bh-ink) !important;text-decoration:none;font-size:15px;border-bottom:1px solid var(--bh-gold-soft);padding-bottom:2px}
+.bh-actions .share-button{margin-left:auto}
+
+.bh-body .bh-states-title{font-family:var(--bh-serif);font-weight:400;font-size:clamp(18px,2.2vw,24px);color:var(--bh-ink-soft) !important;margin:0 0 12px;width:max-content;max-width:100%;will-change:transform,opacity}
+
+.bh-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bh-body a.bh-card{display:block;text-decoration:none;border:1px solid rgba(239,233,220,.1);background:var(--bh-card) !important;border-radius:20px;padding:16px 18px;will-change:transform,opacity,filter;transition:border-color .6s ease,background .6s ease;box-shadow:none}
+.bh-body a.bh-card:hover,.bh-body a.bh-card:focus-visible{border-color:var(--c);background:rgba(255,255,255,.06) !important;outline:none;transform:none}
+.bh-card i{display:block;width:20px;height:20px;border-radius:50%;margin-bottom:12px;background:radial-gradient(circle at 35% 35%,var(--c),transparent 72%);box-shadow:0 0 18px var(--c)}
+.bh-body .bh-card .bh-signal{font-size:12px;letter-spacing:.04em;color:var(--bh-ink-soft) !important;margin:0 0 4px}
+.bh-body .bh-card h3{font-weight:500;font-size:17px;margin:0 0 6px;color:var(--bh-ink) !important;font-family:inherit}
+.bh-body .bh-card .bh-text{font-size:13px;line-height:1.45;color:var(--bh-ink-soft) !important;margin:0}
+
+/* a pessoa: no fim, flutua no centro da tela */
+.bh-stage{--fw:clamp(170px,30vh,300px)}
+.bh-meditator{position:absolute;left:50%;top:44%;width:var(--fw);margin:0;transform:translate(-50%,-50%);will-change:transform;pointer-events:none}
+.bh-meditator{aspect-ratio:1}
+.bh-figure-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+
+.bh-finale{position:absolute;left:0;right:0;top:calc(44% + var(--fw) * .5 + clamp(16px,3vh,32px));text-align:center;padding:0 16px;opacity:0;pointer-events:none}
+.bh-body .bh-finale h2{font-family:var(--bh-serif);font-weight:400;font-size:clamp(24px,3.6vw,36px);line-height:1.15;margin:0 0 clamp(18px,3vh,28px);color:var(--bh-ink) !important;letter-spacing:-.005em}
+.bh-body a.bh-cta{display:inline-block;color:var(--bh-ink) !important;background:rgba(233,196,106,.06) !important;text-decoration:none;font-family:var(--bh-serif);font-size:clamp(18px,2.4vw,22px);padding:15px 40px;border:1px solid rgba(233,196,106,.55);border-radius:999px;box-shadow:0 0 40px rgba(233,196,106,.12);transition:background .8s ease,color .8s ease,box-shadow .8s ease}
+.bh-body a.bh-cta:hover,.bh-body a.bh-cta:focus-visible{background:var(--bh-gold) !important;color:var(--bh-bg) !important;box-shadow:0 0 60px rgba(233,196,106,.35);outline:none}
+
+/* rodapé: também é sugado */
+.bh-footer{position:absolute;left:0;right:0;bottom:18px;max-width:1000px;margin:0 auto;padding:0 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:12px}
+.bh-body .bh-footer p,.bh-body .bh-footer a{color:var(--bh-ink-soft) !important;text-decoration:none;margin:0;display:inline-block}
+.bh-footer-links{display:flex;gap:18px}
+
+.bh-hint{position:absolute;left:0;right:0;bottom:64px;text-align:center;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--bh-ink-soft)}
+.bh-hint::after{content:"";display:block;width:1px;height:28px;margin:10px auto 0;background:linear-gradient(var(--bh-ink-soft),transparent);animation:bh-drip 3.2s ease-in-out infinite}
+@keyframes bh-drip{0%,100%{opacity:.2;transform:scaleY(.6);transform-origin:top}50%{opacity:1;transform:scaleY(1)}}
+
+@media (max-width:940px){
+  /* espaço para a bottom nav do mobile (ela também se dissolve) */
+  .bh-footer{bottom:calc(96px + env(safe-area-inset-bottom))}
+  .bh-hint{bottom:calc(140px + env(safe-area-inset-bottom))}
+}
+@media (max-width:640px){
+  .bh-cards{gap:8px}
+  .bh-body a.bh-card{padding:12px 12px;border-radius:16px}
+  .bh-card i{width:16px;height:16px;margin-bottom:8px}
+  .bh-body .bh-card .bh-text{display:none}
+  .bh-body .bh-card h3{font-size:15px;margin:0}
+  .bh-body .bh-card .bh-signal{font-size:11px}
+  .bh-actions{gap:12px}
+  .bh-body a.bh-primary{padding:11px 16px;font-size:14px}
+  .bh-stage{--fw:clamp(160px,26vh,240px)}
+  .bh-footer{flex-direction:column;gap:6px}
+}
+
+/* Movimento reduzido: tudo estático e legível */
+.bh-rm .bh-scrolly{height:auto}
+.bh-rm .bh-stage{position:relative;height:auto;min-height:100svh;display:flex;flex-direction:column;align-items:center;gap:40px;padding-bottom:120px}
+.bh-rm .bh-content,.bh-rm .bh-meditator,.bh-rm .bh-finale,.bh-rm .bh-footer{position:relative;left:auto;top:auto;bottom:auto;transform:none;opacity:1;pointer-events:auto}
+.bh-rm .bh-content{width:100%}
+.bh-rm .bh-hint{display:none}
+
+/* header escuro, coerente com o palco */
+body.bh-body .site-header{
+  --header-glass-bg:rgba(18,19,22,.55);
+  --header-glass-bg-scrolled:rgba(18,19,22,.72);
+  --header-border:rgba(239,233,220,.08);
+  --header-text:#efe9dc;
+  --header-text-soft:#a39e92;
+  --header-glow:0 10px 30px rgba(0,0,0,.35);
+  --header-control-bg:rgba(255,255,255,.06);
+  --header-control-hover-bg:rgba(255,255,255,.12);
+  --header-indicator:rgba(233,196,106,.14);
+  --header-indicator-border:rgba(233,196,106,.28);
+}
+body.bh-body .brand{--brand-wordmark-color:#efe9dc}
+@media (max-width:640px){
+  .bh-actions{flex-wrap:nowrap;width:100%;padding:8px 8px 8px 8px}
+  .bh-body a.bh-textlink{font-size:14px;white-space:nowrap}
+}
+
+.bh-body a.bh-primary{white-space:nowrap}

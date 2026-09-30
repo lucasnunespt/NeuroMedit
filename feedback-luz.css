@@ -1,0 +1,71 @@
+/* NeuroMedit — Feedback na versão alternativa do design ("Luz") */
+.fb-luz{--fb-gold:#e9c46a;--fb-ink:#f4ead6;--fb-soft:rgba(244,234,214,.66);--fb-line:rgba(233,196,106,.62);--fb-glow:rgba(233,196,106,.32);--fb-serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
+.fb-luz-day{--fb-gold:#b7802a;--fb-ink:#3a2a18;--fb-soft:rgba(58,42,24,.7);--fb-line:rgba(183,128,42,.7);--fb-glow:rgba(233,170,60,.35)}
+
+/* só o elemento principal fica na tela */
+.fb-luz :is(.site-header,.site-footer,.bottom-nav,.bottom-back,.bottom-header,.settings-fab,#settings-fab){display:none !important}
+
+.fb-luz-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.fb-luz-night body{background:#07060a !important}
+.fb-luz-day body{background:radial-gradient(ellipse at 50% 45%,#fff9ee 0%,#f6ead4 55%,#ecdcbd 100%) !important}
+
+/* noite: flores no fundo, mais nítidas e escurecidas */
+.fb-luz-night .feedback-index-atmosphere{opacity:1 !important;visibility:visible !important;display:block !important}
+.fb-luz-night .feedback-index-video{filter:blur(1.5px) brightness(.5) saturate(.9) !important;transform:scale(1.04)}
+.fb-luz-night .feedback-index-atmosphere::after{background:radial-gradient(ellipse at 50% 50%,rgba(7,6,10,.15) 0%,rgba(7,6,10,.7) 75%) !important}
+.fb-luz-day .feedback-index-atmosphere{display:none !important}
+
+/* centralizado e imóvel */
+.fb-luz .complete-page{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:grid;place-items:center;padding:24px 16px}
+.fb-luz .complete-hero{width:100%;padding:0 !important;background:none !important}
+.fb-luz :is(.complete-container,body.feedback-minimal .complete-container){background:transparent !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;margin:0 auto !important;padding:0 !important;transform:none !important}
+html.fb-luz [class*="-hero"] > .container > *{animation:none !important;opacity:1 !important}
+.fb-luz body .complete-card,
+.fb-luz body.complete-body.feedback-minimal .complete-card{position:relative;transform:none !important;transition:none !important;margin:0 auto !important;max-width:460px;
+  border:0 !important;border-radius:26px;box-shadow:none !important;
+  background:rgba(10,8,6,.38) !important;backdrop-filter:blur(6px) !important;-webkit-backdrop-filter:blur(6px) !important;
+  padding:clamp(1.8rem,5vw,2.6rem) clamp(1.4rem,4vw,2.2rem) !important;text-align:center;color:var(--fb-ink)}
+.fb-luz-day body .complete-card,
+.fb-luz-day body.complete-body.feedback-minimal .complete-card{background:rgba(255,251,244,.74) !important;backdrop-filter:blur(10px) !important;-webkit-backdrop-filter:blur(10px) !important}
+
+/* o contorno do card é uma linha de luz que se desenha */
+.fb-luz-outline{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.fb-luz-outline rect{fill:none;stroke:var(--fb-line);stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px var(--fb-glow)) drop-shadow(0 0 16px var(--fb-glow));transition:stroke-dashoffset 2.2s cubic-bezier(.45,0,.2,1) 1.8s}
+.fb-luz-in .fb-luz-outline rect{stroke-dashoffset:0}
+
+/* saudação */
+.fb-luz-hello{margin:0 0 clamp(1.2rem,3vh,1.8rem);opacity:0;transition:opacity 2s ease .5s}
+.fb-luz-in .fb-luz-hello{opacity:1}
+.fb-luz-title{margin:0 0 .5rem;font-family:var(--fb-serif);font-size:clamp(1.45rem,4vw,2rem);line-height:1.2;color:var(--fb-ink);text-shadow:0 0 26px var(--fb-glow)}
+.fb-luz-thanks{margin:0;font-size:.98rem;color:var(--fb-soft)}
+.fb-luz-stay{display:none;margin:0 0 .6rem;font-family:var(--fb-serif);font-size:clamp(1.3rem,3.6vw,1.75rem);line-height:1.25;color:var(--fb-ink);text-shadow:0 0 26px var(--fb-glow)}
+.fb-luz body.feedback-answered .fb-luz-hello{display:none}
+.fb-luz body.feedback-answered .fb-luz-stay{display:block;animation:fbLuzIn 2s ease both}
+
+/* pergunta e respostas chegam depois do contorno */
+.fb-luz .feedback-minimal-question{color:var(--fb-ink) !important;font-weight:400 !important;font-size:clamp(1.1rem,3vw,1.35rem) !important;margin:0 auto 1.1rem !important;opacity:0;transition:opacity 1.6s ease 3.2s}
+.fb-luz-in .feedback-minimal-question{opacity:1}
+.fb-luz :is(.feedback-thank-you){color:var(--fb-soft) !important;font-size:.98rem !important}
+
+.fb-luz :is(.feedback-option,.feedback-btn.primary-button){
+  position:relative;border-radius:999px !important;min-height:48px;
+  color:var(--fb-ink) !important;border:1px solid var(--fb-line) !important;
+  background: transparent !important;
+  box-shadow:0 0 14px var(--fb-glow),inset 0 0 12px rgba(233,196,106,.08) !important;
+  text-shadow:0 0 10px var(--fb-glow);transform:none !important;
+  transition:box-shadow .8s ease,border-color .8s ease,background-color .8s ease !important}
+.fb-luz :is(.feedback-option,.feedback-btn.primary-button):is(:hover,:focus-visible){outline:none;border-color:var(--fb-gold) !important;box-shadow:0 0 26px var(--fb-glow),inset 0 0 18px rgba(233,196,106,.14) !important}
+.fb-luz .feedback-option{clip-path:inset(0 50% 0 50% round 999px);transition:clip-path 1.1s cubic-bezier(.45,0,.2,1),box-shadow .8s ease !important}
+.fb-luz-in .feedback-option{clip-path:inset(0 0 0 0 round 999px)}
+.fb-luz-in .feedback-option:nth-child(1){transition-delay:3.5s,0s !important}
+.fb-luz-in .feedback-option:nth-child(2){transition-delay:3.8s,0s !important}
+.fb-luz-in .feedback-option:nth-child(3){transition-delay:4.1s,0s !important}
+.fb-luz .feedback-ghost-link{color:var(--fb-soft) !important;border-color:var(--fb-line) !important}
+.fb-luz .share-button{color:var(--fb-ink) !important;border-color:var(--fb-line) !important;background:transparent !important;box-shadow:0 0 12px var(--fb-glow) !important}
+
+/* chegada vinda da meditação: o mesmo brilho quente que encerrou a sessão */
+.fb-luz-arriving body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;
+  background:radial-gradient(circle at 50% 45%,rgba(255,244,220,.95),rgba(233,196,106,.6) 55%,rgba(233,196,106,.35));
+  animation:fbLuzBloom 3.2s ease forwards}
+@keyframes fbLuzBloom{0%{opacity:1}100%{opacity:0}}
+@keyframes fbLuzIn{from{opacity:0}to{opacity:1}}

@@ -1,0 +1,88 @@
+/* NeuroMedit — Versão alternativa do design ("Luz") nos airlocks */
+#luz-layer{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease}
+#luz-layer.is-visible{opacity:1}
+#luz-layer canvas{display:block;width:100%;height:100%}
+#luz-clones{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden}
+
+/* fundos do design padrão saem da frente da luz */
+.luz-active body{background:#050506 !important}
+.luz-active .experience,
+.luz-active .meditation-shell{background:transparent !important}
+.luz-active .meditation-shell::before,
+.luz-active .meditation-shell::after{opacity:0 !important}
+
+/* o orbe dá lugar à pessoa de luz (continua a ocupar o mesmo espaço) */
+.luz-active #breathField{opacity:0 !important}
+.luz-active :is(.airlock-orb,.practice-orb){background:none !important;border-color:transparent !important;box-shadow:none !important;margin-bottom:2.2em}
+.luz-active :is(.airlock-orb,.practice-orb)::before,
+.luz-active :is(.airlock-orb,.practice-orb)::after{display:none !important}
+.luz-active .session-progress{opacity:0 !important}
+.luz-active :is(.airlock-orb,.practice-orb) > span{position:absolute;left:0;right:0;bottom:-1.9em;text-align:center;color:rgba(239,233,220,.62) !important;font-size:.95rem;letter-spacing:.06em}
+
+/* textos das sessões legíveis sobre o escuro */
+.luz-active .session-flow{
+  --text:#efe9dc;
+  --text-soft:rgba(239,233,220,.64);
+  --line:rgba(239,233,220,.12);
+  --surface:rgba(255,255,255,.04);
+  --accent-dark:#e9c46a;
+}
+.luz-active .session-flow :is(h1,h2,h3){font-weight:400;color:#efe9dc !important}
+.luz-active .session-flow :is(p,.session-instruction){color:rgba(239,233,220,.64) !important}
+
+/* index: a frase guia fica abaixo da pessoa, não por cima */
+.luz-active #message{top:calc(50% + min(26vmin,170px) + 12px);font-size:clamp(1.3rem,3.6vw,2.4rem);text-shadow:0 0 30px rgba(233,196,106,.25)}
+
+.luz-active :is(.exit-btn,.session-exit){background:rgba(255,255,255,.04) !important;color:rgba(239,233,220,.72) !important;border-color:rgba(239,233,220,.14) !important}
+.luz-active body.is-meditating #intro{opacity:0 !important}
+
+/* ---------- um só controle, no centro de baixo ---------- */
+.luz-active :is(.exit-btn,.session-exit,.session-pause){opacity:0 !important;pointer-events:none !important}
+#luz-controls{position:fixed;left:50%;bottom:max(5vh,28px);transform:translateX(-50%);z-index:60;display:none;flex-direction:column;align-items:center;gap:14px;transition:opacity 1.6s ease;font-family:inherit}
+#luz-controls.is-on{display:flex}
+#luz-controls.is-idle{opacity:.16}
+#luz-controls.is-leaving{opacity:0;pointer-events:none}
+.luz-orb-btn{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:#f3dfae;
+  background:radial-gradient(circle at 50% 50%,rgba(233,196,106,.14),rgba(233,196,106,.02) 70%);
+  border:1px solid rgba(233,196,106,.42);
+  box-shadow:0 0 22px rgba(233,196,106,.22),inset 0 0 14px rgba(233,196,106,.12);
+  transition:box-shadow .8s ease,border-color .8s ease,transform .8s ease}
+.luz-orb-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(233,196,106,.8))}
+.luz-orb-btn:hover,.luz-orb-btn:focus-visible{outline:none;border-color:rgba(233,196,106,.8);box-shadow:0 0 34px rgba(233,196,106,.38),inset 0 0 18px rgba(233,196,106,.18)}
+#luz-controls.is-open .luz-orb-btn,#luz-controls.is-resting .luz-orb-btn{display:none}
+
+/* pílulas de luz: só o contorno neon */
+.luz-menu{display:flex;gap:12px}
+.luz-menu[hidden],.luz-rest[hidden]{display:none}
+.luz-pill{min-width:150px;padding:14px 28px;border-radius:999px;cursor:pointer;font:inherit;font-size:1rem;letter-spacing:.02em;color:#f6ecd6;
+  border:1px solid rgba(233,196,106,.6);
+  background: rgba(20,16,10,.55);
+  box-shadow:0 0 18px rgba(233,196,106,.25),inset 0 0 16px rgba(233,196,106,.1);
+  text-shadow:0 0 10px rgba(233,196,106,.45);
+  transition:box-shadow .8s ease,border-color .8s ease,background-color .8s ease}
+.luz-pill:hover,.luz-pill:focus-visible{outline:none;border-color:#e9c46a;box-shadow:0 0 30px rgba(233,196,106,.45),inset 0 0 20px rgba(233,196,106,.16)}
+.luz-pill--ghost{border-color:rgba(239,233,220,.22);box-shadow:none;text-shadow:none;color:rgba(239,233,220,.78)}
+
+/* ---------- fim da meditação: a luz fica, a pessoa decide quando sair ---------- */
+.luz-resting :is(.session-step,#message,#choices){opacity:0 !important;transition:opacity 3.5s ease !important}
+.luz-rest{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;opacity:0;transition:opacity 3s ease}
+.luz-rest.is-visible{opacity:1}
+.luz-rest-title{margin:0;color:#f3e8d2;font-size:clamp(1.15rem,2.6vw,1.5rem);text-shadow:0 0 24px rgba(233,196,106,.35)}
+.luz-rest-sub{margin:0 0 12px;color:rgba(239,233,220,.6);font-size:.95rem}
+.luz-leaving :is(.session-step,#message,#choices){opacity:0 !important;transition:opacity 1.2s ease !important}
+
+/* legendas (quando ligadas) ficam abaixo da pessoa */
+.luz-active .nm-caption{bottom:calc(max(5vh,28px) + 74px)}
+.luz-active.nm-captions-on .meditation-shell{padding-bottom:calc(max(5vh,28px) + 170px) !important}
+.luz-active.nm-captions-on #message{top:calc(50% + min(22vmin,150px))}
+.luz-resting .nm-caption,.luz-leaving .nm-caption{opacity:0 !important}
+
+/* espaço reservado para o controle central, para ele nunca cobrir o texto */
+.luz-active .meditation-shell{padding-bottom:calc(max(5vh,28px) + 84px) !important}
+.luz-active :is(.airlock-orb,.practice-orb){width:min(40vmin,260px) !important}
+.luz-active .session-step h2{font-size:clamp(1.6rem,4.4vw,2.8rem) !important}
+/* durante a meditação a sessão ocupa exatamente a tela (sem o espaço do header escondido) */
+.luz-active .meditation-shell{position:fixed !important;inset:0 !important;z-index:1;min-height:0 !important;height:auto !important;padding-top:clamp(16px,4vh,40px) !important;place-items:center !important;overflow:hidden}
+/* o texto do airlock só aparece depois que a poeira assentou */
+.luz-active [data-session-step="airlock"]:not([hidden]){animation:luzStepIn 1.8s ease 1.5s both}
+@keyframes luzStepIn{from{opacity:0}to{opacity:1}}

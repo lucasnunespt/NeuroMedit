@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NeuroMedit · Luz</title>
+  <meta name="description" content="Pausa inicial do NeuroMedit na versão de luz.">
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="settings-panel.css">
+  <style>
+    /* Airlock da versão de luz: página própria, separada do airlock padrão (index.html) */
+    html, body { margin: 0; height: 100%; background: #050506; color: #f4ead6; font-family: Arial, sans-serif; }
+    #settings-fab, .settings-fab { display: none !important; }
+    noscript p { padding: 24px; line-height: 1.6; }
+    noscript a { color: #e9c46a; }
+  </style>
+</head>
+<body class="luz-page">
+  <audio id="airlockAudio" preload="auto">
+    <source src="audio/intro-v2.mp3" type="audio/mp3">
+  </audio>
+
+  <noscript><p>Esta versão precisa de JavaScript. <a href="index.html">Abrir a pausa inicial padrão</a>.</p></noscript>
+
+  <script src="settings-panel.js"></script>
+  <script src="js/luz-figure.js"></script>
+  <script src="js/luz-pause.js"></script>
+  <script>
+    (function () {
+      function go() { window.NeuroMeditLuzPause && window.NeuroMeditLuzPause.start(); }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go, { once: true });
+      else go();
+    })();
+  </script>
+</body>
+</html>

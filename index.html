@@ -1663,12 +1663,15 @@
       }
 
       function completeInitialPauseToFeedback() {
+        // Versão alternativa do design: a luz fica até a pessoa escolher sair
+        if (window.NeuroMeditLuz?.handleEnd?.(getInitialPauseFeedbackUrl("completed"))) return;
         hidePracticeSurface();
         // Redirect to feedback after completion
         window.location.href = getInitialPauseFeedbackUrl("completed");
       }
 
       function exitInitialPauseToFeedback() {
+        if (window.NeuroMeditLuz?.leave?.(getInitialPauseFeedbackUrl("exited"))) return;
         hidePracticeSurface();
         window.location.href = getInitialPauseFeedbackUrl("exited");
       }

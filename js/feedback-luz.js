@@ -10,10 +10,16 @@
   const on = () => !!window.NeuroMeditSettings?.get?.().altDesign
     && !document.body.classList.contains("settings-muted-motion")
     && !matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!on()) return;
+  const reveal = () => {
+    const h = document.documentElement;
+    if (!h.classList.contains("fb-luz-boot")) return;
+    h.classList.add("fb-luz-boot-out");
+    requestAnimationFrame(() => requestAnimationFrame(() => h.classList.remove("fb-luz-boot")));
+  };
+  if (!on()) { reveal(); return; }
 
   const card = document.querySelector(".complete-card");
-  if (!card) return;
+  if (!card) { reveal(); return; }
 
   const LANG = () => { const l = localStorage.getItem("neuromedit-language"); return ["pt", "en", "es", "it", "ru"].includes(l) ? l : "pt"; };
   const TXT = {
@@ -43,6 +49,9 @@
 
   html.classList.add("fb-luz", isDay() ? "fb-luz-day" : "fb-luz-night");
   if (fromLuz) html.classList.add("fb-luz-arriving");
+  // o novo design já está montado: só então a página aparece
+  const cssReady = new Promise((ok) => { css.onload = ok; css.onerror = ok; setTimeout(ok, 800); });
+  cssReady.then(reveal);
 
   // ---------- conteúdo: saudação + frase de despedida ----------
   const hello = document.createElement("div");

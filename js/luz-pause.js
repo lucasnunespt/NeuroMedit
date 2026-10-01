@@ -27,6 +27,10 @@
 
   const CSS = `
     #luz-pause{position:fixed;inset:0;z-index:2147483100;background:#050506;color:#f4ead6;font-family:inherit;overflow:hidden}
+    #luz-pause{--text:#f4ead6;--text-primary:#f4ead6;--text-secondary:rgba(244,234,214,.72);--text-soft:rgba(244,234,214,.72);--text-muted:rgba(244,234,214,.6);--button-text:#f6ecd6;--link-text:#f6ecd6}
+    #luz-pause :is(.lp-title,.lp-pill){color:#f6ecd6 !important}
+    #luz-pause .lp-sub{color:rgba(239,233,220,.7) !important}
+    #luz-pause .lp-ghost{color:rgba(239,233,220,.82) !important}
     #luz-pause canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
     #luz-pause .lp-msg{position:absolute;left:0;right:0;top:calc(40% + min(19vmin,145px));margin:0;padding:0 20px;text-align:center;
       font-size:clamp(1.25rem,3.4vw,2rem);font-weight:300;letter-spacing:.01em;color:#f4e6da;text-shadow:0 0 30px rgba(233,196,106,.28);

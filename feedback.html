@@ -15,6 +15,26 @@
   <link rel="stylesheet" href="hero-motion.css">
   <link rel="stylesheet" href="settings-panel.css">
   <script src="theme-sync.js"></script>
+  <style>
+    /* Versão de luz: a página só aparece já no design novo, sem passar pelo antigo */
+    html.fb-luz-boot{background:#07060a}
+    html.fb-luz-boot.theme-morning,html.fb-luz-boot.theme-dawn,html.fb-luz-boot.theme-afternoon,html.fb-luz-boot.theme-day{background:#f6ead4}
+    html.fb-luz-boot body{opacity:0 !important}
+    html.fb-luz-boot-out body{transition:opacity 1.2s ease}
+  </style>
+  <script>
+    (function () {
+      try {
+        var s = JSON.parse(localStorage.getItem("neuromedit-settings") || "{}");
+        var reduced = s.muteAnimations || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+        if (s.altDesign && !reduced) {
+          var h = document.documentElement;
+          h.classList.add("fb-luz-boot");
+          setTimeout(function () { h.classList.remove("fb-luz-boot"); }, 3500);
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body class="complete-body feedback-atmosphere feedback-minimal">
   <div class="feedback-index-atmosphere" aria-hidden="true">

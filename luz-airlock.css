@@ -86,3 +86,13 @@
 /* o texto do airlock só aparece depois que a poeira assentou */
 .luz-active [data-session-step="airlock"]:not([hidden]){animation:luzStepIn 1.8s ease 1.5s both}
 @keyframes luzStepIn{from{opacity:0}to{opacity:1}}
+
+/* cores fixas: a cena de luz é escura em qualquer tema do site */
+#luz-controls{--text:#f4ead6;--text-primary:#f4ead6;--button-text:#f6ecd6;--link-text:#f6ecd6}
+#luz-controls .luz-pill{color:#f6ecd6 !important}
+#luz-controls .luz-pill--ghost{color:rgba(239,233,220,.82) !important}
+#luz-controls .luz-orb-btn{color:#f3dfae !important}
+.luz-rest .luz-rest-title{color:#f3e8d2 !important}
+.luz-rest .luz-rest-sub{color:rgba(239,233,220,.7) !important}
+.luz-active .session-flow :is(.session-step,.airlock-orb,.practice-orb) :is(h1,h2,h3){color:#efe9dc !important}
+.luz-active .session-flow :is(.session-instruction,.session-step p){color:rgba(239,233,220,.74) !important}

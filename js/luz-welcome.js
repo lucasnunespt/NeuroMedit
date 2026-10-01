@@ -88,6 +88,15 @@
       .lw-later{color:rgba(239,233,220,.72);background:transparent;border:1px solid rgba(239,233,220,.2)}
       .lw-later:hover,.lw-later:focus-visible{outline:none;border-color:rgba(239,233,220,.5);color:#f4ead6}
       .lw-note{margin:16px 0 0;font-size:.8rem;color:rgba(244,234,214,.45)}
+      /* a cena de luz é sempre escura: o texto não herda as cores do tema claro do site */
+      #luz-welcome{--text:#f4ead6;--text-primary:#f4ead6;--text-secondary:rgba(244,234,214,.72);--text-soft:rgba(244,234,214,.72);--text-muted:rgba(244,234,214,.6);--button-text:#f6ecd6;--link-text:#f6ecd6;--line:rgba(244,234,214,.16)}
+      #luz-welcome .lw-kicker{color:rgba(233,196,106,.9) !important}
+      #luz-welcome .lw-title{color:#f6eddb !important}
+      #luz-welcome .lw-sub{color:rgba(244,234,214,.78) !important}
+      #luz-welcome .lw-go{color:#f6ecd6 !important;background-color:rgba(20,16,10,.55)}
+      #luz-welcome .lw-later{color:rgba(239,233,220,.8) !important}
+      #luz-welcome .lw-later:hover,#luz-welcome .lw-later:focus-visible{color:#f4ead6 !important}
+      #luz-welcome .lw-note{color:rgba(244,234,214,.62) !important}
       @media (max-height:640px){#luz-welcome{top:calc(36% + min(18vmin,120px))}.lw-sub{margin-bottom:14px}}`;
     document.head.appendChild(style);
     document.body.append(canvas, clones, dlg);

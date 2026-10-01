@@ -40,6 +40,13 @@
     .luz-convite .lc-no{padding:8px 4px;font-size:.84rem;color:rgba(241,231,211,.6);background:none;border:0}
     .luz-convite .lc-no:hover,.luz-convite .lc-no:focus-visible{outline:none;color:#f1e7d3;text-decoration:underline}
     @media (max-width:940px){.luz-convite{left:16px;right:16px;width:auto;bottom:calc(var(--bottom-bar-h,66px) + env(safe-area-inset-bottom) + 18px)}}
+    /* cores próprias: o cartão é escuro em qualquer tema, então o texto não herda as cores do tema claro */
+    .luz-convite{--text:#f1e7d3;--text-primary:#f1e7d3;--text-secondary:rgba(241,231,211,.86);--text-soft:rgba(241,231,211,.86);--button-text:#f6ecd6;--link-text:#f6ecd6;background:rgba(18,15,11,.9) !important}
+    .luz-convite .lc-tag,.luz-convite .lc-tag span{color:rgba(233,196,106,.95) !important}
+    .luz-convite .lc-text{color:rgba(241,231,211,.9) !important}
+    .luz-convite .lc-try{color:#f6ecd6 !important}
+    .luz-convite .lc-no{color:rgba(241,231,211,.72) !important}
+    .luz-convite .lc-no:hover,.luz-convite .lc-no:focus-visible{color:#f1e7d3 !important}
     body.is-meditating .luz-convite,.settings-open .luz-convite{display:none}`;
   document.head.appendChild(style);
 

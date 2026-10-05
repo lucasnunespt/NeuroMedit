@@ -12,6 +12,8 @@ Cada áudio procura aqui um arquivo com o mesmo nome e a extensão `.vtt`:
 | assets/audio/medit.observador.MP3 | legendas/medit.observador.vtt |
 | assets/audio/remember.your.value.mp3.mp3 | legendas/remember.your.value.vtt |
 | assets/audio/return-to-yourself.mp3.mp3 | legendas/return-to-yourself.vtt |
+| assets/audio/O rádio.m4a | legendas/O rádio.vtt ✔ |
+| assets/audio/Eu te escuto mas não te compro.m4a | legendas/Eu te escuto mas não te compro.vtt ✔ |
 
 ## Formato (WebVTT)
 

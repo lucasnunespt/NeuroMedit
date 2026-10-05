@@ -28,7 +28,8 @@
     "library.html", "calm.html", "focus.html", "sleep.html", "states.html",
     "healing-return-to-yourself.html", "healing-remember-your-value.html",
     "complete.html", "body.html", "dream.html",
-    "voltar.html", "observador.html"
+    "voltar.html", "observador.html",
+    "radio.html", "eu-te-escuto.html"
   ];
   const activeTab = (page === "" || page === "home.html") ? "home"
     : LIBRARY_PAGES.includes(page) ? "library"
@@ -223,6 +224,8 @@
       "calm.html": "calma calmo ansiedade ansioso estresse stress respiracao respirar acalmar tranquilidade paz nervoso panico sobrecarregado respiracao calma calm anxiety anxious breath breathing relax peace overwhelmed ansia respiro calma ansiedad respirar paz agobiado спокойствие дыхание тревога стресс",
       "focus.html": "foco profundo concentracao atencao estudo estudar trabalho produtividade clareza mente deep focus concentration attention study work clarity productivity concentrazione attenzione lavoro concentracion atencion trabajo фокус внимание учеба работа",
       "voltar.html": "voltar retornar foco distracao distraido disperso dispersao atencao concentracao mente inquieta pensamentos estudo come back return focus distraction distracted wandering mind attention thoughts volver distraccion disperso atencion tornare distrazione distratto attenzione вернуться отвлечение рассеянность внимание мысли",
+      "radio.html": "radio quem esta falando nomear pensamentos rotular mente tagarela voz interior pensamento intrusivo ruminacao arquiteto da frequencia who is speaking naming thoughts inner voice rumination quien esta hablando nombrar pensamientos chi sta parlando pensieri кто говорит мысли внутренний голос",
+      "eu-te-escuto.html": "eu te escuto mas nao te compro desfusao pensamento negativo autocritica nao vou conseguir distancia acreditar radio i hear you but i dont buy it defusion negative thoughts self criticism te escucho pero no te compro ti ascolto ma non ti compro я тебя слышу негативные мысли",
       "observador.html": "observar observador consciencia presenca presente mindfulness atencao plena mente corpo pensamentos sensacoes aqui agora awareness observer presence present mind body thoughts sensations here now presencia observar cuerpo consapevolezza presenza osservare corpo mente осознанность присутствие наблюдать тело ум",
       "body.html": "corpo tensao tenso relaxamento muscular escaneamento soltar ombros reinicio corporal body scan tension tense muscles release shoulders body reset corpo tensione cuerpo tension hombros тело напряжение мышцы",
       "healing-return-to-yourself.html": "cura curar emocional psicologia autocompaixao acolhimento culpa perdao passado regresso a si voltar para si sentimentos emocoes healing emotional self-compassion guilt past forgiveness feelings emotions guarigione emozioni colpa passato sanacion emociones culpa pasado исцеление эмоции вина прошлое",

@@ -296,11 +296,24 @@ body.theme-night :is(.secondary-button, .filter-pill) {
   color: var(--text);
 }
 
-body.theme-sunset :is(a.state-card:hover, a.featured-card:hover, a.session-card:hover),
-body.theme-evening :is(a.state-card:hover, a.featured-card:hover, a.session-card:hover),
-body.theme-night :is(a.state-card:hover, a.featured-card:hover, a.session-card:hover) {
+body.theme-sunset :is(a.state-card:hover, a.featured-card:hover),
+body.theme-evening :is(a.state-card:hover, a.featured-card:hover),
+body.theme-night :is(a.state-card:hover, a.featured-card:hover) {
   background: var(--surface-strong);
   border-color: var(--line);
+  box-shadow: var(--shadow-card);
+}
+
+/* SessionCard (design system): hover com surface-strong e borda que mistura accent com line */
+body.theme-morning a.session-card:not(.session-card--locked):hover,
+body.theme-afternoon a.session-card:not(.session-card--locked):hover,
+body.theme-day a.session-card:not(.session-card--locked):hover,
+body.theme-sunset a.session-card:not(.session-card--locked):hover,
+body.theme-evening a.session-card:not(.session-card--locked):hover,
+body.theme-night a.session-card:not(.session-card--locked):hover,
+body.theme-late-night a.session-card:not(.session-card--locked):hover {
+  background: var(--surface-strong);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--line));
   box-shadow: var(--shadow-card);
 }
 
@@ -403,7 +416,7 @@ body.theme-late-night :is(.secondary-button, .filter-pill) {
   color: var(--text);
 }
 
-body.theme-late-night :is(a.state-card:hover, a.featured-card:hover, a.session-card:hover) {
+body.theme-late-night :is(a.state-card:hover, a.featured-card:hover) {
   background: var(--surface-strong);
   border-color: var(--line);
   box-shadow: var(--shadow-card);

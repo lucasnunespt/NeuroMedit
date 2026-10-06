@@ -309,9 +309,8 @@ p {
 
 a.session-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(138, 165, 160, 0.28);
-  box-shadow: 0 16px 36px rgba(31, 35, 38, 0.08);
-  background: rgba(255, 255, 255, 0.86);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--line));
+  background: var(--surface-strong);
 }
 
 
@@ -320,11 +319,22 @@ a.session-card:focus-visible {
   outline-offset: 4px;
 }
 
-a.session-card::after {
-  content: "→";
-  display: inline-block;
-  margin-top: 1.1rem;
+/* Cartão disponível: seta ícone "arrow" no fundo do cartão (SessionCard) */
+a.session-card:not(.session-card--locked) {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-card-arrow {
+  display: inline-flex;
+  margin-top: auto;
+  padding-top: 1.1rem;
   color: var(--accent-dark);
+}
+
+.session-card-arrow svg {
+  width: 20px;
+  height: 20px;
 }
 
 .session-meta {
@@ -336,7 +346,7 @@ a.session-card::after {
   margin-bottom: 0.8rem;
 }
 
-.session-card p:last-child {
+.session-card h3 + p {
   max-width: 28ch;
   line-height: 1.7;
 }
@@ -353,7 +363,7 @@ a.session-card::after {
 
 .session-card--locked:hover {
   transform: translateY(-1px);
-  border-color: rgba(138, 165, 160, 0.14);
+  border-color: var(--line);
   box-shadow: var(--shadow-card);
   background: var(--surface);
   cursor: default;
@@ -365,11 +375,6 @@ a.session-card::after {
   user-select: none;
   opacity: 0.55;
   transition: filter 0.25s ease, opacity 0.25s ease;
-}
-
-/* Hide the arrow that normal cards show */
-a.session-card--locked::after {
-  display: none;
 }
 
 /* Lock overlay */
@@ -388,10 +393,13 @@ a.session-card--locked::after {
 }
 
 .session-lock-icon {
-  font-size: 1.35rem;
-  line-height: 1;
-  opacity: 0.75;
-  margin-bottom: 0.1rem;
+  display: inline-flex;
+  color: var(--text-soft);
+}
+
+.session-lock-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .session-lock-badge {
@@ -401,9 +409,9 @@ a.session-card--locked::after {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent-dark);
-  background: var(--surface-strong, rgba(255, 255, 255, 0.88));
+  background: var(--surface-strong);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.3rem 0.85rem;
 }
 

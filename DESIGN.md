@@ -24,9 +24,9 @@ No artifact, os ficheiros que contam são:
 - Precisas mesmo de um valor que não existe? Propõe-o **primeiro** como adição ao design system (com nome, valor em cada tema e nota de uso). Só depois de entrar nos tokens é que vai para o código.
 - O que o README do design system marca como "Decidido, ainda por implementar" é direção, não código atual.
 
-### Tokens que ainda não têm variável CSS no código
+### Tokens com variável própria em `tokens.css`
 
-Estes tokens existem no design system mas ainda não estão definidos como `--variável` em nenhum ficheiro do repositório: `radius-pill`, `radius-chip`, `control-height`, `button-pad-x`, `luz-gold`, `luz-gold-soft`, `glow-gold`, e as famílias de texto (`sans`, `serif`). Até serem definidos, usa o valor exato do token e marca-o com um comentário, por exemplo `border-radius: 999px; /* token: radius-pill */`.
+`tokens.css` (carregado antes de qualquer outra folha) define as variáveis dos tokens que não mudam com o tema: `--radius-pill`, `--radius-chip`, `--control-height`, `--button-pad-x`, `--font-sans`, `--font-serif`, `--luz-gold`, `--luz-gold-soft`, `--luz-glow-core`, `--luz-glow-mid` e `--glow-gold`. As cores e sombras por tema continuam em `theme-sync.css` e no CSS de cada página.
 
 ## Temas
 
@@ -44,9 +44,10 @@ Antes de criar um componente novo, usa um destes:
 | **SessionOrb** | Orbe que respira no centro da sessão (ciclo de 8 s), com uma palavra no centro. Decorativo. | `.airlock-orb`, `.practice-orb` em `session.css` |
 | **LuzOrbButton** | O único controlo da versão Luz: círculo dourado de 58px só com ícone (play/pause), sempre sobre o escuro da Luz. | `.luz-orb-btn` em `luz-airlock.css` |
 | **Planeta** | Planeta de pontos de brilho para fundo de página: SVG base + SVG que respira em 11 s. Um por ecrã, num canto. | ativos do grupo Planetas no design system |
+| **SessionCard** | Cartão da biblioteca: disponível (link), "Em breve" (bloqueado, com ícone `lock`) ou com "Por que funciona" dobrado por baixo. Sempre dentro de `nm-session-grid`. | `library.html`, `library.css` (alinhamento em curso, ver Roadmap › Para o site) |
 
-Fora do design system por agora (não copiar como modelo sem o propor antes): cabeçalho, folha "Menu", painel de definições, cartões da biblioteca e ecrã de feedback.
+Fora do design system por agora (não copiar como modelo sem o propor antes): cabeçalho, folha "Menu", painel de definições e ecrã de feedback. Estão por documentar, por esta ordem, em `project/07-roadmap.md` do design system.
 
 ## Dívida conhecida
 
-O código atual ainda tem muitos valores literais que não correspondem a nenhum token (gradientes `--surface-static-*`, tokens `--header-*`, cores e durações soltas em várias páginas). Estão a ser listados ficheiro a ficheiro antes de qualquer correção. Ao tocar num desses ficheiros, não acrescentes valores novos; se puderes, troca o literal pelo token equivalente.
+O código atual ainda tem muitos valores literais que não correspondem a nenhum token (gradientes `--surface-static-*`, tokens `--header-*`, cores e durações soltas em várias páginas). Estão listados ficheiro a ficheiro, sem alterar nada, em [`docs/valores-fora-do-sistema.md`](docs/valores-fora-do-sistema.md). Ao tocar num desses ficheiros, não acrescentes valores novos; se puderes, troca o literal pelo token equivalente.

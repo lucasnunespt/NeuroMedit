@@ -10,11 +10,11 @@ https://claude.ai/artifact/JHzwjfKnJ11kwCCJkcxvrQ
 
 1. Lê `project/README.md` e `project/tokens.json` do artifact (ação `read`), e o `README.md` do componente que vais tocar em `project/components/<Nome>/`.
 2. Usa **só os tokens dele**: nenhuma cor, fonte, raio, sombra ou duração nova fora dos tokens. No CSS, `var(--nome-do-token)`, nunca o valor literal — incluindo fallbacks de `var()`.
-3. Usa os componentes existentes (Button, Chip, BottomNav, SessionOrb, LuzOrbButton, Planeta) antes de criar outro.
+3. Usa os componentes existentes (Button, Chip, BottomNav, SessionOrb, LuzOrbButton, Planeta, SessionCard) antes de criar outro.
 4. Se faltar um valor ou componente, **não o inventes no código**: propõe-o primeiro como adição ao design system e espera que entre lá.
 5. O que o design system marca como "Decidido, ainda por implementar" é direção, não código atual.
 
-Regras completas, temas e lista de componentes: [`DESIGN.md`](DESIGN.md).
+Regras completas, temas e lista de componentes: [`DESIGN.md`](DESIGN.md). Valores de CSS que ainda estão fora dos tokens, por ficheiro: [`docs/valores-fora-do-sistema.md`](docs/valores-fora-do-sistema.md).
 
 ## Outras notas
 

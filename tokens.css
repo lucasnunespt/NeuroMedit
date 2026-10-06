@@ -1,0 +1,29 @@
+/*
+ * tokens.css — tokens do design system NeuroMedit que ainda não existiam como variável CSS.
+ * Fonte: https://claude.ai/artifact/JHzwjfKnJ11kwCCJkcxvrQ (project/tokens.json).
+ *
+ * Só valores que não mudam com o tema. As cores por tema (bg, text, accent, line…)
+ * continuam definidas em theme-sync.css e no CSS de cada página.
+ * Não acrescentar valores aqui sem os propor primeiro ao design system (ver DESIGN.md).
+ * Carregar antes de qualquer outra folha de estilo.
+ */
+:root {
+  /* Raio */
+  --radius-pill: 999px; /* todos os botões: sempre pílula */
+  --radius-chip: 14px;  /* session-chip */
+
+  /* Dimensões */
+  --control-height: 50px; /* altura mínima de botões, alvo de toque */
+  --button-pad-x: 1.6rem; /* padding horizontal do botão */
+
+  /* Tipografia */
+  --font-sans: Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+
+  /* Luz (constantes em todos os temas) */
+  --luz-gold: #e9c46a;
+  --luz-gold-soft: rgba(233, 196, 106, 0.28);
+  --luz-glow-core: #fffae8;
+  --luz-glow-mid: #ffe4a8;
+  --glow-gold: 0 0 22px rgba(233, 196, 106, 0.22), inset 0 0 14px rgba(233, 196, 106, 0.12);
+}

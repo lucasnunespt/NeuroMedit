@@ -283,7 +283,8 @@
       return (dict[lang] && dict[lang][key]) || (dict.en && dict.en[key]) || fallback;
     }
 
-    const hrefOf = (card) => (card.getAttribute("href") || "").split("/").pop();
+    const linkOf = (card) => card.getAttribute("href") || (card.querySelector("a[href]") && card.querySelector("a[href]").getAttribute("href")) || "";
+    const hrefOf = (card) => linkOf(card).split("/").pop();
 
     /* Busca por início de palavra ("dorm" encontra "dormir", mas
        "ciencia" não encontra "consciencia"). Palavras com menos de 3
@@ -319,7 +320,7 @@
       const title = titleEl ? titleEl.textContent.trim() : "";
       const meta = metaEl ? metaEl.textContent.trim() : "";
       return `
-            <a href="${card.getAttribute("href")}" class="search-result">
+            <a href="${linkOf(card)}" class="search-result">
               <span class="bottom-nav-icon">${ICONS.library}</span>
               <span class="search-result-text">${title}</span>
               <span class="search-result-meta">${meta}</span>

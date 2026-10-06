@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="entry.js"></script>
   <title data-i18n="index_meta_title">NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
@@ -667,6 +668,11 @@
       font-size: 0.95rem;
       cursor: pointer;
       transition: color 250ms ease, transform 250ms ease;
+    }
+
+    /* Quem vem do TikTok vai direto ao alívio: um toque e começa */
+    html[data-origin="tiktok"] .explore-btn {
+      display: none;
     }
 
     .exit-btn {

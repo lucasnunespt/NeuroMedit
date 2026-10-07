@@ -541,6 +541,9 @@ audio {
   margin-bottom: clamp(0.65rem, 2vw, 1rem);
 }
 
+/* Anel de progresso: escondido durante a prática. Ver quanto falta gera ansiedade
+   (a pessoa fica a olhar onde está e quer terminar); a prática é estar aqui agora.
+   O elemento e o --session-progress ficam no HTML e no JS, só não se vê. */
 .session-progress {
   position: absolute;
   inset: -7px;
@@ -548,6 +551,7 @@ audio {
   background: conic-gradient(var(--accent) var(--session-progress, 0%), transparent 0);
   mask: radial-gradient(circle, transparent 67%, #000 68%);
   opacity: 0.58;
+  display: none;
 }
 
 /* Sair (ExitButton do design system): círculo só com a porta, anel e ícone em exit,

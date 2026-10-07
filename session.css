@@ -550,25 +550,50 @@ audio {
   opacity: 0.58;
 }
 
+/* Sair (ExitButton do design system): círculo só com a porta, anel e ícone em exit,
+   na zona do polegar, em baixo à direita */
 .session-exit {
   position: fixed;
-  top: max(1rem, env(safe-area-inset-top));
-  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1.1rem, env(safe-area-inset-bottom));
+  right: max(1.1rem, env(safe-area-inset-right));
   z-index: 30;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 2px solid var(--exit);
+  border-radius: var(--radius-pill);
   background: var(--surface);
-  color: var(--text-soft);
-  padding: 0.52rem 0.78rem;
-  font: inherit;
-  font-size: 0.88rem;
+  color: var(--exit);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  transition: background-color 250ms ease;
+}
+
+.session-exit svg {
+  width: 24px;
+  height: 24px;
+}
+
+.session-exit:hover {
+  background: var(--surface-strong);
+}
+
+.session-exit:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: 3px;
 }
 
 .session-exit[hidden] {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .session-exit {
+    transition: none;
+  }
 }
 
 .session-pause {

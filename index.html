@@ -48,6 +48,7 @@
       --text-subtle: rgba(244, 230, 218, 0.54);
       --button-text: #140e0b;
       --link-text: rgba(244, 230, 218, 0.86);
+      --exit: #ff8a85; /* token exit nos temas escuros: coral */
       --line: rgba(210, 132, 84, 0.18);
       --accent: #c77a4a;
       --accent-dark: #d09168;
@@ -135,6 +136,7 @@
       --text-muted: rgba(89, 70, 48, 0.8);
       --text-subtle: rgba(89, 70, 48, 0.48);
       --button-text: #2d261f;
+      --exit: #a8232a; /* token exit nos temas claros: vermelho escuro */
       --link-text: #3f3024;
       --line: rgba(116, 83, 47, 0.13);
       --accent: #c88f53;
@@ -155,6 +157,7 @@
       --text-muted: rgba(96, 79, 55, 0.82);
       --text-subtle: rgba(96, 79, 55, 0.48);
       --button-text: #2a2620;
+      --exit: #a8232a; /* token exit nos temas claros: vermelho escuro */
       --link-text: #3e3325;
       --line: rgba(112, 86, 52, 0.12);
       --accent: #b9905e;
@@ -176,6 +179,7 @@
       --text-subtle: rgba(244, 230, 218, 0.54);
       --button-text: #140e0b;
       --link-text: rgba(244, 230, 218, 0.86);
+      --exit: #ff8a85; /* token exit nos temas escuros: coral */
       --line: rgba(238, 220, 199, 0.14);
       --accent: #d59663;
       --accent-dark: #efc08f;
@@ -195,6 +199,7 @@
       --text-subtle: rgba(244, 230, 218, 0.54);
       --button-text: #140e0b;
       --link-text: rgba(244, 230, 218, 0.86);
+      --exit: #ff8a85; /* token exit nos temas escuros: coral */
       --line: rgba(210, 132, 84, 0.18);
       --accent: #c77a4a;
       --accent-dark: #d09168;
@@ -214,6 +219,7 @@
       --text-subtle: rgba(244, 230, 218, 0.54);
       --button-text: #140e0b;
       --link-text: rgba(244, 230, 218, 0.86);
+      --exit: #ff8a85; /* token exit nos temas escuros: coral */
       --line: rgba(210, 132, 84, 0.14);
       --accent: #b96d43;
       --accent-dark: #c9855f;
@@ -243,6 +249,7 @@
       --text-subtle: rgba(244, 230, 218, 0.54);
       --button-text: #140e0b;
       --link-text: rgba(244, 230, 218, 0.86);
+      --exit: #ff8a85; /* token exit nos temas escuros: coral */
       --line: rgba(210, 132, 84, 0.18);
       --accent: #c77a4a;
       --accent-dark: #d09168;
@@ -677,24 +684,33 @@
       display: none;
     }
 
+    /* Sair (ExitButton do design system): círculo só com a porta, em exit, na zona do polegar.
+       Aparece logo ao começar, sem demora. */
     .exit-btn {
       position: fixed;
-      top: max(1rem, env(safe-area-inset-top));
-      right: max(1rem, env(safe-area-inset-right));
+      bottom: max(1.1rem, env(safe-area-inset-bottom));
+      right: max(1.1rem, env(safe-area-inset-right));
       z-index: 40;
-      border: 1px solid var(--line);
+      box-sizing: border-box;
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      padding: 0;
+      border: 2px solid var(--exit);
       border-radius: var(--radius-pill);
       background: var(--surface);
-      color: var(--text-soft);
-      padding: 0.5rem 0.72rem;
-      font: inherit;
-      font-size: 0.88rem;
-      line-height: 1;
+      color: var(--exit);
+      box-shadow: var(--shadow-soft);
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
-      backdrop-filter: blur(14px);
-      transition: opacity 1.4s ease, color 250ms ease, border-color 250ms ease, background 250ms ease, transform 250ms ease;
+      transition: opacity 250ms ease, background-color 250ms ease;
+    }
+
+    .exit-btn svg {
+      width: 24px;
+      height: 24px;
     }
 
     .exit-btn.visible {
@@ -712,9 +728,7 @@
     }
 
     .explore-btn:hover,
-    .explore-btn:focus-visible,
-    .exit-btn:hover,
-    .exit-btn:focus-visible {
+    .explore-btn:focus-visible {
       color: var(--text);
       outline: none;
       transform: translateY(-1px);
@@ -752,19 +766,21 @@
       visibility: hidden;
     }
 
-    .exit-btn:hover,
-    .exit-btn:focus-visible {
-      border-color: var(--text-soft);
+    .exit-btn:hover {
       background: var(--surface-strong);
     }
 
     .start-btn:focus-visible,
     .explore-btn:focus-visible,
-    .exit-btn:focus-visible,
     .final-btn:focus-visible,
     .choice:focus-visible {
       outline: 2px solid var(--accent-dark);
       outline-offset: 4px;
+    }
+
+    .exit-btn:focus-visible {
+      outline: 2px solid var(--accent-dark);
+      outline-offset: 3px;
     }
 
     .message {
@@ -990,16 +1006,6 @@
       .content {
         width: 92vw;
         min-height: 66vh;
-      }
-
-      .exit-btn {
-        top: auto;
-        right: max(1rem, env(safe-area-inset-right));
-        bottom: max(1rem, env(safe-area-inset-bottom));
-        min-height: 44px;
-        padding: 0.72rem 1rem;
-        background: var(--surface);
-        box-shadow: var(--shadow-soft);
       }
 
       .choices {
@@ -1298,9 +1304,7 @@
       <p class="audio-language-note intro-language-note" data-audio-lang-note data-i18n="global_audio_pt_only">Por enquanto, as meditações guiadas estão disponíveis apenas em português.</p>
     </section>
 
-    <button class="exit-btn" type="button" aria-label="Exit meditation" data-exit-meditation data-airlock-stop data-i18n="index_exit_aria" data-i18n-attr="aria-label">
-      <span data-i18n="index_exit_cta">Exit</span>
-    </button>
+    <button class="exit-btn nm-exit" type="button" aria-label="Exit meditation" data-exit-meditation data-airlock-stop data-i18n="index_exit_aria" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M6.5 20V5.5C6.5 4.67 7.17 4 8 4H16C16.83 4 17.5 4.67 17.5 5.5V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 20H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14 12H14.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 
     <div class="content" id="content">
       <div class="breath-field" id="breathField" aria-hidden="true">

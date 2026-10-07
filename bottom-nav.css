@@ -462,13 +462,8 @@
      Visíveis só durante a prática, quando a barra já sumiu.
      ------------------------------------------------------ */
   .session-exit {
-    top: auto;
-    bottom: 1.1rem;
     bottom: calc(env(safe-area-inset-bottom) + 1.1rem);
     right: max(1.1rem, env(safe-area-inset-right));
-    min-height: 44px;
-    min-width: 44px;
-    padding: 0.6rem 1rem;
   }
 
   .session-pause {

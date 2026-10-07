@@ -1,5 +1,6 @@
 html,
 body {
+  --exit: #a8232a; /* token exit: vermelho escuro nos temas claros */
   --text-primary: var(--text, #1f2326);
   --text-secondary: var(--text-soft, rgba(84, 94, 95, 0.92));
   --text-muted: rgba(84, 94, 95, 0.72);
@@ -100,6 +101,7 @@ body[data-theme="evening"] {
   --link-text: rgba(244, 230, 218, 0.86);
   --line: rgba(238, 220, 199, 0.14);
   --accent: #d59663;
+  --exit: #ff8a85; /* token exit nos temas escuros: coral */
   --accent-dark: #efc08f;
   --shadow-soft: 0 14px 34px rgba(3, 7, 14, 0.2);
   --shadow-card: 0 18px 44px rgba(3, 7, 14, 0.24);
@@ -145,6 +147,7 @@ body[data-theme="sleep"] {
   --link-text: rgba(244, 230, 218, 0.86);
   --line: var(--night-border);
   --accent: var(--night-accent);
+  --exit: #ff8a85; /* token exit nos temas escuros: coral */
   --accent-dark: #d09168;
   --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.3);
   --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.34), 0 0 32px var(--night-glow-soft);
@@ -182,6 +185,7 @@ body[data-theme="late-night"] {
   --link-text: rgba(244, 230, 218, 0.86);
   --line: var(--night-border);
   --accent: var(--night-accent);
+  --exit: #ff8a85; /* token exit nos temas escuros: coral */
   --accent-dark: #c9855f;
   --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.34);
   --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.36), 0 0 24px var(--night-glow-soft);

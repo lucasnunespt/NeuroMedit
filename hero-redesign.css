@@ -54,12 +54,20 @@
   .hero-aura-breathe {
     transform-box: fill-box;
     transform-origin: center;
-    animation: heroAuraBreathe 9s ease-in-out infinite;
+    /* Mesmo ciclo de 8 s das palavras Inspire/Expire (home.css): cresce na
+       inspiração (0–4 s) e volta a encolher na expiração (4–8 s).
+       breath-sync.js põe as duas animações a começar no mesmo instante. */
+    animation: heroAuraBreathe 8s ease-in-out infinite;
   }
   @keyframes heroAuraBreathe {
-    0%, 100% { transform: scale(0.985); opacity: 0.9; }
-    50%      { transform: scale(1.03);  opacity: 1; }
+    0%, 100% { transform: scale(0.92); opacity: 0.85; }
+    50%      { transform: scale(1.08); opacity: 1; }
   }
+}
+
+/* Configurações → Reduzir animações: a aura fica parada */
+body.settings-muted-motion .hero-aura-breathe {
+  animation: none;
 }
 
 /* Overline pequeno, cinza suave */

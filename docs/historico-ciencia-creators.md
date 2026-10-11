@@ -50,7 +50,7 @@ Registo de tudo o que foi feito nesta frente de trabalho (outubro de 2026), para
 ## 6. Pendente
 
 - Push do commit `4eb8ba7` no repositório do site (tira os 800 € do texto Sobre).
-- O PDF `assets/images/benchmark/titulo de residência .pdf` aparece apagado desde antes deste trabalho. Não foi incluído em nenhum commit.
+- O PDF do título de residência (`assets/images/benchmark/`) foi removido do repositório e de todo o histórico (o histórico foi reescrito e enviado com push forçado). O GitHub ainda serve o commit antigo `49669de` pelo endereço direto até o suporte apagar os objetos órfãos: ver o pedido em "Remover dados sensíveis" no suporte do GitHub.
 - "Hoje tenho 23 anos e vivo há 4 fora do Brasil" vai ficar desatualizado. Alternativa: "vivo fora do Brasil desde 2022".
 - Idiomas: as páginas Creators, da história, Ciência e Leituras estão 100% em pt, en, es, it e ru. Os títulos originais dos artigos científicos e os nomes das revistas ficam no idioma original, como em qualquer citação.
 - O desenho do preview foi verificado só em janelas estreitas ou baixas. Confirmar no telemóvel e no desktop largo, nos temas claro e escuro, principalmente o modo fixo da linha do tempo.

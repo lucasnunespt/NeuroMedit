@@ -271,18 +271,12 @@ p {
   margin-top: auto;
 }
 
-
 .cr-honest {
   max-width: 58ch;
   margin-top: 1.5rem;
   padding-left: 1.25rem;
   border-left: 2px solid var(--accent);
 }
-
-
-
-
-
 
 .cr-bring {
   display: grid;
@@ -657,10 +651,6 @@ p {
 
 /* Fecho da história: três convites */
 .story-end {
-  text-align: left;
-}
-
-.story-end h2 {
   text-align: center;
 }
 
@@ -672,29 +662,30 @@ p {
 
 .story-end-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   list-style: none;
 }
 
 .story-end-list li {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
-  padding: 1rem 0;
+  padding: 1.25rem 0;
   border-top: 1px solid var(--line);
+  min-width: 0;
 }
 
 .contributors-cta-box .story-end-list p {
+  text-align: center;
   max-width: none;
   margin: 0;
   color: var(--text);
 }
 
-@media (min-width: 720px) {
-  .story-end-list li {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-  }
+
+.story-end-list .button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
 }

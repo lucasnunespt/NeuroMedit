@@ -52,6 +52,6 @@ Registo de tudo o que foi feito nesta frente de trabalho (outubro de 2026), para
 - Push do commit `4eb8ba7` no repositório do site (tira os 800 € do texto Sobre).
 - O PDF `assets/images/benchmark/titulo de residência .pdf` aparece apagado desde antes deste trabalho. Não foi incluído em nenhum commit.
 - "Hoje tenho 23 anos e vivo há 4 fora do Brasil" vai ficar desatualizado. Alternativa: "vivo fora do Brasil desde 2022".
-- Espanhol, italiano e russo: só os rótulos de Creators estão traduzidos. O corpo das páginas novas cai para inglês.
+- Idiomas: as páginas Creators, da história, Ciência e Leituras estão 100% em pt, en, es, it e ru. Os títulos originais dos artigos científicos e os nomes das revistas ficam no idioma original, como em qualquer citação.
 - O desenho do preview foi verificado só em janelas estreitas ou baixas. Confirmar no telemóvel e no desktop largo, nos temas claro e escuro, principalmente o modo fixo da linha do tempo.
 - Decidir se a página Ciência deve ser indexada pelo Google (hoje não é).

@@ -11,11 +11,15 @@
   /* Raio */
   --radius-pill: 999px; /* todos os botões: sempre pílula */
   --radius-chip: 14px;  /* session-chip */
+  --radius-lg: 28px;    /* cartões grandes e painéis */
   --radius-md: 22px;    /* cartões médios */
+  --radius-sm: 16px;    /* cartões pequenos e campos */
 
   /* Dimensões */
   --control-height: 50px; /* altura mínima de botões, alvo de toque */
   --button-pad-x: 1.6rem; /* padding horizontal do botão */
+  --container: 1120px;    /* largura máxima do conteúdo */
+  --gutter: 1.5rem;       /* margem lateral do container */
 
   /* Tipografia */
   --font-sans: Arial, sans-serif;

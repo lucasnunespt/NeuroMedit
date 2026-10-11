@@ -139,7 +139,7 @@
       <li>
         <a href="contributors.html" class="bottom-sheet-link">
           <span class="bottom-nav-icon">${ICONS.contributors}</span>
-          <span data-i18n="nav.contributors">Contributors</span>
+          <span data-i18n="nav.contributors">Creators</span>
         </a>
       </li>
     </ul>`;
@@ -251,7 +251,7 @@
     /* Páginas do site também entram na busca */
     const PAGES = [
       { href: "about.html", key: "global_nav_about", fallback: "About", icon: ICONS.about, kw: "filosofia philosophy filosofia философия sobre projeto missao historia neuromedit contato about project mission story contact por que porque ciencia neurociencia cerebro mente psicologia evidencia beneficios why science neuroscience brain mind evidence benefits scienza neurociencia ciencia наука мозг" },
-      { href: "contributors.html", key: "nav.contributors", fallback: "Contributors", icon: ICONS.contributors, kw: "colaboradores equipe creditos pessoas contributors team credits people" }
+      { href: "contributors.html", key: "nav.contributors", fallback: "Creators", icon: ICONS.contributors, kw: "creators creator criador criadores colaboradores equipe creditos pessoas contributors team credits people" }
     ];
 
     const dock = document.createElement("form");

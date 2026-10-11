@@ -436,7 +436,6 @@ window.NeuroMeditTranslations = {
     creator_t2025_text: "The project is born, during a sabbatical.",
     creator_t2026_title: "Today",
     creator_t2026_text: "UX Design, yoga and meditation, side by side. A volunteer at a yoga center, and guiding meditations.",
-    creator_story_link: "Read the full story",
     creator_built_label: "What I built",
     creator_built_title: "Work in progress",
     creator_b1_label: "Product",

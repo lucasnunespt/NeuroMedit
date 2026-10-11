@@ -436,7 +436,6 @@ window.NeuroMeditTranslations = {
     creator_t2025_text: "O projeto nasce, num período sabático.",
     creator_t2026_title: "Hoje",
     creator_t2026_text: "UX Design, yoga e meditação, lado a lado. Voluntário num centro de yoga, e guiando meditações.",
-    creator_story_link: "Ler a história completa",
     creator_built_label: "O que construí",
     creator_built_title: "Obra em andamento",
     creator_b1_label: "Produto",

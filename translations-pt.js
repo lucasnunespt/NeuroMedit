@@ -404,6 +404,7 @@ window.NeuroMeditTranslations = {
     philo_honest_label: "O que não prometemos",
     philo_honest_title: "Sem milagres.",
     philo_honest_text: "A ciência ainda estuda como a meditação muda o cérebro, e os efeitos variam de pessoa para pessoa. A NeuroMedit não substitui terapia nem tratamento. Se você estiver passando por um momento difícil, procure um profissional de saúde.",
+    philo_studies_cta: "Ver os estudos e os limites",
     philo_share_thanks: "Obrigado por ler até aqui.",
     philo_share_invite: "Conhece alguém que precisa de uma pausa?",
     philo_share_cta: "Indicar a um amigo",

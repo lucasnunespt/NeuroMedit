@@ -404,6 +404,7 @@ window.NeuroMeditTranslations = {
     philo_honest_label: "What we don't promise",
     philo_honest_title: "No miracles.",
     philo_honest_text: "Science is still learning how meditation changes the brain, and effects vary from person to person. NeuroMedit is not a substitute for therapy or treatment. If you're going through a hard time, please reach out to a health professional.",
+    philo_studies_cta: "See the studies and their limits",
     philo_share_thanks: "Thank you for reading this far.",
     philo_share_invite: "Know someone who needs a pause?",
     philo_share_cta: "Recommend to a friend",

@@ -271,10 +271,6 @@ p {
   margin-top: auto;
 }
 
-.cr-idea {
-  font-family: var(--font-serif);
-  font-weight: 400;
-}
 
 .cr-honest {
   max-width: 58ch;
@@ -283,36 +279,10 @@ p {
   border-left: 2px solid var(--accent);
 }
 
-.cr-timeline {
-  max-width: 62ch;
-  margin-top: 1.5rem;
-  list-style: none;
-}
 
-.cr-timeline li {
-  display: grid;
-  grid-template-columns: 5.5rem 1fr;
-  gap: 1rem;
-  padding: 0.9rem 0;
-  border-bottom: 1px solid var(--line);
-}
 
-.cr-year {
-  font-size: 0.95rem;
-  color: var(--accent-dark);
-}
 
-.cr-timeline strong {
-  display: block;
-  margin-bottom: 0.15rem;
-  font-weight: 600;
-  color: var(--text);
-}
 
-.cr-timeline span {
-  color: var(--text-soft);
-  line-height: 1.6;
-}
 
 .cr-bring {
   display: grid;
@@ -511,4 +481,220 @@ p {
 .author-photo-wrap,
 .author-profile-content {
   z-index: 1;
+}
+
+.cr-more {
+  margin-top: 1.5rem;
+}
+
+.cr-text + .cr-text {
+  margin-top: 1rem;
+}
+
+/* Linha do tempo horizontal: neurónios ligados por dendrites */
+
+.contributors-page .story-timeline {
+  padding-block: 2rem 1rem;
+}
+
+.story-scroller {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 1rem;
+}
+
+.story-scroller:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: -2px;
+}
+
+.story-track {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 1.25rem;
+  width: max-content;
+  padding: 5.5rem calc(50vw - min(40vw, 10rem)) 0;
+}
+
+.story-neurons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.story-neurons .story-dot {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.story-segment,
+.story-branch {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.story-segment {
+  stroke-width: 2.5;
+}
+
+.story-bud {
+  fill: var(--line);
+}
+
+.story-link.is-passed .story-segment,
+.story-link.is-passed .story-branch {
+  stroke: var(--accent);
+}
+
+.story-link.is-passed .story-bud {
+  fill: var(--accent);
+}
+
+.story-dot {
+  fill: var(--surface-strong);
+  stroke: var(--accent-dark);
+  stroke-width: 2;
+}
+
+.story-dot.is-passed,
+.story-dot.is-active {
+  fill: var(--accent);
+}
+
+.story-halo {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  visibility: hidden;
+}
+
+.story-halo.is-active {
+  visibility: visible;
+}
+
+.story-node {
+  flex: 0 0 min(80vw, 20rem);
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card), var(--glass-highlight);
+}
+
+.story-node .cr-label {
+  margin-bottom: 0;
+}
+
+.story-node.is-active {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+}
+
+.story-node h2 {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+
+.story-node p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.story-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding-top: 1rem;
+}
+
+.story-step {
+  width: var(--control-height);
+  padding: 0;
+}
+
+.story-step svg {
+  width: 24px;
+  height: 24px;
+}
+
+.story-step:disabled {
+  color: var(--text-soft);
+  cursor: default;
+}
+
+.story-count {
+  min-width: 5rem;
+  text-align: center;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  color: var(--text-soft);
+}
+
+/* Modo fixo: a página para e a linha do tempo anda para o lado */
+.story-timeline.is-pinned .story-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 5rem;
+}
+
+.story-timeline.is-pinned .story-scroller {
+  overflow-x: hidden;
+  scroll-snap-type: none;
+}
+
+/* Fecho da história: três convites */
+.story-end {
+  text-align: left;
+}
+
+.story-end h2 {
+  text-align: center;
+}
+
+.contributors-cta-box .story-end-lead {
+  max-width: 54ch;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+.story-end-list {
+  display: grid;
+  list-style: none;
+}
+
+.story-end-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.contributors-cta-box .story-end-list p {
+  max-width: none;
+  margin: 0;
+  color: var(--text);
+}
+
+@media (min-width: 720px) {
+  .story-end-list li {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
 }

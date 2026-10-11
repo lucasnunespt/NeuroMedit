@@ -3,181 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Lucas - NeuroMedit</title>
-  <meta name="description" content="The personal story behind Lucas, his path to calm, and the origin of NeuroMedit.">
+  <title data-i18n="story_title">A história de Lucas</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="contributors.css">
+  <link rel="stylesheet" href="i18n.css">
+  <link rel="stylesheet" href="share-button.css">
   <link rel="stylesheet" href="header.css">
   <link rel="stylesheet" href="bottom-nav.css">
   <link rel="stylesheet" href="watch.css">
   <link rel="stylesheet" href="theme-sync.css">
+  <link rel="stylesheet" href="hero-motion.css">
   <link rel="stylesheet" href="settings-panel.css">
-  <link rel="stylesheet" href="about-lucas.css">
   <script src="theme-sync.js"></script>
+  <link rel="stylesheet" href="hero-type.css">
 </head>
-<body class="lucas-page">
+<body class="contributors-body">
   <header class="site-header" data-header>
     <div class="container header-shell">
-      <a class="brand" href="index.html">
-        <img src="assets/neuromedit-symbol-vector.svg" alt="NeuroMedit symbol" class="brand-symbol">
-        <span class="brand-wordmark">NeuroMedit</span>
-      </a>
+      <a class="brand" href="/"><img src="assets/neuromedit-symbol-vector.svg" alt="NeuroMedit symbol" class="brand-symbol"><span class="brand-wordmark">NeuroMedit</span></a>
 
-      <nav class="header-nav header-nav-desktop" aria-label="Main navigation">
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
         <span class="nav-indicator" aria-hidden="true"></span>
-        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" aria-label="Home" title="Home">
+        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="global_nav_home" data-i18n-attr="aria-label,title">
           <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
-          <span class="header-nav-text">Home</span>
+          <span class="header-nav-text" data-i18n="global_nav_home">Home</span>
         </a>
-        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" aria-label="Library" title="Library">
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="global_nav_library" data-i18n-attr="aria-label,title">
           <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
-          <span class="header-nav-text">Library</span>
+          <span class="header-nav-text" data-i18n="global_nav_library">Library</span>
         </a>
-        <a href="about.html" class="header-nav-link nav-link" data-nav-key="about" aria-label="About" title="About">
+        <a href="about.html" class="header-nav-link nav-link" data-nav-key="about" aria-label="About" title="About" data-i18n="global_nav_about" data-i18n-attr="aria-label,title">
           <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
-          <span class="header-nav-text">About</span>
+          <span class="header-nav-text" data-i18n="global_nav_about">About</span>
         </a>
       </nav>
 
       <div class="header-actions">
         <div class="header-language-slot" data-language-host></div>
-        <button type="button" class="header-menu-toggle" data-mobile-toggle aria-controls="lucas-mobile-nav" aria-expanded="false" aria-label="Open menu" title="Open menu">
+
+        <button type="button" class="header-menu-toggle" data-mobile-toggle aria-controls="contributors-mobile-nav" aria-expanded="false" aria-label="Open menu" title="Open menu" data-i18n="global_menu_open" data-i18n-attr="aria-label,title">
           <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
         </button>
       </div>
     </div>
 
     <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
-    <aside id="lucas-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+
+    <aside id="contributors-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
       <div class="header-mobile-inner">
         <div class="header-mobile-top">
           <p class="header-mobile-brand">NeuroMedit</p>
-          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu">
+          <button type="button" class="header-mobile-close" data-mobile-close aria-label="Close menu" title="Close menu" data-i18n="global_menu_close" data-i18n-attr="aria-label,title">
             <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
           </button>
         </div>
-        <nav class="header-mobile-nav" aria-label="Main navigation">
-          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home">Home</a>
-          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library">Library</a>
-          <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about">About</a>
+
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="global_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="global_nav_home" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="global_nav_home">Home</span>
+          </a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="global_nav_library" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="global_nav_library">Library</span>
+          </a>
+          <a href="about.html" class="header-mobile-link nav-link" data-nav-key="about" aria-label="About" title="About" data-i18n="global_nav_about" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="global_nav_about">About</span>
+          </a>
         </nav>
       </div>
     </aside>
   </header>
 
-  <main id="main-content">
-    <section class="lucas-hero" aria-labelledby="lucas-title">
-      <div class="lucas-hero-inner">
-        <p class="lucas-kicker">The story behind NeuroMedit</p>
-        <h1 id="lucas-title">Lucas learned calm by walking toward it slowly.</h1>
-        <p>Before NeuroMedit became a place for others to breathe, it was a private search for silence inside a loud life.</p>
+  <main class="contributors-page">
+    <section class="contributors-hero">
+      <div class="container hero-content">
+        <p class="eyebrow" data-i18n="story_eyebrow">A história</p>
+        <h1 data-i18n="story_h1">Como me tornei quem sou.</h1>
+        <p class="hero-text" data-i18n="story_lead">Uma personalidade construída ao ar livre, na música, na escola e numa biblioteca, até chegar a Lisboa e à NeuroMedit.</p>
+        <button type="button" class="share-button share-button--page" data-share-button aria-label="Compartilhar esta página" title="Compartilhar esta página" data-i18n="share_page_aria" data-i18n-attr="aria-label,title"></button>
       </div>
     </section>
 
-    <section class="story-scroll" data-story-scroll aria-label="Lucas timeline">
-      <div class="story-progress" aria-hidden="true">
-        <span class="story-progress-line"><span data-progress-bar></span></span>
-        <span class="story-progress-count"><span data-progress-current>01</span> / 07</span>
-      </div>
-
-      <div class="story-sticky">
+    <section class="story-timeline" data-story>
+      <div class="story-sticky" data-story-sticky>
+      <div class="story-scroller" data-story-scroller tabindex="0" role="region" aria-label="Linha do tempo da minha história, com conexões neurais" data-i18n="story_timeline_label" data-i18n-attr="aria-label">
         <div class="story-track" data-story-track>
-          <article class="journey-card intro-card" aria-labelledby="chapter-1">
-            <div class="chapter-copy">
-              <p class="chapter-number">01</p>
-              <h2 id="chapter-1">The Inner Noise</h2>
-              <p>There was a time when Lucas could hear everything except himself.</p>
-              <p>The days moved fast. The mind moved faster. Calm felt like a language spoken somewhere else.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-01.jpg" data-lightbox-alt="Lucas standing in a quiet room, surrounded by soft morning shadow">
-              <img src="assets/lucas-journey-01.jpg" alt="Lucas standing in a quiet room, surrounded by soft morning shadow">
-            </button>
+          <svg class="story-neurons" data-story-svg aria-hidden="true" focusable="false"></svg>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c1_label">2002–2008</span>
+            <h2 data-i18n="story_c1_title">Dentro das árvores</h2>
+            <p data-i18n="story_c1_p1">Nasci em Paulo Afonso, na Bahia. Minha personalidade se formou ao ar livre: subindo em árvores e pedras, correndo pela floresta, fazendo trilhas.</p>
+            <p data-i18n="story_c1_p2">Tomava banho de água doce e de piscina, e me sentia conectado com a água. Subia aos miradouros e à barragem da minha cidade para vê-la de cima.</p>
+            <p data-i18n="story_c1_p3">Aprendi cedo que o melhor jeito de viver é como uma criança: sem julgar, de forma pura.</p>
           </article>
-
-          <article class="journey-card" aria-labelledby="chapter-2">
-            <div class="chapter-copy">
-              <p class="chapter-number">02</p>
-              <h2 id="chapter-2">The First Breath</h2>
-              <p>Then came one breath that was not dramatic.</p>
-              <p>Just enough air to notice that his body had been waiting for him to return.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-02.jpg" data-lightbox-alt="A close calm portrait of Lucas breathing with eyes closed">
-              <img src="assets/lucas-journey-02.jpg" alt="A close calm portrait of Lucas breathing with eyes closed">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c2_label">2008–2014</span>
+            <h2 data-i18n="story_c2_title">A música</h2>
+            <p data-i18n="story_c2_p1">Fiz aulas de canto e de piano. Toquei lira e prato nas bandas marciais da minha cidade e da minha escola.</p>
+            <p data-i18n="story_c2_p2">Por um tempo me afastei do divino, dando prioridade às tarefas da vida. Mas nunca por completo.</p>
           </article>
-
-          <article class="journey-card" aria-labelledby="chapter-3">
-            <div class="chapter-copy">
-              <p class="chapter-number">03</p>
-              <h2 id="chapter-3">Nature Started Speaking</h2>
-              <p>Outside, the world did not ask him to improve.</p>
-              <p>Trees repeated their quiet lesson: grow slowly, bend often, stay rooted.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-03.jpg" data-lightbox-alt="Lucas walking through green nature after rain">
-              <img src="assets/lucas-journey-03.jpg" alt="Lucas walking through green nature after rain">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c3_label">2014–2017</span>
+            <h2 data-i18n="story_c3_title">A escola nova</h2>
+            <p data-i18n="story_c3_p1">Mudei de escola e deixei os amigos de infância por um lugar desconhecido, onde eu sabia que me desenvolveria melhor, psicológica e intelectualmente. Era uma escola que acompanhava mais as minhas habilidades.</p>
+            <p data-i18n="story_c3_p2">Conheci pessoas novas e fiz novos amigos. A escola tinha acabado de ser reformada e fui convidado para o coral. Na inauguração, cantamos o hino da cidade e o hino nacional, ao lado de amigos que eu tinha acabado de fazer.</p>
           </article>
-
-          <article class="journey-card" aria-labelledby="chapter-4">
-            <div class="chapter-copy">
-              <p class="chapter-number">04</p>
-              <h2 id="chapter-4">Movement Became Meditation</h2>
-              <p>Yoga changed meditation from an idea into a rhythm.</p>
-              <p>The breath had a shape. The body had memory. Stillness could move.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-04.jpg" data-lightbox-alt="Lucas practicing yoga in warm natural light">
-              <img src="assets/lucas-journey-04.jpg" alt="Lucas practicing yoga in warm natural light">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c4_label">2018</span>
+            <h2 data-i18n="story_c4_title">O colégio inteiro</h2>
+            <p data-i18n="story_c4_p1">No primeiro ano do ensino médio, participei só do staff dos eventos. Fui aprendendo como a escola funcionava e saí da banda marcial.</p>
+            <p data-i18n="story_c4_p2">Fui ficando cada vez mais popular: pessoas de todas as salas e turmas me conheciam naquele período.</p>
           </article>
-
-          <article class="journey-card" aria-labelledby="chapter-5">
-            <div class="chapter-copy">
-              <p class="chapter-number">05</p>
-              <h2 id="chapter-5">The Calm I Didn't Know I Had</h2>
-              <p>Travel softened the edges of certainty.</p>
-              <p>In unfamiliar places, Lucas found something familiar beneath everything: a quieter self, already there.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-05.jpg" data-lightbox-alt="Lucas looking over a distant landscape while traveling">
-              <img src="assets/lucas-journey-05.jpg" alt="Lucas looking over a distant landscape while traveling">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c5_label">2019</span>
+            <h2 data-i18n="story_c5_title">Representar</h2>
+            <p data-i18n="story_c5_p1">Conhecido e confiável, fui votado para representar todos os alunos. Concorri às eleições do colegiado escolar e do grêmio estudantil e fiquei em segundo lugar. Participei de todas as reuniões, onde entravam em pauta as tarefas e as mudanças do colégio.</p>
+            <p data-i18n="story_c5_p2">Foi nesse período que o curso de espanhol começou, e as rotinas ficaram mais intensas. Minha avó pagou o primeiro ano inteiro, e sou grato a ela.</p>
           </article>
-
-          <article class="journey-card" aria-labelledby="chapter-6">
-            <div class="chapter-copy">
-              <p class="chapter-number">06</p>
-              <h2 id="chapter-6">NeuroMedit</h2>
-              <p>NeuroMedit began as a promise to make calm feel reachable.</p>
-              <p>Not perfect. Not distant. A soft doorway back into attention, breath, and the nervous system.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-06.jpg" data-lightbox-alt="A peaceful NeuroMedit workspace with natural textures and soft light">
-              <img src="assets/lucas-journey-06.jpg" alt="A peaceful NeuroMedit workspace with natural textures and soft light">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c6_label">2020–2021</span>
+            <h2 data-i18n="story_c6_title">Me construir</h2>
+            <p data-i18n="story_c6_p1">De fevereiro de 2020 a abril de 2021, trabalhei numa biblioteca. Em 2020 e 2021, paguei o curso de espanhol junto com a minha avó. Comprei meu segundo notebook e estudei tudo com mais intensidade.</p>
+            <p data-i18n="story_c6_p2">Deixei de usar o computador para jogar. Foi a época em que comecei a me construir como pessoa.</p>
           </article>
-
-          <article class="journey-card final-card" aria-labelledby="chapter-7">
-            <div class="chapter-copy">
-              <p class="chapter-number">07</p>
-              <h2 id="chapter-7">Becoming</h2>
-              <p>The path is still alive.</p>
-              <p>Lucas is still listening, still practicing, still building a place where people can meet themselves with care.</p>
-            </div>
-            <button class="journey-image-button" type="button" data-lightbox-src="assets/lucas-journey-07.jpg" data-lightbox-alt="Lucas at sunset, standing quietly in open nature">
-              <img src="assets/lucas-journey-07.jpg" alt="Lucas at sunset, standing quietly in open nature">
-            </button>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c7_label">2022–2024</span>
+            <h2 data-i18n="story_c7_title">Atravessar</h2>
+            <p data-i18n="story_c7_p1">Em 2022, atravessei o Brasil de ônibus e depois o Atlântico, até chegar a Lisboa.</p>
+            <p data-i18n="story_c7_p2">Trabalhei na hospitalidade, onde gente virou especialidade. Em seguida, comecei a faculdade de UX Design, lado a lado com o trabalho.</p>
+          </article>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_cw_label">2022–hoje</span>
+            <h2 data-i18n="story_cw_title">Longe do Brasil</h2>
+            <p data-i18n="story_cw_p1">Hoje tenho 23 anos e vivo há 4 fora do Brasil. Continuei a me construir longe de onde nasci: nos idiomas que falo, nas pessoas que conheço, nos lugares por onde passo.</p>
+          </article>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_cx_label">2022–hoje</span>
+            <h2 data-i18n="story_cx_title">O mundo me constrói</h2>
+            <p data-i18n="story_cx_p1">Espanha, França, Itália e Portugal me construíram, e me constroem. Cada país, cada conversa, cada álbum de alguém que acabei de conhecer: um chileno, um colombiano, um espanhol, um italiano, um francês, um napolitano.</p>
+            <p data-i18n="story_cx_p2">Me reconheci no povo de muitos deles, nas várias Itálias que conheci. Tudo é construção, e o mundo nos molda mesmo sem querermos, sem termos controle disso.</p>
+          </article>
+          <article class="story-node" data-story-node>
+            <span class="cr-label" data-i18n="story_c8_label">2025–hoje</span>
+            <h2 data-i18n="story_c8_title">A NeuroMedit</h2>
+            <p data-i18n="story_c8_p1">A NeuroMedit nasceu num período sabático, como uma promessa de tornar a calma alcançável. Hoje estudo UX Design, pratico yoga e meditação, sou voluntário num centro de yoga e guio meditações.</p>
+            <p data-i18n="story_c8_p2">O princípio é o mesmo desde a infância: reduzir o ruído para devolver presença.</p>
           </article>
         </div>
+      </div>
+
+      <div class="container story-controls">
+        <button type="button" class="button ghost-button story-step" data-story-prev aria-label="Capítulo anterior" data-i18n="story_prev" data-i18n-attr="aria-label">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+        <p class="story-count" aria-live="polite"><span data-story-current>01</span> / <span data-story-total>10</span></p>
+        <button type="button" class="button ghost-button story-step" data-story-next aria-label="Próximo capítulo" data-i18n="story_next" data-i18n-attr="aria-label">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </button>
+      </div>
+      </div>
+    </section>
+
+    <section class="contributors-cta">
+      <div class="contributors-cta-box card-static story-end">
+        <h2 data-i18n="story_end_title">O próximo capítulo pode ser seu.</h2>
+        <p class="story-end-lead" data-i18n="story_end_lead">Muita gente não sabe, mas pode fazer parte do próximo capítulo da minha história.</p>
+        <ul class="story-end-list">
+          <li>
+            <p data-i18n="story_end_join_text">Quer fazer parte? Venha se juntar a mim na NeuroMedit.</p>
+            <a href="about.html#contact" class="button ghost-button" data-i18n="story_end_join_btn">Fazer parte</a>
+          </li>
+          <li>
+            <p data-i18n="story_end_book_text">Quer saber quem eu sou? Leia o meu livro.</p>
+            <a href="https://www.amazon.com.br/dp/B0H7XXKX29" class="button ghost-button" target="_blank" rel="noopener noreferrer" data-i18n="story_end_book_btn">Ler o livro</a>
+          </li>
+          <li>
+            <p data-i18n="story_end_med_text">Quer a meditação diária no seu dia a dia? Vamos começar agora.</p>
+            <a href="index.html#airlock" class="button primary-button" data-airlock-link data-i18n="story_end_med_btn">Começar uma meditação</a>
+          </li>
+        </ul>
       </div>
     </section>
   </main>
 
-  <div class="lucas-lightbox" data-lightbox hidden role="dialog" aria-modal="true" aria-label="Expanded journey image">
-    <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close image" title="Close image">Close</button>
-    <img data-lightbox-image src="" alt="">
-  </div>
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <p data-i18n="global_footer_brand">© 2026 NeuroMedit</p>
+      <div class="footer-links">
+        <a href="about.html" data-i18n="global_footer_about">About</a>
+        <a href="about.html#contact" data-i18n="global_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="global_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
 
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script src="share-button.js"></script>
   <script src="header-nav.js"></script>
   <script src="bottom-nav.js"></script>
+  <script src="story-timeline.js"></script>
   <script src="settings-panel.js"></script>
-  <script src="about-lucas.js"></script>
 </body>
 </html>

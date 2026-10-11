@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ciência | NeuroMedit</title>
+  <meta name="description" content="Os estudos que sustentam a NeuroMedit, o que eles mostram e o que a ciência ainda não consegue." />
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="why.css" />
+  <link rel="stylesheet" href="evidencia.css" />
+  <link rel="stylesheet" href="i18n.css" />
+  <link rel="stylesheet" href="share-button.css">
+  <link rel="stylesheet" href="header.css" />
+  <link rel="stylesheet" href="bottom-nav.css">
+  <link rel="stylesheet" href="watch.css">
+  <link rel="stylesheet" href="theme-sync.css" />
+  <link rel="stylesheet" href="settings-panel.css">
+  <script src="theme-sync.js"></script>
+  <link rel="stylesheet" href="hero-motion.css">
+  <link rel="stylesheet" href="hero-type.css">
+</head>
+<body class="why-body">
+    <header class="site-header" data-header>
+    <div class="container header-shell">
+      <a class="brand" href="/"><img src="assets/neuromedit-symbol-vector.svg" alt="NeuroMedit symbol" class="brand-symbol"><span class="brand-wordmark">NeuroMedit</span></a>
+
+      <nav class="header-nav header-nav-desktop" aria-label="Main navigation" data-i18n="why_nav_aria" data-i18n-attr="aria-label">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <a href="home.html" class="header-nav-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="why_nav_home" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="why_nav_home">Home</span>
+        </a>
+        <a href="library.html" class="header-nav-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="why_nav_library" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          <span class="header-nav-text" data-i18n="why_nav_library">Library</span>
+        </a>
+        <a href="about.html" class="header-nav-link nav-link active" aria-current="page" data-nav-key="about" aria-label="About" title="About" data-i18n="why_nav_about" data-i18n-attr="aria-label,title">
+          <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+          <span class="header-nav-text" data-i18n="why_nav_about">About</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="header-language-slot" data-language-host></div>
+
+        <button
+          type="button"
+          class="header-menu-toggle"
+          data-mobile-toggle
+          aria-controls="why-mobile-nav"
+          aria-expanded="false"
+          aria-label="Open menu"
+          title="Open menu"
+          data-i18n="global_menu_open"
+          data-i18n-attr="aria-label,title"
+        >
+          <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M4 7.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 12H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M4 16.5H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="header-mobile-overlay" data-mobile-overlay hidden></div>
+
+    <aside id="why-mobile-nav" class="header-mobile-panel" data-mobile-panel aria-hidden="true" hidden>
+      <div class="header-mobile-inner">
+        <div class="header-mobile-top">
+          <p class="header-mobile-brand">NeuroMedit</p>
+
+          <button
+            type="button"
+            class="header-mobile-close"
+            data-mobile-close
+            aria-label="Close menu"
+            title="Close menu"
+            data-i18n="global_menu_close"
+            data-i18n-attr="aria-label,title"
+          >
+            <span class="header-menu-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M6.5 6.5L17.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><path d="M17.5 6.5L6.5 17.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+          </button>
+        </div>
+
+        <nav class="header-mobile-nav" aria-label="Main navigation" data-i18n="why_nav_aria" data-i18n-attr="aria-label">
+          <a href="home.html" class="header-mobile-link nav-link" data-nav-key="home" aria-label="Home" title="Home" data-i18n="why_nav_home" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="why_nav_home">Home</span>
+          </a>
+          <a href="library.html" class="header-mobile-link nav-link" data-nav-key="library" aria-label="Library" title="Library" data-i18n="why_nav_library" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 6.5C10.3 5.4 8.3 4.85 6.25 4.9C5.03 4.93 3.83 5.18 2.7 5.65V18.35C3.83 17.88 5.03 17.63 6.25 17.6C8.3 17.55 10.3 18.1 12 19.2C13.7 18.1 15.7 17.55 17.75 17.6C18.97 17.63 20.17 17.88 21.3 18.35V5.65C20.17 5.18 18.97 4.93 17.75 4.9C15.7 4.85 13.7 5.4 12 6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 6.5V19.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+            <span class="header-mobile-text" data-i18n="why_nav_library">Library</span>
+          </a>
+          <a href="about.html" class="header-mobile-link nav-link active" aria-current="page" data-nav-key="about" aria-label="About" title="About" data-i18n="why_nav_about" data-i18n-attr="aria-label,title">
+            <span class="header-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 10.75V15.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path><circle cx="12" cy="8.2" r="0.8" fill="currentColor"></circle></svg></span>
+            <span class="header-mobile-text" data-i18n="why_nav_about">About</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+  </header>
+
+
+  <main class="why-page philo-page">
+    <section class="why-hero">
+      <div class="container">
+        <div class="why-hero-content">
+          <span class="eyebrow">Ciência</span>
+          <h1>O que a ciência mostra. E o que ainda não.</h1>
+          <p class="why-hero-text">A NeuroMedit apoia-se em estudos publicados por cientistas, e diz com a mesma clareza onde esses estudos terminam. Aqui estão os artigos, com um botão para cada um.</p>
+
+          <div class="why-hero-actions">
+            <a href="#estudos" class="button primary-button">Ver os estudos</a>
+            <a href="#limites" class="button secondary-button">O que ainda não sabemos</a>
+            <button type="button" class="share-button share-button--page" data-share-button aria-label="Compartilhar esta página" title="Compartilhar esta página" data-i18n="share_page_aria" data-i18n-attr="aria-label,title"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ev-section ev-section--wide" id="estudos">
+      <div class="narrow">
+        <span class="eyebrow">A base científica</span>
+        <h2>O que os estudos mostram</h2>
+        <p class="ev-intro">Cada cartão diz o que o estudo encontrou e, ao lado, a leitura honesta: o que ele não permite concluir. O botão abre o artigo na página da revista.</p>
+
+        <ul class="ev-list ev-list--two">
+          <li class="ev-card">
+            <span class="ev-label">Atenção · 2010</span>
+            <h3>A mente vagueia quase metade do tempo</h3>
+            <p>Em cerca de 47% do tempo acordados, as pessoas estavam pensando em outra coisa, e relataram estar menos felizes nesses momentos.</p>
+            <p class="ev-cite">Killingsworth &amp; Gilbert, <i>Science</i>, 2010</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> medido por autorrelato, em momentos sorteados do dia.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1126/science.1192439" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Atenção · 2012</span>
+            <h3>Perceber a distração é uma fase da prática</h3>
+            <p>Meditadores no scanner apertavam um botão ao perceber que se tinham distraído. Isso separou quatro fases: vaguear, perceber, voltar e sustentar o foco.</p>
+            <p class="ev-cite">Hasenkamp et al., <i>NeuroImage</i>, 2012</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> amostra pequena, em laboratório.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1016/j.neuroimage.2011.07.008" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Cérebro · 2011</span>
+            <h3>Menos atividade na Rede de Modo Padrão</h3>
+            <p>Meditadores experientes mostraram menor atividade da rede ligada ao vaguear da mente durante a meditação.</p>
+            <p class="ev-cite">Brewer et al., <i>PNAS</i>, 2011</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> são meditadores experientes; não diz o que acontece com quem começa.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1073/pnas.1112029108" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Cérebro · 2011</span>
+            <h3>Oito semanas, mais massa cinzenta?</h3>
+            <p>Depois de um programa de 8 semanas (MBSR), o estudo encontrou mais massa cinzenta no hipocampo e no cingulado posterior.</p>
+            <p class="ev-cite">Hölzel et al., <i>Psychiatry Research: Neuroimaging</i>, 2011</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> amostra pequena. Veja o estudo de 2022 abaixo.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1016/j.pscychresns.2010.08.006" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Cérebro · 2022</span>
+            <h3>Sem mudança estrutural detectável</h3>
+            <p>Dois ensaios randomizados juntos, com 218 adultos sem experiência, não encontraram diferença na estrutura do cérebro após 8 semanas de MBSR.</p>
+            <p class="ev-cite">Kral et al., <i>Science Advances</i>, 2022</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> trava conclusões apressadas. Não exclui efeitos de uma prática mais longa.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1126/sciadv.abk3316" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Respiração · 2023</span>
+            <h3>Cinco minutos de respiração, durante um mês</h3>
+            <p>Num ensaio randomizado, exercícios respiratórios diários, em especial o suspiro cíclico com expiração longa, melhoraram o humor mais do que a meditação mindfulness.</p>
+            <p class="ev-cite">Balban et al., <i>Cell Reports Medicine</i>, 2023</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> ensaio remoto, com o humor relatado pelos próprios participantes.</p>
+            <a class="button secondary-button" href="https://doi.org/10.1016/j.xcrm.2022.100895" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+
+          <li class="ev-card">
+            <span class="ev-label">Atenção · 2025</span>
+            <h3>Meditação e atenção, medidas pelo olhar</h3>
+            <p>Um estudo pré-registrado usou rastreio ocular em jovens e idosos, e relata que mesmo uma meditação de curta duração pode melhorar o controle da atenção.</p>
+            <p class="ev-cite">Kim et al., <i>eNeuro</i>, 2025</p>
+            <p class="ev-reading"><b>Leitura honesta:</b> é um estudo, publicado há pouco. Ainda precisa de ser repetido por outros grupos.</p>
+            <a class="button secondary-button" href="https://www.eneuro.org/content/early/2025/06/26/ENEURO.0356-23.2025" target="_blank" rel="noopener noreferrer">Abrir o artigo</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="ev-section" id="limites">
+      <div class="narrow">
+        <span class="eyebrow">Os limites</span>
+        <h2>O que a ciência ainda não consegue</h2>
+        <p class="ev-intro">Dizer onde a ciência para faz parte do método. Estes são os limites que a NeuroMedit assume.</p>
+
+        <ul class="ev-limits">
+          <li>
+            <h3>Ainda não fecha a pergunta sobre a estrutura do cérebro</h3>
+            <p>Um estudo pequeno viu mais massa cinzenta depois de 8 semanas; um ensaio maior, em 2022, não viu mudança estrutural. Os sinais são mistos.</p>
+          </li>
+          <li>
+            <h3>Correlação não é causa</h3>
+            <p>Muitos estudos comparam meditadores experientes com outras pessoas. Mostram diferenças, mas não provam que a meditação as causou.</p>
+          </li>
+          <li>
+            <h3>Os efeitos variam de pessoa para pessoa</h3>
+            <p>Os resultados são médias de grupos pequenos ou médios. Não dizem o que vai acontecer com você.</p>
+          </li>
+          <li>
+            <h3>O exagero é um risco real</h3>
+            <p>Uma revisão crítica de 2018 alerta para promessas maiores do que as provas, e para a falta de definições e métodos comuns na área.</p>
+            <div class="ev-links">
+              <a class="button secondary-button" href="https://doi.org/10.1177/1745691617709589" target="_blank" rel="noopener noreferrer">Abrir: Van Dam et al., 2018</a>
+            </div>
+          </li>
+          <li>
+            <h3>Um padrão de respiração é um exemplo, não uma regra</h3>
+            <p>Respirar devagar, com a expiração mais longa, tem apoio em estudos. Os números exatos, como 4 e 6 segundos, são um ponto de partida.</p>
+          </li>
+          <li>
+            <h3>Não é tratamento</h3>
+            <p>A NeuroMedit é uma prática de atenção e regulação. Não substitui terapia nem tratamento. Se você está passando por um momento difícil, procure um profissional de saúde.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="why-cta">
+      <div class="why-cta-box card-static">
+        <h2>Estes são os estudos. E os meus?</h2>
+        <p>Na página Leituras estão os artigos que escrevi e estudei ao longo da jornada de autoconhecimento que deu origem à NeuroMedit.</p>
+        <a href="leituras.html" class="button primary-button">Ver as leituras</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p data-i18n="home_footer_copyright">&copy; 2026 NeuroMedit</p>
+
+      <div class="footer-links">
+        <a href="about.html" data-i18n="global_footer_about">Philosophy</a>
+        <a href="evidencia.html">Ciência</a>
+        <a href="leituras.html">Leituras</a>
+        <a href="about.html#contact" data-i18n="global_footer_contact">Contact</a>
+        <a href="about.html#social" data-i18n="global_footer_instagram">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
+  <script src="share-button.js"></script>
+  <script src="header-nav.js"></script>
+  <script src="bottom-nav.js"></script>
+  <script src="settings-panel.js"></script>
+</body>
+</html>

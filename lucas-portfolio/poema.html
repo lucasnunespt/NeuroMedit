@@ -6,54 +6,34 @@
 <title>A árvore — Lucas</title>
 <meta name="description" content="O poema que guarda a raiz do NeuroMedit.">
 <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+<link rel="stylesheet" href="neuromedit-ds.css">
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
 img{ max-width:100%; display:block; }
 a{ color:inherit; text-decoration:none; }
 
-:root{
-  --bg:#f8f0e4;
-  --bg-soft:#fff8ed;
-  --text:#2d261f;
-  --text-soft:rgba(74,60,45,.75);
-  --text-faint:rgba(74,60,45,.32);
-  --line:rgba(116,83,47,.13);
-  --accent:#c88f53;
-  --accent-dark:#9e7042;
-  --button-text:#2d261f;
-  --shadow-soft:0 12px 28px rgba(94,66,34,.1);
-  --ease-premium:cubic-bezier(0.22,1,0.36,1);
-}
 
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,ui-sans-serif,Arial,sans-serif;
+  font-family:var(--font-sans);
   background:linear-gradient(to bottom, var(--bg) 0%, var(--bg-soft) 100%);
   color:var(--text);
   line-height:1.6;
 }
-::selection{ background:rgba(200,143,83,.28); }
+::selection{ background:var(--surface); }
 
-/* fundo — mesmos blobs do portfólio */
-.bg-blobs{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
-.blob{ position:absolute; border-radius:50%; filter:blur(80px); }
-.blob-amber{ width:560px; height:560px; top:-160px; left:-140px; opacity:.4; background:radial-gradient(circle, rgba(200,143,83,.55), transparent 70%); animation:driftA 40s ease-in-out infinite; }
-.blob-sage{ width:480px; height:480px; bottom:-140px; right:-100px; opacity:.28; background:radial-gradient(circle, rgba(138,165,160,.5), transparent 70%); animation:driftB 46s ease-in-out infinite; }
-@keyframes driftA{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(46px,-34px) scale(1.08); } }
-@keyframes driftB{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-40px,28px) scale(1.05); } }
 
 /* voltar — discreto, sem header pesado */
 .back-link{
   position:fixed; top:1.5rem; left:1.5rem; z-index:20;
   display:flex; align-items:center; gap:.5rem;
   padding:.6rem 1.1rem; border-radius:999px;
-  background:rgba(255,252,245,.55); border:1px solid var(--line);
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  background:var(--surface-strong); border:1px solid var(--line);
   font-size:.88rem; font-weight:600; color:var(--text-soft);
-  box-shadow:0 8px 20px rgba(94,66,34,.06);
-  transition:.25s var(--ease-premium);
+  box-shadow:var(--shadow-soft);
+ 
 }
-.back-link:hover{ color:var(--text); background:rgba(255,252,245,.8); transform:translateY(-1px); }
+.back-link:hover{ color:var(--text); background:var(--surface-strong); transform:translateY(-1px); }
 
 /* ============================================================
    SELETOR DE IDIOMA — versão discreta para a página do poema
@@ -62,12 +42,11 @@ body{
 .language-wrapper{
   position:relative; display:inline-flex; flex-direction:column;
   width:60px; max-height:38px; border-radius:999px;
-  background:rgba(255,252,245,.55);
+  background:var(--surface-strong);
   border:1px solid var(--line);
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  box-shadow:0 8px 20px rgba(94,66,34,.06);
+  box-shadow:var(--shadow-soft);
   overflow:hidden;
-  transition:max-height .3s var(--ease-premium), background .25s ease, box-shadow .25s ease;
+ 
 }
 .language-trigger{
   appearance:none; position:relative; z-index:2; flex:0 0 38px; width:100%; height:38px;
@@ -80,27 +59,27 @@ body{
 .language-options{
   width:100%; padding:0 .3rem .5rem; display:grid; align-items:center; gap:.2rem; box-sizing:border-box;
   opacity:0; transform:translateY(-10px);
-  transition:opacity .3s ease, transform .3s var(--ease-premium);
+ 
 }
 .language-wrapper.is-open{
   max-height:250px; color:var(--text);
-  background:rgba(255,252,245,.92);
-  box-shadow:0 14px 30px rgba(94,66,34,.12);
+  background:var(--surface-strong);
+  box-shadow:var(--shadow-card);
 }
 .language-wrapper.is-open .language-options{ opacity:1; transform:translateY(0); }
 @media (hover:hover) and (pointer:fine){
-  .language-wrapper:hover{ max-height:250px; background:rgba(255,252,245,.92); box-shadow:0 14px 30px rgba(94,66,34,.12); }
+  .language-wrapper:hover{ max-height:250px; background:var(--surface-strong); box-shadow:var(--shadow-card); }
   .language-wrapper:hover .language-options{ opacity:1; transform:translateY(0); }
 }
 .language-options button{
   appearance:none; min-width:44px; height:28px; border:0; border-radius:999px;
   color:var(--text-soft); background:transparent; font:inherit; font-size:.7rem; letter-spacing:.08em;
-  cursor:pointer; transition:background .18s ease, color .18s ease, transform .18s ease;
+  cursor:pointer;
 }
 .language-options button:hover, .language-options button:focus-visible{
-  color:var(--text); background:rgba(200,143,83,.15); outline:none;
+  color:var(--text); background:var(--surface); outline:none;
 }
-.language-options button.is-active{ color:#fff; background-color:var(--accent); outline:none; }
+.language-options button.is-active{ color:var(--button-text); background-color:var(--accent); outline:none; }
 .language-options button:active{ transform:scale(.96); }
 @media (max-width:600px){
   .lang-slot{ top:1rem; right:1rem; }
@@ -108,7 +87,7 @@ body{
   .language-trigger{ flex:0 0 34px; height:34px; }
 }
 @media (prefers-reduced-motion:reduce){
-  .language-wrapper, .language-trigger, .language-options, .language-options button{ transition:none; }
+  .language-wrapper, .language-trigger, .language-options, .language-options button{ }
 }
 
 /* abertura */
@@ -130,15 +109,14 @@ body{
   margin-bottom:2.6rem; position:relative; z-index:1;
 }
 .scroll-hint{
-  font-size:.82rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint);
+  font-size:.82rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted);
   position:relative; z-index:1;
 }
 .scroll-hint::after{
   content:""; display:block; width:1px; height:44px; margin:14px auto 0;
-  background:linear-gradient(var(--text-faint), transparent);
-  animation:drip 2.8s ease-in-out infinite;
+  background:linear-gradient(var(--text-muted), transparent);
+ 
 }
-@keyframes drip{ 0%,100%{ opacity:.3; transform:scaleY(.7); transform-origin:top; } 50%{ opacity:1; transform:scaleY(1); } }
 
 /* poema — um "respiro" por vez */
 .poem{ position:relative; z-index:1; }
@@ -149,8 +127,8 @@ body{
 .beat p{
   max-width:38ch; text-align:center;
   font-size:clamp(1.3rem,2.6vw,1.85rem); line-height:1.65; font-weight:400;
-  color:var(--text-faint);
-  transition:opacity .9s var(--ease-premium), color .9s var(--ease-premium), transform .9s var(--ease-premium);
+  color:var(--text-muted);
+ 
   transform:translateY(14px);
 }
 .beat.active p{ color:var(--text); transform:translateY(0); }
@@ -171,33 +149,25 @@ body{
 .closing-actions{ display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
 .button{
   display:inline-flex; align-items:center; justify-content:center;
-  min-height:50px; padding:.95rem 1.7rem; border-radius:999px;
+  min-height:var(--control-height); padding:.95rem var(--button-pad-x); border-radius:999px;
   border:1px solid transparent; font-size:1rem; font-weight:600;
-  cursor:pointer; white-space:nowrap; transition:.25s var(--ease-premium);
+  cursor:pointer; white-space:nowrap;
 }
 .primary-button{ background:var(--accent); color:var(--button-text); box-shadow:var(--shadow-soft); }
-.primary-button:hover{ background:var(--accent-dark); transform:translateY(-1px); }
+.primary-button:hover{ box-shadow:var(--shadow-card); }
 .secondary-button{ background:transparent; color:var(--text); border:1px solid var(--line); }
-.secondary-button:hover{ background:rgba(255,255,255,.5); }
+.secondary-button:hover{ background:var(--surface); }
 
 @media (max-width:600px){
   .back-link{ top:1rem; left:1rem; padding:.5rem .9rem; font-size:.82rem; }
   .beat{ min-height:64vh; padding:2rem 1.2rem; }
 }
 @media (prefers-reduced-motion:reduce){
-  .blob{ animation:none; }
-  .scroll-hint::after{ animation:none; }
-  .beat p{ transition:none; }
   html{ scroll-behavior:auto; }
 }
 </style>
 </head>
 <body>
-
-<div class="bg-blobs" aria-hidden="true">
-  <div class="blob blob-amber"></div>
-  <div class="blob blob-sage"></div>
-</div>
 
 <a class="back-link" href="index.html#casos" data-i18n="cs_back">← Voltar ao portfólio</a>
 <div class="lang-slot" data-language-host></div>

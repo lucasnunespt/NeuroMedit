@@ -11,6 +11,7 @@
   /* Raio */
   --radius-pill: 999px; /* todos os botões: sempre pílula */
   --radius-chip: 14px;  /* session-chip */
+  --radius-md: 22px;    /* cartões médios */
 
   /* Dimensões */
   --control-height: 50px; /* altura mínima de botões, alvo de toque */

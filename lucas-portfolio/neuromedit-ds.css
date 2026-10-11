@@ -1,0 +1,58 @@
+/* neuromedit-ds.css — tokens do design system NeuroMedit para o portfólio.
+   Fonte: https://claude.ai/artifact/JHzwjfKnJ11kwCCJkcxvrQ (project/tokens.json).
+   Tema claro = calm (padrão). Tema escuro = night, ativado por prefers-color-scheme.
+   Não acrescentar valores aqui sem os propor primeiro ao design system. */
+
+:root {
+  --bg: #f4f4f1;
+  --bg-soft: #f8f8f5;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-strong: rgba(255, 255, 255, 0.88);
+  --text: #1f2326;
+  --text-soft: #66706f;
+  --text-muted: #7b8483;
+  --text-subtle: rgba(84, 94, 95, 0.54);
+  --button-text: #1f2326;
+  --link-text: #1f2326;
+  --line: rgba(31, 35, 38, 0.08);
+  --accent: #8aa5a0;
+  --accent-dark: #517067;
+  --shadow-soft: 0 10px 24px rgba(31, 35, 38, 0.05);
+  --shadow-card: 0 12px 32px rgba(31, 35, 38, 0.05);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  --radius-lg: 28px;
+  --radius-md: 22px;
+  --radius-sm: 16px;
+  --radius-chip: 14px;
+  --radius-pill: 999px;
+
+  --control-height: 50px;
+  --button-pad-x: 1.6rem;
+  --container: 1120px;
+  --gutter: 1.5rem;
+
+  --font-sans: Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0706;
+    --bg-soft: #1a0d12;
+    --surface: rgba(36, 16, 22, 0.72);
+    --surface-strong: rgba(48, 22, 26, 0.78);
+    --text: #f4e6da;
+    --text-soft: rgba(244, 230, 218, 0.72);
+    --text-muted: rgba(244, 230, 218, 0.72);
+    --text-subtle: rgba(244, 230, 218, 0.54);
+    --button-text: #140e0b;
+    --link-text: rgba(244, 230, 218, 0.86);
+    --line: rgba(210, 132, 84, 0.18);
+    --accent: #c77a4a;
+    --accent-dark: #d09168;
+    --shadow-soft: 0 14px 34px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.34), 0 0 32px rgba(199, 122, 74, 0.1);
+    --glass-highlight: inset 0 1px 0 rgba(240, 222, 208, 0.06);
+  }
+}

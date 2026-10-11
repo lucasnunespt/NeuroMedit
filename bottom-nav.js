@@ -66,7 +66,9 @@
      página "de cima": sessão → Biblioteca; resto → Início.
      No feedback vai sempre à Biblioteca, para não reabrir a sessão. */
   if (activeTab !== "home") {
-    const parentPage = (LIBRARY_PAGES.includes(page) && page !== "library.html") || page === "feedback.html"
+    const parentPage = page === "about-lucas.html"
+      ? "contributors.html"
+      : (LIBRARY_PAGES.includes(page) && page !== "library.html") || page === "feedback.html"
       ? "library.html"
       : "home.html";
 

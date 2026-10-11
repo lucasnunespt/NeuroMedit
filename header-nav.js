@@ -16,7 +16,9 @@
   function isCurrentPage(item) {
     const basename = (path) =>
       path.replace(/[?#].*$/, "").replace(/\/+$/, "").split("/").pop().replace(/\.html$/i, "");
-    return basename(window.location.pathname) === basename(item.href);
+    const current = basename(window.location.pathname);
+    if (item.key === "contributors" && current === "about-lucas") return true;
+    return current === basename(item.href);
   }
 
   function buildContributorsLink(kind) {

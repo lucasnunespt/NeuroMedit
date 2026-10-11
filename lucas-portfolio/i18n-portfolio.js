@@ -96,7 +96,7 @@
     idx_about_eyebrow: "Sobre mim",
     idx_about_h2: "Do Rio São Francisco a Lisboa",
     idx_about_p1: "Nasci em Paulo Afonso, Bahia, à beira do rio. Aos 16, pagava minha própria escola de espanhol trabalhando numa biblioteca — e já meditava todas as manhãs.",
-    idx_about_p2: "Em 2022 atravessei o Brasil de ônibus e depois o Atlântico, e recomecei em Lisboa com 800€. Hoje sou estudante de UX Design, voluntário num centro de yoga, e sigo guiando meditações — agora para muito mais gente do que imaginava.",
+    idx_about_p2: "Em 2022 atravessei o Brasil de ônibus e depois o Atlântico, até chegar a Lisboa. Hoje sou estudante de UX Design, voluntário num centro de yoga, e sigo guiando meditações — agora para muito mais gente do que imaginava.",
 
     idx_tl_2002_title: "Paulo Afonso, Bahia",
     idx_tl_2002_desc: "Nasço à beira do Rio São Francisco.",
@@ -440,7 +440,7 @@
     idx_about_eyebrow: "About me",
     idx_about_h2: "From the São Francisco River to Lisbon",
     idx_about_p1: "I was born in Paulo Afonso, Bahia, on the river's edge. At 16, I paid for my own Spanish classes working at a library — and I already meditated every morning.",
-    idx_about_p2: "In 2022 I crossed Brazil by bus, then the Atlantic, and started over in Lisbon with €800. Today I'm a UX design student, I volunteer at a yoga center, and I still guide meditations — now for far more people than I imagined.",
+    idx_about_p2: "In 2022 I crossed Brazil by bus, then the Atlantic, all the way to Lisbon. Today I'm a UX design student, I volunteer at a yoga center, and I still guide meditations — now for far more people than I imagined.",
 
     idx_tl_2002_title: "Paulo Afonso, Bahia",
     idx_tl_2002_desc: "Born on the banks of the São Francisco River.",
@@ -784,7 +784,7 @@
     idx_about_eyebrow: "Sobre mí",
     idx_about_h2: "Del Río São Francisco a Lisboa",
     idx_about_p1: "Nací en Paulo Afonso, Bahía, a orillas del río. A los 16 años, pagaba mi propia escuela de español trabajando en una biblioteca — y ya meditaba todas las mañanas.",
-    idx_about_p2: "En 2022 crucé Brasil en autobús y después el Atlántico, y volví a empezar en Lisboa con 800€. Hoy soy estudiante de UX Design, voluntario en un centro de yoga, y sigo guiando meditaciones — ahora para mucha más gente de la que imaginaba.",
+    idx_about_p2: "En 2022 crucé Brasil en autobús y después el Atlántico, hasta llegar a Lisboa. Hoy soy estudiante de UX Design, voluntario en un centro de yoga, y sigo guiando meditaciones — ahora para mucha más gente de la que imaginaba.",
 
     idx_tl_2002_title: "Paulo Afonso, Bahía",
     idx_tl_2002_desc: "Nazco a orillas del Río São Francisco.",
@@ -1128,7 +1128,7 @@
     idx_about_eyebrow: "Chi sono",
     idx_about_h2: "Dal Rio São Francisco a Lisbona",
     idx_about_p1: "Sono nato a Paulo Afonso, Bahia, sulle rive del fiume. A 16 anni pagavo da solo la scuola di spagnolo lavorando in una biblioteca — e meditavo già ogni mattina.",
-    idx_about_p2: "Nel 2022 ho attraversato il Brasile in autobus e poi l'Atlantico, ricominciando a Lisbona con 800€. Oggi sono studente di UX Design, volontario in un centro yoga, e continuo a guidare meditazioni — ora per molte più persone di quante immaginassi.",
+    idx_about_p2: "Nel 2022 ho attraversato il Brasile in autobus e poi l'Atlantico, fino ad arrivare a Lisbona. Oggi sono studente di UX Design, volontario in un centro yoga, e continuo a guidare meditazioni — ora per molte più persone di quante immaginassi.",
 
     idx_tl_2002_title: "Paulo Afonso, Bahia",
     idx_tl_2002_desc: "Nasco sulle rive del Rio São Francisco.",

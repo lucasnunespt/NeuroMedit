@@ -1,0 +1,78 @@
+/*
+ * creator-links.css — botões "LinkedIn" e "Escrever para mim" (Gmail) do Lucas.
+ *
+ * EXCEÇÃO AO DESIGN SYSTEM: o azul do LinkedIn e o branco do texto sobre ele não existem em
+ * tokens.json. Foram pedidos expressamente pelo Lucas (botão azul "como o LinkedIn") e estão
+ * registados em docs/valores-fora-do-sistema.md até entrarem no design system como proposta.
+ * Tudo o resto usa tokens. Sem animações nem transições (não há tokens de movimento).
+ */
+:root {
+  --linkedin-blue: #0a66c2;      /* EXCEÇÃO: cor da marca LinkedIn */
+  --linkedin-on-blue: #ffffff;   /* EXCEÇÃO: texto/ícone sobre o azul */
+}
+
+.creator-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.creator-links--center {
+  justify-content: center;
+}
+
+.creator-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: var(--control-height);
+  padding: 0.95rem var(--button-pad-x);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.creator-link svg {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.creator-link--linkedin {
+  background-color: var(--linkedin-blue);
+  color: var(--linkedin-on-blue);
+  box-shadow: var(--shadow-soft);
+}
+
+.creator-link--linkedin:hover {
+  box-shadow: var(--shadow-card);
+}
+
+.creator-link--mail {
+  background-color: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.creator-link--mail:hover {
+  background-color: var(--surface);
+}
+
+.creator-link:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: 4px;
+}
+
+@media (max-width: 480px) {
+  .creator-links .creator-link {
+    flex: 1 1 100%;
+  }
+}

@@ -1297,3 +1297,7 @@ Sem nenhum valor fixo detetado: `about.html`, `about-lucas.html`, `body.html`, `
 | Categoria | Valor | Usos | Linhas | Def. |
 |---|---|---:|---|:-:|
 | Cor | `#f4ead6` | 1 | 13 |  |
+
+## Exceções pedidas (fora da medição acima)
+
+- `creator-links.css` (2026-10-12): `--linkedin-blue: #0a66c2` e `--linkedin-on-blue: #ffffff`, para o botão de LinkedIn. Cor da marca LinkedIn, pedida expressamente pelo Lucas. **A propor ao design system** como token de cor e ícone; até entrar, fica como exceção só neste ficheiro.

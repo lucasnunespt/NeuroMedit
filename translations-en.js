@@ -428,7 +428,7 @@ window.NeuroMeditTranslations = {
     library_sleep_session_2_meta: "4 min",
     library_sleep_session_2_title: "Slow Exhale",
     library_sleep_session_2_text: "A quieter breathing rhythm to help the body downshift.",
-    library_sleep_session_3_meta: "6 min",
+    library_sleep_session_3_meta: "7 min",
     library_sleep_session_3_title: "Before Sleep",
     library_sleep_session_3_text: "A soft transition from mental activity into nighttime rest.",
     library_healing_label: "Healing",

@@ -520,7 +520,7 @@ window.NeuroMeditTranslations = {
     library_sleep_session_2_meta: "4 min",
     library_sleep_session_2_title: "Espirazione Lenta",
     library_sleep_session_2_text: "Un ritmo respiratorio più quieto per aiutare il corpo a rallentare.",
-    library_sleep_session_3_meta: "6 min",
+    library_sleep_session_3_meta: "7 min",
     library_sleep_session_3_title: "Prima di Dormire",
     library_sleep_session_3_text: "Una transizione morbida dall'attività mentale al riposo notturno.",
     library_healing_label: "Guarigione",

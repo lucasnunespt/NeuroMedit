@@ -520,7 +520,7 @@ window.NeuroMeditTranslations = {
     library_sleep_session_2_meta: "4 min",
     library_sleep_session_2_title: "Exhalación Lenta",
     library_sleep_session_2_text: "Un ritmo de respiración más silencioso para ayudar al cuerpo a bajar el ritmo.",
-    library_sleep_session_3_meta: "6 min",
+    library_sleep_session_3_meta: "7 min",
     library_sleep_session_3_title: "Antes de Dormir",
     library_sleep_session_3_text: "Una transición suave de la actividad mental al descanso nocturno.",
     library_healing_label: "Sanación",

@@ -542,7 +542,7 @@ window.NeuroMeditTranslations = {
     library_sleep_session_2_meta: "4 мин",
     library_sleep_session_2_title: "Медленный выдох",
     library_sleep_session_2_text: "Более тихий дыхательный ритм, чтобы помочь телу замедлиться.",
-    library_sleep_session_3_meta: "6 мин",
+    library_sleep_session_3_meta: "7 мин",
     library_sleep_session_3_title: "Перед сном",
     library_sleep_session_3_text: "Мягкий переход от активности ума к ночному отдыху.",
     library_healing_label: "Исцеление",

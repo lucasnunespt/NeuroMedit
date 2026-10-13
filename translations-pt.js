@@ -616,7 +616,6 @@ window.NeuroMeditTranslations = {
     creator_end_linkedin: "LinkedIn",
     creator_links_label: "Falar com Lucas Nunes",
     creator_linkedin_aria: "Abrir o perfil de Lucas Nunes no LinkedIn (abre em nova aba)",
-    creator_mail_cta: "Escrever para mim",
     creator_mail_aria: "Escrever para Lucas Nunes no Gmail (abre em nova aba)",
     creator_mail_subject: "Olá, Lucas! Vim pela NeuroMedit",
     creator_mail_body: "Olá, Lucas!\n\nConheci a NeuroMedit e queria conversar com você sobre:\n\n",

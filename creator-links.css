@@ -46,27 +46,27 @@
   height: 1.25rem;
 }
 
-.creator-link--linkedin {
+.creator-links .creator-link.creator-link--linkedin {
   background-color: var(--linkedin-blue);
   color: var(--linkedin-on-blue);
   box-shadow: var(--shadow-soft);
 }
 
-.creator-link--linkedin:hover {
+.creator-links .creator-link.creator-link--linkedin:hover {
   box-shadow: var(--shadow-card);
 }
 
-.creator-link--mail {
+.creator-links .creator-link.creator-link--mail {
   background-color: transparent;
   color: var(--text);
   border-color: var(--line);
 }
 
-.creator-link--mail:hover {
+.creator-links .creator-link.creator-link--mail:hover {
   background-color: var(--surface);
 }
 
-.creator-link:focus-visible {
+.creator-links .creator-link:focus-visible {
   outline: 2px solid var(--accent-dark);
   outline-offset: 4px;
 }
@@ -75,4 +75,21 @@
   .creator-links .creator-link {
     flex: 1 1 100%;
   }
+}
+
+/* case-study.html: o grupo vai para a linha de baixo, centrado, em vez de ficar ao lado do botão */
+.case-cta-row {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.case-cta-row .creator-links {
+  flex: 1 1 100%;
+  justify-content: center;
+  margin-top: 0;
+}
+
+/* case-study.html: o --text desta página é escuro nos temas noturnos; usa a cor de texto da própria secção final */
+.case-cta-row .creator-links .creator-link.creator-link--mail {
+  color: var(--case-thankyou-text, var(--text));
 }

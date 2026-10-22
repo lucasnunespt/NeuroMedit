@@ -601,7 +601,7 @@ window.NeuroMeditTranslations = {
     story_c7_p2: "Trabalhei na hospitalidade, onde gente virou especialidade. Em seguida, comecei a faculdade de UX Design, lado a lado com o trabalho.",
     story_cw_label: "2022–hoje",
     story_cw_title: "Longe do Brasil",
-    story_cw_p1: "Hoje tenho 23 anos e vivo há 4 fora do Brasil. Continuei a me construir longe de onde nasci: nos idiomas que falo, nas pessoas que conheço, nos lugares por onde passo.",
+    story_cw_p1: "Vivo fora do Brasil desde 2022. Continuei a me construir longe de onde nasci: nos idiomas que falo, nas pessoas que conheço, nos lugares por onde passo.",
     story_cx_label: "2022–hoje",
     story_cx_title: "O mundo me constrói",
     story_cx_p1: "Espanha, França, Itália e Portugal me construíram, e me constroem. Cada país, cada conversa, cada álbum de alguém que acabei de conhecer: um chileno, um colombiano, um espanhol, um italiano, um francês, um napolitano.",

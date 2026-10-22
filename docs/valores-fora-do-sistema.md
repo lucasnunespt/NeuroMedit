@@ -1300,4 +1300,4 @@ Sem nenhum valor fixo detetado: `about.html`, `about-lucas.html`, `body.html`, `
 
 ## Exceções pedidas (fora da medição acima)
 
-- `creator-links.css` (2026-10-12): `--linkedin-blue: #0a66c2` e `--linkedin-on-blue: #ffffff`, para o botão de LinkedIn. Cor da marca LinkedIn, pedida expressamente pelo Lucas. **A propor ao design system** como token de cor e ícone; até entrar, fica como exceção só neste ficheiro.
+- `creator-links.css` (2026-10-12): `--linkedin-blue: #0a66c2` e `--linkedin-on-blue: #ffffff`, para o botão de LinkedIn. Cor da marca LinkedIn, pedida expressamente pelo Lucas. **Proposto ao design system** em 2026-10-22 (`linkedin-blue`, `linkedin-on-blue`, marcados PROPOSTA). Até ser aprovado, fica como exceção só neste ficheiro.

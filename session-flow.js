@@ -328,6 +328,15 @@
   // Pause / Resume
   // ---------------------------------------------------------------------------
 
+  // Pausa e continuar: o mesmo botão redondo, só troca o símbolo.
+  // O nome acessível vem das traduções (data-i18n-attr="aria-label").
+  function setPauseLabel(key) {
+    if (!pauseButton) return;
+    pauseButton.dataset.i18n = key;
+    pauseButton.setAttribute("aria-label", t(key));
+    pauseButton.classList.toggle("is-paused", key === "global_resume");
+  }
+
   function pausePractice() {
     if (!root.classList.contains("is-practicing") || isPaused) return;
 
@@ -344,8 +353,7 @@
     }
 
     if (pauseButton) {
-      pauseButton.textContent = t("global_resume");
-      pauseButton.dataset.i18n = "global_resume";
+      setPauseLabel("global_resume");
     }
   }
 
@@ -364,8 +372,7 @@
     }
 
     if (pauseButton) {
-      pauseButton.textContent = t("global_pause");
-      pauseButton.dataset.i18n = "global_pause";
+      setPauseLabel("global_pause");
     }
   }
 
@@ -389,8 +396,7 @@
 
     if (pauseButton) {
       pauseButton.hidden = false;
-      pauseButton.textContent = t("global_pause");
-      pauseButton.dataset.i18n = "global_pause";
+      setPauseLabel("global_pause");
     }
 
     try {

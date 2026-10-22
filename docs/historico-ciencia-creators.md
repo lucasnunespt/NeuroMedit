@@ -11,7 +11,7 @@ Registo de tudo o que foi feito nesta frente de trabalho (outubro de 2026), para
 
 - As duas têm `noindex, nofollow`. Não aparecem em nenhum menu.
 - Entrada discreta: botão "Ver os estudos e os limites" no fim da página Filosofia (`about.html`, bloco "Sem milagres").
-- Todos os links de artigos são DOI ou a página da revista. As editoras bloquearam a leitura automática: convém abrir cada botão uma vez.
+- Todos os links de artigos são DOI ou a página da revista. Em 2026-10-22: os 7 DOI correspondem aos estudos citados e a página do eNeuro abre (Kim, Chen & Mather, 2025). Falta só clicar uma vez em cada botão no navegador, porque as editoras bloqueiam a leitura automática.
 
 ## 2. Página Creators (antiga Contributors)
 
@@ -51,7 +51,7 @@ Registo de tudo o que foi feito nesta frente de trabalho (outubro de 2026), para
 
 - Push do commit `4eb8ba7` no repositório do site (tira os 800 € do texto Sobre).
 - O PDF do título de residência (`assets/images/benchmark/`) foi removido do repositório e de todo o histórico (o histórico foi reescrito e enviado com push forçado). O GitHub ainda serve o commit antigo `49669de` pelo endereço direto até o suporte apagar os objetos órfãos: ver o pedido em "Remover dados sensíveis" no suporte do GitHub.
-- "Hoje tenho 23 anos e vivo há 4 fora do Brasil" vai ficar desatualizado. Alternativa: "vivo fora do Brasil desde 2022".
+- ~~"Hoje tenho 23 anos e vivo há 4 fora do Brasil"~~ — feito em 2026-10-22: "Vivo fora do Brasil desde 2022", nos cinco idiomas.
 - Idiomas: as páginas Creators, da história, Ciência e Leituras estão 100% em pt, en, es, it e ru. Os títulos originais dos artigos científicos e os nomes das revistas ficam no idioma original, como em qualquer citação.
-- O desenho do preview foi verificado só em janelas estreitas ou baixas. Confirmar no telemóvel e no desktop largo, nos temas claro e escuro, principalmente o modo fixo da linha do tempo.
+- ~~Confirmar a linha do tempo no telemóvel e no desktop largo~~ — verificado em 2026-10-22 (390, 1440 e 2560 px; claro e escuro): modo fixo ativo, sem erros nem scroll horizontal. Nota de desenho: no desktop fica muito espaço vazio entre o cabeçalho e a linha.
 - Decidir se a página Ciência deve ser indexada pelo Google (hoje não é).

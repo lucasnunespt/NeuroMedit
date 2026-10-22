@@ -200,7 +200,7 @@ window.NeuroMeditTranslations = {
     "story_c8_p2": "El principio es el mismo desde la infancia: reducir el ruido para devolver la presencia.",
     "story_c8_title": "NeuroMedit",
     "story_cw_label": "2022–hoy",
-    "story_cw_p1": "Hoy tengo 23 años y llevo 4 viviendo fuera de Brasil. Seguí construyéndome lejos de donde nací: en los idiomas que hablo, en las personas que conozco, en los lugares por los que paso.",
+    "story_cw_p1": "Vivo fuera de Brasil desde 2022. Seguí construyéndome lejos de donde nací: en los idiomas que hablo, en las personas que conozco, en los lugares por los que paso.",
     "story_cw_title": "Lejos de Brasil",
     "story_cx_label": "2022–hoy",
     "story_cx_p1": "España, Francia, Italia y Portugal me construyeron, y me siguen construyendo. Cada país, cada conversación, cada álbum de alguien que acabo de conocer: un chileno, un colombiano, un español, un italiano, un francés, un napolitano.",

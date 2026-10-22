@@ -170,12 +170,14 @@
     return "idle";
   }
 
-  // O botão da pausa fica fixo ao lado do botão Retomar (que passa a ser o "play").
+  // Com a sessão pausada, a partilha fica à esquerda do botão Retomar:
+  // à direita dele está o Sair, na zona do polegar.
   function placeNextToPause(button) {
     if (!pauseButton || pauseButton.hidden) return;
     const rect = pauseButton.getBoundingClientRect();
     const size = button.offsetHeight || 44;
-    button.style.left = `${Math.round(rect.right + 8)}px`;
+    const width = button.offsetWidth || size;
+    button.style.left = `${Math.round(rect.left - 8 - width)}px`;
     button.style.top = `${Math.round(rect.top + (rect.height - size) / 2)}px`;
   }
 

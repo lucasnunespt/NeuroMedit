@@ -65,7 +65,8 @@ service cloud.firestore {
         || (isSignedIn()
             && resource.data.userId == request.auth.uid
             && request.resource.data.estado == 'cancelada'
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'canceladoEm', 'reembolsoPedido']));
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'canceladoEm', 'reembolsoPedido', 'canceladoPor', 'motivo'])
+            && (!('motivo' in request.resource.data) || (request.resource.data.motivo is string && request.resource.data.motivo.size() <= 300)));
       allow delete: if isAdmin();
     }
 

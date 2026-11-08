@@ -455,13 +455,16 @@
         nota.textContent = semCusto
           ? (b.estado === "confirmada" ? `Faltam mais de ${st.cfg.cancelarAteHoras} horas: devolvo o sinal de ${euro(b.sinal)}.` : "Ainda não enviou o sinal, por isso não há nada a devolver.")
           : `Faltam menos de ${st.cfg.cancelarAteHoras} horas, por isso o sinal não é devolvido. Se preferir, posso remarcar uma vez.`;
+        const rot = document.createElement("label"); rot.className = "rotulo"; rot.textContent = "Quer contar o que aconteceu? (opcional)";
+        const motivo = document.createElement("textarea"); motivo.className = "campo"; motivo.rows = 2; motivo.maxLength = 300;
+        motivo.style.padding = "12px 16px"; motivo.style.minHeight = "0"; rot.append(motivo);
         const sim = document.createElement("button"); sim.type = "button"; sim.className = "btn btn--primary"; sim.textContent = "Sim, cancelar";
-        conf.append(nota, sim);
+        conf.append(nota, rot, sim);
         btn.addEventListener("click", () => { conf.hidden = !conf.hidden; btn.textContent = conf.hidden ? "Preciso cancelar" : "Não, manter a sessão"; });
         sim.addEventListener("click", async () => {
           sim.disabled = true;
           try {
-            await updateDoc(doc(db, "bookings", b.id), { estado: "cancelada", canceladoEm: serverTimestamp(), reembolsoPedido: semCusto && b.estado === "confirmada" });
+            await updateDoc(doc(db, "bookings", b.id), { estado: "cancelada", canceladoEm: serverTimestamp(), canceladoPor: "pessoa", motivo: motivo.value.trim(), reembolsoPedido: semCusto && b.estado === "confirmada" });
             await deleteDoc(doc(db, "slots", b.slotId)).catch(() => {});
             card.innerHTML = "";
             const p = document.createElement("p"); p.className = "nota";

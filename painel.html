@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel · NeuroMedit</title>
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+  <style>
+    /* Só tokens do design system NeuroMedit. */
+    body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text);
+      background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); line-height: 1.5; }
+    .painel { box-sizing: border-box; max-width: 560px; margin: 0 auto; padding: 48px 24px; }
+    .painel h1 { margin: 0 0 16px; font-size: 2.6rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+    .painel p { margin: 0 0 24px; font-size: 1.12rem; line-height: 1.75; color: var(--text-soft); }
+    .painel-btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--control-height);
+      padding: 0 var(--button-pad-x); border-radius: var(--radius-pill); border: 1px solid transparent;
+      font: inherit; font-size: 1rem; cursor: pointer; text-decoration: none; }
+    .painel-btn--primary { background: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    .painel-btn--secondary { background: transparent; color: var(--text); border-color: var(--line); }
+    .painel-btn:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="painel" aria-live="polite">
+    <section data-estado="a-verificar">
+      <p>Um momento…</p>
+    </section>
+
+    <section data-estado="sem-login" hidden>
+      <h1>Painel</h1>
+      <p>Esta página é só para o Lucas. Entre com a sua conta Google.</p>
+      <button type="button" class="painel-btn painel-btn--primary" data-entrar>Entrar com Google</button>
+    </section>
+
+    <section data-estado="sem-acesso" hidden>
+      <h1>Sem acesso</h1>
+      <p>Esta conta não tem acesso ao painel. Se quer marcar uma sessão, a página é outra.</p>
+      <a class="painel-btn painel-btn--primary" href="home.html">Ir para o início</a>
+      <button type="button" class="painel-btn painel-btn--secondary" data-sair>Sair</button>
+    </section>
+
+    <section data-estado="admin" hidden>
+      <h1>Olá, <span data-nome>Lucas</span>.</h1>
+      <p>Você entrou no painel. Aqui vão entrar o Início, a Agenda, o Dinheiro e os Ajustes.</p>
+      <button type="button" class="painel-btn painel-btn--secondary" data-sair>Sair</button>
+    </section>
+  </main>
+
+  <script type="module">
+    import { watchPainel, entrar, sair } from "./painel-guard.js";
+    const secoes = document.querySelectorAll("[data-estado]");
+    watchPainel((estado, user) => {
+      secoes.forEach((s) => { s.hidden = s.dataset.estado !== estado; });
+      if (estado === "admin" && user?.displayName) {
+        document.querySelector("[data-nome]").textContent = user.displayName.split(" ")[0];
+      }
+    });
+    document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));
+    document.querySelectorAll("[data-sair]").forEach((b) => b.addEventListener("click", () => sair()));
+  </script>
+</body>
+</html>

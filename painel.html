@@ -87,6 +87,33 @@
       .ag-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
     }
     @media (min-width: 1100px) { .shell:has(.ag-layout) { max-width: 980px; } }
+
+    /* Ajustes */
+    .aj-titulo { margin: 0 0 4px; font-size: 1.1rem; font-weight: 600; color: var(--text); }
+    .aj-linha { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .aj-linha .muted { margin: 0; }
+    .aj-switch { flex: none; position: relative; width: 52px; height: 32px; padding: 0; border-radius: var(--radius-pill);
+      border: 1px solid var(--line); background: var(--surface-strong); }
+    .aj-switch span { position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--text-soft); }
+    .aj-switch[aria-checked="true"] { background: var(--accent); border-color: transparent; }
+    .aj-switch[aria-checked="true"] span { left: 23px; background: var(--button-text); }
+    .aj-grelha { display: grid; gap: 16px; }
+    .aj-campo-rot { display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; color: var(--text-soft); }
+    .aj-campo { box-sizing: border-box; width: 100%; min-height: var(--control-height); padding: 0 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line); background: var(--surface-strong); color: var(--text); font: inherit; font-size: 1rem; color-scheme: dark; }
+    .aj-campo:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+    .aj-semana { display: grid; gap: 8px; margin-top: 16px; }
+    .aj-dia { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) minmax(0, 0.8fr); gap: 8px; align-items: center; }
+    .aj-dia span { color: var(--text); }
+    .aj-dia select[hidden] { display: block !important; visibility: hidden; }
+    .aj-locais { display: grid; gap: 4px; margin-top: 12px; }
+    .aj-check { display: flex; align-items: center; gap: 12px; min-height: 44px; color: var(--text); }
+    .aj-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+    .ag-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    @media (min-width: 720px) {
+      .aj-grelha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .aj-largo { grid-column: 1 / -1; }
+    }
     /* Navegação: 4 destinos. Embaixo no celular e no tablet, na lateral a partir de 1100px. */
     .nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-strong);
@@ -182,6 +209,7 @@
           </div>
           <p class="muted" style="margin-top: 16px;" data-ag-nota></p>
           <p class="muted ag-resumo" data-ag-resumo></p>
+          <div class="ag-acoes"><button type="button" class="btn btn--secondary" data-ag-preencher>Preencher com a semana padrão</button></div>
           <p class="ag-estado" data-ag-estado aria-live="polite"></p>
         </div>
       </div>
@@ -193,13 +221,83 @@
       <p class="lead">Aqui vai ficar o resumo do mês: só o que entrou, as sessões feitas e o que falta receber.</p>
     </main>
 
-    <main class="shell" data-sec-painel="ajustes" hidden>
+    <main class="shell" data-sec-painel="ajustes" hidden data-ajustes>
+      <p class="kicker">Só você vê isto. Tudo fica guardado sozinho.</p>
       <h1>Ajustes</h1>
-      <p class="lead">Preços, sinal, MB Way, regras e locais vão ficar aqui.</p>
-      <div class="card">
-        <div class="item"><span>Conta</span><span data-email></span></div>
+      <p class="ag-estado" data-aj-estado aria-live="polite"></p>
+
+      <div class="card aj-linha">
+        <div><p class="aj-titulo">Receber pedidos</p><p class="muted" data-aj-switch-nota></p></div>
+        <button type="button" class="aj-switch" role="switch" aria-checked="true" aria-label="Receber pedidos" data-aj-switch><span></span></button>
       </div>
-      <div class="bloco"><button type="button" class="btn btn--secondary" data-sair>Sair do painel</button></div>
+
+      <div class="bloco">
+        <p class="label">Disponibilidade</p>
+        <div class="card">
+          <p class="aj-titulo">Semana padrão</p>
+          <p class="muted">Como é a sua semana tipo. Na Agenda, "Preencher com a semana padrão" usa isto.</p>
+          <div class="aj-semana" data-aj-semana></div>
+        </div>
+        <div class="card">
+          <p class="aj-titulo">Tempo de deslocação</p>
+          <p class="muted">Tempo livre entre duas sessões, para chegar de um sítio ao outro.</p>
+          <div class="ag-tipos" style="margin-top: 16px;">
+            <button type="button" class="pill" data-aj-desl="30" aria-pressed="false">30 min</button>
+            <button type="button" class="pill" data-aj-desl="60" aria-pressed="false">1 hora</button>
+            <button type="button" class="pill" data-aj-desl="120" aria-pressed="false">2 horas</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Valores</p>
+        <div class="card aj-grelha">
+          <label class="aj-campo-rot">Sessão avulsa (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="precoAvulsa"></label>
+          <label class="aj-campo-rot">Pacote de 3 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote3"></label>
+          <label class="aj-campo-rot">Pacote de 4 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote4"></label>
+          <label class="aj-campo-rot">Desconto de lançamento (%)<input class="aj-campo" type="number" min="0" max="100" step="1" inputmode="numeric" data-aj="descontoLancamento"></label>
+          <label class="aj-campo-rot">Desconto válido até<input class="aj-campo" type="date" data-aj="descontoAte"></label>
+          <p class="muted aj-largo" data-aj-resumo></p>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Pagamento</p>
+        <div class="card aj-grelha">
+          <label class="aj-campo-rot">Sinal (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="sinal"></label>
+          <label class="aj-campo-rot">MB Way<input class="aj-campo" type="tel" data-aj="mbway"></label>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Regras</p>
+        <div class="card aj-grelha">
+          <label class="aj-campo-rot">Duração da sessão (min)<input class="aj-campo" type="number" min="15" step="5" inputmode="numeric" data-aj="duracao"></label>
+          <label class="aj-campo-rot">Cancelar sem custo até (horas antes)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="cancelarAteHoras"></label>
+          <label class="aj-campo-rot">Validade do pacote (meses)<input class="aj-campo" type="number" min="1" step="1" inputmode="numeric" data-aj="validadePacoteMeses"></label>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Locais</p>
+        <div class="card"><p class="muted">Onde aceita sessões. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div></div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Avisos</p>
+        <div class="card aj-grelha">
+          <label class="aj-campo-rot">E-mail para avisos<input class="aj-campo" type="email" data-aj="emailAvisos"></label>
+          <label class="aj-campo-rot">WhatsApp<input class="aj-campo" type="tel" data-aj="whatsapp"></label>
+        </div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Conta</p>
+        <div class="card">
+          <div class="item"><span>Entrou como</span><span data-email></span></div>
+          <button type="button" class="btn btn--secondary" style="margin-top: 16px;" data-sair>Sair do painel</button>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -207,6 +305,7 @@
     import { watchPainel, entrar, sair, pedidosPendentes } from "./painel-guard.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
     import { iniciarAgenda } from "./painel-agenda.js";
+    import { iniciarAjustes } from "./painel-ajustes.js";
     let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
@@ -253,7 +352,7 @@
         document.querySelector("[data-email]").textContent = user?.email || "";
         mostrarSecao();
         carregarPedidos();
-        if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); }
+        if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); }
       }
     });
     document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));

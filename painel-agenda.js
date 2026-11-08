@@ -7,6 +7,7 @@
  * As mudanças ficam guardadas sozinhas, 600 ms depois do último toque.
  */
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
+import { lerSemanaPadrao } from "./painel-ajustes.js";
 
 const H0 = 6, H1 = 21;              // roda de horas: 06:00 a 21:00
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -45,7 +46,8 @@ export function iniciarAgenda(raiz) {
     estado: raiz.querySelector("[data-ag-estado]"),
     resumo: raiz.querySelector("[data-ag-resumo]"),
     ant: raiz.querySelector("[data-ag-ant]"),
-    seg: raiz.querySelector("[data-ag-seg]")
+    seg: raiz.querySelector("[data-ag-seg]"),
+    preencher: raiz.querySelector("[data-ag-preencher]")
   };
 
   // ---------- roda de horas (scroll com encaixe; setas do teclado mudam uma hora)
@@ -151,6 +153,18 @@ export function iniciarAgenda(raiz) {
     const k = b.dataset.agTipo;
     definir(k === "from" ? { k: "from", h: (tipoDe(st.sel).h || rodaHora || 19) } : { k });
   }));
+  el.preencher.addEventListener("click", async () => {
+    if (!st.carregado) return;
+    const semana = await lerSemanaPadrao();
+    const nDias = new Date(st.ano, st.mes + 1, 0).getDate();
+    for (let n = 1; n <= nDias; n++) {
+      if (passado(n)) continue;
+      const d = semana[(new Date(st.ano, st.mes, n).getDay() + 6) % 7] || { k: "none" };
+      if (d.k === "none") delete st.dias[n]; else st.dias[n] = { ...d };
+    }
+    desenhar();
+    guardar();
+  });
   el.ant.addEventListener("click", () => mudarMes(-1));
   el.seg.addEventListener("click", () => mudarMes(1));
   function mudarMes(d) {

@@ -1,7 +1,8 @@
 /**
  * painel-dinheiro.js — o que entrou no mês. Só entradas, sem despesas.
  *
- * Conta: sinais recebidos (menos os devolvidos) + o restante das sessões feitas.
+ * Conta: sinais que ficaram (recebidos menos devolvidos) + o restante das sessões feitas.
+ * Atualiza sozinho: o painel escuta os pedidos em tempo real e chama desenhar() a cada mudança.
  * Por receber: o restante das sessões confirmadas que ainda não aconteceram.
  */
 import { euro } from "./reservas-dados.js";
@@ -35,9 +36,9 @@ export function iniciarDinheiro(raiz, obterLista) {
     const total = sinais - devolvido + restante;
     $("[data-din-total]").textContent = euro(total);
     $("[data-din-linhas]").innerHTML = [
-      ["Sinais recebidos", euro(sinais)],
+      ["Sinais que ficaram", euro(sinais - devolvido)],
       ["Pago na hora", euro(restante)],
-      ["Sinais devolvidos", devolvido ? "−" + euro(devolvido) : euro(0)]
+      ["Sinais recebidos e já devolvidos", devolvido ? `${euro(devolvido)} (não contam)` : euro(0)]
     ].map(([a, b]) => `<div class="item"><span>${a}</span><span>${b}</span></div>`).join("");
     $("[data-din-sessoes]").innerHTML = [
       ["Feitas", cont.realizada],

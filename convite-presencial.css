@@ -1,0 +1,15 @@
+/* convite-presencial.css — o cartão "Se quiser, podemos meditar juntos" no fim da meditação.
+   Mesmo desenho do SessionCard do design system NeuroMedit. Só tokens. */
+.convite-presencial { box-sizing: border-box; width: 100%; max-width: 560px; margin: 24px auto 0; text-align: left; }
+.convite-presencial__card { display: block; padding: 1.6rem; border-radius: var(--radius-lg); background: var(--surface);
+  border: 1px solid var(--line); box-shadow: var(--shadow-card), var(--glass-highlight); color: var(--text); text-decoration: none; }
+.convite-presencial__card:hover { background: var(--surface-strong); border-color: var(--accent); }
+.convite-presencial__card:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 4px; }
+.convite-presencial__meta { margin: 0 0 0.9rem; font-size: 0.84rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-dark); }
+.convite-presencial__titulo { margin: 0 0 0.8rem; font-size: 1.2rem; line-height: 1.2; font-weight: 600; letter-spacing: -0.03em; }
+.convite-presencial__texto { margin: 0; max-width: 40ch; font-size: 1rem; line-height: 1.7; color: var(--text-soft); }
+.convite-presencial__seta { display: inline-flex; margin-top: 1.1rem; color: var(--accent-dark); }
+.convite-presencial__seta svg { width: 20px; height: 20px; }
+.convite-presencial__agora-nao { display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; padding: 0 8px;
+  background: none; border: 0; color: var(--text-soft); font: inherit; font-size: 0.95rem; cursor: pointer; }
+.convite-presencial__agora-nao:hover, .convite-presencial__agora-nao:focus-visible { color: var(--text); }

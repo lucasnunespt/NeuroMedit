@@ -95,6 +95,12 @@
     .pedido-nome { margin: 0 0 2px; font-size: 1.2rem; font-weight: 600; letter-spacing: -0.03em; }
     .pedido .muted { margin: 0; }
     .pedido-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .pedido-meta { margin-bottom: 4px; }
+    .pedido-motivo { margin-top: 6px !important; font-family: var(--font-serif); font-style: italic; color: var(--text); }
+    .pedido-cancelar { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .rotulo-campo { display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; color: var(--text-soft); }
+    .campo-texto { box-sizing: border-box; width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--line);
+      background: var(--surface-strong); color: var(--text); font: inherit; font-size: 1rem; resize: vertical; color-scheme: dark; }
     .din-total { margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
 
     /* Ajustes */
@@ -185,6 +191,11 @@
       <div class="bloco">
         <p class="label">Próximas sessões</p>
         <div class="card" data-proximas><p class="muted">Carregando…</p></div>
+      </div>
+
+      <div class="bloco">
+        <p class="label">Sessões canceladas</p>
+        <div class="card" data-canceladas><p class="muted">Carregando…</p></div>
         <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
       </div>
     </main>
@@ -328,7 +339,7 @@
   </div>
 
   <script type="module">
-    import { watchPainel, entrar, sair, todosPedidos } from "./painel-guard.js";
+    import { watchPainel, entrar, sair, ouvirPedidos } from "./painel-guard.js";
     import { desenharPedidos } from "./painel-pedidos.js";
     import { iniciarDinheiro } from "./painel-dinheiro.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
@@ -352,17 +363,32 @@
 
     let lista = [];
     let desenharDinheiro = null;
-    async function carregarPedidos() {
-      lista = await todosPedidos();
-      desenharPedidos(document.querySelector("[data-pedidos]"), document.querySelector("[data-proximas]"), lista, carregarPedidos);
+    let pararEscuta = null;
+    function desenharTudo() {
+      desenharPedidos(document.querySelector("[data-pedidos]"), document.querySelector("[data-proximas]"), document.querySelector("[data-canceladas]"), lista);
       if (!desenharDinheiro) desenharDinheiro = iniciarDinheiro(document.querySelector("[data-dinheiro]"), () => lista);
       desenharDinheiro();
     }
+    function carregarPedidos() {
+      if (pararEscuta) return;
+      pararEscuta = ouvirPedidos((l) => { lista = l; desenharTudo(); });
+      setInterval(desenharTudo, 60000); // "Como correu?" aparece sozinho quando a hora da sessão passa
+    }
 
-    const hoje = new Date();
-    document.querySelector("[data-hoje]").textContent =
-      hoje.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
-    document.querySelector("[data-visao]").textContent = mensagemDoDia(hoje);
+    let diaMostrado = "";
+    function atualizarDia() {
+      const agora = new Date();
+      const chave = agora.toDateString();
+      if (chave === diaMostrado) return;
+      diaMostrado = chave;
+      document.querySelector("[data-hoje]").textContent =
+        agora.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
+      document.querySelector("[data-visao]").textContent = mensagemDoDia(agora);
+      if (lista) desenharTudo();
+    }
+    atualizarDia();
+    setInterval(atualizarDia, 60000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizarDia(); });
 
     watchPainel((estado, user) => {
       estados.forEach((s) => { s.hidden = s.dataset.estado !== estado; });

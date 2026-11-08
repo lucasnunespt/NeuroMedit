@@ -6,7 +6,7 @@
  * Este ficheiro só decide o que a página mostra: entrar, sem acesso ou painel.
  */
 import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc, getDoc } from "./firebase-init.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 async function isAdmin(user) {
   if (!user) return false;
@@ -50,4 +50,11 @@ export async function todosPedidos() {
   } catch (err) {
     return null;
   }
+}
+
+/** Escuta os pedidos em tempo real: onLista(lista) a cada mudança, onLista(null) se falhar. Devolve a função para parar. */
+export function ouvirPedidos(onLista) {
+  return onSnapshot(collection(db, "bookings"),
+    (snap) => onLista(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    () => onLista(null));
 }

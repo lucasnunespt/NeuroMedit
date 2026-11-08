@@ -19,6 +19,52 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ---------- Painel do Lucas (sessão presencial) ----------
+    // Admin = quem tem um documento em /admins/{uid}.
+    // Esse documento só se cria à mão na consola do Firebase:
+    // nenhuma pessoa consegue tornar-se admin a partir do site.
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      // Cada pessoa só consegue perguntar "sou admin?" sobre si própria.
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Pedidos de sessão: a pessoa vê e cria só os seus; o Lucas vê e gere todos.
+    match /bookings/{bookingId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.estado == 'pedida';
+      // A pessoa só pode mudar o seu pedido para "cancelada"; o resto é do Lucas.
+      allow update: if isAdmin()
+        || (isSignedIn()
+            && resource.data.userId == request.auth.uid
+            && request.resource.data.userId == resource.data.userId
+            && request.resource.data.estado == 'cancelada');
+      allow delete: if isAdmin();
+    }
+
+    // Disponibilidade por mês: todos leem meses publicados; só o Lucas escreve.
+    match /availability/{monthId} {
+      allow read: if isAdmin() || resource.data.publicado == true;
+      allow write: if isAdmin();
+    }
+
+    // Preços, sinal, regras, locais: leitura pública, escrita só do Lucas.
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     function isValidRating(data) {
       return data.keys().hasAll(['meditationId', 'stars', 'createdAt'])
         && data.keys().hasOnly(['meditationId', 'stars', 'comment', 'createdAt'])

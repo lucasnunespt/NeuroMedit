@@ -88,6 +88,15 @@
     }
     @media (min-width: 1100px) { .shell:has(.ag-layout) { max-width: 980px; } }
 
+    /* Pedidos e Dinheiro */
+    .pedido { padding: 12px 0 16px; border-bottom: 1px solid var(--line); }
+    .pedido:last-child { border-bottom: 0; padding-bottom: 0; }
+    .pedido:first-child { padding-top: 0; }
+    .pedido-nome { margin: 0 0 2px; font-size: 1.2rem; font-weight: 600; letter-spacing: -0.03em; }
+    .pedido .muted { margin: 0; }
+    .pedido-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .din-total { margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+
     /* Ajustes */
     .aj-titulo { margin: 0 0 4px; font-size: 1.1rem; font-weight: 600; color: var(--text); }
     .aj-linha { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -172,6 +181,12 @@
         <p class="label">À espera de você</p>
         <div class="card" data-pedidos><p class="muted">Carregando…</p></div>
       </div>
+
+      <div class="bloco">
+        <p class="label">Próximas sessões</p>
+        <div class="card" data-proximas><p class="muted">Carregando…</p></div>
+        <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
+      </div>
     </main>
 
     <main class="shell" data-sec-painel="agenda" hidden data-agenda>
@@ -215,10 +230,21 @@
       </div>
     </main>
 
-    <main class="shell" data-sec-painel="dinheiro" hidden>
-      <p class="kicker">Em construção</p>
-      <h1>Dinheiro</h1>
-      <p class="lead">Aqui vai ficar o resumo do mês: só o que entrou, as sessões feitas e o que falta receber.</p>
+    <main class="shell" data-sec-painel="dinheiro" hidden data-dinheiro>
+      <p class="kicker">Só o que entrou. Sem despesas.</p>
+      <div class="ag-topo">
+        <button type="button" class="ag-seta" data-din-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <h1 data-din-mes>Dinheiro</h1>
+        <button type="button" class="ag-seta" data-din-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="card">
+        <p class="din-total" data-din-total>—</p>
+        <p class="muted" style="margin: 4px 0 12px;">entrou neste mês</p>
+        <div data-din-linhas></div>
+      </div>
+      <div class="bloco"><p class="label">Sessões</p><div class="card" data-din-sessoes></div></div>
+      <div class="bloco"><p class="label">Ainda por receber</p><div class="card"><div class="item"><span>Restante das sessões confirmadas</span><span data-din-receber>—</span></div></div></div>
+      <p class="muted" style="margin-top: 16px;" data-din-nota></p>
     </main>
 
     <main class="shell" data-sec-painel="ajustes" hidden data-ajustes>
@@ -302,7 +328,9 @@
   </div>
 
   <script type="module">
-    import { watchPainel, entrar, sair, pedidosPendentes } from "./painel-guard.js";
+    import { watchPainel, entrar, sair, todosPedidos } from "./painel-guard.js";
+    import { desenharPedidos } from "./painel-pedidos.js";
+    import { iniciarDinheiro } from "./painel-dinheiro.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
     import { iniciarAgenda } from "./painel-agenda.js";
     import { iniciarAjustes } from "./painel-ajustes.js";
@@ -322,22 +350,13 @@
     }
     window.addEventListener("hashchange", mostrarSecao);
 
-    function quando(p) {
-      return [p.data, p.hora].filter(Boolean).join(" · ");
-    }
+    let lista = [];
+    let desenharDinheiro = null;
     async function carregarPedidos() {
-      const caixa = document.querySelector("[data-pedidos]");
-      const lista = await pedidosPendentes();
-      if (lista === null) { caixa.innerHTML = '<p class="muted">Não consegui ler os pedidos agora. Tente de novo daqui a pouco.</p>'; return; }
-      if (lista.length === 0) { caixa.innerHTML = '<p class="muted">Nada por agora. Quando alguém pedir uma sessão, aparece aqui.</p>'; return; }
-      caixa.textContent = "";
-      lista.forEach((p) => {
-        const linha = document.createElement("div");
-        linha.className = "item";
-        const a = document.createElement("span"); a.textContent = p.nome || "Pedido";
-        const b = document.createElement("span"); b.textContent = quando(p) || p.estado;
-        linha.append(a, b); caixa.append(linha);
-      });
+      lista = await todosPedidos();
+      desenharPedidos(document.querySelector("[data-pedidos]"), document.querySelector("[data-proximas]"), lista, carregarPedidos);
+      if (!desenharDinheiro) desenharDinheiro = iniciarDinheiro(document.querySelector("[data-dinheiro]"), () => lista);
+      desenharDinheiro();
     }
 
     const hoje = new Date();

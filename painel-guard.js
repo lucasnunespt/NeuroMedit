@@ -6,7 +6,7 @@
  * Este ficheiro só decide o que a página mostra: entrar, sem acesso ou painel.
  */
 import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc, getDoc } from "./firebase-init.js";
-import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 async function isAdmin(user) {
   if (!user) return false;
@@ -42,13 +42,12 @@ export function sair() {
   return signOut(auth);
 }
 
-/** Pedidos que esperam por uma ação do Lucas (só funciona para admin, pelas regras). */
-export async function pedidosPendentes() {
+/** Todos os pedidos (só funciona para admin, pelas regras). null = não foi possível ler. */
+export async function todosPedidos() {
   try {
-    const q = query(collection(db, "bookings"), where("estado", "in", ["pedida", "reembolso", "remarcacao"]));
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, "bookings"));
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch (err) {
-    return null; // null = não foi possível ler
+    return null;
   }
 }

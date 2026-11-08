@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Meditação presencial com o Lucas · NeuroMedit</title>
+  <meta name="description" content="Sessões individuais de meditação de 30 minutos em Lisboa, com o Lucas, criador do NeuroMedit.">
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+  <style>
+    /* Reserva da sessão presencial: uma conversa com o Lucas. Só tokens do design system NeuroMedit. */
+    body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
+      background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); }
+    a { color: var(--link-text); }
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+    .conversa { box-sizing: border-box; max-width: 560px; margin: 0 auto; padding: 24px var(--gutter) 64px; display: flex; flex-direction: column; gap: 10px; }
+    .quem { display: flex; align-items: center; gap: 12px; min-height: 44px; margin-bottom: 14px; }
+    .orbe { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+      background: radial-gradient(circle at center, var(--surface-strong), transparent 62%), var(--surface); box-shadow: var(--shadow-card); }
+    .quem p { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
+    .bolha { max-width: 88%; box-sizing: border-box; padding: 12px 16px; font-size: 1rem; line-height: 1.7; color: var(--text);
+      background: var(--surface-strong); border: 1px solid var(--line); box-shadow: var(--glass-highlight);
+      border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-chip); }
+    .minha { align-self: flex-end; background: var(--accent); color: var(--button-text); border-color: transparent;
+      border-radius: var(--radius-md) var(--radius-md) var(--radius-chip) var(--radius-md); }
+    .card { box-sizing: border-box; width: 100%; padding: 20px 16px; border-radius: var(--radius-lg); background: var(--surface);
+      border: 1px solid var(--line); box-shadow: var(--shadow-card), var(--glass-highlight); }
+    .linha { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .linha:last-child { border-bottom: 0; }
+    .linha span:last-child { text-align: right; }
+    .antes { color: var(--text-soft); text-decoration: line-through; margin-right: 6px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: var(--control-height); padding: 0 var(--button-pad-x);
+      border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 1rem; text-decoration: none; text-align: center; }
+    .btn--primary { background: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    .btn--secondary { background: transparent; color: var(--text); border-color: var(--line); }
+    .btn--link { background: transparent; color: var(--text-soft); }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .acoes { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; margin-top: 16px; }
+    .topo-cal { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .topo-cal p { flex: 1; margin: 0; text-align: center; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
+    .seta { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: var(--radius-pill);
+      border: 1px solid var(--line); background: var(--surface); color: var(--text-soft); }
+    .seta svg { width: 22px; height: 22px; }
+    .semana, .grelha { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+    .semana span { text-align: center; font-size: 0.78rem; color: var(--text-soft); }
+    .dia { height: 48px; padding: 0; border-radius: var(--radius-chip); border: 1px solid transparent; background: transparent;
+      color: var(--text-soft); opacity: 0.5; }
+    .dia.tem { background: var(--surface-strong); border-color: var(--accent); color: var(--text); font-weight: 600; opacity: 1; }
+    .dia.sel { background: var(--accent); color: var(--button-text); border-color: transparent; opacity: 1; }
+    .opcoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; }
+    .pill { min-height: var(--control-height); padding: 6px 8px; border-radius: var(--radius-pill); border: 1px solid var(--line);
+      background: transparent; color: var(--text); font-size: 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .pill small { font-size: 0.85rem; color: inherit; opacity: 0.85; }
+    .pill[aria-pressed="true"] { background: var(--accent); color: var(--button-text); border-color: transparent; box-shadow: var(--shadow-soft); }
+    .campo { box-sizing: border-box; width: 100%; min-height: var(--control-height); padding: 0 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line); background: var(--surface-strong); color: var(--text); font-size: 1rem; }
+    .rotulo { display: flex; flex-direction: column; gap: 6px; width: 100%; color: var(--text-soft); font-size: 0.95rem; }
+    .nota { margin: 0; font-size: 0.9rem; color: var(--text-soft); }
+    .erro { color: var(--exit); }
+  </style>
+</head>
+<body>
+  <main class="conversa" aria-live="polite">
+    <div class="quem"><div class="orbe" aria-hidden="true"></div><p>Lucas</p></div>
+
+    <div data-passo="a-carregar"><div class="bolha">Um momento…</div></div>
+
+    <!-- Pausa -->
+    <div data-passo="pausa" hidden style="display: contents;">
+      <div class="bolha">Neste momento não estou recebendo novos pedidos de sessão presencial.</div>
+      <div class="bolha">Se quiser falar comigo, escreva no <a data-wa href="#">WhatsApp</a>. Respondo assim que puder.</div>
+    </div>
+
+    <!-- Convite -->
+    <div data-passo="convite" hidden style="display: contents;">
+      <div class="bolha">Que bom ter você aqui. Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</div>
+      <div class="bolha">Podemos nos encontrar num destes lugares: <span data-locais></span>. Escolhemos juntos.</div>
+      <div class="bolha" data-desconto hidden></div>
+      <div class="card" data-precos></div>
+      <div class="bolha">Para confirmar o horário, peço um sinal de <span data-sinal>€4</span>, que entra no valor. Você paga por MB Way, e o restante na hora.</div>
+      <div class="bolha">Até <span data-horas>24</span> horas antes, você pode cancelar sem custo e eu devolvo o sinal. Se faltar sem avisar, o sinal não é devolvido.</div>
+      <div class="bolha">É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
+    </div>
+
+    <!-- Entrar -->
+    <div data-passo="entrar" hidden style="display: contents;">
+      <div class="bolha">Para reservar, preciso só que você entre com a sua conta Google. Assim os seus dados e as suas sessões ficam guardados.</div>
+      <div class="acoes"><button type="button" class="btn btn--primary" data-entrar>Entrar com Google</button></div>
+    </div>
+
+    <!-- Escolher -->
+    <div data-passo="escolher" hidden style="display: contents;">
+      <div data-minhas hidden style="display: contents;"></div>
+      <div class="bolha">Estes são os dias em que posso receber você. Escolha o que for melhor.</div>
+      <div class="card">
+        <div class="topo-cal">
+          <button type="button" class="seta" data-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <p data-mes></p>
+          <button type="button" class="seta" data-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+        <div class="semana" aria-hidden="true"><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
+        <div class="grelha" data-grelha></div>
+      </div>
+      <div class="bolha" data-sem-dias hidden>Ainda não há dias livres neste mês. Veja o mês seguinte, ou fale comigo no <a data-wa href="#">WhatsApp</a>.</div>
+
+      <div data-horas-bloco hidden style="display: contents;">
+        <div class="bolha" data-dia-frase></div>
+        <div class="opcoes" data-horas-lista></div>
+      </div>
+
+      <div data-plano-bloco hidden style="display: contents;">
+        <div class="bolha minha" data-escolha></div>
+        <div class="bolha">Combinado. Quantas sessões você quer reservar?</div>
+        <div class="opcoes" data-planos></div>
+        <div class="bolha" data-plano-nota></div>
+        <div class="bolha">Onde prefere?</div>
+        <label class="rotulo">Lugar<select class="campo" data-local></select></label>
+        <div class="bolha">E o seu WhatsApp? É por ele que posso falar com você se precisar.</div>
+        <label class="rotulo">Telefone (WhatsApp)<input class="campo" type="tel" autocomplete="tel" data-tel placeholder="+351 …"></label>
+        <p class="nota">Ao pedir, você concorda com as regras de cancelamento acima. Uso estes dados só para cuidar das suas sessões.</p>
+        <p class="nota erro" data-erro></p>
+        <div class="acoes">
+          <button type="button" class="btn btn--primary" data-pedir>Pedir esta sessão</button>
+          <a class="btn btn--link" data-wa href="#">Prefiro conversar antes</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pedido feito -->
+    <div data-passo="feito" hidden style="display: contents;">
+      <div class="bolha minha" data-feito-resumo></div>
+      <div class="bolha">Recebi o seu pedido. Obrigado.</div>
+      <div class="bolha" data-feito-sinal></div>
+      <div class="bolha">Quando o sinal chegar, confirmo o horário. Se não chegar em 24 horas, o horário volta a ficar livre para outra pessoa.</div>
+      <div class="acoes">
+        <a class="btn btn--primary" data-mbway-wa href="#">Avisar pelo WhatsApp que enviei</a>
+        <button type="button" class="btn btn--link" data-ver-minhas>Ver as minhas sessões</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, doc } from "./firebase-init.js";
+    import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, chaveMes, pad2, euro } from "./reservas-dados.js";
+
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => document.querySelectorAll(s);
+    const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    const SEMANA = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+    const hoje = new Date();
+    const st = { cfg: null, p: null, user: null, ano: hoje.getFullYear(), mes: hoje.getMonth(), agenda: {}, ocupados: new Set(), dia: null, hora: null, plano: 1 };
+
+    function mostrar(...passos) {
+      $$("[data-passo]").forEach((el) => { el.hidden = !passos.includes(el.dataset.passo); });
+    }
+    function waLink(texto) {
+      const n = (st.cfg?.whatsapp || "+351 933 594 881").replace(/\D/g, "");
+      return `https://wa.me/${n}?text=${encodeURIComponent(texto)}`;
+    }
+
+    // ---------- convite
+    function desenharConvite() {
+      const c = st.cfg, p = st.p;
+      $("[data-duracao]").textContent = c.duracao;
+      const locais = Object.keys(c.locais || {}).filter((k) => c.locais[k]).map((k) => k.toLowerCase());
+      $("[data-locais]").textContent = locais.length ? locais.join(", ") : "um lugar a combinar";
+      $("[data-sinal]").textContent = euro(c.sinal);
+      $("[data-horas]").textContent = c.cancelarAteHoras;
+      if (p.desconto) {
+        const ate = p.ate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
+        $("[data-desconto]").textContent = `Até ${ate} tenho um preço de lançamento: ${p.desconto}% de desconto para quem reservar.`;
+        $("[data-desconto]").hidden = false;
+      }
+      $("[data-precos]").innerHTML = p.planos.map((pl) =>
+        `<div class="linha"><span>${pl.nome}</span><span>${pl.antes ? `<span class="antes">${euro(pl.antes)}</span>` : ""}${euro(pl.valor)}</span></div>`
+      ).join("") + `<div class="linha"><span>Pacotes válidos por</span><span>${c.validadePacoteMeses} meses</span></div>`;
+      $$("[data-wa]").forEach((a) => { a.href = waLink("Olá, Lucas! Gostaria de saber mais sobre a meditação presencial."); a.target = "_blank"; a.rel = "noopener"; });
+    }
+
+    // ---------- calendário
+    async function carregarMes() {
+      $("[data-mes]").textContent = `${cap(MESES[st.mes])} ${st.ano}`;
+      $("[data-grelha]").textContent = "";
+      [st.agenda, st.ocupados] = await Promise.all([lerAgenda(st.ano, st.mes), lerOcupados(st.ano, st.mes)]);
+      st.dia = null; st.hora = null;
+      $("[data-horas-bloco]").hidden = true; $("[data-plano-bloco]").hidden = true;
+      desenharMes();
+    }
+    function desenharMes() {
+      const g = $("[data-grelha]"); g.textContent = "";
+      const nDias = new Date(st.ano, st.mes + 1, 0).getDate();
+      const vazios = (new Date(st.ano, st.mes, 1).getDay() + 6) % 7;
+      for (let i = 0; i < vazios; i++) g.append(document.createElement("span"));
+      let algum = false;
+      for (let n = 1; n <= nDias; n++) {
+        const livres = horasLivres({ ano: st.ano, mes: st.mes, dia: n, agenda: st.agenda, ocupados: st.ocupados, cfg: st.cfg });
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = n;
+        b.className = "dia" + (livres.length ? " tem" : "") + (n === st.dia ? " sel" : "");
+        b.disabled = !livres.length;
+        b.setAttribute("aria-label", `${n} de ${MESES[st.mes]}, ${livres.length ? livres.length + " horários livres" : "sem horários"}`);
+        if (livres.length) { algum = true; b.addEventListener("click", () => escolherDia(n, livres)); }
+        g.append(b);
+      }
+      $("[data-sem-dias]").hidden = algum;
+      const mHoje = hoje.getFullYear() * 12 + hoje.getMonth(), mAtual = st.ano * 12 + st.mes;
+      $("[data-ant]").disabled = mAtual <= mHoje;
+      $("[data-seg]").disabled = mAtual >= mHoje + 2;
+    }
+    function escolherDia(n, livres) {
+      st.dia = n; st.hora = null; desenharMes();
+      const wd = SEMANA[new Date(st.ano, st.mes, n).getDay()];
+      const d = st.agenda[n];
+      $("[data-dia-frase]").textContent = `Na ${wd}, dia ${n}, ` + (d.k === "free" ? "estou livre o dia todo." : `consigo a partir das ${pad2(d.h)}:00.`) + " Que horas ficam melhor?";
+      const lista = $("[data-horas-lista]"); lista.textContent = "";
+      livres.forEach((h) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "pill"; b.textContent = `${pad2(h)}:00`; b.setAttribute("aria-pressed", "false");
+        b.addEventListener("click", () => escolherHora(h));
+        lista.append(b);
+      });
+      $("[data-horas-bloco]").hidden = false; $("[data-plano-bloco]").hidden = true;
+      $("[data-horas-lista]").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    function escolherHora(h) {
+      st.hora = h;
+      $$("[data-horas-lista] .pill").forEach((b) => b.setAttribute("aria-pressed", b.textContent === `${pad2(h)}:00` ? "true" : "false"));
+      const wd = SEMANA[new Date(st.ano, st.mes, st.dia).getDay()];
+      $("[data-escolha]").textContent = `${cap(wd)}, ${st.dia} de ${MESES[st.mes]}, às ${pad2(h)}:00`;
+      desenharPlanos();
+      $("[data-plano-bloco]").hidden = false;
+      $("[data-escolha]").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    function desenharPlanos() {
+      const box = $("[data-planos]"); box.textContent = "";
+      st.p.planos.forEach((pl) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "pill"; b.setAttribute("aria-pressed", pl.n === st.plano ? "true" : "false");
+        b.innerHTML = `<small>${pl.nome}</small>${euro(pl.valor)}`;
+        b.addEventListener("click", () => { st.plano = pl.n; desenharPlanos(); });
+        box.append(b);
+      });
+      const pl = st.p.planos.find((x) => x.n === st.plano);
+      $("[data-plano-nota]").textContent = pl.n === 1
+        ? `Uma sessão individual de ${st.cfg.duracao} minutos: ${euro(pl.valor)}. O restante na hora: ${euro(pl.valor - st.cfg.sinal)}.`
+        : `O pacote de ${pl.n} sessões custa ${euro(pl.valor)}. Este é o horário da primeira; as outras combinamos por mensagem.`;
+      const sel = $("[data-local]");
+      if (!sel.options.length) {
+        Object.keys(st.cfg.locais || {}).filter((k) => st.cfg.locais[k]).forEach((k) => sel.append(new Option(k, k)));
+        sel.append(new Option("Combinamos depois", "A combinar"));
+      }
+    }
+
+    // ---------- pedir
+    async function pedir() {
+      const erro = $("[data-erro]"); erro.textContent = "";
+      const tel = $("[data-tel]").value.trim();
+      if (tel.replace(/\D/g, "").length < 9) { erro.textContent = "Escreva o seu número de WhatsApp, por favor."; $("[data-tel]").focus(); return; }
+      const pl = st.p.planos.find((x) => x.n === st.plano);
+      const data = chaveDia(st.ano, st.mes, st.dia), hora = `${pad2(st.hora)}:00`;
+      const slotId = `${data}_${pad2(st.hora)}`;
+      const bRef = doc(collection(db, "bookings"));
+      const lote = writeBatch(db);
+      lote.set(doc(db, "slots", slotId), { uid: st.user.uid, bookingId: bRef.id });
+      lote.set(bRef, {
+        userId: st.user.uid, nome: st.user.displayName || "", email: st.user.email || "", telefone: tel,
+        data, hora, slotId, plano: pl.n, valor: pl.valor, sinal: st.cfg.sinal, local: $("[data-local]").value,
+        estado: "pedida", criado: serverTimestamp()
+      });
+      $("[data-pedir]").disabled = true;
+      try {
+        await lote.commit();
+      } catch (e) {
+        $("[data-pedir]").disabled = false;
+        erro.textContent = "Este horário acabou de ser reservado por outra pessoa, ou houve um problema de ligação. Escolha outro, por favor.";
+        await carregarMes();
+        return;
+      }
+      $("[data-feito-resumo]").textContent = `${$("[data-escolha]").textContent} · ${pl.nome} · ${euro(pl.valor)}`;
+      $("[data-feito-sinal]").textContent = `Para confirmar, envie o sinal de ${euro(st.cfg.sinal)} por MB Way para o ${st.cfg.mbway}.`;
+      const a = $("[data-mbway-wa]");
+      a.href = waLink(`Olá, Lucas! Pedi a sessão de ${$("[data-escolha]").textContent} e enviei o sinal de ${euro(st.cfg.sinal)} por MB Way.`);
+      a.target = "_blank"; a.rel = "noopener";
+      mostrar("feito");
+      window.scrollTo(0, 0);
+    }
+
+    // ---------- as minhas sessões
+    async function desenharMinhas() {
+      const box = $("[data-minhas]");
+      let lista = [];
+      try {
+        const snap = await getDocs(query(collection(db, "bookings"), where("userId", "==", st.user.uid)));
+        lista = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
+          .filter((b) => ["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date())
+          .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
+      } catch (e) { lista = []; }
+      box.textContent = "";
+      if (!lista.length) { box.hidden = true; return; }
+      const intro = document.createElement("div"); intro.className = "bolha";
+      intro.textContent = lista.length === 1 ? "Você já tem uma sessão comigo:" : "Você já tem estas sessões comigo:";
+      box.append(intro);
+      lista.forEach((b) => {
+        const quando = new Date(`${b.data}T${b.hora}`);
+        const card = document.createElement("div"); card.className = "card";
+        const titulo = `${cap(SEMANA[quando.getDay()])}, ${quando.getDate()} de ${MESES[quando.getMonth()]}, às ${b.hora}`;
+        card.innerHTML = `<div class="linha"><span>${titulo}</span><span>${b.estado === "pedida" ? "à espera do sinal" : "confirmada"}</span></div>`;
+        const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn btn--secondary"; btn.style.marginTop = "12px";
+        btn.textContent = "Preciso cancelar";
+        const conf = document.createElement("div"); conf.hidden = true; conf.style.marginTop = "12px";
+        const horasAntes = (quando - new Date()) / 3600000;
+        const semCusto = horasAntes >= st.cfg.cancelarAteHoras;
+        conf.innerHTML = `<p class="nota">${semCusto
+          ? (b.estado === "confirmada" ? `Faltam mais de ${st.cfg.cancelarAteHoras} horas: devolvo o sinal de ${euro(b.sinal)}.` : "Ainda não enviou o sinal, por isso não há nada a devolver.")
+          : `Faltam menos de ${st.cfg.cancelarAteHoras} horas, por isso o sinal não é devolvido. Se preferir remarcar, fale comigo no WhatsApp.`}</p>`;
+        const sim = document.createElement("button"); sim.type = "button"; sim.className = "btn btn--primary"; sim.style.marginTop = "12px";
+        sim.textContent = "Sim, cancelar";
+        conf.append(sim);
+        btn.addEventListener("click", () => { conf.hidden = !conf.hidden; });
+        sim.addEventListener("click", async () => {
+          sim.disabled = true;
+          try {
+            await updateDoc(doc(db, "bookings", b.id), { estado: "cancelada", canceladoEm: serverTimestamp(), reembolsoPedido: semCusto && b.estado === "confirmada" });
+            await deleteDoc(doc(db, "slots", b.slotId)).catch(() => {});
+            card.innerHTML = `<p class="nota">Sessão cancelada. Tudo bem, acontece. ${semCusto && b.estado === "confirmada" ? "Faço a devolução do sinal assim que puder." : ""}</p>`;
+            carregarMes();
+          } catch (e) {
+            sim.disabled = false;
+            conf.querySelector(".nota").textContent = "Não consegui cancelar agora. Tente de novo, ou fale comigo no WhatsApp.";
+          }
+        });
+        card.append(btn, conf);
+        box.append(card);
+      });
+      box.hidden = false;
+    }
+
+    // ---------- arranque
+    $("[data-entrar]").addEventListener("click", () => {
+      const p = new GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" });
+      signInWithPopup(auth, p).catch(() => {});
+    });
+    $("[data-ant]").addEventListener("click", () => { const d = new Date(st.ano, st.mes - 1, 1); st.ano = d.getFullYear(); st.mes = d.getMonth(); carregarMes(); });
+    $("[data-seg]").addEventListener("click", () => { const d = new Date(st.ano, st.mes + 1, 1); st.ano = d.getFullYear(); st.mes = d.getMonth(); carregarMes(); });
+    $("[data-pedir]").addEventListener("click", pedir);
+    $("[data-ver-minhas]").addEventListener("click", async () => { mostrar("convite", "escolher"); await desenharMinhas(); await carregarMes(); $("[data-minhas]").scrollIntoView({ behavior: "smooth" }); });
+
+    st.cfg = await lerAjustes();
+    st.p = precos(st.cfg);
+    desenharConvite();
+    if (!st.cfg.receberPedidos) {
+      mostrar("pausa");
+    } else {
+      onAuthStateChanged(auth, async (user) => {
+        st.user = user;
+        if (!user) { mostrar("convite", "entrar"); return; }
+        mostrar("convite", "escolher");
+        await desenharMinhas();
+        await carregarMes();
+      });
+    }
+  </script>
+</body>
+</html>

@@ -37,19 +37,35 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Horários ocupados: um documento por horário (AAAA-MM-DD_HH). Leitura pública,
+    // sem dados pessoais. Como o ID é o horário, duas pessoas não reservam o mesmo.
+    match /slots/{slotId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'bookingId'])
+        && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
     // Pedidos de sessão: a pessoa vê e cria só os seus; o Lucas vê e gere todos.
     match /bookings/{bookingId} {
       allow read: if isAdmin()
         || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.estado == 'pedida';
-      // A pessoa só pode mudar o seu pedido para "cancelada"; o resto é do Lucas.
+        && request.resource.data.estado == 'pedida'
+        && !('sinalRecebido' in request.resource.data)
+        && request.resource.data.valor is number
+        && request.resource.data.sinal is number
+        && getAfter(/databases/$(database)/documents/slots/$(request.resource.data.slotId)).data.uid == request.auth.uid;
+      // A pessoa só pode cancelar o seu pedido; o resto é do Lucas.
       allow update: if isAdmin()
         || (isSignedIn()
             && resource.data.userId == request.auth.uid
-            && request.resource.data.userId == resource.data.userId
-            && request.resource.data.estado == 'cancelada');
+            && request.resource.data.estado == 'cancelada'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'canceladoEm', 'reembolsoPedido']));
       allow delete: if isAdmin();
     }
 

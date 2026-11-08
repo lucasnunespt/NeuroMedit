@@ -37,6 +37,56 @@
     .btn--primary { background: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
     .btn--secondary { background: transparent; color: var(--text); border-color: var(--line); }
 
+
+    /* Agenda */
+    .ag-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .ag-topo h1 { margin: 0; flex: 1; }
+    .ag-seta { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: var(--radius-pill);
+      border: 1px solid var(--line); background: var(--surface); color: var(--text-soft); }
+    .ag-seta svg { width: 22px; height: 22px; }
+    .ag-layout { display: grid; gap: 24px; }
+    .ag-cal { padding: 20px 16px; }
+    .ag-semana, .ag-grelha { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+    .ag-semana { margin-bottom: 4px; }
+    .ag-semana span { text-align: center; font-size: 0.78rem; color: var(--text-soft); }
+    .dia { height: 52px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: var(--radius-chip); border: 1px solid transparent; background: transparent; color: var(--text-soft); }
+    .dia span { font-size: 1rem; line-height: 1.1; }
+    .dia small { font-size: 0.68rem; line-height: 1; margin-top: 3px; min-height: 0.68rem; }
+    .dia--free { background: var(--surface-strong); border-color: var(--accent); color: var(--text); font-weight: 600; }
+    .dia--from { background: var(--surface-strong); border-color: var(--line); color: var(--text); }
+    .dia--none { opacity: 0.6; }
+    .dia.is-passado { opacity: 0.35; }
+    .dia.is-sel { background: var(--accent); border-color: transparent; color: var(--button-text); font-weight: 600; opacity: 1; }
+    .ag-legenda { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+    .ag-legenda span { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--text-soft); }
+    .sw { display: inline-grid; place-items: center; min-width: 18px; height: 18px; border-radius: var(--radius-chip);
+      font-style: normal; font-size: 0.68rem; padding: 0 3px; box-sizing: border-box; }
+    .sw--free { background: var(--surface-strong); border: 1px solid var(--accent); }
+    .sw--from { background: var(--surface-strong); border: 1px solid var(--line); color: var(--text); }
+    .sw--none { border: 1px solid var(--line); }
+    .ag-tipos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .pill { min-height: var(--control-height); padding: 6px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line);
+      background: transparent; color: var(--text); font-size: 0.95rem; line-height: 1.25; }
+    .pill[aria-pressed="true"] { background: var(--accent); color: var(--button-text); border-color: transparent; box-shadow: var(--shadow-soft); }
+    .pill:disabled { opacity: 0.45; cursor: default; }
+    .ag-roda { position: relative; height: 240px; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain;
+      border-radius: var(--radius-md); background: var(--surface-strong); border: 1px solid var(--line); box-shadow: var(--glass-highlight);
+      scrollbar-width: none; -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent); }
+    .ag-roda::-webkit-scrollbar { display: none; }
+    .ag-roda ul { list-style: none; margin: 0; padding: 96px 0; }
+    .ag-roda li { height: 48px; display: flex; align-items: center; justify-content: center; scroll-snap-align: center;
+      font-size: 1.1rem; color: var(--text); opacity: 0.28; cursor: pointer; }
+    .ag-roda li.perto { opacity: 0.55; }
+    .ag-roda li.on { opacity: 1; font-size: 1.6rem; font-weight: 600; }
+    .ag-roda-caixa { position: relative; }
+    .ag-resumo { margin-top: 16px; color: var(--text); }
+    .ag-estado { margin: 8px 0 0; font-size: 0.9rem; color: var(--accent-dark); min-height: 1.4em; }
+    @media (min-width: 720px) {
+      .ag-layout { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; }
+    }
+    @media (min-width: 1100px) { .shell:has(.ag-layout) { max-width: 980px; } }
     /* Navegação: 4 destinos. Embaixo no celular e no tablet, na lateral a partir de 1100px. */
     .nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-strong);
@@ -97,10 +147,44 @@
       </div>
     </main>
 
-    <main class="shell" data-sec-painel="agenda" hidden>
-      <p class="kicker">Em construção</p>
-      <h1>Agenda</h1>
-      <p class="lead">Aqui vai ficar o calendário: cada dia Livre, A partir de certa hora ou Indisponível, com a roda de horas.</p>
+    <main class="shell" data-sec-painel="agenda" hidden data-agenda>
+      <p class="kicker">Toque num dia para dizer quando está livre.</p>
+      <div class="ag-topo">
+        <button type="button" class="ag-seta" data-ag-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <h1 data-ag-mes>Agenda</h1>
+        <button type="button" class="ag-seta" data-ag-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+
+      <div class="ag-layout">
+        <div class="card ag-cal">
+          <div class="ag-semana" aria-hidden="true"><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
+          <div class="ag-grelha" data-ag-grelha></div>
+          <div class="ag-legenda">
+            <span><i class="sw sw--free"></i>Livre</span>
+            <span><i class="sw sw--from">19h</i>A partir da hora</span>
+            <span><i class="sw sw--none"></i>Indisponível</span>
+          </div>
+        </div>
+
+        <div class="ag-painel">
+          <p class="label" data-ag-dia></p>
+          <div class="ag-tipos">
+            <button type="button" class="pill" data-ag-tipo="free" aria-pressed="false">Livre</button>
+            <button type="button" class="pill" data-ag-tipo="from" aria-pressed="false">A partir de…</button>
+            <button type="button" class="pill" data-ag-tipo="none" aria-pressed="false">Indisponível</button>
+          </div>
+          <div class="ag-roda-caixa" hidden>
+            <p class="label" style="margin-top: 24px;">A partir de que horas?</p>
+            <div class="ag-roda" data-ag-roda role="slider" tabindex="0" aria-label="Hora" aria-valuemin="6" aria-valuemax="21">
+              <ul data-ag-roda-lista></ul>
+            </div>
+            <p class="muted" style="margin-top: 8px;">Deslize para cima ou para baixo, ou toque numa hora.</p>
+          </div>
+          <p class="muted" style="margin-top: 16px;" data-ag-nota></p>
+          <p class="muted ag-resumo" data-ag-resumo></p>
+          <p class="ag-estado" data-ag-estado aria-live="polite"></p>
+        </div>
+      </div>
     </main>
 
     <main class="shell" data-sec-painel="dinheiro" hidden>
@@ -122,6 +206,8 @@
   <script type="module">
     import { watchPainel, entrar, sair, pedidosPendentes } from "./painel-guard.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
+    import { iniciarAgenda } from "./painel-agenda.js";
+    let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
     const secoes = document.querySelectorAll("[data-sec-painel]");
@@ -167,6 +253,7 @@
         document.querySelector("[data-email]").textContent = user?.email || "";
         mostrarSecao();
         carregarPedidos();
+        if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); }
       }
     });
     document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));

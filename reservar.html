@@ -24,8 +24,17 @@
       padding-top: max(16px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 12px; min-height: 60px; }
     .orbe { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
       background: radial-gradient(circle at center, var(--surface-strong), transparent 62%), var(--surface); box-shadow: var(--shadow-card); }
+    .orbe { display: grid; place-items: center; color: var(--text); }
+    .orbe svg { width: 26px; height: 26px; }
+    .topo-acoes { display: flex; align-items: center; gap: 4px; }
+    .topo-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; border-radius: var(--radius-pill);
+      border: 1px solid transparent; background: transparent; color: var(--text-soft); font-size: 0.95rem; text-decoration: none; }
+    .topo-link:hover { color: var(--text); border-color: var(--line); }
+    .progresso { box-sizing: border-box; width: 100%; max-width: 560px; margin: 0 auto; padding: 4px var(--gutter) 0;
+      font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-dark); min-height: 1.2em; }
+    .passo:focus { outline: none; }
+    .titulo-passo { margin: 0 0 6px; font-size: 1.6rem; line-height: 1.2; font-weight: 600; letter-spacing: -0.03em; }
     .topo strong { flex: 1; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
-    .topo a { display: inline-flex; align-items: center; min-height: 44px; font-size: 0.95rem; color: var(--text-soft); text-decoration: none; }
 
     .passo { box-sizing: border-box; width: 100%; max-width: 560px; margin: 0 auto; padding: 16px var(--gutter) 24px;
       display: flex; flex-direction: column; gap: 10px; flex: 1; }
@@ -56,7 +65,7 @@
     .barra { position: sticky; bottom: 0; z-index: 5; box-sizing: border-box; width: 100%; max-width: 560px; margin: 0 auto;
       padding: 16px var(--gutter); padding-bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; align-items: center; gap: 12px; background: linear-gradient(to bottom, transparent, var(--bg-soft) 40%); }
-    .voltar { flex: none; display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border-radius: var(--radius-pill);
+    .voltar { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 50px; height: 50px; padding: 0 18px 0 12px; border-radius: var(--radius-pill);
       border: 1px solid var(--line); background: var(--surface-strong); color: var(--text-soft); box-shadow: var(--shadow-soft); }
     .voltar svg { width: 22px; height: 22px; }
     .barra .btn--primary { flex: 1; }
@@ -88,29 +97,35 @@
     /* tablet e acima: o passo dos dias abre em duas colunas */
     @media (min-width: 720px) {
       .passo[data-passo="dias"] { max-width: 860px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
-      .passo[data-passo="dias"] + .barra, body.largo .barra, body.largo .topo { max-width: 860px; }
+      body.largo .barra, body.largo .topo, body.largo .progresso { max-width: 860px; }
       .passo { padding-top: 32px; }
     }
   </style>
 </head>
 <body>
   <header class="topo">
-    <div class="orbe" aria-hidden="true"></div>
+    <div class="orbe" aria-hidden="true">
+      <svg viewBox="0 0 200 200" fill="none"><polyline points="52,40 52,150 98,150 98,62 148,150 148,40" stroke="currentColor" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><g fill="var(--accent)"><circle cx="52" cy="40" r="12"/><circle cx="52" cy="150" r="12"/><circle cx="98" cy="150" r="12"/><circle cx="98" cy="62" r="12"/><circle cx="148" cy="150" r="12"/><circle cx="148" cy="40" r="15"/></g></svg>
+    </div>
     <strong>Lucas</strong>
-    <a href="#minhas" data-link-minhas hidden>As minhas sessões</a>
+    <div class="topo-acoes" data-topo-conta hidden>
+      <a href="#minhas" class="topo-link">As minhas sessões</a>
+      <button type="button" class="topo-link" data-sair>Sair</button>
+    </div>
   </header>
+  <p class="progresso" data-progresso aria-live="polite"></p>
 
   <main id="conteudo" aria-live="polite" style="display: contents;">
-    <section class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
+    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
 
-    <section class="passo" data-passo="pausa" hidden>
+    <section tabindex="-1" class="passo" data-passo="pausa" hidden>
       <div class="bolha">Neste momento não estou recebendo novos pedidos de sessão presencial.</div>
       <div class="bolha">Se quiser falar comigo, é só escrever. Respondo assim que puder.</div>
       <div class="empilhar"><a class="btn btn--secondary" data-wa href="#">Falar no WhatsApp</a></div>
     </section>
 
-    <section class="passo" data-passo="convite" hidden>
-      <div class="bolha">Que bom ter você aqui. Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</div>
+    <section tabindex="-1" class="passo" data-passo="convite" hidden>
+      <div class="bolha"><span data-ola>Que bom ter você aqui.</span> Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</div>
       <div class="bolha">Podemos nos encontrar num destes lugares: <span data-locais></span>. Escolhemos juntos.</div>
       <div class="bolha" data-desconto hidden></div>
       <div class="card" data-precos></div>
@@ -120,13 +135,13 @@
       <div class="bolha">Quer ver quando estou livre?</div>
     </section>
 
-    <section class="passo" data-passo="entrar" hidden>
+    <section tabindex="-1" class="passo" data-passo="entrar" hidden>
       <div class="bolha">Para reservar, preciso só que você entre com a sua conta Google.</div>
       <div class="bolha">Assim os seus dados e as suas sessões ficam guardados, e você não precisa preencher nada de novo da próxima vez.</div>
       <p class="nota erro" data-erro-entrar></p>
     </section>
 
-    <section class="passo" data-passo="dias" hidden>
+    <section tabindex="-1" class="passo" data-passo="dias" hidden>
       <div class="dias-col">
         <div class="bolha">Estes são os dias em que posso receber você. Escolha o que for melhor.</div>
         <div class="card">
@@ -148,7 +163,7 @@
       </div>
     </section>
 
-    <section class="passo" data-passo="detalhes" hidden>
+    <section tabindex="-1" class="passo" data-passo="detalhes" hidden>
       <div class="bolha minha" data-escolha></div>
       <div class="bolha">Combinado. Quantas sessões você quer reservar?</div>
       <div class="opcoes" data-planos></div>
@@ -161,7 +176,7 @@
       <p class="nota erro" data-erro></p>
     </section>
 
-    <section class="passo" data-passo="feito" hidden>
+    <section tabindex="-1" class="passo" data-passo="feito" hidden>
       <div class="bolha minha" data-feito-resumo></div>
       <div class="bolha">Recebi o seu pedido. Obrigado.</div>
       <div class="bolha" data-feito-sinal></div>
@@ -169,18 +184,23 @@
       <div class="empilhar"><a class="btn btn--secondary" data-mbway-wa href="#">Avisar pelo WhatsApp que enviei</a></div>
     </section>
 
-    <section class="passo" data-passo="minhas" hidden>
+    <section tabindex="-1" class="passo" data-passo="minhas" hidden>
+      <h1 class="titulo-passo" data-minhas-ola>As suas sessões</h1>
       <div class="bolha" data-minhas-intro>Um momento…</div>
       <div class="empilhar" data-minhas-lista></div>
+      <div data-minhas-antes hidden style="display: contents;">
+        <p class="progresso" style="padding: 16px 0 0;">Antes</p>
+        <div class="card" data-minhas-antes-lista></div>
+      </div>
     </section>
 
-    <section class="passo" data-passo="politica" hidden>
+    <section tabindex="-1" class="passo" data-passo="politica" hidden>
       <div class="bolha">Deixo tudo claro para nós dois.</div>
       <div class="card"><ul class="lista-regras" data-regras></ul></div>
       <div class="bolha">E se não estiver bem no dia da sessão, é só me dizer. Cuidar de você vem primeiro.</div>
     </section>
 
-    <section class="passo" data-passo="contato" hidden>
+    <section tabindex="-1" class="passo" data-passo="contato" hidden>
       <div class="bolha">Prefere conversar antes? Sem problema.</div>
       <div class="bolha">Escolha o canal que for mais fácil para você. Já deixei uma mensagem escrita; pode mudar o texto antes de enviar.</div>
       <div class="empilhar">
@@ -191,12 +211,12 @@
   </main>
 
   <nav class="barra" aria-label="Navegação da reserva">
-    <button type="button" class="voltar" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button type="button" class="voltar" data-voltar><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-voltar-texto>Voltar</span></button>
     <button type="button" class="btn btn--primary" data-principal>Continuar</button>
   </nav>
 
   <script type="module">
-    import { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, doc } from "./firebase-init.js";
+    import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc } from "./firebase-init.js";
     import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro } from "./reservas-dados.js";
 
@@ -247,15 +267,15 @@
 
     // ---------- navegação por passos (o botão voltar do navegador também funciona)
     const PASSOS = {
-      convite:  { voltar: () => { location.href = "home.html"; }, rotuloVoltar: "Voltar ao início", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
-      entrar:   { voltar: "convite", principal: "Entrar com Google", acao: entrar },
-      dias:     { voltar: "convite", principal: "Continuar", acao: () => ir("detalhes"), ativo: () => st.hora != null },
-      detalhes: { voltar: "dias", principal: "Pedir esta sessão", acao: pedir },
-      feito:    { voltar: "convite", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
+      convite:  { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", progresso: "Passo 1 de 4 · Conhecer", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
+      entrar:   { voltar: "convite", progresso: "Passo 2 de 4 · Entrar", principal: "Entrar com Google", acao: entrar },
+      dias:     { voltar: "convite", progresso: "Passo 2 de 4 · Dia e hora", principal: "Continuar", acao: () => ir("detalhes"), ativo: () => st.hora != null },
+      detalhes: { voltar: "dias", progresso: "Passo 3 de 4 · Detalhes", principal: "Pedir esta sessão", acao: pedir },
+      feito:    { voltar: "convite", progresso: "Passo 4 de 4 · Pedido enviado", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
       minhas:   { voltar: "convite", principal: "Marcar outra sessão", acao: () => ir("dias") },
       politica: { voltar: "anterior", principal: "Entendi", acao: () => voltarAnterior() },
       contato:  { voltar: "anterior", principal: null },
-      pausa:    { voltar: () => { location.href = "home.html"; }, rotuloVoltar: "Voltar ao início", principal: null }
+      pausa:    { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", principal: null }
     };
     function ir(passo) { if (location.hash !== "#" + passo) location.hash = passo; else mostrar(); }
     function voltarAnterior() { ir(st.ultimo && st.ultimo !== location.hash.slice(1) ? st.ultimo : "convite"); }
@@ -276,8 +296,12 @@
       const pr = $("[data-principal]");
       pr.hidden = !cfg.principal;
       if (cfg.principal) { pr.textContent = cfg.principal; pr.disabled = cfg.ativo ? !cfg.ativo() : false; }
-      $("[data-voltar]").setAttribute("aria-label", cfg.rotuloVoltar || "Voltar");
+      $("[data-voltar]").setAttribute("aria-label", cfg.rotuloVoltar || "Voltar ao passo anterior");
+      $("[data-voltar-texto]").textContent = cfg.textoVoltar || "Voltar";
+      $("[data-progresso]").textContent = cfg.progresso || "";
       window.scrollTo(0, 0);
+      const sec = document.querySelector(`[data-passo="${passo}"]`);
+      if (st.atual && st.atual !== passo) sec?.focus({ preventScroll: true });
 
       if (passo === "dias") await prepararDias();
       if (passo === "detalhes") desenharDetalhes();
@@ -417,7 +441,6 @@
       a.href = waLink(`Olá, Lucas! Pedi a sessão de ${escolha} e enviei o sinal de ${euro(st.cfg.sinal)} por MB Way.`);
       a.target = "_blank"; a.rel = "noopener";
       st.mesCarregado = null; st.dia = null; st.hora = null;
-      $("[data-link-minhas]").hidden = false;
       ir("feito");
     }
 
@@ -425,17 +448,33 @@
     async function lerMinhas() {
       try {
         const snap = await getDocs(query(collection(db, "bookings"), where("userId", "==", st.user.uid)));
-        return snap.docs.map((d) => ({ id: d.id, ...d.data() }))
-          .filter((b) => ["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date())
-          .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
+        return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       } catch (e) { return null; }
     }
+    const ESTADO_ANTES = { realizada: "feita", falta: "não compareceu", cancelada: "cancelada", reembolsada: "cancelada, sinal devolvido", libertada: "não confirmada (sem sinal)" };
+    function desenharAnteriores(todas) {
+      const antes = todas.filter((b) => !(["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date()))
+        .sort((a, b) => (b.data + b.hora).localeCompare(a.data + a.hora)).slice(0, 10);
+      const box = $("[data-minhas-antes-lista]"); box.textContent = "";
+      antes.forEach((b) => {
+        const q = new Date(`${b.data}T${b.hora}`);
+        const l = document.createElement("div"); l.className = "linha";
+        const a = document.createElement("span"); a.textContent = `${q.getDate()} de ${MESES[q.getMonth()]}, ${b.hora}`;
+        const c = document.createElement("span"); c.textContent = ESTADO_ANTES[b.estado] || (b.estado === "confirmada" ? "feita" : b.estado);
+        l.append(a, c); box.append(l);
+      });
+      $("[data-minhas-antes]").hidden = !antes.length;
+    }
+
     async function desenharMinhas() {
       const intro = $("[data-minhas-intro]"), box = $("[data-minhas-lista]");
       intro.textContent = "Um momento…"; box.textContent = "";
-      const lista = await lerMinhas();
-      if (lista === null) { intro.textContent = "Não consegui ler as suas sessões agora. Tente de novo daqui a pouco."; return; }
-      if (!lista.length) { intro.textContent = "Ainda não tem nenhuma sessão marcada comigo."; return; }
+      const todas = await lerMinhas();
+      if (todas === null) { intro.textContent = "Não consegui ler as suas sessões agora. Tente de novo daqui a pouco."; return; }
+      desenharAnteriores(todas);
+      const lista = todas.filter((b) => ["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date())
+        .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
+      if (!lista.length) { intro.textContent = "Ainda não tem nenhuma sessão marcada comigo. Quando quiser, é só escolher um dia."; return; }
       intro.textContent = lista.length === 1 ? "Esta é a sua sessão comigo:" : "Estas são as suas sessões comigo:";
       lista.forEach((b) => {
         const quando = new Date(`${b.data}T${b.hora}`);
@@ -482,6 +521,12 @@
       });
     }
 
+    $("[data-sair]").addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) {}
+      st.dia = null; st.hora = null; st.feito = null;
+      ir("convite");
+    });
+
     // ---------- arranque
     st.cfg = await lerAjustes();
     st.p = precos(st.cfg);
@@ -489,7 +534,10 @@
     onAuthStateChanged(auth, async (user) => {
       const antes = st.user;
       st.user = user;
-      $("[data-link-minhas]").hidden = !user;
+      $("[data-topo-conta]").hidden = !user;
+      const primeiro = (user?.displayName || "").split(" ")[0];
+      $("[data-ola]").textContent = primeiro ? `Que bom ter você aqui, ${primeiro}.` : "Que bom ter você aqui.";
+      $("[data-minhas-ola]").textContent = primeiro ? `Olá, ${primeiro}.` : "As suas sessões";
       if (antes === undefined) { mostrar(); return; }
       if (user && st.atual === "entrar") ir("dias");
       else mostrar();

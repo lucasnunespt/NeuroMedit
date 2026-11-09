@@ -369,6 +369,13 @@
             Sair
           </button>
         </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <p class="setting-label">Meditação presencial</p>
+            <p class="setting-hint">As sessões que marcou comigo, em Lisboa.</p>
+          </div>
+          <a class="setting-ghost-btn" href="reservar.html#minhas" style="margin: 0; min-height: 38px; padding: 0.5rem 1rem; text-decoration: none; display: inline-flex; align-items: center;">As minhas sessões</a>
+        </div>
       `;
       document.getElementById("btn-signout")?.addEventListener("click", async () => {
         try {

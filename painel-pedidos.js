@@ -140,7 +140,7 @@ function desenharCanceladas(caixa, lista) {
   if (!canceladas.length) { caixa.append(el("p", "muted", "Nenhuma sessão cancelada.")); return; }
   canceladas.forEach((b) => {
     const item = el("div", "pedido");
-    const quem = b.estado === "libertada" ? "Libertada por si" : b.canceladoPor === "lucas" ? "Cancelada por si" : "Cancelada pela pessoa";
+    const quem = b.estado === "libertada" ? "Libertada por você" : b.canceladoPor === "lucas" ? "Cancelada por você" : "Cancelada pela pessoa";
     item.append(
       el("p", "label pedido-meta", quem),
       el("p", "pedido-nome", b.nome || b.email || "Sem nome"),

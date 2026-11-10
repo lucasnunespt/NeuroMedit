@@ -52,7 +52,6 @@
 .home-states .state-card:nth-of-type(2) { --card-accent: #b4925c; } /* Foco   */
 .home-states .state-card:nth-of-type(3) { --card-accent: #c77a4a; } /* Sono   */
 
-.home-presencial .state-card:nth-of-type(1) { --card-accent: var(--accent); } /* Presencial */
 
 /* mantém o texto acima do grafismo */
 .home-states .state-card > * { position: relative; z-index: 1; }
@@ -115,4 +114,45 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .closing-wave { animation: nmDrift 14s ease-in-out infinite; }
+}
+
+/* ---------------------------------------------------
+   FAIXA PRESENCIAL — convite largo e baixo para a sessão ao vivo.
+   Diferente dos cartões de meditação: ocupa a largura do conteúdo
+   e usa o acento como fundo. Só tokens (accent, button-text, bg-soft, text).
+--------------------------------------------------- */
+.home-presencial { padding: 1rem 0 3rem; }
+.presencial-faixa {
+  display: flex; align-items: center; gap: 1.6rem;
+  padding: 1.6rem;
+  border-radius: var(--radius-lg);
+  background: var(--accent);
+  color: var(--button-text);
+  --text-primary: var(--button-text); /* os títulos seguem a cor do texto da faixa em todos os temas */
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+}
+.home-presencial .presencial-faixa .presencial-faixa-texto > * { margin: 0; color: var(--button-text); }
+.home-presencial .presencial-faixa h2.presencial-faixa-titulo { font-size: 1.5rem; line-height: 1.25; }
+.presencial-faixa-simbolo { flex: none; width: 56px; height: 56px; padding: 8px; box-sizing: border-box; border-radius: var(--radius-pill); background: var(--luz-glow-core); box-shadow: var(--glass-highlight); }
+.presencial-faixa-texto { flex: 1; display: grid; gap: 0.3rem; min-width: 0; }
+.presencial-faixa-sinal { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.presencial-faixa-titulo { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
+.presencial-faixa-frase { line-height: 1.6; max-width: 62ch; }
+.presencial-faixa-acao {
+  flex: none; display: inline-flex; align-items: center; min-height: var(--control-height); padding: 0 var(--button-pad-x);
+  border-radius: var(--radius-pill); font-weight: 500; white-space: nowrap;
+  background: var(--accent-light);
+  color: var(--button-text);
+  box-shadow: var(--glass-highlight);
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.presencial-faixa:hover .presencial-faixa-acao { background: var(--accent-light-hover); }
+.presencial-faixa:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+@media (max-width: 640px) {
+  .presencial-faixa { flex-wrap: wrap; gap: 1rem; padding: 1.3rem; }
+  .presencial-faixa-simbolo { width: 44px; height: 44px; }
+  .presencial-faixa-texto { flex-basis: 100%; }
+  .home-presencial .presencial-faixa h2.presencial-faixa-titulo { font-size: 1.3rem; }
+  .presencial-faixa-acao { flex-basis: 100%; justify-content: center; }
 }

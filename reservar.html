@@ -67,7 +67,12 @@
     .voltar { flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 50px; height: 50px; padding: 0 18px 0 12px; border-radius: var(--radius-pill);
       border: 1px solid var(--line); background: var(--surface-strong); color: var(--text-soft); box-shadow: var(--shadow-soft); }
     .voltar svg { width: 22px; height: 22px; }
-    .barra .btn--primary { flex: 1; }
+    .barra .btn--primary, .barra .btn--google { flex: 1; }
+    /* Continuar com o Google: a mesma forma do botão da janela de conta (configurações), com o "G" oficial */
+    .btn--google { gap: 10px; background: var(--surface-strong); color: var(--text); border-color: var(--line); box-shadow: var(--shadow-soft); font-weight: 500; }
+    .btn--google img { width: 20px; height: 20px; flex: none; }
+    .btn--google span { white-space: nowrap; }
+    .voltar:has(span:empty) { padding: 0; }
 
     /* calendário e horas */
     .topo-cal { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
@@ -129,13 +134,20 @@
       <div class="bolha">Para confirmar o horário, peço um sinal de <span data-sinal>€4</span>, que entra no valor. Você paga por MB Way, e o restante na hora.</div>
       <div class="bolha">Cancelar e remarcar é simples. <a href="#politica">Veja como funciona</a>.</div>
       <div class="bolha">É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
+      <div class="bolha" data-aviso-conta hidden>Para reservar, você vai precisar de uma conta no NeuroMedit. É rápido: ela é criada com a sua conta Google.</div>
       <div class="bolha">Quer ver quando estou livre?</div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="entrar" hidden>
-      <div class="bolha">Para reservar, preciso só que você entre com a sua conta Google.</div>
-      <div class="bolha">Assim os seus dados e as suas sessões ficam guardados, e você não precisa preencher nada de novo da próxima vez.</div>
+      <div class="bolha">Obrigado pelo interesse. Para reservar um horário, você precisa de uma conta no NeuroMedit.</div>
+      <div class="bolha">Se ainda não tem, ela é criada agora, com a sua conta Google, sem senha nova. Se já tem, é só entrar.</div>
+      <div class="bolha">Assim as suas sessões ficam guardadas, e você não precisa preencher nada de novo da próxima vez.</div>
+      <div class="bolha" data-app-aviso hidden>Parece que você abriu este link dentro de outro aplicativo, como o WhatsApp ou o Instagram. O Google não deixa entrar por aqui. Abra a página no navegador do celular (Safari ou Chrome) e tente de novo.</div>
       <p class="nota erro" data-erro-entrar></p>
+      <div class="empilhar">
+        <button type="button" class="btn btn--secondary" data-copiar-link hidden>Copiar o link da página</button>
+        <a class="btn btn--link" href="#contato">Prefiro conversar antes</a>
+      </div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="dias" hidden>
@@ -216,6 +228,7 @@
     import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc } from "./firebase-init.js";
     import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro } from "./reservas-dados.js";
+    import { PADRAO } from "./painel-ajustes.js";
 
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
@@ -265,7 +278,7 @@
     // ---------- navegação por passos (o botão voltar do navegador também funciona)
     const PASSOS = {
       convite:  { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", progresso: "Passo 1 de 4 · Conhecer", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
-      entrar:   { voltar: "convite", progresso: "Passo 2 de 4 · Entrar", principal: "Entrar com Google", acao: entrar },
+      entrar:   { voltar: "convite", progresso: "Passo 2 de 4 · Sua conta", textoVoltar: "", principal: "Continuar com o Google", google: true, acao: entrar },
       dias:     { voltar: "convite", progresso: "Passo 2 de 4 · Dia e hora", principal: "Continuar", acao: () => ir("detalhes"), ativo: () => st.hora != null },
       detalhes: { voltar: "dias", progresso: "Passo 3 de 4 · Detalhes", principal: "Pedir esta sessão", acao: pedir },
       feito:    { voltar: "convite", progresso: "Passo 4 de 4 · Pedido enviado", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
@@ -292,9 +305,14 @@
       const cfg = PASSOS[passo];
       const pr = $("[data-principal]");
       pr.hidden = !cfg.principal;
-      if (cfg.principal) { pr.textContent = cfg.principal; pr.disabled = cfg.ativo ? !cfg.ativo() : false; }
+      pr.className = "btn " + (cfg.google ? "btn--google" : "btn--primary");
+      if (cfg.principal) {
+        if (cfg.google) pr.innerHTML = `<img src="assets/google-g.svg" alt="" width="20" height="20"><span>${cfg.principal}</span>`;
+        else pr.textContent = cfg.principal;
+        pr.disabled = cfg.ativo ? !cfg.ativo() : false;
+      }
       $("[data-voltar]").setAttribute("aria-label", cfg.rotuloVoltar || "Voltar ao passo anterior");
-      $("[data-voltar-texto]").textContent = cfg.textoVoltar || "Voltar";
+      $("[data-voltar-texto]").textContent = cfg.textoVoltar ?? "Voltar";
       $("[data-progresso]").textContent = cfg.progresso || "";
       window.scrollTo(0, 0);
       const sec = document.querySelector(`[data-passo="${passo}"]`);
@@ -316,10 +334,28 @@
     $("[data-principal]").addEventListener("click", () => PASSOS[st.atual]?.acao?.());
 
     // ---------- entrar
+    // Navegadores dentro de outros aplicativos (WhatsApp, Instagram, Facebook…): o Google bloqueia o login neles.
+    const emApp = /FBAN|FBAV|Instagram|WhatsApp|Line\/|Twitter|TikTok|musical_ly|; wv\)/i.test(navigator.userAgent);
+    $("[data-app-aviso]").hidden = !emApp;
+    $("[data-copiar-link]").hidden = !emApp;
+    $("[data-copiar-link]").addEventListener("click", async (ev) => {
+      const bt = ev.currentTarget, url = location.origin + location.pathname;
+      try { await navigator.clipboard.writeText(url); bt.textContent = "Link copiado. Cole no navegador."; }
+      catch (e) { bt.textContent = url; }
+    });
     async function entrar() {
+      const erro = $("[data-erro-entrar]"); erro.textContent = "";
       const p = new GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" });
       try { await signInWithPopup(auth, p); }
-      catch (e) { $("[data-erro-entrar]").textContent = "Não consegui abrir o login. Se o navegador bloqueou a janela, permita e tente de novo."; }
+      catch (e) {
+        const c = e?.code || "";
+        if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") erro.textContent = "Tudo bem. Quando quiser, é só tentar de novo.";
+        else if (c === "auth/popup-blocked") erro.textContent = "O navegador bloqueou a janela do Google. Permita janelas deste site e tente de novo.";
+        else if (c === "auth/network-request-failed") erro.textContent = "Parece que a ligação à internet falhou. Tente de novo daqui a pouco.";
+        else erro.textContent = emApp
+          ? "Não deu para entrar por aqui. Abra a página no navegador do celular e tente de novo."
+          : "Não consegui abrir o login. Tente de novo, ou fale comigo se continuar.";
+      }
     }
 
     // ---------- dias e horas
@@ -525,16 +561,25 @@
     });
 
     // ---------- arranque
-    st.cfg = await lerAjustes();
+    // Nunca ficar preso em "Um momento…": se a ligação demorar, seguimos com os valores padrão.
+    const comLimite = (promessa, ms, reserva) => Promise.race([promessa, new Promise((r) => setTimeout(() => r(reserva), ms))]);
+    st.cfg = await comLimite(lerAjustes(), 5000, { ...PADRAO });
     st.p = precos(st.cfg);
     preencherTextos();
-    onAuthStateChanged(auth, async (user) => {
-      const antes = st.user;
+    function aplicarConta(user) {
       st.user = user;
       $("[data-topo-conta]").hidden = !user;
+      $("[data-aviso-conta]").hidden = !!user;
       const primeiro = (user?.displayName || "").split(" ")[0];
       $("[data-ola]").textContent = primeiro ? `Que bom ter você aqui, ${primeiro}.` : "Que bom ter você aqui.";
       $("[data-minhas-ola]").textContent = primeiro ? `Olá, ${primeiro}.` : "As suas sessões";
+    }
+    // Se o estado da conta não chegar a tempo (navegação privada, bloqueadores), tratamos como visitante.
+    const semResposta = setTimeout(() => { if (st.user === undefined) { aplicarConta(null); mostrar(); } }, 4000);
+    onAuthStateChanged(auth, async (user) => {
+      clearTimeout(semResposta);
+      const antes = st.user;
+      aplicarConta(user);
       if (antes === undefined) { mostrar(); return; }
       if (user && st.atual === "entrar") ir("dias");
       else mostrar();

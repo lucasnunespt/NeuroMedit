@@ -112,7 +112,6 @@
     <strong>Lucas</strong>
     <div class="topo-acoes" data-topo-conta hidden>
       <a href="#minhas" class="topo-link">As minhas sessões</a>
-      <button type="button" class="topo-link" data-sair>Sair</button>
     </div>
   </header>
   <p class="progresso" data-progresso aria-live="polite"></p>
@@ -225,7 +224,7 @@
   </nav>
 
   <script type="module">
-    import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc } from "./firebase-init.js";
+    import { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, doc } from "./firebase-init.js";
     import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro } from "./reservas-dados.js";
     import { PADRAO } from "./painel-ajustes.js";
@@ -554,11 +553,6 @@
       });
     }
 
-    $("[data-sair]").addEventListener("click", async () => {
-      try { await signOut(auth); } catch (e) {}
-      st.dia = null; st.hora = null; st.feito = null;
-      ir("convite");
-    });
 
     // ---------- arranque
     // Nunca ficar preso em "Um momento…": se a ligação demorar, seguimos com os valores padrão.

@@ -167,6 +167,7 @@
       <button type="button" class="setting-ghost-btn" id="btn-disconnect">
         Restaurar configurações padrão
       </button>
+      <div id="settings-signout-slot"></div>
       <p class="settings-status" id="settings-status" role="status" aria-live="polite"></p>
     </section>
   </div>
@@ -365,9 +366,6 @@
             <p class="setting-label">Conta</p>
             <p class="setting-hint" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${user.email}">${user.email}</p>
           </div>
-          <button type="button" class="setting-ghost-btn" id="btn-signout" style="margin: 0; min-height: 38px; padding: 0.5rem 1rem;">
-            Sair
-          </button>
         </div>
         <div class="setting-row">
           <div class="setting-info">
@@ -377,6 +375,8 @@
           <a class="setting-ghost-btn" href="reservar.html#minhas" style="margin: 0; min-height: 38px; padding: 0.5rem 1rem; text-decoration: none; display: inline-flex; align-items: center;">As minhas sessões</a>
         </div>
       `;
+      const sairSlot = document.getElementById("settings-signout-slot");
+      if (sairSlot) sairSlot.innerHTML = `<button type="button" class="setting-ghost-btn" id="btn-signout">Sair da conta</button>`;
       document.getElementById("btn-signout")?.addEventListener("click", async () => {
         try {
           await signOut(auth);
@@ -385,6 +385,8 @@
         }
       });
     } else {
+      const sairVazio = document.getElementById("settings-signout-slot");
+      if (sairVazio) sairVazio.innerHTML = "";
       container.innerHTML = `
         <div class="setting-row auth-login-row" style="flex-direction: column; align-items: stretch; gap: 0.75rem; width: 100%;">
           <div class="setting-info" style="margin-bottom: 0.25rem;">

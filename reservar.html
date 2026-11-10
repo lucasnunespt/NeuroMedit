@@ -44,6 +44,10 @@
       border-radius: var(--radius-md) var(--radius-md) var(--radius-chip) var(--radius-md); }
     .card { box-sizing: border-box; width: 100%; padding: 20px 16px; border-radius: var(--radius-lg); background: var(--surface);
       border: 1px solid var(--line); box-shadow: var(--shadow-card), var(--glass-highlight); }
+    /* Conversa: cada mensagem chega depois da anterior, só com opacidade e rise-distance.
+       O intervalo é duration-calm; com movimento reduzido os tokens valem 0 e tudo aparece junto. */
+    .chega { animation: chegar var(--duration-calm) var(--easing-calm) both; animation-delay: calc(var(--duration-calm) * var(--ordem, 0)); }
+    @keyframes chegar { from { opacity: 0; transform: translateY(var(--rise-distance)); } }
     .linha { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
     .linha:last-child { border-bottom: 0; }
     .linha span:last-child { text-align: right; }
@@ -315,6 +319,7 @@
       $("[data-progresso]").textContent = cfg.progresso || "";
       window.scrollTo(0, 0);
       const sec = document.querySelector(`[data-passo="${passo}"]`);
+      conversa(sec, passo);
       if (st.atual && st.atual !== passo) sec?.focus({ preventScroll: true });
 
       if (passo === "dias") await prepararDias();
@@ -322,6 +327,17 @@
       if (passo === "minhas") await desenharMinhas();
       if (!["politica", "contato"].includes(passo)) st.ultimo = passo;
       st.atual = passo;
+    }
+    // A primeira vez que cada passo aparece, as mensagens chegam uma a uma, como numa conversa.
+    // Ao voltar a um passo já visto, aparece tudo de uma vez.
+    const vistos = new Set();
+    function conversa(sec, passo) {
+      if (!sec) return;
+      const itens = [...sec.children].filter((el) => !el.hidden);
+      itens.forEach((el) => { el.classList.remove("chega"); el.style.removeProperty("--ordem"); });
+      if (vistos.has(passo)) return;
+      vistos.add(passo);
+      itens.forEach((el, i) => { el.style.setProperty("--ordem", i); el.classList.add("chega"); });
     }
     window.addEventListener("hashchange", mostrar);
     $("[data-voltar]").addEventListener("click", () => {

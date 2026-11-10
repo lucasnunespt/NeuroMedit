@@ -25,17 +25,18 @@ async function recebePedidos() {
 }
 
 function criarCartao(lugar) {
+  // Usa as mesmas peças do cartão de fim de sessão (complete.css): mesmo cartão, mesmo rótulo, mesmos botões.
   const caixa = document.createElement("div");
-  caixa.className = "convite-presencial";
+  caixa.className = "complete-card card-static convite-presencial";
   caixa.innerHTML = `
-    <a class="convite-presencial__card" href="reservar.html">
-      <p class="convite-presencial__meta">Meditação presencial</p>
-      <p class="convite-presencial__titulo">Se quiser, podemos meditar juntos, ao vivo.</p>
-      <p class="convite-presencial__texto">Uma sessão individual de 30 minutos comigo, aqui em Lisboa.</p>
-      <span class="convite-presencial__seta" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12H19M13 6L19 12L13 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    </a>
-    <button type="button" class="convite-presencial__agora-nao">Agora não</button>`;
-  caixa.querySelector("button").addEventListener("click", () => {
+    <p class="complete-label">Meditação presencial</p>
+    <h2>Se quiser, podemos meditar juntos, ao vivo.</h2>
+    <p class="complete-meta">Uma sessão individual de 30 minutos comigo, aqui em Lisboa.</p>
+    <div class="complete-actions">
+      <a href="reservar.html" class="button secondary-button">Ver dias e horários</a>
+      <button type="button" class="feedback-ghost-link" data-agora-nao>Agora não</button>
+    </div>`;
+  caixa.querySelector("[data-agora-nao]").addEventListener("click", () => {
     try { localStorage.setItem(CHAVE, String(Date.now() + DIAS_ESCONDIDO * 86400000)); } catch (e) {}
     caixa.remove();
   });

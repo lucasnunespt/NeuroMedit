@@ -31,4 +31,21 @@
   --luz-glow-core: #fffae8;
   --luz-glow-mid: #ffe4a8;
   --glow-gold: 0 0 22px rgba(233, 196, 106, 0.22), inset 0 0 14px rgba(233, 196, 106, 0.12);
+
+  /* Movimento (design system, nov 2026): só opacidade e pequenas deslocações */
+  --duration-quick: 160ms;
+  --duration-calm: 700ms;
+  --easing-calm: cubic-bezier(0.22, 1, 0.36, 1);
+  --rise-distance: 12px;
+}
+
+/* accent-light e accent-light-hover (design system, nov 2026): o acento de cada tema, mais claro.
+   Definidos em html e body para seguirem o tema da página; mesmos valores do tokens.json. */
+html, body {
+  --accent-light: color-mix(in srgb, var(--accent) 55%, var(--luz-glow-core));
+  --accent-light-hover: color-mix(in srgb, var(--accent) 35%, var(--luz-glow-core));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-quick: 0ms; --duration-calm: 0ms; --rise-distance: 0px; }
 }

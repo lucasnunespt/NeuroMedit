@@ -23,30 +23,31 @@
 
   const style = document.createElement("style");
   style.textContent = `
+    /* Cartão de vidro com as cores do tema (design system): nada de cores fixas. */
     .luz-convite{position:fixed;left:24px;bottom:24px;z-index:70;width:min(300px,calc(100vw - 32px));box-sizing:border-box;
-      padding:16px 18px 14px;border-radius:18px;color:#f1e7d3;font-family:inherit;
-      background:rgba(18,15,11,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-      border:1px solid rgba(233,196,106,.32);box-shadow:0 10px 30px rgba(0,0,0,.22),0 0 18px rgba(233,196,106,.1);
-      opacity:0;transform:translateY(10px);transition:opacity 1.4s ease,transform 1.4s ease}
+      padding:16px 18px 14px;border-radius:var(--radius-md);font-family:inherit;
+      background:var(--surface-strong);border:1px solid var(--line);
+      backdrop-filter:var(--surface-static-blur);-webkit-backdrop-filter:var(--surface-static-blur);
+      box-shadow:var(--shadow-card),var(--glass-highlight);
+      opacity:0;transform:translateY(var(--rise-distance));
+      transition:opacity var(--duration-calm) var(--easing-calm),transform var(--duration-calm) var(--easing-calm)}
     .luz-convite.is-on{opacity:1;transform:none}
-    .luz-convite .lc-tag{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(233,196,106,.9)}
-    .luz-convite .lc-dot{width:7px;height:7px;border-radius:50%;background:#f3d890;box-shadow:0 0 8px 2px rgba(233,196,106,.55);animation:lcBreath 11s ease-in-out infinite}
+    .luz-convite .lc-tag{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-dark)}
+    /* o ponto de luz: dourado da Luz, respira no ciclo de 11 s da figura */
+    .luz-convite .lc-dot{width:7px;height:7px;border-radius:var(--radius-pill);background:var(--luz-gold);box-shadow:var(--glow-gold);animation:lcBreath 11s ease-in-out infinite}
     @keyframes lcBreath{0%,100%{opacity:.45}41%{opacity:1}}
-    .luz-convite .lc-text{margin:0 0 12px;font-size:.92rem;line-height:1.45;color:rgba(241,231,211,.86)}
+    .luz-convite .lc-text{margin:0 0 12px;font-size:.92rem;line-height:1.45;color:var(--text)}
     .luz-convite .lc-row{display:flex;align-items:center;gap:14px}
-    .luz-convite button{font:inherit;cursor:pointer;border-radius:999px}
-    .luz-convite .lc-try{padding:8px 16px;font-size:.88rem;color:#f6ecd6;background:transparent;border:1px solid rgba(233,196,106,.6);box-shadow:0 0 12px rgba(233,196,106,.18);transition:box-shadow .8s ease,border-color .8s ease}
-    .luz-convite .lc-try:hover,.luz-convite .lc-try:focus-visible{outline:none;border-color:#e9c46a;box-shadow:0 0 20px rgba(233,196,106,.38)}
-    .luz-convite .lc-no{padding:8px 4px;font-size:.84rem;color:rgba(241,231,211,.6);background:none;border:0}
-    .luz-convite .lc-no:hover,.luz-convite .lc-no:focus-visible{outline:none;color:#f1e7d3;text-decoration:underline}
+    .luz-convite button{font:inherit;cursor:pointer;border-radius:var(--radius-pill)}
+    .luz-convite .lc-try{padding:8px 16px;font-size:.88rem;font-weight:500;color:var(--button-text);border:0;
+      background:var(--accent-light);box-shadow:var(--glass-highlight);
+      transition:background-color var(--duration-quick) var(--easing-calm)}
+    .luz-convite .lc-try:hover{background:var(--accent-light-hover)}
+    .luz-convite .lc-try:focus-visible,.luz-convite .lc-no:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+    .luz-convite .lc-no{padding:8px 4px;font-size:.84rem;color:var(--text-soft);background:none;border:0}
+    .luz-convite .lc-no:hover{color:var(--text);text-decoration:underline}
     @media (max-width:940px){.luz-convite{left:16px;right:16px;width:auto;bottom:calc(var(--bottom-bar-h,66px) + env(safe-area-inset-bottom) + 18px)}}
-    /* cores próprias: o cartão é escuro em qualquer tema, então o texto não herda as cores do tema claro */
-    .luz-convite{--text:#f1e7d3;--text-primary:#f1e7d3;--text-secondary:rgba(241,231,211,.86);--text-soft:rgba(241,231,211,.86);--button-text:#f6ecd6;--link-text:#f6ecd6;background:rgba(18,15,11,.9) !important}
-    .luz-convite .lc-tag,.luz-convite .lc-tag span{color:rgba(233,196,106,.95) !important}
-    .luz-convite .lc-text{color:rgba(241,231,211,.9) !important}
-    .luz-convite .lc-try{color:#f6ecd6 !important}
-    .luz-convite .lc-no{color:rgba(241,231,211,.72) !important}
-    .luz-convite .lc-no:hover,.luz-convite .lc-no:focus-visible{color:#f1e7d3 !important}
+    @media (prefers-reduced-motion:reduce){.luz-convite .lc-dot{animation:none;opacity:1}}
     body.is-meditating .luz-convite,.settings-open .luz-convite{display:none}`;
   document.head.appendChild(style);
 

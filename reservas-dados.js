@@ -1,6 +1,11 @@
 /**
  * reservas-dados.js — o que a página de reserva e o painel partilham:
  * ajustes (preços, regras), agenda publicada, horários ocupados e o cálculo dos horários livres.
+ *
+ * Contas por profissional (nov 2026): cada profissional tem um id (o uid da conta Google).
+ * Sem id (proId vazio) = o Lucas, nos caminhos de sempre (/settings/sessao, /availability, slots "AAAA-MM-DD_HH").
+ * Com id = /pros/{proId} (campo sessao), /pros/{proId}/availability e slots "{proId}_AAAA-MM-DD_HH".
+ * Ver docs/contas-por-profissional.md.
  */
 import { db, doc, getDoc } from "./firebase-init.js";
 import { collection, getDocs, query, where, documentId } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -11,10 +16,24 @@ export const chaveMes = (a, m) => `${a}-${pad2(m + 1)}`;
 export const chaveDia = (a, m, d) => `${a}-${pad2(m + 1)}-${pad2(d)}`;
 export const euro = (n) => "€" + (Math.round(n * 100) / 100).toString().replace(".", ",");
 
-export async function lerAjustes() {
+/** O profissional da página, pelo endereço (?p=<id>). Vazio = o Lucas. */
+export function proDaPagina() {
+  const p = new URLSearchParams(location.search).get("p") || "";
+  return /^[A-Za-z0-9_-]{1,128}$/.test(p) ? p : "";
+}
+/** Prefixo do id dos horários ocupados: "" para o Lucas, "{proId}_" para os outros. */
+export const prefixoSlot = (proId) => (proId ? `${proId}_` : "");
+/** Sufixo do endereço para levar o profissional de uma página para a outra. */
+export const comPro = (url, proId) => (proId ? `${url}${url.includes("?") ? "&" : "?"}p=${encodeURIComponent(proId)}` : url);
+
+export async function lerAjustes(proId = "") {
   try {
-    const s = await getDoc(doc(db, "settings", "sessao"));
-    return s.exists() ? { ...PADRAO, ...s.data() } : { ...PADRAO };
+    if (!proId) {
+      const s = await getDoc(doc(db, "settings", "sessao"));
+      return s.exists() ? { ...PADRAO, ...s.data() } : { ...PADRAO };
+    }
+    const s = await getDoc(doc(db, "pros", proId));
+    return s.exists() ? { ...PADRAO, ...(s.data().sessao || {}) } : { ...PADRAO };
   } catch (e) {
     return { ...PADRAO };
   }
@@ -37,22 +56,24 @@ export function precos(cfg, hoje = new Date()) {
 }
 
 /** Agenda publicada do mês: { "11": {k:"free"}, "12": {k:"from", h:19}, ... } */
-export async function lerAgenda(ano, mes) {
+export async function lerAgenda(ano, mes, proId = "") {
   try {
-    const s = await getDoc(doc(db, "availability", chaveMes(ano, mes)));
+    const ref = proId ? doc(db, "pros", proId, "availability", chaveMes(ano, mes)) : doc(db, "availability", chaveMes(ano, mes));
+    const s = await getDoc(ref);
     return s.exists() && s.data().publicado ? (s.data().dias || {}) : {};
   } catch (e) {
     return {};
   }
 }
 
-/** Horários ocupados do mês: Set de "AAAA-MM-DD_HH". */
-export async function lerOcupados(ano, mes) {
-  const ini = `${chaveMes(ano, mes)}-00`, fim = `${chaveMes(ano, mes)}-99`;
+/** Horários ocupados do mês: Set de "AAAA-MM-DD_HH" (já sem o prefixo do profissional). */
+export async function lerOcupados(ano, mes, proId = "") {
+  const pre = prefixoSlot(proId);
+  const ini = `${pre}${chaveMes(ano, mes)}-00`, fim = `${pre}${chaveMes(ano, mes)}-99`;
   try {
     const q = query(collection(db, "slots"), where(documentId(), ">=", ini), where(documentId(), "<=", fim));
     const snap = await getDocs(q);
-    return new Set(snap.docs.map((d) => d.id));
+    return new Set(snap.docs.map((d) => d.id.slice(pre.length)));
   } catch (e) {
     return new Set();
   }

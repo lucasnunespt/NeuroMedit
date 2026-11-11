@@ -8,6 +8,19 @@
 import { db, doc } from "./firebase-init.js";
 import { updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { euro } from "./reservas-dados.js";
+import { linkRota } from "./perfil-dados.js";
+
+// Moradas dos locais (Ajustes › Perfil público › Moradas). Com morada, a sessão ganha o botão "Rota".
+let moradas = {};
+export function definirMoradas(m) { moradas = m || {}; }
+function linkRotaSessao(b) {
+  const morada = moradas[b.local];
+  if (!morada) return null;
+  const a = el("a", "btn btn--link", "Rota"); a.target = "_blank"; a.rel = "noopener";
+  a.href = linkRota(morada);
+  a.setAttribute("aria-label", `Rota até ${b.local}, no Google Maps`);
+  return a;
+}
 
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 const SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
@@ -118,6 +131,7 @@ function desenharProximas(caixa, lista) {
     });
     acoes.append(abrir);
     const wa = linkWhatsApp(b); if (wa) acoes.append(wa);
+    const rota = linkRotaSessao(b); if (rota) acoes.append(rota);
     item.append(acoes, cancelar);
     caixa.append(item);
   });

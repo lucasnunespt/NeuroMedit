@@ -113,7 +113,7 @@
 <body>
   <header class="topo">
     <img class="orbe" src="assets/neuromedit-symbol-vector.svg" alt="" width="40" height="40">
-    <strong>Lucas</strong>
+    <strong data-nome-pro>Lucas</strong>
     <div class="topo-acoes" data-topo-conta hidden>
       <a href="#minhas" class="topo-link">As minhas sessões</a>
     </div>
@@ -130,13 +130,13 @@
     </section>
 
     <section tabindex="-1" class="passo" data-passo="convite" hidden>
-      <div class="bolha"><span data-ola>Que bom ter você aqui.</span> Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</div>
+      <div class="bolha"><span data-ola>Que bom ter você aqui.</span> <span data-oferta>Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</span></div>
       <div class="bolha">Podemos nos encontrar num destes lugares: <span data-locais></span>. Escolhemos juntos.</div>
       <div class="bolha" data-desconto hidden></div>
       <div class="card" data-precos></div>
       <div class="bolha">Para confirmar o horário, peço um sinal de <span data-sinal>€4</span>, que entra no valor. Você paga por MB Way, e o restante na hora.</div>
       <div class="bolha">Cancelar e remarcar é simples. <a href="#politica">Veja como funciona</a>.</div>
-      <div class="bolha">É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
+      <div class="bolha" data-aviso-pratica>É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
       <div class="bolha" data-aviso-conta hidden>Para reservar, você vai precisar de uma conta no NeuroMedit. É rápido: ela é criada com a sua conta Google.</div>
       <div class="bolha">Quer ver quando estou livre?</div>
     </section>
@@ -182,6 +182,8 @@
       <div class="bolha" data-plano-nota></div>
       <div class="bolha">Onde prefere?</div>
       <label class="rotulo">Lugar<select class="campo" data-local></select></label>
+      <label class="rotulo" data-morada-caixa hidden>A sua morada<input class="campo" type="text" autocomplete="street-address" maxlength="200" data-morada placeholder="Rua, número, andar, código postal"></label>
+      <p class="nota" data-morada-nota hidden>A morada só serve para chegar até você. É apagada sozinha dois dias depois da sessão.</p>
       <div class="bolha">E o seu WhatsApp? É por ele que posso falar com você se precisar.</div>
       <label class="rotulo">Telefone (WhatsApp)<input class="campo" type="tel" autocomplete="tel" inputmode="tel" data-tel placeholder="+351 …"></label>
       <p class="nota">Ao pedir, você concorda com a <a href="#politica">política de cancelamento</a>. Uso estes dados só para cuidar das suas sessões.</p>
@@ -230,7 +232,12 @@
   <script type="module">
     import { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, doc } from "./firebase-init.js";
     import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro } from "./reservas-dados.js";
+    import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro, proDaPagina, prefixoSlot } from "./reservas-dados.js";
+    import { lerPerfil } from "./perfil-dados.js";
+    // Contas por profissional: ?p=<id> abre a reserva de outro profissional; sem ?p é o Lucas, como sempre.
+    const PRO = proDaPagina();
+    let NOME = "Lucas";
+    const emCasa = (local) => /casa d[oa] cliente|em sua casa|ao domic/i.test(local || "");
     import { PADRAO } from "./painel-ajustes.js";
 
     const $ = (s) => document.querySelector(s);
@@ -249,7 +256,7 @@
     }
     function preencherTextos() {
       const c = st.cfg, p = st.p;
-      $("[data-duracao]").textContent = c.duracao;
+      const du = $("[data-duracao]"); if (du) du.textContent = c.duracao;
       const locais = Object.keys(c.locais || {}).filter((k) => c.locais[k]).map((k) => (k === "Casa do Ser" ? k : k.charAt(0).toLowerCase() + k.slice(1)));
       $("[data-locais]").textContent = locais.length ? locais.join(", ") : "um lugar a combinar";
       $("[data-sinal]").textContent = euro(c.sinal);
@@ -261,7 +268,7 @@
       $("[data-precos]").innerHTML = p.planos.map((pl) =>
         `<div class="linha"><span>${pl.nome} de ${c.duracao} min</span><span>${pl.antes ? `<span class="antes">${euro(pl.antes)}</span>` : ""}${euro(pl.valor)}</span></div>`
       ).join("") + `<div class="linha"><span>Pacotes válidos por</span><span>${c.validadePacoteMeses} meses</span></div>`;
-      const msg = "Olá, Lucas! Gostaria de saber mais sobre a meditação presencial.";
+      const msg = `Olá, ${NOME}! Gostaria de saber mais sobre ${PRO ? "as sessões" : "a meditação presencial"}.`;
       $$("[data-wa]").forEach((a) => { a.href = waLink(msg); a.target = "_blank"; a.rel = "noopener"; });
       const mail = $("[data-mail]");
       mail.href = `mailto:${c.emailAvisos}?subject=${encodeURIComponent("Meditação presencial")}&body=${encodeURIComponent(msg)}`;
@@ -378,7 +385,7 @@
       const k = `${st.ano}-${st.mes}`;
       if (st.mesCarregado !== k) {
         $("[data-mes]").textContent = `${cap(MESES[st.mes])} ${st.ano}`;
-        [st.agenda, st.ocupados] = await Promise.all([lerAgenda(st.ano, st.mes), lerOcupados(st.ano, st.mes)]);
+        [st.agenda, st.ocupados] = await Promise.all([lerAgenda(st.ano, st.mes, PRO), lerOcupados(st.ano, st.mes, PRO)]);
         st.mesCarregado = k;
       }
       desenharMes();
@@ -455,6 +462,8 @@
       if (!sel.options.length) {
         Object.keys(st.cfg.locais || {}).filter((k) => st.cfg.locais[k]).forEach((k) => sel.append(new Option(k, k)));
         sel.append(new Option("Combinamos depois", "A combinar"));
+        const mostrarMorada = () => { const on = emCasa(sel.value); $("[data-morada-caixa]").hidden = !on; $("[data-morada-nota]").hidden = !on; };
+        sel.addEventListener("change", mostrarMorada); mostrarMorada();
       }
     }
     async function pedir() {
@@ -463,14 +472,18 @@
       if (tel.replace(/\D/g, "").length < 9) { erro.textContent = "Escreva o seu número de WhatsApp, por favor."; $("[data-tel]").focus(); return; }
       const pl = st.p.planos.find((x) => x.n === st.plano);
       const data = chaveDia(st.ano, st.mes, st.dia), hora = `${pad2(st.hora)}:00`;
-      const slotId = `${data}_${pad2(st.hora)}`;
+      const slotId = `${prefixoSlot(PRO)}${data}_${pad2(st.hora)}`;
+      const local = $("[data-local]").value;
+      const morada = emCasa(local) ? $("[data-morada]").value.trim() : "";
+      if (emCasa(local) && !morada) { erro.textContent = "Falta a sua morada, para eu conseguir chegar até você."; $("[data-morada]").focus(); return; }
       const bRef = doc(collection(db, "bookings"));
       const lote = writeBatch(db);
-      lote.set(doc(db, "slots", slotId), { uid: st.user.uid, bookingId: bRef.id });
+      lote.set(doc(db, "slots", slotId), PRO ? { uid: st.user.uid, bookingId: bRef.id, proId: PRO } : { uid: st.user.uid, bookingId: bRef.id });
       lote.set(bRef, {
         userId: st.user.uid, nome: st.user.displayName || "", email: st.user.email || "", telefone: tel,
-        data, hora, slotId, plano: pl.n, valor: pl.valor, sinal: st.cfg.sinal, local: $("[data-local]").value,
-        estado: "pedida", criado: serverTimestamp()
+        data, hora, slotId, plano: pl.n, valor: pl.valor, sinal: st.cfg.sinal, local,
+        estado: "pedida", criado: serverTimestamp(),
+        ...(PRO ? { proId: PRO } : {}), ...(morada ? { moradaCliente: morada } : {})
       });
       const pr = $("[data-principal]"); pr.disabled = true; pr.textContent = "Enviando…";
       try {
@@ -486,7 +499,7 @@
       $("[data-feito-resumo]").textContent = `${escolha} · ${pl.nome} · ${euro(pl.valor)}`;
       $("[data-feito-sinal]").textContent = `Para confirmar, envie o sinal de ${euro(st.cfg.sinal)} por MB Way para o ${st.cfg.mbway}.`;
       const a = $("[data-mbway-wa]");
-      a.href = waLink(`Olá, Lucas! Pedi a sessão de ${escolha} e enviei o sinal de ${euro(st.cfg.sinal)} por MB Way.`);
+      a.href = waLink(`Olá, ${NOME}! Pedi a sessão de ${escolha} e enviei o sinal de ${euro(st.cfg.sinal)} por MB Way.`);
       a.target = "_blank"; a.rel = "noopener";
       st.mesCarregado = null; st.dia = null; st.hora = null;
       ir("feito");
@@ -536,7 +549,7 @@
         const acoes = document.createElement("div"); acoes.className = "empilhar"; acoes.style.marginTop = "12px";
         const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn btn--secondary"; btn.textContent = "Preciso cancelar";
         const rem = document.createElement("a"); rem.className = "btn btn--link"; rem.textContent = "Prefiro remarcar"; rem.target = "_blank"; rem.rel = "noopener";
-        rem.href = waLink(`Olá, Lucas! Gostaria de remarcar a sessão de ${titulo}.`);
+        rem.href = waLink(`Olá, ${NOME}! Gostaria de remarcar a sessão de ${titulo}.`);
         const conf = document.createElement("div"); conf.hidden = true; conf.className = "empilhar";
         const nota = document.createElement("p"); nota.className = "nota";
         nota.textContent = semCusto
@@ -573,7 +586,25 @@
     // ---------- arranque
     // Nunca ficar preso em "Um momento…": se a ligação demorar, seguimos com os valores padrão.
     const comLimite = (promessa, ms, reserva) => Promise.race([promessa, new Promise((r) => setTimeout(() => r(reserva), ms))]);
-    st.cfg = await comLimite(lerAjustes(), 5000, { ...PADRAO });
+    st.cfg = await comLimite(lerAjustes(PRO), 5000, { ...PADRAO });
+    if (PRO) {
+      const perfil = await comLimite(lerPerfil(PRO), 5000, null);
+      if (!perfil) {
+        // Profissional que não existe ou ainda não foi aprovado: nada para reservar.
+        st.cfg.receberPedidos = false;
+        const pausa = $('[data-passo="pausa"]');
+        pausa.innerHTML = '<div class="bolha">Esta página de reserva não está disponível. Pode ainda não ter sido aprovada, ou o endereço mudou.</div><div class="empilhar"><a class="btn btn--secondary" href="home.html">Ir para o início</a></div>';
+      }
+      if (perfil?.nome) {
+        NOME = perfil.nome.split(" ")[0];
+        $("[data-nome-pro]").textContent = perfil.nome;
+        document.title = `Reservar com ${perfil.nome} · NeuroMedit`;
+      }
+      // Texto geral para outros profissionais; o aviso sobre a prática só aparece se o profissional o escreveu.
+      $("[data-oferta]").textContent = `Ofereço sessões individuais de ${st.cfg.duracao} minutos${perfil?.cidade ? `, em ${perfil.cidade}` : ""}.`;
+      if (st.cfg.avisoPratica) $("[data-aviso-pratica]").textContent = st.cfg.avisoPratica;
+      else $("[data-aviso-pratica]").hidden = true;
+    }
     st.p = precos(st.cfg);
     preencherTextos();
     function aplicarConta(user) {

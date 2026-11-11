@@ -37,21 +37,28 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Horários ocupados: um documento por horário (AAAA-MM-DD_HH). Leitura pública,
-    // sem dados pessoais. Como o ID é o horário, duas pessoas não reservam o mesmo.
+    // Horários ocupados: um documento por horário. Leitura pública, sem dados pessoais.
+    // Id "AAAA-MM-DD_HH" (Lucas) ou "{proId}_AAAA-MM-DD_HH" (outros profissionais): duas pessoas não reservam o mesmo.
     match /slots/{slotId} {
       allow read: if true;
       allow create: if isSignedIn()
-        && request.resource.data.keys().hasOnly(['uid', 'bookingId'])
-        && request.resource.data.uid == request.auth.uid;
+        && request.resource.data.keys().hasOnly(['uid', 'bookingId', 'proId'])
+        && request.resource.data.uid == request.auth.uid
+        && (!('proId' in request.resource.data) || slotId.matches(request.resource.data.proId + '_.*'));
       allow update: if false;
       allow delete: if isAdmin()
-        || (isSignedIn() && resource.data.uid == request.auth.uid);
+        || (isSignedIn() && resource.data.uid == request.auth.uid)
+        || (isSignedIn() && 'proId' in resource.data && resource.data.proId == request.auth.uid);
     }
 
-    // Pedidos de sessão: a pessoa vê e cria só os seus; o Lucas vê e gere todos.
+    // Pedidos de sessão: a pessoa vê e cria só os seus; o profissional vê e gere os seus (proId);
+    // o Lucas (admin) vê e gere todos. Pedidos sem proId são do Lucas.
+    function isProDoPedido(data) {
+      return isSignedIn() && 'proId' in data && data.proId == request.auth.uid;
+    }
     match /bookings/{bookingId} {
       allow read: if isAdmin()
+        || isProDoPedido(resource.data)
         || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow create: if isSignedIn()
         && request.resource.data.userId == request.auth.uid
@@ -59,9 +66,13 @@ service cloud.firestore {
         && !('sinalRecebido' in request.resource.data)
         && request.resource.data.valor is number
         && request.resource.data.sinal is number
-        && getAfter(/databases/$(database)/documents/slots/$(request.resource.data.slotId)).data.uid == request.auth.uid;
-      // A pessoa só pode cancelar o seu pedido; o resto é do Lucas.
+        && (!('moradaCliente' in request.resource.data) || (request.resource.data.moradaCliente is string && request.resource.data.moradaCliente.size() <= 200))
+        && getAfter(/databases/$(database)/documents/slots/$(request.resource.data.slotId)).data.uid == request.auth.uid
+        && (!('proId' in request.resource.data)
+            || getAfter(/databases/$(database)/documents/slots/$(request.resource.data.slotId)).data.proId == request.resource.data.proId);
+      // A pessoa só pode cancelar o seu pedido; o resto é do profissional ou do Lucas.
       allow update: if isAdmin()
+        || (isProDoPedido(resource.data) && request.resource.data.proId == resource.data.proId)
         || (isSignedIn()
             && resource.data.userId == request.auth.uid
             && request.resource.data.estado == 'cancelada'
@@ -80,6 +91,31 @@ service cloud.firestore {
     match /settings/{docId} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // ---------- Contas por profissional (nov 2026) ----------
+    // /pros/{proId}: proId = uid da conta Google do profissional. Campos: perfil (público), sessao (preços, locais,
+    // semana, contactos), estado: rascunho → pendente → aprovado. Só o Lucas (admin) aprova.
+    // Público só depois de aprovado; o próprio profissional e o Lucas veem sempre.
+    function isDono(proId) {
+      return isSignedIn() && request.auth.uid == proId;
+    }
+    match /pros/{proId} {
+      allow read: if isAdmin() || isDono(proId) || resource.data.estado == 'aprovado';
+      allow create: if isDono(proId) && request.resource.data.estado == 'rascunho';
+      // O profissional edita o seu perfil, mas não se aprova: o estado só pode ficar igual ou ir de rascunho a pendente.
+      allow update: if isAdmin()
+        || (isDono(proId)
+            && (request.resource.data.estado == resource.data.estado
+                || (resource.data.estado == 'rascunho' && request.resource.data.estado == 'pendente')));
+      allow delete: if isAdmin() || isDono(proId);
+
+      match /availability/{monthId} {
+        allow read: if isAdmin() || isDono(proId)
+          || (resource.data.publicado == true
+              && get(/databases/$(database)/documents/pros/$(proId)).data.estado == 'aprovado');
+        allow write: if isAdmin() || isDono(proId);
+      }
     }
 
     function isValidRating(data) {

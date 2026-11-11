@@ -129,19 +129,44 @@
       .aj-grelha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .aj-largo { grid-column: 1 / -1; }
     }
-    /* Navegação: 4 destinos. Embaixo no celular e no tablet, na lateral a partir de 1100px. */
+    /* Navegação: 4 destinos. Embaixo no celular e no tablet (BottomNav); a partir de 1100px, SideNav
+       do design system (decidido a 10 nov 2026): marca em cima, destinos, conta colada ao fundo. */
     .nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom));
       display: flex; gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface-strong);
       border: 1px solid var(--line); box-shadow: var(--shadow-soft), var(--glass-highlight); z-index: 10; }
-    .nav a { display: flex; align-items: center; justify-content: center; gap: 8px; min-width: 54px; min-height: 44px;
-      padding: 0 12px; border-radius: var(--radius-pill); color: var(--text-soft); }
-    .nav a[aria-current="page"] { color: var(--text); background: var(--surface); }
+    .nav-destinos { display: contents; }
+    .nav-destinos a { display: flex; align-items: center; justify-content: center; gap: 12px; min-width: 54px; min-height: 44px;
+      padding: 0 12px; border-radius: var(--radius-pill); color: var(--text-soft);
+      transition: background-color var(--duration-quick) var(--easing-calm), color var(--duration-quick) var(--easing-calm); }
+    .nav-destinos a[aria-current="page"] { color: var(--text); background: var(--surface); }
     .nav svg { width: 22px; height: 22px; flex: none; }
     .nav .nome { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .nav-marca, .nav-conta { display: none; }
+    .ini-topo { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+    .ini-topo h1 { margin: 0; }
+    .foto { flex: none; width: 64px; height: 64px; border-radius: var(--radius-pill); object-fit: cover;
+      box-shadow: 0 0 0 3px var(--luz-glow-core); }
+    .conta-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
     @media (min-width: 1100px) {
-      .nav { left: 32px; top: 32px; bottom: auto; transform: none; flex-direction: column; border-radius: var(--radius-lg); padding: 6px; }
-      .nav a { justify-content: flex-start; padding: 0 16px; min-width: 168px; }
+      [data-estado="admin"] .shell { margin-left: calc(248px + 48px); margin-right: auto; }
+      .nav { left: 24px; top: 24px; bottom: 24px; transform: none; flex-direction: column; gap: 18px; width: 248px; box-sizing: border-box;
+        padding: 18px 14px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card), var(--glass-highlight); }
+      .nav-destinos { display: grid; gap: 4px; }
+      .nav-destinos a { justify-content: flex-start; min-height: var(--control-height); border-radius: var(--radius-sm); }
+      .nav-destinos a:hover { background: var(--surface); color: var(--text); }
+      .nav-destinos a[aria-current="page"] { background: var(--surface-strong); box-shadow: var(--shadow-soft); font-weight: 500; }
       .nav .nome { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+      .nav-marca { display: flex; align-items: center; gap: 10px; padding: 4px 8px; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+      .nav-marca img { width: 32px; height: 32px; padding: 4px; box-sizing: border-box; border-radius: var(--radius-pill); background: var(--luz-glow-core); }
+      .nav-conta { display: grid; gap: 4px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+      .nav-quem { display: flex; align-items: center; gap: 10px; padding: 0 8px 6px; min-width: 0; }
+      .nav-quem img { width: 36px; height: 36px; border-radius: var(--radius-pill); object-fit: cover; flex: none; }
+      .nav-quem b { display: block; font-weight: 500; color: var(--text); }
+      .nav-quem small { display: block; color: var(--text-soft); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .nav-conta a, .nav-conta button { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 8px; border: 0;
+        border-radius: var(--radius-sm); background: transparent; color: var(--text-soft); text-align: left; }
+      .nav-conta a:hover, .nav-conta button:hover { color: var(--text); }
+      .nav-conta svg { width: 20px; height: 20px; }
       .shell { padding-top: 64px; padding-bottom: 64px; }
     }
   </style>
@@ -166,15 +191,26 @@
   <!-- Painel -->
   <div data-estado="admin" hidden>
     <nav class="nav" aria-label="Painel">
+      <a class="nav-marca" href="#inicio"><img src="assets/neuromedit-symbol-vector.svg" alt="" width="32" height="32">Painel</a>
+      <div class="nav-destinos">
       <a href="#inicio" data-sec="inicio"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Início</span></a>
       <a href="#agenda" data-sec="agenda"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14.5" rx="3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10.5H20M8.25 3.75V7.25M15.75 3.75V7.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Agenda</span></a>
       <a href="#dinheiro" data-sec="dinheiro"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.4 7C16.3 5.8 14.7 5 12.9 5C9.6 5 7 7.9 7 12C7 16.1 9.6 19 12.9 19C14.7 19 16.3 18.2 17.4 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.25H13M4.5 13.75H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Dinheiro</span></a>
       <a href="#ajustes" data-sec="ajustes"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 8H6.75M11.25 8H19.5M4.5 16H12.75M17.25 16H19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="8" r="2.25" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="16" r="2.25" stroke="currentColor" stroke-width="1.8"/></svg><span class="nome">Ajustes</span></a>
+      </div>
+      <div class="nav-conta">
+        <div class="nav-quem"><img data-foto-conta alt="" width="36" height="36" hidden><span><b data-nome-conta>Lucas</b><small data-email-curto></small></span></div>
+        <a href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
+        <button type="button" data-sair>Sair da conta</button>
+      </div>
     </nav>
 
     <main class="shell" data-sec-painel="inicio">
       <p class="kicker" data-hoje></p>
-      <h1>Bem-vindo de volta, <span data-nome>Lucas</span>.</h1>
+      <div class="ini-topo">
+        <img class="foto" data-foto alt="" width="64" height="64" hidden>
+        <h1>Bem-vindo de volta, <span data-nome>Lucas</span>.</h1>
+      </div>
       <p class="lead">Obrigado por estar aqui. Você está no controle do seu futuro, e as coisas vão dar certo.</p>
 
       <p class="label">A visão de hoje</p>
@@ -328,11 +364,38 @@
         </div>
       </div>
 
+      <div class="bloco" data-perfil-publico>
+        <p class="label">Perfil público</p>
+        <div class="card">
+          <p class="muted">O que as pessoas veem na sua página. Guarda sozinho.</p>
+          <p class="ag-estado" data-pf-estado aria-live="polite"></p>
+          <div class="aj-grelha">
+            <label class="aj-campo-rot">Nome<input class="aj-campo" type="text" autocomplete="name" data-pf="nome"></label>
+            <label class="aj-campo-rot">Cidade<input class="aj-campo" type="text" data-pf="cidade"></label>
+            <label class="aj-campo-rot aj-largo">O que faz (uma linha)<input class="aj-campo" type="text" maxlength="80" data-pf="profissao"></label>
+            <label class="aj-campo-rot aj-largo">Sobre (2 ou 3 frases, na primeira pessoa)<textarea class="campo-texto" rows="4" maxlength="400" data-pf="sobre"></textarea></label>
+            <label class="aj-campo-rot">No NeuroMedit desde (ano)<input class="aj-campo" type="text" inputmode="numeric" maxlength="4" data-pf="desde"></label>
+          </div>
+          <div class="conta-links">
+            <button type="button" class="btn btn--secondary" data-pf-foto>Usar a foto da conta Google</button>
+            <a class="btn btn--secondary" href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+          </div>
+        </div>
+        <div class="card">
+          <p class="aj-titulo">Moradas</p>
+          <p class="muted">Com morada, o local ganha o botão "Como chegar" na sua página e o botão "Rota" nas suas próximas sessões. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
+          <div class="aj-grelha" style="margin-top: 16px;" data-pf-moradas></div>
+        </div>
+      </div>
+
       <div class="bloco">
         <p class="label">Conta</p>
         <div class="card">
           <div class="item"><span>Entrou como</span><span data-email></span></div>
-          <button type="button" class="btn btn--secondary" style="margin-top: 16px;" data-sair>Sair do painel</button>
+          <div class="conta-links">
+            <a class="btn btn--secondary" href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <button type="button" class="btn btn--secondary" data-sair>Sair da conta</button>
+          </div>
         </div>
       </div>
     </main>
@@ -340,11 +403,13 @@
 
   <script type="module">
     import { watchPainel, entrar, sair, ouvirPedidos } from "./painel-guard.js";
-    import { desenharPedidos } from "./painel-pedidos.js";
+    import { desenharPedidos, definirMoradas } from "./painel-pedidos.js";
+    import { lerPerfil } from "./perfil-dados.js";
     import { iniciarDinheiro } from "./painel-dinheiro.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
     import { iniciarAgenda } from "./painel-agenda.js";
     import { iniciarAjustes } from "./painel-ajustes.js";
+    import { iniciarPerfil } from "./painel-perfil.js";
     let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
@@ -395,9 +460,15 @@
       if (estado === "admin") {
         if (user?.displayName) document.querySelector("[data-nome]").textContent = user.displayName.split(" ")[0];
         document.querySelector("[data-email]").textContent = user?.email || "";
+        document.querySelector("[data-email-curto]").textContent = user?.email || "";
+        if (user?.displayName) document.querySelector("[data-nome-conta]").textContent = user.displayName;
+        if (user?.photoURL) {
+          document.querySelectorAll("[data-foto], [data-foto-conta]").forEach((img) => { img.referrerPolicy = "no-referrer"; img.src = user.photoURL; img.hidden = false; });
+        }
         mostrarSecao();
         carregarPedidos();
-        if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); }
+        lerPerfil().then((p) => { definirMoradas(p.moradas); if (lista) desenharTudo(); });
+        if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); iniciarPerfil(document.querySelector("[data-perfil-publico]"), user); }
       }
     });
     document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));

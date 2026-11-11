@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lucas Nunes · Meditação ao vivo em Lisboa · NeuroMedit</title>
+  <meta name="description" content="Sessões individuais de meditação guiada de 30 minutos em Lisboa, ao ar livre ou num espaço de meditação.">
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+  <style>
+    /* A classe "button" nos links-botão impede que a regra de links do theme-sync.css lhes mude a cor.
+       Perfil público do colaborador. Componentes do design system NeuroMedit (10 nov 2026):
+       ProfileHeader, WeekStrip, VerifiedBadge, LocationCard, Testimonial, Toast. Só tokens; sem cores novas. */
+    body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
+      background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); }
+    a { color: var(--link-text); }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+    svg { flex: none; }
+
+    .topo { box-sizing: border-box; max-width: var(--container); margin: 0 auto; padding: 16px var(--gutter) 0;
+      padding-top: max(16px, env(safe-area-inset-top)); display: flex; justify-content: space-between; align-items: center; }
+    .redondo { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: var(--radius-pill);
+      background: var(--surface-strong); border: 1px solid var(--line); color: var(--text); }
+    .redondo svg { width: 22px; height: 22px; }
+
+    .pagina { box-sizing: border-box; max-width: var(--container); margin: 0 auto; padding: 16px var(--gutter) 64px;
+      display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    .coluna { flex: 2 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 32px; }
+    .lado { flex: 1 1 320px; min-width: 0; position: sticky; top: 24px; }
+    .cartao { box-sizing: border-box; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--line);
+      box-shadow: var(--shadow-card), var(--glass-highlight); }
+    h2 { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+    .texto { margin: 0; color: var(--text-soft); line-height: 1.7; max-width: 62ch; }
+    .bloco { display: flex; flex-direction: column; gap: 12px; }
+
+    /* ProfileHeader */
+    .ph { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 32px; }
+    .foto { width: 96px; height: 96px; border-radius: var(--radius-pill); object-fit: cover; flex: none;
+      background: var(--luz-glow-core); box-shadow: 0 0 0 3px var(--luz-glow-core); }
+    .foto--simbolo { padding: 16px; box-sizing: border-box; object-fit: contain; }
+    .ph-texto { flex: 1; min-width: 220px; display: grid; gap: 6px; }
+    h1 { margin: 0; font-size: 2.6rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+    .profissao { margin: 0; color: var(--text-soft); }
+    .factos { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--text-soft); font-size: 0.9rem; }
+    .factos span { display: inline-flex; align-items: center; gap: 5px; }
+    .factos svg { width: 18px; height: 18px; }
+    .verificado svg { color: var(--accent-dark); }
+
+    .btn { box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px; min-height: var(--control-height);
+      padding: 0 var(--button-pad-x); border-radius: var(--radius-pill); font-size: 1rem; font-weight: 500; text-decoration: none;
+      border: 1px solid transparent; transition: background-color var(--duration-quick) var(--easing-calm); }
+    .btn svg { width: 20px; height: 20px; }
+    .btn--primary { background: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    .btn--primary:hover { background: var(--accent-light); }
+    .btn--secondary { background: var(--surface-strong); color: var(--text); border-color: var(--text-muted); }
+
+    /* Horários: WeekStrip */
+    .horarios { display: flex; flex-direction: column; gap: 14px; padding: 24px 20px; }
+    .cab { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .cab span { color: var(--text-soft); font-size: 0.9rem; }
+    .semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+    .dia { display: grid; justify-items: center; gap: 2px; padding: 8px 0 10px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line); background: var(--surface); color: var(--text); }
+    .dia small { font-size: 0.82rem; color: var(--text-soft); }
+    .dia b { font-size: 1.1rem; font-weight: 600; }
+    .dia[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--button-text); }
+    .dia[aria-pressed="true"] small { color: var(--button-text); }
+    .dia.sem b { color: var(--text-soft); text-decoration: line-through; }
+    .horas { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; }
+    .hora { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.1rem; border-radius: var(--radius-pill);
+      border: 1px solid var(--text-muted); background: var(--surface-strong); color: var(--text); }
+    .nota { margin: 0; color: var(--text-soft); font-size: 0.92rem; line-height: 1.6; }
+
+    /* Chips, locais, depoimentos */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; padding: 0.45rem 0.9rem; border-radius: var(--radius-chip); background: var(--surface-strong);
+      border: 1px solid var(--line); color: var(--text); font-size: 0.9rem; }
+    .locais { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .local { display: grid; gap: 8px; padding: 18px; border-radius: var(--radius-md); }
+    .local-nome { display: flex; align-items: center; gap: 8px; font-size: 1.12rem; font-weight: 600; }
+    .local-nome svg { width: 20px; height: 20px; color: var(--text-soft); }
+    .local .btn { justify-self: start; }
+    .depoimento { margin: 0; display: grid; gap: 8px; padding: 18px; border-radius: var(--radius-md); }
+    .depoimento svg { width: 26px; height: 26px; color: var(--accent-dark); }
+    .depoimento blockquote { margin: 0; color: var(--text); font-size: 1.12rem; line-height: 1.75; }
+    .depoimento figcaption { color: var(--text-soft); font-size: 0.92rem; }
+
+    /* Toast */
+    .toast { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translate(-50%, var(--rise-distance));
+      display: inline-flex; align-items: center; gap: 8px; padding: 0.7rem 1.2rem; border-radius: var(--radius-pill);
+      background: var(--surface-strong); border: 1px solid var(--line); box-shadow: var(--shadow-soft), var(--glass-highlight);
+      font-weight: 500; opacity: 0; pointer-events: none; transition: opacity var(--duration-calm) var(--easing-calm), transform var(--duration-calm) var(--easing-calm); }
+    .toast.on { opacity: 1; transform: translate(-50%, 0); }
+    .toast svg { width: 20px; height: 20px; color: var(--accent-dark); }
+
+    @media (max-width: 640px) {
+      .ph { flex-direction: column; text-align: center; padding: 28px 20px 22px; gap: 12px; }
+      .ph-texto { min-width: 0; }
+      .factos { justify-content: center; }
+      h1 { font-size: 2rem; }
+      .pagina { flex-direction: column; flex-wrap: nowrap; gap: 32px; }
+      .coluna { display: contents; }
+      .ph { order: 1; } .lado { order: 2; position: static; width: 100%; flex: none; } .coluna > .bloco { order: 3; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <a class="redondo" href="home.html" aria-label="Voltar ao início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
+    <button type="button" class="redondo" data-partilhar aria-label="Compartilhar perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5.5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="18.5" r="2.2"/><path d="M8 11l8-4.4M8 13l8 4.4"/></svg></button>
+  </header>
+
+  <main class="pagina">
+    <div class="coluna">
+      <section class="cartao ph" aria-labelledby="nome">
+        <img class="foto foto--simbolo" data-foto src="assets/neuromedit-symbol-vector.svg" alt="" width="96" height="96">
+        <div class="ph-texto">
+          <h1 id="nome" data-p="nome">Lucas Nunes</h1>
+          <p class="profissao" data-p="profissao"></p>
+          <div class="factos">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-6.5-5.6-6.5-10.7a6.5 6.5 0 0 1 13 0c0 5.1-6.5 10.7-6.5 10.7z"/><circle cx="12" cy="9.8" r="2.4"/></svg><span data-p="cidade"></span></span>
+            <span data-desde></span>
+            <span class="verificado" data-verificado hidden title="Identidade confirmada pelo NeuroMedit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l7 2.8v5.2c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6.3z"/><path d="M8.8 12.2l2.3 2.3 4.2-4.4"/></svg>Verificado</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="bloco" aria-labelledby="t-sobre">
+        <h2 id="t-sobre">Sobre</h2>
+        <p class="texto" data-p="sobre"></p>
+      </section>
+
+      <section class="bloco" aria-labelledby="t-sessoes">
+        <h2 id="t-sessoes">Sessões</h2>
+        <div class="chips" data-sessoes></div>
+      </section>
+
+      <section class="bloco" aria-labelledby="t-onde">
+        <h2 id="t-onde">Onde</h2>
+        <div class="locais" data-locais></div>
+      </section>
+
+      <section class="bloco" aria-labelledby="t-dep">
+        <h2 id="t-dep">Depoimentos</h2>
+        <div class="locais" data-depoimentos></div>
+      </section>
+    </div>
+
+    <aside class="lado">
+      <section class="cartao horarios" aria-labelledby="t-hor">
+        <div class="cab"><h2 id="t-hor">Próximos horários</h2><span data-mes></span></div>
+        <div class="semana" role="group" aria-label="Próximos 7 dias" data-semana></div>
+        <div class="horas" data-horas aria-live="polite"></div>
+        <a class="btn btn--primary button" href="reservar.html">Agendar uma sessão</a>
+        <p class="nota" data-preco></p>
+      </section>
+    </aside>
+  </main>
+
+  <div class="toast" role="status" data-toast><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span>Link copiado</span></div>
+
+  <script type="module">
+    import { lerPerfil, linkRota } from "./perfil-dados.js";
+    import { lerAjustes, lerAgenda, lerOcupados, horasLivres, precos, euro, pad2, proDaPagina, comPro } from "./reservas-dados.js";
+    const PRO = proDaPagina(); // vazio = o Lucas; ?p=<id> = outro profissional
+
+    const $ = (s) => document.querySelector(s);
+    const SEM = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    const SEM_LONGO = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const ICO = {
+      pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-6.5-5.6-6.5-10.7a6.5 6.5 0 0 1 13 0c0 5.1-6.5 10.7-6.5 10.7z"/><circle cx="12" cy="9.8" r="2.4"/></svg>',
+      rota: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7.5a3 3 0 0 0 0-6h-7a3 3 0 0 1 0-6H16"/></svg>',
+      aspas: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 7.5C6.5 8.5 5 10.8 5 14v2.5h4.5V12H7.2M19 7.5c-3 1-4.5 3.3-4.5 6.5v2.5H19V12h-2.3"/></svg>'
+    };
+    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+    function pintarPerfil(p) {
+      document.querySelectorAll("[data-p]").forEach((n) => { n.textContent = p[n.dataset.p] || ""; });
+      $("[data-desde]").textContent = p.desde ? `No NeuroMedit desde ${p.desde}` : "";
+      $("[data-verificado]").hidden = !p.verificado;
+      if (p.foto) {
+        const f = $("[data-foto]");
+        f.src = p.foto; f.alt = `Foto de ${p.nome}`; f.classList.remove("foto--simbolo");
+        f.referrerPolicy = "no-referrer";
+      }
+      document.title = `${p.nome} · ${p.cidade} · NeuroMedit`;
+
+      const dep = $("[data-depoimentos]");
+      dep.textContent = "";
+      const lista = (p.depoimentos || []).filter((d) => d && d.texto);
+      if (!lista.length) {
+        const fig = el("figure", "cartao depoimento");
+        fig.innerHTML = ICO.aspas;
+        fig.append(el("blockquote", "", "Os primeiros depoimentos aparecem aqui depois das sessões, com o nome ou as iniciais de quem os escreveu."));
+        fig.querySelector("blockquote").style.color = "var(--text-soft)";
+        dep.append(fig);
+      }
+      lista.forEach((d) => {
+        const fig = el("figure", "cartao depoimento");
+        fig.innerHTML = ICO.aspas;
+        fig.append(el("blockquote", "", d.texto), el("figcaption", "", [d.nome, d.data].filter(Boolean).join(" · ")));
+        dep.append(fig);
+      });
+    }
+
+    function pintarSessoes(cfg) {
+      const pr = precos(cfg);
+      const box = $("[data-sessoes]");
+      box.textContent = "";
+      box.append(el("span", "chip", `Sessão individual · ${cfg.duracao} min · ${euro(pr.planos[0].valor)}`));
+      pr.planos.slice(1).forEach((pl) => box.append(el("span", "chip", `${pl.nome} · ${euro(pl.valor)}`)));
+      const ate = pr.ate ? pr.ate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" }) : "";
+      $("[data-preco]").textContent =
+        `Sessão individual de ${cfg.duracao} min · ${euro(pr.planos[0].valor)}` +
+        (pr.desconto ? ` (preço de lançamento até ${ate}; depois ${euro(pr.planos[0].antes)})` : "") +
+        `. Um sinal de ${euro(cfg.sinal)} por MB Way confirma o horário; o resto é pago no dia.`;
+    }
+
+    function pintarLocais(cfg, p) {
+      const box = $("[data-locais]");
+      box.textContent = "";
+      const nomes = Object.entries(cfg.locais || {}).filter(([, on]) => on).map(([nome]) => nome);
+      const moradas = p.moradas || {};
+      // Local com morada: LocationCard com "Como chegar". Os outros juntos num só cartão, com a nota uma vez.
+      nomes.filter((n) => moradas[n]).forEach((nome) => {
+        const c = el("div", "cartao local");
+        const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(nome);
+        const a = el("a", "btn btn--secondary button"); a.href = linkRota(moradas[nome]); a.target = "_blank"; a.rel = "noopener";
+        a.innerHTML = ICO.rota; a.append("Como chegar");
+        c.append(t, el("p", "texto", moradas[nome]), a);
+        box.append(c);
+      });
+      const outros = nomes.filter((n) => !moradas[n]);
+      if (outros.length) {
+        const c = el("div", "cartao local");
+        const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(outros.length === nomes.length ? "Em Lisboa" : "Também");
+        const chips = el("div", "chips");
+        outros.forEach((n) => chips.append(el("span", "chip", n)));
+        c.append(t, chips, el("p", "texto", "O ponto de encontro fica combinado na reserva."));
+        box.append(c);
+      }
+    }
+
+    async function pintarHorarios(cfg) {
+      const semana = $("[data-semana]"), horasBox = $("[data-horas]");
+      if (cfg.receberPedidos === false) {
+        semana.hidden = true;
+        horasBox.textContent = "";
+        horasBox.append(el("p", "nota", "Neste momento não estou recebendo pedidos. Volte em breve."));
+        return;
+      }
+      const hoje = new Date();
+      const dias = [...Array(7)].map((_, i) => new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + i));
+      const meses = [...new Set(dias.map((d) => `${d.getFullYear()}-${d.getMonth()}`))].map((k) => k.split("-").map(Number));
+      const dados = {};
+      await Promise.all(meses.map(async ([a, m]) => {
+        const [agenda, ocupados] = await Promise.all([lerAgenda(a, m, PRO), lerOcupados(a, m, PRO)]);
+        dados[`${a}-${m}`] = { agenda, ocupados };
+      }));
+      const livres = dias.map((d) => {
+        const { agenda, ocupados } = dados[`${d.getFullYear()}-${d.getMonth()}`];
+        return horasLivres({ ano: d.getFullYear(), mes: d.getMonth(), dia: d.getDate(), agenda, ocupados, cfg });
+      });
+      $("[data-mes]").textContent = hoje.toLocaleDateString("pt-BR", { month: "long" }).replace(/^./, (c) => c.toUpperCase());
+
+      let escolhido = livres.findIndex((h) => h.length);
+      semana.textContent = "";
+      const botoes = dias.map((d, i) => {
+        const b = el("button", "dia" + (livres[i].length ? "" : " sem"));
+        b.type = "button";
+        b.append(el("small", "", SEM[d.getDay()]), el("b", "", String(d.getDate())));
+        b.setAttribute("aria-label", `${SEM_LONGO[d.getDay()]} ${d.getDate()}` + (i === 0 ? ", hoje" : "") +
+          (livres[i].length ? `, ${livres[i].length} ${livres[i].length === 1 ? "horário livre" : "horários livres"}` : ", sem horários"));
+        b.addEventListener("click", () => { escolhido = i; marcar(); });
+        semana.append(b);
+        return b;
+      });
+      function marcar() {
+        botoes.forEach((b, i) => b.setAttribute("aria-pressed", i === escolhido ? "true" : "false"));
+        horasBox.textContent = "";
+        if (escolhido < 0) { horasBox.append(el("p", "nota", "Sem horários livres nos próximos 7 dias. Os próximos aparecem quando a agenda for publicada.")); return; }
+        const h = livres[escolhido];
+        if (!h.length) { horasBox.append(el("p", "nota", "Sem horários livres neste dia.")); return; }
+        h.slice(0, 4).forEach((x) => horasBox.append(el("span", "hora", `${pad2(x)}:00`)));
+      }
+      marcar();
+    }
+
+    // Compartilhar: menu do aparelho, ou copiar o link com um Toast "Link copiado".
+    $("[data-partilhar]").addEventListener("click", async () => {
+      const url = location.href.split("#")[0];
+      try {
+        if (navigator.share) { await navigator.share({ title: document.title, url }); return; }
+        await navigator.clipboard.writeText(url);
+        const t = $("[data-toast]");
+        t.classList.add("on");
+        setTimeout(() => t.classList.remove("on"), 4000);
+      } catch (e) { /* a pessoa cancelou */ }
+    });
+
+    document.querySelectorAll('a[href="reservar.html"]').forEach((a) => { a.href = comPro("reservar.html", PRO); });
+    const [perfil, cfg] = await Promise.all([lerPerfil(PRO), lerAjustes(PRO)]);
+    if (!perfil) {
+      // Perfil que não existe ou ainda não foi aprovado: as regras do Firestore não o deixam ler.
+      document.querySelector(".pagina").innerHTML = "";
+      const vazio = el("section", "cartao ph");
+      vazio.append(el("h1", "", "Este perfil não está disponível"), el("p", "profissao", "Pode ainda não ter sido aprovado, ou o endereço mudou."));
+      const a = el("a", "btn btn--primary button", "Ir para o início"); a.href = "home.html";
+      vazio.append(a);
+      document.querySelector(".pagina").append(vazio);
+      throw new Error("perfil indisponível");
+    }
+    pintarPerfil(perfil);
+    pintarSessoes(cfg);
+    pintarLocais(cfg, perfil);
+    pintarHorarios(cfg);
+  </script>
+</body>
+</html>

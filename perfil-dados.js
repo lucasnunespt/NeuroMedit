@@ -21,12 +21,19 @@ export const PERFIL_PADRAO = {
   depoimentos: []
 };
 
-export async function lerPerfil() {
+/** Perfil público. Sem proId = o Lucas (/settings/perfil); com proId = /pros/{proId}, campo perfil. */
+export async function lerPerfil(proId = "") {
   try {
+    if (proId) {
+      const s = await getDoc(doc(db, "pros", proId));
+      // Perfil de outro profissional: sem os textos do Lucas por omissão.
+      const vazio = { ...PERFIL_PADRAO, nome: "", profissao: "", cidade: "", desde: "", sobre: "", verificado: false };
+      return s.exists() ? { ...vazio, ...(s.data().perfil || {}), verificado: s.data().estado === "aprovado" } : null;
+    }
     const s = await getDoc(doc(db, "settings", "perfil"));
     return s.exists() ? { ...PERFIL_PADRAO, ...s.data() } : { ...PERFIL_PADRAO };
   } catch (e) {
-    return { ...PERFIL_PADRAO };
+    return proId ? null : { ...PERFIL_PADRAO };
   }
 }
 

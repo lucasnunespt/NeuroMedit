@@ -5,6 +5,10 @@
  *   1. Pedido novo      → e-mail para o Lucas quando alguém pede uma sessão (verifica a cada 10 min).
  *   2. Sessão cancelada → e-mail para o Lucas quando a pessoa cancela (a cada 10 min).
  *   3. Véspera          → e-mail para a pessoa, no dia antes de uma sessão confirmada (todos os dias às 18h).
+ * E uma limpeza: a morada do cliente (sessões em casa dele) é apagada dois dias depois da sessão (todos os dias às 3h).
+ *
+ * Contas por profissional: um pedido com proId avisa o e-mail desse profissional (/pros/{proId}, sessao.emailAvisos);
+ * sem proId, é do Lucas (/settings/sessao).
  *
  * Lê e marca os pedidos em /bookings pela API REST do Firestore, com a conta Google dona do projeto
  * Firebase "neuromedit" (as regras do site não se aplicam a esta conta). Cada pedido ganha um campo
@@ -24,21 +28,27 @@ function instalar() {
   ScriptApp.getProjectTriggers().forEach(function (t) { ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger("verificarPedidos").timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger("lembrarVespera").timeBased().atHour(18).everyDays(1).inTimezone("Europe/Lisbon").create();
+  ScriptApp.newTrigger("apagarMoradas").timeBased().atHour(3).everyDays(1).inTimezone("Europe/Lisbon").create();
   // O que já existe antes de instalar não gera avisos: só o que chegar a partir de agora.
   porEstado("pedida").forEach(function (b) { if (!b.avisoPedido) marcar(b.id, "avisoPedido"); });
   porEstado("cancelada").forEach(function (b) { if (!b.avisoCancelada) marcar(b.id, "avisoCancelada"); });
-  Logger.log("Gatilhos instalados: verificarPedidos (10 min) e lembrarVespera (18h).");
+  Logger.log("Gatilhos instalados: verificarPedidos (10 min), lembrarVespera (18h) e apagarMoradas (3h).");
 }
 
 // ---------- 1 e 2: pedidos novos e cancelamentos, para o Lucas
 function verificarPedidos() {
-  const cfg = lerAjustes();
-  const para = cfg.emailAvisos || Session.getEffectiveUser().getEmail();
+  const lucas = lerAjustes().emailAvisos || Session.getEffectiveUser().getEmail();
+  const cache = {};
+  function emailDe(b) {
+    if (!b.proId) return lucas;
+    if (!(b.proId in cache)) cache[b.proId] = (lerAjustesPro(b.proId).emailAvisos) || lucas;
+    return cache[b.proId];
+  }
 
   porEstado("pedida").forEach(function (b) {
     if (b.avisoPedido) return;
     MailApp.sendEmail({
-      to: para,
+      to: emailDe(b),
       subject: "Pedido novo: " + (b.nome || b.email) + ", " + quando(b),
       body: [
         (b.nome || "Alguém") + " pediu uma sessão.",
@@ -58,7 +68,7 @@ function verificarPedidos() {
   porEstado("cancelada").forEach(function (b) {
     if (b.avisoCancelada || b.canceladoPor === "lucas") return;
     MailApp.sendEmail({
-      to: para,
+      to: emailDe(b),
       subject: "Sessão cancelada: " + (b.nome || b.email) + ", " + quando(b),
       body: [
         (b.nome || "Alguém") + " cancelou a sessão de " + quando(b) + ".",
@@ -77,32 +87,48 @@ function lembrarVespera() {
   const amanha = new Date();
   amanha.setDate(amanha.getDate() + 1);
   const dia = Utilities.formatDate(amanha, "Europe/Lisbon", "yyyy-MM-dd");
-  const cfg = lerAjustes();
+  const lucas = lerAjustes();
 
   porEstado("confirmada").forEach(function (b) {
     if (b.data !== dia || b.avisoVespera || !b.email) return;
+    const cfg = b.proId ? lerAjustesPro(b.proId) : lucas;
+    const quem = b.proId ? ((lerPro(b.proId).perfil || {}).nome || "").split(" ")[0] : "Lucas";
     const nome = (b.nome || "").split(" ")[0];
     const restante = Math.max(0, (b.valor || 0) - (b.sinal || 0));
     MailApp.sendEmail({
       to: b.email,
       replyTo: cfg.emailAvisos || undefined,
-      name: "Lucas · NeuroMedit",
+      name: (quem || "NeuroMedit") + " · NeuroMedit",
       subject: "Amanhã, às " + b.hora + ": a sua meditação",
       body: [
         "Olá" + (nome ? ", " + nome : "") + ".",
         "",
         "Amanhã, " + quando(b) + ", nos encontramos para a sua meditação" + (b.local ? ", em " + b.local.charAt(0).toLowerCase() + b.local.slice(1) : "") + ".",
         "",
-        "Venha com roupa confortável. Não precisa trazer nada nem saber meditar: eu guio tudo.",
+        b.proId ? "" : "Venha com roupa confortável. Não precisa trazer nada nem saber meditar: eu guio tudo.",
         restante && (b.plano || 1) === 1 ? "No dia, falta pagar " + euro(restante) + "." : "",
         "",
         "Se precisar mudar o horário, é só responder a este e-mail.",
         "",
         "Até amanhã,",
-        "Lucas"
+        quem || ""
       ].filter(function (l, i, a) { return l || a[i - 1]; }).join("\n")
     });
     marcar(b.id, "avisoVespera");
+  });
+}
+
+// ---------- limpeza: morada do cliente apagada 2 dias depois da sessão
+function apagarMoradas() {
+  const limite = new Date();
+  limite.setDate(limite.getDate() - 2);
+  const ate = Utilities.formatDate(limite, "Europe/Lisbon", "yyyy-MM-dd");
+  ["pedida", "confirmada", "realizada", "falta", "cancelada", "libertada", "reembolsada"].forEach(function (estado) {
+    porEstado(estado).forEach(function (b) {
+      if (!b.moradaCliente || !b.data || b.data > ate) return;
+      // updateMask com o campo e sem valor = o campo é apagado.
+      pedido(BASE + "/bookings/" + b.id + "?updateMask.fieldPaths=moradaCliente", { method: "patch", payload: JSON.stringify({ fields: {} }) });
+    });
   });
 }
 
@@ -141,6 +167,10 @@ function marcar(id, campo) {
 function lerAjustes() {
   try { return valores(pedido(BASE + "/settings/sessao").fields); } catch (e) { return {}; }
 }
+function lerPro(proId) {
+  try { return valores(pedido(BASE + "/pros/" + proId).fields); } catch (e) { return {}; }
+}
+function lerAjustesPro(proId) { return lerPro(proId).sessao || {}; }
 
 function valores(campos) {
   const o = {};

@@ -165,7 +165,8 @@
 
   <script type="module">
     import { lerPerfil, linkRota } from "./perfil-dados.js";
-    import { lerAjustes, lerAgenda, lerOcupados, horasLivres, precos, euro, pad2 } from "./reservas-dados.js";
+    import { lerAjustes, lerAgenda, lerOcupados, horasLivres, precos, euro, pad2, proDaPagina, comPro } from "./reservas-dados.js";
+    const PRO = proDaPagina(); // vazio = o Lucas; ?p=<id> = outro profissional
 
     const $ = (s) => document.querySelector(s);
     const SEM = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -257,7 +258,7 @@
       const meses = [...new Set(dias.map((d) => `${d.getFullYear()}-${d.getMonth()}`))].map((k) => k.split("-").map(Number));
       const dados = {};
       await Promise.all(meses.map(async ([a, m]) => {
-        const [agenda, ocupados] = await Promise.all([lerAgenda(a, m), lerOcupados(a, m)]);
+        const [agenda, ocupados] = await Promise.all([lerAgenda(a, m, PRO), lerOcupados(a, m, PRO)]);
         dados[`${a}-${m}`] = { agenda, ocupados };
       }));
       const livres = dias.map((d) => {
@@ -301,7 +302,18 @@
       } catch (e) { /* a pessoa cancelou */ }
     });
 
-    const [perfil, cfg] = await Promise.all([lerPerfil(), lerAjustes()]);
+    document.querySelectorAll('a[href="reservar.html"]').forEach((a) => { a.href = comPro("reservar.html", PRO); });
+    const [perfil, cfg] = await Promise.all([lerPerfil(PRO), lerAjustes(PRO)]);
+    if (!perfil) {
+      // Perfil que não existe ou ainda não foi aprovado: as regras do Firestore não o deixam ler.
+      document.querySelector(".pagina").innerHTML = "";
+      const vazio = el("section", "cartao ph");
+      vazio.append(el("h1", "", "Este perfil não está disponível"), el("p", "profissao", "Pode ainda não ter sido aprovado, ou o endereço mudou."));
+      const a = el("a", "btn btn--primary button", "Ir para o início"); a.href = "home.html";
+      vazio.append(a);
+      document.querySelector(".pagina").append(vazio);
+      throw new Error("perfil indisponível");
+    }
     pintarPerfil(perfil);
     pintarSessoes(cfg);
     pintarLocais(cfg, perfil);

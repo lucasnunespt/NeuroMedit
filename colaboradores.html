@@ -61,7 +61,7 @@
 </head>
 <body>
   <header class="topo">
-    <a class="redondo" href="home.html" aria-label="Voltar ao início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
+    <a class="redondo" data-voltar href="home.html" aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
   </header>
   <main class="pagina">
     <h1>Colaboradores</h1>
@@ -134,6 +134,12 @@
       });
     }
     pintar();
+
+    // Voltar devolve a pessoa a onde estava. Só vai à home quem chegou aqui de fora do site.
+    document.querySelector("[data-voltar]").addEventListener("click", (ev) => {
+      const veioDaqui = document.referrer && new URL(document.referrer).origin === location.origin;
+      if (veioDaqui && history.length > 1) { ev.preventDefault(); history.back(); }
+    });
   </script>
 </body>
 </html>

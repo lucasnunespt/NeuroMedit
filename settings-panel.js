@@ -159,16 +159,9 @@
       </div>
     </section>
 
-    <section class="settings-section" aria-labelledby="settings-section-ensinar">
+    <section class="settings-section" id="settings-ensinar" aria-labelledby="settings-section-ensinar" hidden>
       <p class="settings-section-label" id="settings-section-ensinar">Ensinar</p>
-
-      <div class="setting-row setting-row--stacked">
-        <div class="setting-info">
-          <p class="setting-label">Oferecer sessões</p>
-          <p class="setting-hint">É professor ou terapeuta? Tenha a sua página de reservas no NeuroMedit.</p>
-        </div>
-        <a class="button setting-ghost-btn" href="profissional.html">Crie a sua página</a>
-      </div>
+      <div id="settings-ensinar-corpo"></div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-account">
@@ -357,6 +350,60 @@
     });
   }
 
+  // A secção "Ensinar" muda de cara: quem já tem página não precisa de ser convidado a criá-la.
+  // Fica escondida até sabermos qual é o caso, para não mostrar o estado errado por um instante.
+  async function pintarEnsinar(user) {
+    const sec = document.getElementById("settings-ensinar");
+    const corpo = document.getElementById("settings-ensinar-corpo");
+    const titulo = document.getElementById("settings-section-ensinar");
+    if (!sec || !corpo) return;
+
+    const convidar = () => {
+      titulo.textContent = "Ensinar";
+      corpo.innerHTML = `
+        <div class="setting-row setting-row--stacked">
+          <div class="setting-info">
+            <p class="setting-label">Oferecer sessões</p>
+            <p class="setting-hint">É professor ou terapeuta? Tenha a sua página de reservas no NeuroMedit.</p>
+          </div>
+          <a class="button setting-ghost-btn" href="profissional.html">Crie a sua página</a>
+        </div>`;
+      sec.hidden = false;
+    };
+    const painel = () => {
+      titulo.textContent = "A sua página";
+      corpo.innerHTML = `
+        <div class="setting-row">
+          <div class="setting-info">
+            <p class="setting-label">Painel</p>
+            <p class="setting-hint">A sua agenda, os pedidos e o seu perfil público.</p>
+          </div>
+          <a class="button setting-ghost-btn setting-row-acao" href="painel.html">Abrir o painel</a>
+        </div>`;
+      sec.hidden = false;
+    };
+
+    if (!user) { convidar(); return; }
+    if (!db || !doc || !getDoc) { convidar(); return; }
+
+    const chave = "neuromedit-tem-painel-" + user.uid;
+    const guardado = sessionStorage.getItem(chave);
+    if (guardado !== null) { guardado === "1" ? painel() : convidar(); return; }
+
+    sec.hidden = true;
+    try {
+      const [admin, pro] = await Promise.all([
+        getDoc(doc(db, "admins", user.uid)).then((s) => s.exists()).catch(() => false),
+        getDoc(doc(db, "pros", user.uid)).then((s) => s.exists()).catch(() => false)
+      ]);
+      const tem = admin || pro;
+      sessionStorage.setItem(chave, tem ? "1" : "0");
+      tem ? painel() : convidar();
+    } catch {
+      convidar();
+    }
+  }
+
   function renderAuthUI() {
     const container = document.getElementById("settings-auth-container");
     if (!container) return;
@@ -367,10 +414,12 @@
           <p class="setting-hint">Carregando autenticação...</p>
         </div>
       `;
+      pintarEnsinar(null);
       return;
     }
 
     const user = auth.currentUser;
+    pintarEnsinar(user);
     if (user) {
       container.innerHTML = `
         <div class="setting-row auth-user-row">
@@ -384,7 +433,7 @@
             <p class="setting-label">Meditação presencial</p>
             <p class="setting-hint">As sessões que marcou comigo, em Lisboa.</p>
           </div>
-          <a class="setting-ghost-btn" href="reservar.html#minhas" style="margin: 0; min-height: 38px; padding: 0.5rem 1rem; text-decoration: none; display: inline-flex; align-items: center;">As minhas sessões</a>
+          <a class="setting-ghost-btn setting-row-acao" href="reservar.html#minhas">As minhas sessões</a>
         </div>
       `;
       const sairSlot = document.getElementById("settings-signout-slot");

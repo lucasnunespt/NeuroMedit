@@ -538,6 +538,18 @@ body.settings-open .settings-fab {
 /* O mesmo botão discreto, quando é um link (ir para a página profissional). */
 a.setting-ghost-btn { text-decoration: none; }
 
+/* Botão ao lado do texto, numa linha de ajuste: ocupa o que precisa, não a linha toda.
+   Sem isto, a largura de 100% acima empurra o texto ao lado até uma letra por linha. */
+.setting-row .setting-row-acao {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0;
+  min-height: 38px;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+}
+.setting-row .setting-info { min-width: 0; }
+
 .setting-ghost-btn:hover {
   background: var(--surface);
   border-color: var(--line);

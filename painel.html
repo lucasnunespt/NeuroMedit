@@ -144,6 +144,12 @@
     .nav-marca, .nav-conta { display: none; }
     .ini-topo { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
     .ini-topo h1 { margin: 0; }
+    /* Foto do perfil: ver a foto atual é o que faz perceber que ela existe e que mudou. */
+    .pf-foto { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 20px; }
+    .pf-foto-pre { flex: none; width: 72px; height: 72px; border-radius: var(--radius-pill); object-fit: cover;
+      border: 1px solid var(--line); background: var(--surface-strong); }
+    .pf-foto-pre[data-simbolo] { object-fit: contain; padding: 14px; box-sizing: border-box; }
+    .pf-foto-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
     .foto { flex: none; width: 64px; height: 64px; border-radius: var(--radius-pill); object-fit: cover;
       box-shadow: 0 0 0 3px var(--luz-glow-core); }
     .conta-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
@@ -404,8 +410,17 @@
             <label class="aj-campo-rot aj-largo">Sobre (2 ou 3 frases, na primeira pessoa)<textarea class="campo-texto" rows="4" maxlength="400" data-pf="sobre"></textarea></label>
             <label class="aj-campo-rot">No NeuroMedit desde (ano)<input class="aj-campo" type="text" inputmode="numeric" maxlength="4" data-pf="desde"></label>
           </div>
+          <div class="pf-foto">
+            <img class="pf-foto-pre" data-pf-foto-pre alt="" width="72" height="72">
+            <div class="pf-foto-acoes">
+              <button type="button" class="btn btn--secondary" data-pf-foto>Usar a foto da conta Google</button>
+              <button type="button" class="btn btn--secondary" data-pf-foto-escolher>Escolher uma foto</button>
+              <input type="file" accept="image/jpeg,image/png,image/webp" data-pf-foto-ficheiro hidden>
+              <button type="button" class="btn btn--secondary" data-pf-foto-tirar hidden>Remover a foto</button>
+            </div>
+          </div>
+          <p class="muted" data-pf-foto-nota aria-live="polite">Sem foto, a sua página mostra o símbolo do NeuroMedit.</p>
           <div class="conta-links">
-            <button type="button" class="btn btn--secondary" data-pf-foto>Usar a foto da conta Google</button>
             <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
           </div>
         </div>

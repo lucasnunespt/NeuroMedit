@@ -535,6 +535,9 @@ body.settings-open .settings-fab {
     transform 0.22s ease;
 }
 
+/* O mesmo botão discreto, quando é um link (ir para a página profissional). */
+a.setting-ghost-btn { text-decoration: none; }
+
 .setting-ghost-btn:hover {
   background: var(--surface);
   border-color: var(--line);

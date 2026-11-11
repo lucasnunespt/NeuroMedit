@@ -370,6 +370,9 @@ p {
   border-color: var(--line);
 }
 
+/* O único botão com palavras na fila dos ícones: pode partir a linha no telemóvel. */
+.creator-agendar { white-space: normal; text-align: center; }
+
 .ghost-button:hover {
   background-color: var(--surface);
 }

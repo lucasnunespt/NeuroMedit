@@ -159,6 +159,18 @@
       </div>
     </section>
 
+    <section class="settings-section" aria-labelledby="settings-section-ensinar">
+      <p class="settings-section-label" id="settings-section-ensinar">Ensinar</p>
+
+      <div class="setting-row setting-row--stacked">
+        <div class="setting-info">
+          <p class="setting-label">Oferecer sessões</p>
+          <p class="setting-hint">É professor ou terapeuta? Tenha a sua página de reservas no NeuroMedit.</p>
+        </div>
+        <a class="button setting-ghost-btn" href="profissional.html">Crie a sua página</a>
+      </div>
+    </section>
+
     <section class="settings-section" aria-labelledby="settings-section-account">
       <p class="settings-section-label" id="settings-section-account">Conta</p>
 

@@ -36,11 +36,82 @@ export function iniciarPerfil(raiz, user) {
     });
   });
 
+  // ---------- Foto ----------
+  // A foto fica no próprio documento do perfil, como imagem pequena. O plano Spark não tem
+  // armazenamento de ficheiros, e um quadrado de 256 px comprimido cabe de sobra num documento.
+  const LADO = 256;          // a página mostra 96 px; 256 chega para ecrãs densos
+  const MAXIMO = 180 * 1024; // acima disto não guarda: o documento tem um limite de 1 MB
+
+  const preFoto = raiz.querySelector("[data-pf-foto-pre]");
   const btnFoto = raiz.querySelector("[data-pf-foto]");
+  const ficheiro = raiz.querySelector("[data-pf-foto-ficheiro]");
+  const btnEscolher = raiz.querySelector("[data-pf-foto-escolher]");
+  const btnTirar = raiz.querySelector("[data-pf-foto-tirar]");
+  const nota = raiz.querySelector("[data-pf-foto-nota]");
+
+  const SIMBOLO = "assets/neuromedit-symbol-vector.svg";
+  function pintarFoto() {
+    const tem = !!perfil?.foto;
+    preFoto.src = tem ? perfil.foto : SIMBOLO;
+    preFoto.alt = tem ? "A sua foto" : "";
+    preFoto.referrerPolicy = "no-referrer";
+    if (tem) preFoto.removeAttribute("data-simbolo");
+    else preFoto.setAttribute("data-simbolo", "");
+    btnTirar.hidden = !tem;
+    nota.textContent = tem ? "" : "Sem foto, a sua página mostra o símbolo do NeuroMedit.";
+  }
+
+  // Corta ao centro, reduz e comprime, no próprio navegador. Nada sai do dispositivo antes disto.
+  function encolher(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const lado = Math.min(img.width, img.height);
+        const tela = document.createElement("canvas");
+        tela.width = tela.height = LADO;
+        const ctx = tela.getContext("2d");
+        ctx.drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, LADO, LADO);
+        let fora = tela.toDataURL("image/jpeg", 0.82);
+        if (fora.length > MAXIMO) fora = tela.toDataURL("image/jpeg", 0.68);
+        resolve(fora);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("imagem")); };
+      img.src = url;
+    });
+  }
+
   if (!user?.photoURL) btnFoto.hidden = true;
   btnFoto.addEventListener("click", () => {
     if (!perfil || !user?.photoURL) return;
     perfil.foto = user.photoURL;
+    pintarFoto();
+    guardar();
+  });
+
+  btnEscolher.addEventListener("click", () => ficheiro.click());
+
+  ficheiro.addEventListener("change", async () => {
+    const f = ficheiro.files?.[0];
+    ficheiro.value = "";
+    if (!perfil || !f) return;
+    nota.textContent = "Preparando a foto…";
+    try {
+      const dados = await encolher(f);
+      if (dados.length > MAXIMO) { nota.textContent = "Essa imagem é grande demais. Tente outra."; return; }
+      perfil.foto = dados;
+      pintarFoto();
+      guardar();
+    } catch {
+      nota.textContent = "Não consegui ler essa imagem. Tente um JPEG ou PNG.";
+    }
+  });
+
+  btnTirar.addEventListener("click", () => {
+    if (!perfil) return;
+    perfil.foto = "";
+    pintarFoto();
     guardar();
   });
 
@@ -74,6 +145,7 @@ export function iniciarPerfil(raiz, user) {
     perfil = (await lerPerfil(pro)) || {};
     raiz.querySelectorAll("[data-pf]").forEach((inp) => { inp.value = perfil[inp.dataset.pf] || ""; });
     estado.textContent = "";
+    pintarFoto();
     pintarMoradas();
   })();
 }

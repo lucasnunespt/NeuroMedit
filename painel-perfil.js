@@ -7,6 +7,7 @@
 import { lerPerfil, guardarPerfil } from "./perfil-dados.js";
 import { lerAjustes } from "./reservas-dados.js";
 import { proPainel } from "./conta-pro.js";
+import { AREAS, aplicarTermos } from "./termos.js";
 
 export function iniciarPerfil(raiz, user) {
   if (!raiz) return;
@@ -28,10 +29,19 @@ export function iniciarPerfil(raiz, user) {
     }, 700);
   }
 
+  // A lista de áreas, igual à do formulário de entrada.
+  const caixaArea = raiz.querySelector("[data-pf-areas]");
+  if (caixaArea) {
+    caixaArea.append(new Option("—", ""));
+    AREAS.forEach(([nome]) => caixaArea.append(new Option(nome, nome)));
+  }
+
   raiz.querySelectorAll("[data-pf]").forEach((inp) => {
     inp.addEventListener("input", () => {
       if (!perfil) return;
       perfil[inp.dataset.pf] = inp.value.trim() ? inp.value : "";
+      // Mudar de área muda a palavra em todo o painel, na hora.
+      if (inp.dataset.pf === "area") aplicarTermos(document, perfil.area);
       guardar();
     });
   });
@@ -115,6 +125,61 @@ export function iniciarPerfil(raiz, user) {
     guardar();
   });
 
+  // ---------- Depoimentos ----------
+  // O campo já existia e a página pública já os mostrava: faltava o sítio onde escrevê-los.
+  const caixaDep = raiz.querySelector("[data-pf-depoimentos]");
+  const depTexto = raiz.querySelector("[data-dep-texto]");
+  const depNome = raiz.querySelector("[data-dep-nome]");
+  const depData = raiz.querySelector("[data-dep-data]");
+  const depErro = raiz.querySelector("[data-dep-erro]");
+  const depAdd = raiz.querySelector("[data-dep-add]");
+
+  function pintarDepoimentos() {
+    if (!caixaDep) return;
+    caixaDep.textContent = "";
+    const lista = (perfil?.depoimentos || []).filter((d) => d && d.texto);
+    if (!lista.length) {
+      const p = document.createElement("p");
+      p.className = "muted";
+      p.textContent = "Ainda nenhum. A sua página mostra uma frase a dizer que os primeiros aparecem depois.";
+      caixaDep.append(p);
+      return;
+    }
+    lista.forEach((d, i) => {
+      const linha = document.createElement("div");
+      linha.className = "item";
+      const texto = document.createElement("span");
+      texto.textContent = [d.texto, [d.nome, d.data].filter(Boolean).join(" · ")].filter(Boolean).join(" — ");
+      const tirar = document.createElement("button");
+      tirar.type = "button";
+      tirar.className = "btn btn--secondary";
+      tirar.textContent = "Remover";
+      tirar.addEventListener("click", () => {
+        perfil.depoimentos = lista.filter((_, j) => j !== i);
+        pintarDepoimentos();
+        guardar();
+      });
+      linha.append(texto, tirar);
+      caixaDep.append(linha);
+    });
+  }
+
+  depAdd?.addEventListener("click", () => {
+    if (!perfil) return;
+    const texto = depTexto.value.trim();
+    const nome = depNome.value.trim();
+    if (!texto) { depErro.textContent = "Escreva o que a pessoa disse."; depTexto.focus(); return; }
+    if (!nome) { depErro.textContent = "Falta quem escreveu. Pode ser só as iniciais."; depNome.focus(); return; }
+    depErro.textContent = "";
+    const novo = { texto, nome };
+    const quando = depData.value.trim();
+    if (quando) novo.data = quando;
+    perfil.depoimentos = [...(perfil.depoimentos || []), novo];
+    depTexto.value = ""; depNome.value = ""; depData.value = "";
+    pintarDepoimentos();
+    guardar();
+  });
+
   async function pintarMoradas() {
     const box = raiz.querySelector("[data-pf-moradas]");
     const cfg = await lerAjustes(pro);
@@ -146,6 +211,7 @@ export function iniciarPerfil(raiz, user) {
     raiz.querySelectorAll("[data-pf]").forEach((inp) => { inp.value = perfil[inp.dataset.pf] || ""; });
     estado.textContent = "";
     pintarFoto();
+    pintarDepoimentos();
     pintarMoradas();
   })();
 }

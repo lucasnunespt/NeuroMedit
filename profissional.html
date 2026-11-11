@@ -32,6 +32,13 @@
 
     .passo { padding-top: 24px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
     .passo:focus { outline: none; }
+    /* Convite: a página responde ao que ganha, quanto trabalho dá e quem decide, antes de perguntar o que quer que seja. */
+    .convite-titulo { margin: 8px 0 12px; font-size: 2rem; line-height: 1.15; font-weight: 600; letter-spacing: -0.03em; }
+    .convite-lead { margin: 0 0 32px; color: var(--text-soft); line-height: 1.7; }
+    .pontos { display: grid; gap: 24px; }
+    .ponto h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; }
+    .ponto p { margin: 0; color: var(--text-soft); line-height: 1.7; }
+    @media (max-width: 640px) { .convite-titulo { font-size: 1.7rem; } }
     .bolha { max-width: 88%; box-sizing: border-box; padding: 12px 16px; line-height: 1.7; background: var(--surface-strong); border: 1px solid var(--line);
       box-shadow: var(--glass-highlight); border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-chip); }
     .chega { animation: chegar var(--duration-calm) var(--easing-calm) both; animation-delay: calc(var(--duration-calm) * var(--ordem, 0)); }
@@ -85,6 +92,25 @@
 
   <main style="display: contents;">
     <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
+
+    <section tabindex="-1" class="passo" data-passo="convite" hidden>
+      <h1 class="convite-titulo">Tenha a sua página de reservas no NeuroMedit.</h1>
+      <p class="convite-lead">Para quem ensina ou acompanha pessoas: meditação, yoga, massagem, terapias, treino.</p>
+      <div class="pontos">
+        <div class="ponto">
+          <h2>O que fica seu</h2>
+          <p>Uma página com o seu nome, o que faz e onde trabalha. As pessoas veem os seus horários livres e pedem a sessão. Não precisa de site, nem de combinar horas por mensagem.</p>
+        </div>
+        <div class="ponto">
+          <h2>Quanto trabalho dá</h2>
+          <p>Seis perguntas curtas, cerca de cinco minutos. Depois é só abrir os horários que quiser, no seu painel. Pode mudar tudo mais tarde.</p>
+        </div>
+        <div class="ponto">
+          <h2>Quem decide</h2>
+          <p>A página fica em rascunho, só para você. Vai ao ar quando você pedir e a sua entrada for aprovada.</p>
+        </div>
+      </div>
+    </section>
 
     <section tabindex="-1" class="passo" data-passo="entrar" hidden>
       <div class="bolha">Que bom ter você aqui. O NeuroMedit pode ser a sua página de reservas: as pessoas veem os seus horários livres e pedem uma sessão.</div>
@@ -185,12 +211,14 @@
       const i = ORDEM.indexOf(p);
       $("[data-passo-texto]").textContent = i >= 0 ? `Passo ${i + 1} de ${ORDEM.length} · ${NOMES[p]}` : "";
       $("[data-feito]").style.width = i >= 0 ? `${((i + 1) / ORDEM.length) * 100}%` : "0";
+      $(".progresso").hidden = i < 0;
       const barra = $("[data-barra]"), seguir = $("[data-seguir]"), voltar = $("[data-voltar]");
       barra.hidden = p === "carregar";
       voltar.hidden = i <= 0;
       seguir.className = "btn " + (p === "entrar" ? "btn--google" : "btn--primary");
       seguir.disabled = false;
       if (p === "entrar") seguir.innerHTML = '<img src="assets/google-g.svg" alt="" width="20" height="20"><span>Continuar com o Google</span>';
+      else if (p === "convite") seguir.textContent = "Começar";
       else seguir.textContent = p === "resumo" ? "Criar a minha página" : "Continuar";
       if (p === "area") { $("[data-primeiro]").textContent = d.nome.split(" ")[0]; }
       if (p === "resumo") pintarResumo();
@@ -276,6 +304,7 @@
 
     $("[data-seguir]").addEventListener("click", async () => {
       const seguir = $("[data-seguir]");
+      if (passo === "convite") { mostrar(user ? "nome" : "entrar"); return; }
       if (passo === "entrar") {
         erro("");
         try {
@@ -303,11 +332,11 @@
     });
 
     // ---------- arranque: quem já tem painel vai direto para ele
-    const limite = setTimeout(() => { if (passo === "carregar") mostrar("entrar"); }, 4000);
+    const limite = setTimeout(() => { if (passo === "carregar") mostrar("convite"); }, 4000);
     onAuthStateChanged(auth, async (u) => {
       clearTimeout(limite);
       user = u;
-      if (!u) { mostrar("entrar"); return; }
+      if (!u) { if (passo === "carregar") mostrar("convite"); return; }
       const [admin, conta] = await Promise.all([
         getDoc(doc(db, "admins", u.uid)).then((s) => s.exists()).catch(() => false),
         lerContaPro(u.uid)
@@ -316,7 +345,9 @@
       d.nome = d.nome || u.displayName || "";
       d.emailAvisos = d.emailAvisos || u.email || "";
       preencher();
-      if (!ORDEM.includes(passo)) mostrar("nome");
+      // Quem acabou de entrar com o Google segue para as perguntas; quem chega agora vê o convite.
+      if (passo === "carregar") mostrar("convite");
+      else if (!ORDEM.includes(passo)) mostrar("nome");
     });
   </script>
 </body>

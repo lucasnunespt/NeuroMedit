@@ -167,6 +167,7 @@ window.NeuroMeditTranslations = {
     "creator_path_label": "El recorrido",
     "creator_path_title": "De dónde vengo",
     "creator_story_link": "Leer la historia completa",
+    "creator_book_link": "Agendar una meditación presencial",
     "story_c1_label": "2002–2008",
     "story_c1_p1": "Nací en Paulo Afonso, en Bahía. Mi personalidad se formó al aire libre: trepando árboles y piedras, corriendo por el bosque, haciendo senderos.",
     "story_c1_p2": "Me bañaba en agua dulce y en piscinas, y me sentía conectado con el agua. Subía a los miradores y a la presa de mi ciudad para verla desde arriba.",

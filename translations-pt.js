@@ -537,6 +537,7 @@ window.NeuroMeditTranslations = {
     creator_path_title: "De onde venho",
     creator_path_intro: "Da infância ao ar livre à NeuroMedit, em dez capítulos.",
     creator_story_link: "Ler a história completa",
+    creator_book_link: "Agendar uma meditação presencial",
     creator_built_label: "O que construí",
     creator_built_title: "Obra em andamento",
     creator_b1_label: "Produto",

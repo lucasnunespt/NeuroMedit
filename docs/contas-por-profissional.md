@@ -42,7 +42,14 @@ Limites de hoje: a reserva pede sempre um sinal por MB Way (mínimo 1 €); os p
 ## Antes de divulgar a outros profissionais
 
 1. **Publicar as regras**: `firebase deploy --only firestore:rules`. Sem isto, ninguém além do Lucas consegue criar conta (as regras antigas recusam `/pros`).
-2. **Testar as regras** no emulador (`firebase emulators:start --only firestore`). Não foi possível nesta sessão (o emulador não descarregou). Casos a verificar:
+2. **Testar as regras.** Os 26 casos abaixo estão escritos em `tests/regras.test.mjs`. Para correr, numa máquina com Java e acesso à Google:
+
+   ```
+   npm install
+   npm run testar-regras
+   ```
+
+   Ainda não foram corridos: o ambiente do agente não alcança os servidores da Google, por isso o emulador não descarrega. As regras estão publicadas sem nunca terem sido executadas contra um caso. Casos cobertos:
    - um profissional cria a sua conta em rascunho, edita, pede aprovação, e **não** consegue pôr `estado: "aprovado"`;
    - um visitante sem login lê um perfil aprovado e **não** lê um rascunho;
    - um profissional lê e confirma os seus pedidos (`where proId == uid`) e **não** lê os do Lucas;

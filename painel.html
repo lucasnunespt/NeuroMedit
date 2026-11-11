@@ -189,7 +189,7 @@
 
   <main class="shell" data-estado="sem-acesso" hidden>
     <h1>Sem acesso</h1>
-    <p class="lead">Esta conta ainda não tem um painel. Se quer marcar uma sessão, a página é outra.</p>
+    <p class="lead">Esta conta ainda não tem um painel. Se quer marcar uma <span data-t="sg">sessão</span>, a página é outra.</p>
     <a class="btn btn--primary" href="home.html">Ir para o início</a>
     <p class="lead" style="margin-top: 32px;">É professor ou terapeuta e quer receber reservas pelo NeuroMedit?</p>
     <a class="btn btn--secondary" href="profissional.html">Criar a minha página</a>
@@ -254,12 +254,12 @@
       </div>
 
       <div class="bloco">
-        <p class="label">Próximas sessões</p>
+        <p class="label">Próximas <span data-t="pl">sessões</span></p>
         <div class="card" data-proximas><p class="muted">Carregando…</p></div>
       </div>
 
       <div class="bloco">
-        <p class="label">Sessões canceladas</p>
+        <p class="label"><span data-t="Pl">Sessões</span> canceladas</p>
         <div class="card" data-canceladas><p class="muted">Carregando…</p></div>
         <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" data-link-reservar style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
       </div>
@@ -318,7 +318,7 @@
         <p class="muted" style="margin: 4px 0 12px;">entrou neste mês</p>
         <div data-din-linhas></div>
       </div>
-      <div class="bloco"><p class="label">Sessões</p><div class="card" data-din-sessoes></div></div>
+      <div class="bloco"><p class="label"><span data-t="Pl">Sessões</span></p><div class="card" data-din-sessoes></div></div>
       <div class="bloco"><p class="label">Ainda por receber</p><div class="card"><div class="item"><span>Restante das sessões confirmadas</span><span data-din-receber>—</span></div></div></div>
       <p class="muted" style="margin-top: 16px;" data-din-nota></p>
     </main>
@@ -342,7 +342,7 @@
         </div>
         <div class="card">
           <p class="aj-titulo">Tempo de deslocação</p>
-          <p class="muted">Tempo livre entre duas sessões, para chegar de um sítio ao outro.</p>
+          <p class="muted">Tempo livre entre duas <span data-t="pl">sessões</span>, para chegar de um sítio ao outro.</p>
           <div class="ag-tipos" style="margin-top: 16px;">
             <button type="button" class="pill" data-aj-desl="30" aria-pressed="false">30 min</button>
             <button type="button" class="pill" data-aj-desl="60" aria-pressed="false">1 hora</button>
@@ -354,7 +354,7 @@
       <div class="bloco">
         <p class="label">Valores</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot">Sessão avulsa (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="precoAvulsa"></label>
+          <label class="aj-campo-rot"><span data-t="Sg">Sessão</span> avulsa (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="precoAvulsa"></label>
           <label class="aj-campo-rot">Pacote de 3 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote3"></label>
           <label class="aj-campo-rot">Pacote de 4 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote4"></label>
           <label class="aj-campo-rot">Desconto de lançamento (%)<input class="aj-campo" type="number" min="0" max="100" step="1" inputmode="numeric" data-aj="descontoLancamento"></label>
@@ -374,7 +374,7 @@
       <div class="bloco">
         <p class="label">Regras</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot">Duração da sessão (min)<input class="aj-campo" type="number" min="15" step="5" inputmode="numeric" data-aj="duracao"></label>
+          <label class="aj-campo-rot">Duração da <span data-t="sg">sessão</span> (min)<input class="aj-campo" type="number" min="15" step="5" inputmode="numeric" data-aj="duracao"></label>
           <label class="aj-campo-rot">Cancelar sem custo até (horas antes)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="cancelarAteHoras"></label>
           <label class="aj-campo-rot">Validade do pacote (meses)<input class="aj-campo" type="number" min="1" step="1" inputmode="numeric" data-aj="validadePacoteMeses"></label>
         </div>
@@ -382,7 +382,7 @@
 
       <div class="bloco">
         <p class="label">Locais</p>
-        <div class="card"><p class="muted">Onde aceita sessões. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div>
+        <div class="card"><p class="muted">Onde aceita <span data-t="pl">sessões</span>. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div>
           <div class="aj-grelha" style="margin-top: 16px;">
             <label class="aj-campo-rot">Outro local<input class="aj-campo" type="text" maxlength="60" placeholder="Ex.: Em casa do cliente" data-aj-local-novo></label>
             <div style="display: flex; align-items: flex-end;"><button type="button" class="btn btn--secondary" data-aj-local-add>Adicionar local</button></div>
@@ -406,6 +406,7 @@
           <div class="aj-grelha">
             <label class="aj-campo-rot">Nome<input class="aj-campo" type="text" autocomplete="name" data-pf="nome"></label>
             <label class="aj-campo-rot">Cidade<input class="aj-campo" type="text" data-pf="cidade"></label>
+            <label class="aj-campo-rot">Área<select class="aj-campo" data-pf="area" data-pf-areas></select><small>Decide a palavra que o painel usa: aula, consulta, treino ou sessão.</small></label>
             <label class="aj-campo-rot aj-largo">O que faz (uma linha)<input class="aj-campo" type="text" maxlength="80" data-pf="profissao"></label>
             <label class="aj-campo-rot aj-largo">Sobre (2 ou 3 frases, na primeira pessoa)<textarea class="campo-texto" rows="4" maxlength="400" data-pf="sobre"></textarea></label>
             <label class="aj-campo-rot">No NeuroMedit desde (ano)<input class="aj-campo" type="text" inputmode="numeric" maxlength="4" data-pf="desde"></label>
@@ -424,6 +425,19 @@
             <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
           </div>
         </div>
+        <div class="card">
+          <p class="aj-titulo">Depoimentos</p>
+          <p class="muted">O que as pessoas escreveram sobre as suas <span data-t="pl">sessões</span>. Só palavras reais, e só com a autorização de quem as escreveu. Aparecem na sua página pública.</p>
+          <div data-pf-depoimentos></div>
+          <div class="aj-grelha" style="margin-top: 16px;">
+            <label class="aj-campo-rot aj-largo">O que escreveram<textarea class="campo-texto" rows="3" maxlength="300" data-dep-texto></textarea></label>
+            <label class="aj-campo-rot">Quem escreveu<input class="aj-campo" type="text" maxlength="40" placeholder="Nome ou iniciais" data-dep-nome></label>
+            <label class="aj-campo-rot">Quando<input class="aj-campo" type="text" maxlength="20" placeholder="nov 2026" data-dep-data></label>
+          </div>
+          <button type="button" class="btn btn--secondary" style="margin-top: 12px;" data-dep-add>Adicionar depoimento</button>
+          <p class="ag-estado" data-dep-erro aria-live="polite"></p>
+        </div>
+
         <div class="card">
           <p class="aj-titulo">Moradas</p>
           <p class="muted">Com morada, o local ganha o botão "Como chegar" na sua página e o botão "Rota" nas suas próximas sessões. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
@@ -455,6 +469,7 @@
     import { iniciarPerfil } from "./painel-perfil.js";
     import { definirProPainel, pedirAprovacao, perfisPendentes, aprovarPro, devolverPro } from "./conta-pro.js";
     import { comPro } from "./reservas-dados.js";
+    import { aplicarTermos } from "./termos.js";
     let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
@@ -584,7 +599,12 @@
         }
         mostrarSecao();
         carregarPedidos();
-        lerPerfil(proId).then((p) => { definirMoradas(p?.moradas); if (lista) desenharTudo(); });
+        lerPerfil(proId).then((p) => {
+          definirMoradas(p?.moradas);
+          // O painel passa a falar a língua da profissão: aula, consulta, treino ou sessão.
+          aplicarTermos(document, p?.area);
+          if (lista) desenharTudo();
+        });
         if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); iniciarPerfil(document.querySelector("[data-perfil-publico]"), user); }
       }
     });

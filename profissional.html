@@ -182,15 +182,13 @@
     import { auth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, db, doc, getDoc } from "./firebase-init.js";
     import { lerContaPro, criarContaPro } from "./conta-pro.js";
     import { PADRAO_PRO } from "./painel-ajustes.js";
+    // A lista de áreas vive em termos.js, com as palavras que cada uma usa.
+    import { AREAS } from "./termos.js";
 
     const $ = (s) => document.querySelector(s);
     const ORDEM = ["nome", "area", "onde", "sessao", "contato", "resumo"];
     const NOMES = { nome: "O seu nome", area: "O que faz", onde: "Onde", sessao: "Sessão", contato: "Contato", resumo: "Conferir" };
-    // Áreas das personas do painel. "saude" muda os avisos da página (dados de saúde pedem mais cuidado).
-    const AREAS = [
-      ["Meditação", false], ["Yoga", false], ["Pilates", false], ["Treino e educação física", false], ["Massagem", false],
-      ["Terapias holísticas", false], ["Coaching", false], ["Fisioterapia", true], ["Psicologia", true], ["Nutrição", true], ["Outra", false]
-    ];
+
     const AVISO_BEM_ESTAR = "É uma prática de bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.";
     const d = { nome: "", area: "", saude: false, profissao: "", cidade: "", modos: [], duracao: 60, precoAvulsa: "", sinal: 5, mbway: "", whatsapp: "", emailAvisos: "" };
     let user = null, passo = "carregar";

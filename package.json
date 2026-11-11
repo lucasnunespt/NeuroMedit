@@ -1,0 +1,13 @@
+{
+  "name": "neuromedit",
+  "private": true,
+  "description": "Site do NeuroMedit. O site é HTML estático e não precisa de build; isto existe só para correr os testes das regras do Firestore.",
+  "scripts": {
+    "testar-regras": "firebase emulators:exec --only firestore \"node --test tests/regras.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.4",
+    "firebase": "^10.12.0",
+    "firebase-tools": "^13.29.1"
+  }
+}

@@ -383,7 +383,7 @@
         </div>
         <div class="card">
           <p class="aj-titulo">Moradas</p>
-          <p class="muted">Com morada, o local ganha o botão "Como chegar" na sua página. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
+          <p class="muted">Com morada, o local ganha o botão "Como chegar" na sua página e o botão "Rota" nas suas próximas sessões. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
           <div class="aj-grelha" style="margin-top: 16px;" data-pf-moradas></div>
         </div>
       </div>
@@ -403,7 +403,8 @@
 
   <script type="module">
     import { watchPainel, entrar, sair, ouvirPedidos } from "./painel-guard.js";
-    import { desenharPedidos } from "./painel-pedidos.js";
+    import { desenharPedidos, definirMoradas } from "./painel-pedidos.js";
+    import { lerPerfil } from "./perfil-dados.js";
     import { iniciarDinheiro } from "./painel-dinheiro.js";
     import { mensagemDoDia } from "./painel-mensagens.js";
     import { iniciarAgenda } from "./painel-agenda.js";
@@ -466,6 +467,7 @@
         }
         mostrarSecao();
         carregarPedidos();
+        lerPerfil().then((p) => { definirMoradas(p.moradas); if (lista) desenharTudo(); });
         if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); iniciarPerfil(document.querySelector("[data-perfil-publico]"), user); }
       }
     });

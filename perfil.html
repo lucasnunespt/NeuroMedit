@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="theme-sync.css">
   <script src="theme-sync.js"></script>
   <style>
-    /* Perfil público do colaborador. Componentes do design system NeuroMedit (10 nov 2026):
+    /* A classe "button" nos links-botão impede que a regra de links do theme-sync.css lhes mude a cor.
+       Perfil público do colaborador. Componentes do design system NeuroMedit (10 nov 2026):
        ProfileHeader, WeekStrip, VerifiedBadge, LocationCard, Testimonial, Toast. Só tokens; sem cores novas. */
     body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
       background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); }
@@ -154,7 +155,7 @@
         <div class="cab"><h2 id="t-hor">Próximos horários</h2><span data-mes></span></div>
         <div class="semana" role="group" aria-label="Próximos 7 dias" data-semana></div>
         <div class="horas" data-horas aria-live="polite"></div>
-        <a class="btn btn--primary" href="reservar.html">Agendar uma sessão</a>
+        <a class="btn btn--primary button" href="reservar.html">Agendar uma sessão</a>
         <p class="nota" data-preco></p>
       </section>
     </aside>
@@ -227,7 +228,7 @@
       nomes.filter((n) => moradas[n]).forEach((nome) => {
         const c = el("div", "cartao local");
         const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(nome);
-        const a = el("a", "btn btn--secondary"); a.href = linkRota(moradas[nome]); a.target = "_blank"; a.rel = "noopener";
+        const a = el("a", "btn btn--secondary button"); a.href = linkRota(moradas[nome]); a.target = "_blank"; a.rel = "noopener";
         a.innerHTML = ICO.rota; a.append("Como chegar");
         c.append(t, el("p", "texto", moradas[nome]), a);
         box.append(c);

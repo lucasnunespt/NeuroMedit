@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Criar a minha página · NeuroMedit</title>
+  <meta name="description" content="Para professores e terapeutas: crie a sua página de reservas no NeuroMedit.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+  <style>
+    /* Formulário de entrada do profissional: uma pergunta por vez, como a conversa da reserva.
+       Componentes do design system NeuroMedit: StepIndicator, TextField, Checkbox, Chip/pill. Só tokens. */
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
+      background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); display: flex; flex-direction: column; }
+    a { color: var(--link-text); }
+    button, input, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    .topo, .progresso, .passo, .barra { box-sizing: border-box; width: 100%; max-width: 560px; margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+    .topo { padding-top: max(16px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 12px; min-height: 60px; }
+    .topo img { width: 40px; height: 40px; padding: 6px; box-sizing: border-box; border-radius: var(--radius-pill); background: var(--luz-glow-core); }
+    .topo strong { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
+    .progresso { padding-top: 8px; min-height: 2.4em; }
+    .progresso p { margin: 0 0 8px; color: var(--text-soft); font-size: 0.92rem; }
+    .trilho { height: 4px; border-radius: var(--radius-pill); background: var(--line); overflow: hidden; }
+    .feito { height: 100%; width: 0; border-radius: var(--radius-pill); background: var(--accent); transition: width var(--duration-calm) var(--easing-calm); }
+
+    .passo { padding-top: 24px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .passo:focus { outline: none; }
+    .bolha { max-width: 88%; box-sizing: border-box; padding: 12px 16px; line-height: 1.7; background: var(--surface-strong); border: 1px solid var(--line);
+      box-shadow: var(--glass-highlight); border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-chip); }
+    .chega { animation: chegar var(--duration-calm) var(--easing-calm) both; animation-delay: calc(var(--duration-calm) * var(--ordem, 0)); }
+    @keyframes chegar { from { opacity: 0; transform: translateY(var(--rise-distance)); } }
+    .rotulo { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
+    .rotulo small { font-weight: 400; color: var(--text-soft); font-size: 0.9rem; }
+    .campo { box-sizing: border-box; width: 100%; min-height: var(--control-height); padding: 0 16px; border-radius: var(--radius-sm);
+      border: 1px solid var(--text-muted); background: var(--surface-strong); color: var(--text); font-size: 1rem; font-weight: 400; }
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--text-muted); background: var(--surface-strong); color: var(--text); }
+    .pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 2px; }
+    legend { padding: 0; margin-bottom: 6px; font-weight: 500; }
+    .op { display: flex; align-items: center; gap: 12px; min-height: var(--control-height); cursor: pointer; }
+    .op input { appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border-radius: var(--radius-check); border: 1.5px solid var(--text-muted);
+      background: var(--surface-strong); display: grid; place-content: center; }
+    .op input::after { content: ""; width: 12px; height: 7px; border-left: 2px solid var(--button-text); border-bottom: 2px solid var(--button-text);
+      transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+    .op input:checked { background: var(--accent); border-color: var(--accent); }
+    .op input:checked::after { opacity: 1; }
+    .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .nota { margin: 0; color: var(--text-soft); font-size: 0.92rem; line-height: 1.6; }
+    .erro { margin: 0; display: flex; gap: 6px; align-items: flex-start; font-weight: 500; font-size: 0.92rem; min-height: 1.4em; }
+    .erro svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--accent-dark); }
+    .erro:empty { display: block; }
+    .resumo { box-sizing: border-box; padding: 8px 16px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card), var(--glass-highlight); }
+    .linha { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .linha:last-child { border-bottom: 0; }
+    .linha span:first-child { color: var(--text-soft); }
+    .linha span:last-child { text-align: right; }
+
+    .barra { position: sticky; bottom: 0; padding-top: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px;
+      background: linear-gradient(to bottom, transparent, var(--bg-soft) 40%); }
+    .voltar { flex: none; display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border-radius: var(--radius-pill); border: 1px solid var(--line);
+      background: var(--surface-strong); color: var(--text-soft); box-shadow: var(--shadow-soft); }
+    .voltar svg { width: 22px; height: 22px; }
+    .btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--control-height); padding: 0 var(--button-pad-x);
+      border-radius: var(--radius-pill); border: 1px solid transparent; font-size: 1rem; font-weight: 500; text-decoration: none; box-sizing: border-box; }
+    .btn--primary { background: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    .btn--google { background: var(--surface-strong); color: var(--text); border-color: var(--line); box-shadow: var(--shadow-soft); }
+    .btn--google img { width: 20px; height: 20px; }
+    .btn:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <img src="assets/neuromedit-symbol-vector.svg" alt="" width="40" height="40">
+    <strong>NeuroMedit</strong>
+  </header>
+  <div class="progresso"><p data-passo-texto aria-live="polite"></p><div class="trilho" aria-hidden="true"><div class="feito" data-feito></div></div></div>
+
+  <main style="display: contents;">
+    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
+
+    <section tabindex="-1" class="passo" data-passo="entrar" hidden>
+      <div class="bolha">Que bom ter você aqui. O NeuroMedit pode ser a sua página de reservas: as pessoas veem os seus horários livres e pedem uma sessão.</div>
+      <div class="bolha">São seis perguntas curtas. No fim, a página fica em rascunho, só para você. Só vai ao ar depois de você pedir e de ser aprovada.</div>
+      <div class="bolha">Para começar, entre com a sua conta Google. É com ela que vai abrir o seu painel.</div>
+      <p class="erro" data-erro-entrar aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="nome" hidden>
+      <div class="bolha">Como você se chama?</div>
+      <label class="rotulo">O seu nome<small>Como as pessoas vão ver na sua página.</small><input class="campo" type="text" autocomplete="name" maxlength="60" data-c="nome"></label>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="area" hidden>
+      <div class="bolha">Prazer, <span data-primeiro></span>. Qual é a sua área?</div>
+      <div class="pills" role="group" aria-label="Área" data-areas></div>
+      <label class="rotulo">O que você faz, numa linha<small>Aparece por baixo do seu nome.</small><input class="campo" type="text" maxlength="80" data-c="profissao" placeholder="Ex.: Professora de yoga e meditação"></label>
+      <p class="nota" data-nota-saude hidden>Na sua página, a reserva e as mensagens servem para combinar sessões, não para acompanhamento clínico. Depoimentos nunca falam de diagnósticos.</p>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="onde" hidden>
+      <div class="bolha">Onde acontecem as suas sessões?</div>
+      <label class="rotulo">Cidade<input class="campo" type="text" autocomplete="address-level2" maxlength="60" data-c="cidade" placeholder="Ex.: Lisboa"></label>
+      <fieldset>
+        <legend>Como você trabalha? Pode escolher mais de uma.</legend>
+        <label class="op"><input type="checkbox" value="No meu espaço" data-modo> No meu espaço</label>
+        <label class="op"><input type="checkbox" value="Ao ar livre" data-modo> Ao ar livre</label>
+        <label class="op"><input type="checkbox" value="Em casa do cliente" data-modo> Em casa do cliente</label>
+        <label class="op"><input type="checkbox" value="Online" data-modo> Online</label>
+      </fieldset>
+      <p class="nota">Em casa do cliente: a morada dele é pedida na reserva e apagada sozinha dois dias depois da sessão.</p>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="sessao" hidden>
+      <div class="bolha">Quanto tempo dura uma sessão, e quanto custa?</div>
+      <div class="pills" role="group" aria-label="Duração" data-duracoes></div>
+      <div class="duas">
+        <label class="rotulo">Preço (€)<input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="precoAvulsa"></label>
+        <label class="rotulo">Sinal (€)<input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="sinal"></label>
+      </div>
+      <label class="rotulo">O seu número MB Way<small>O sinal confirma o horário e entra no valor. A pessoa paga para este número; o resto, no dia.</small><input class="campo" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" data-c="mbway" placeholder="9XX XXX XXX"></label>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="contato" hidden>
+      <div class="bolha">Por onde as pessoas falam com você, e para onde mando os avisos de pedidos novos?</div>
+      <label class="rotulo">WhatsApp<input class="campo" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" data-c="whatsapp" placeholder="+351 …"></label>
+      <label class="rotulo">E-mail para avisos<input class="campo" type="email" autocomplete="email" maxlength="120" data-c="emailAvisos"></label>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+
+    <section tabindex="-1" class="passo" data-passo="resumo" hidden>
+      <div class="bolha">É isto. Confira antes de criar: depois pode mudar tudo no painel.</div>
+      <div class="resumo" data-resumo></div>
+      <p class="nota">A página fica em rascunho. No painel, você escolhe os dias livres na Agenda, completa o perfil e pede a aprovação quando quiser.</p>
+      <p class="erro" data-erro aria-live="polite"></p>
+    </section>
+  </main>
+
+  <div class="barra" data-barra hidden>
+    <button type="button" class="voltar" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></button>
+    <button type="button" class="btn btn--primary" data-seguir>Continuar</button>
+  </div>
+
+  <script type="module">
+    import { auth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, db, doc, getDoc } from "./firebase-init.js";
+    import { lerContaPro, criarContaPro } from "./conta-pro.js";
+    import { PADRAO_PRO } from "./painel-ajustes.js";
+
+    const $ = (s) => document.querySelector(s);
+    const ORDEM = ["nome", "area", "onde", "sessao", "contato", "resumo"];
+    const NOMES = { nome: "O seu nome", area: "O que faz", onde: "Onde", sessao: "Sessão", contato: "Contato", resumo: "Conferir" };
+    // Áreas das personas do painel. "saude" muda os avisos da página (dados de saúde pedem mais cuidado).
+    const AREAS = [
+      ["Meditação", false], ["Yoga", false], ["Pilates", false], ["Treino e educação física", false], ["Massagem", false],
+      ["Terapias holísticas", false], ["Coaching", false], ["Fisioterapia", true], ["Psicologia", true], ["Nutrição", true], ["Outra", false]
+    ];
+    const AVISO_BEM_ESTAR = "É uma prática de bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.";
+    const d = { nome: "", area: "", saude: false, profissao: "", cidade: "", modos: [], duracao: 60, precoAvulsa: "", sinal: 5, mbway: "", whatsapp: "", emailAvisos: "" };
+    let user = null, passo = "carregar";
+
+    const icoAlerta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>';
+    function erro(msg) {
+      const e = document.querySelector(`[data-passo="${passo}"] [data-erro], [data-passo="${passo}"] [data-erro-entrar]`);
+      if (!e) return;
+      e.textContent = "";
+      if (msg) { e.innerHTML = icoAlerta; e.append(msg); }
+    }
+
+    function mostrar(p) {
+      passo = p;
+      document.querySelectorAll("[data-passo]").forEach((s) => { s.hidden = s.dataset.passo !== p; });
+      const sec = document.querySelector(`[data-passo="${p}"]`);
+      [...sec.children].forEach((c, i) => { c.classList.add("chega"); c.style.setProperty("--ordem", Math.min(i, 3)); });
+      const i = ORDEM.indexOf(p);
+      $("[data-passo-texto]").textContent = i >= 0 ? `Passo ${i + 1} de ${ORDEM.length} · ${NOMES[p]}` : "";
+      $("[data-feito]").style.width = i >= 0 ? `${((i + 1) / ORDEM.length) * 100}%` : "0";
+      const barra = $("[data-barra]"), seguir = $("[data-seguir]"), voltar = $("[data-voltar]");
+      barra.hidden = p === "carregar";
+      voltar.hidden = i <= 0;
+      seguir.className = "btn " + (p === "entrar" ? "btn--google" : "btn--primary");
+      seguir.disabled = false;
+      if (p === "entrar") seguir.innerHTML = '<img src="assets/google-g.svg" alt="" width="20" height="20"><span>Continuar com o Google</span>';
+      else seguir.textContent = p === "resumo" ? "Criar a minha página" : "Continuar";
+      if (p === "area") { $("[data-primeiro]").textContent = d.nome.split(" ")[0]; }
+      if (p === "resumo") pintarResumo();
+      erro("");
+      sec.focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    }
+
+    // ---------- campos
+    document.querySelectorAll("[data-c]").forEach((inp) => inp.addEventListener("input", () => { d[inp.dataset.c] = inp.value.trim(); }));
+    const preencher = () => document.querySelectorAll("[data-c]").forEach((inp) => { inp.value = d[inp.dataset.c] ?? ""; });
+
+    const areasBox = $("[data-areas]");
+    AREAS.forEach(([nome, saude]) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "pill"; b.textContent = nome; b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", () => {
+        d.area = nome; d.saude = saude;
+        areasBox.querySelectorAll(".pill").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+        $("[data-nota-saude]").hidden = !saude;
+      });
+      areasBox.append(b);
+    });
+    const durBox = $("[data-duracoes]");
+    [30, 45, 60, 90].forEach((m) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "pill"; b.textContent = `${m} min`; b.setAttribute("aria-pressed", m === d.duracao ? "true" : "false");
+      b.addEventListener("click", () => { d.duracao = m; durBox.querySelectorAll(".pill").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false")); });
+      durBox.append(b);
+    });
+    document.querySelectorAll("[data-modo]").forEach((cb) => cb.addEventListener("change", () => {
+      d.modos = [...document.querySelectorAll("[data-modo]:checked")].map((x) => x.value);
+    }));
+
+    // ---------- validação: o que falta + porquê
+    const so = (t) => String(t || "").replace(/\D/g, "");
+    function validar() {
+      if (passo === "nome" && d.nome.length < 2) return "Falta o seu nome, para as pessoas saberem com quem reservam.";
+      if (passo === "area") {
+        if (!d.area) return "Escolha a área mais próxima do seu trabalho.";
+        if (d.profissao.length < 3) return "Falta dizer numa linha o que você faz.";
+      }
+      if (passo === "onde") {
+        if (d.cidade.length < 2) return "Falta a cidade, para as pessoas saberem se você fica perto.";
+        if (!d.modos.length) return "Escolha pelo menos uma forma de trabalhar.";
+      }
+      if (passo === "sessao") {
+        if (!(Number(d.precoAvulsa) >= 1)) return "Falta o preço de uma sessão.";
+        if (!(Number(d.sinal) >= 1)) return "Falta o valor do sinal (pelo menos 1 €).";
+        if (Number(d.sinal) > Number(d.precoAvulsa)) return "O sinal não pode ser maior do que o preço.";
+        if (so(d.mbway).length < 9) return "Falta o número MB Way, para as pessoas enviarem o sinal.";
+      }
+      if (passo === "contato") {
+        if (so(d.whatsapp).length < 9) return "Falta o WhatsApp, para as pessoas conseguirem falar com você.";
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.emailAvisos)) return "Falta um e-mail válido, para receber os avisos de pedidos.";
+      }
+      return "";
+    }
+
+    function pintarResumo() {
+      const box = $("[data-resumo]");
+      box.textContent = "";
+      [["Nome", d.nome], ["O que faz", d.profissao], ["Área", d.area], ["Cidade", d.cidade], ["Onde", d.modos.join(", ")],
+       ["Sessão", `${d.duracao} min · €${d.precoAvulsa}`], ["Sinal", `€${d.sinal} por MB Way (${d.mbway})`], ["WhatsApp", d.whatsapp], ["Avisos", d.emailAvisos]]
+        .forEach(([k, v]) => {
+          const l = document.createElement("div"); l.className = "linha";
+          const a = document.createElement("span"); a.textContent = k;
+          const b = document.createElement("span"); b.textContent = v;
+          l.append(a, b); box.append(l);
+        });
+    }
+
+    async function criar() {
+      const locais = {};
+      d.modos.forEach((m) => { locais[m] = true; });
+      const perfil = { nome: d.nome, profissao: d.profissao, area: d.area, cidade: d.cidade, desde: String(new Date().getFullYear()),
+        sobre: "", foto: user.photoURL || "", moradas: {}, depoimentos: [] };
+      const sessao = { ...PADRAO_PRO, duracao: d.duracao, precoAvulsa: Number(d.precoAvulsa), sinal: Number(d.sinal), mbway: d.mbway,
+        whatsapp: d.whatsapp, emailAvisos: d.emailAvisos, locais, avisoPratica: d.saude ? "" : AVISO_BEM_ESTAR };
+      await criarContaPro(user.uid, { perfil, sessao });
+      location.href = "painel.html";
+    }
+
+    $("[data-seguir]").addEventListener("click", async () => {
+      const seguir = $("[data-seguir]");
+      if (passo === "entrar") {
+        erro("");
+        try {
+          const provider = new GoogleAuthProvider();
+          provider.setCustomParameters({ prompt: "select_account" });
+          await signInWithPopup(auth, provider);
+        } catch (e) {
+          if (e?.code !== "auth/popup-closed-by-user" && e?.code !== "auth/cancelled-popup-request")
+            erro("Não consegui abrir a janela do Google. Se está dentro do Instagram ou do WhatsApp, abra esta página no navegador.");
+        }
+        return;
+      }
+      const falta = validar();
+      if (falta) { erro(falta); return; }
+      if (passo === "resumo") {
+        seguir.disabled = true;
+        try { await criar(); } catch (e) { seguir.disabled = false; erro("Não consegui criar a página. Verifique a ligação e tente de novo."); }
+        return;
+      }
+      mostrar(ORDEM[ORDEM.indexOf(passo) + 1]);
+    });
+    $("[data-voltar]").addEventListener("click", () => { const i = ORDEM.indexOf(passo); if (i > 0) mostrar(ORDEM[i - 1]); });
+    document.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" && ev.target.matches("input:not([type=checkbox])")) { ev.preventDefault(); $("[data-seguir]").click(); }
+    });
+
+    // ---------- arranque: quem já tem painel vai direto para ele
+    const limite = setTimeout(() => { if (passo === "carregar") mostrar("entrar"); }, 4000);
+    onAuthStateChanged(auth, async (u) => {
+      clearTimeout(limite);
+      user = u;
+      if (!u) { mostrar("entrar"); return; }
+      const [admin, conta] = await Promise.all([
+        getDoc(doc(db, "admins", u.uid)).then((s) => s.exists()).catch(() => false),
+        lerContaPro(u.uid)
+      ]);
+      if (admin || conta) { location.replace("painel.html"); return; }
+      d.nome = d.nome || u.displayName || "";
+      d.emailAvisos = d.emailAvisos || u.email || "";
+      preencher();
+      if (!ORDEM.includes(passo)) mostrar("nome");
+    });
+  </script>
+</body>
+</html>

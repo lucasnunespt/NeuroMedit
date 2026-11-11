@@ -53,8 +53,10 @@ service cloud.firestore {
 
     // Pedidos de sessão: a pessoa vê e cria só os seus; o profissional vê e gere os seus (proId);
     // o Lucas (admin) vê e gere todos. Pedidos sem proId são do Lucas.
+    // Igualdade direta (sem "'proId' in data"): é a forma que as consultas "where proId == uid" conseguem provar.
+    // Num pedido sem proId a comparação dá erro, que conta como "não", e as outras condições decidem.
     function isProDoPedido(data) {
-      return isSignedIn() && 'proId' in data && data.proId == request.auth.uid;
+      return isSignedIn() && data.proId == request.auth.uid;
     }
     match /bookings/{bookingId} {
       allow read: if isAdmin()

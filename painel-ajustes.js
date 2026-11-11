@@ -6,6 +6,8 @@
  * As mudanças ficam guardadas sozinhas, 700 ms depois da última.
  */
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
+import { updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { proPainel } from "./conta-pro.js";
 
 export const PADRAO = {
   receberPedidos: true,
@@ -35,14 +37,28 @@ export const PADRAO = {
   whatsapp: "+351 933 594 881"
 };
 
+/** Base para outros profissionais: sem os contactos, os locais nem o desconto do Lucas. */
+export const PADRAO_PRO = {
+  ...PADRAO,
+  receberPedidos: false,
+  precoAvulsa: 0, pacote3: 0, pacote4: 0, descontoLancamento: 0, descontoAte: "",
+  sinal: 0, mbway: "",
+  duracao: 60,
+  semana: [{ k: "none" }, { k: "none" }, { k: "none" }, { k: "none" }, { k: "none" }, { k: "none" }, { k: "none" }],
+  locais: {},
+  emailAvisos: "", whatsapp: ""
+};
+
 const DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 const pad = (h) => String(h).padStart(2, "0") + ":00";
 const euro = (n) => "€" + (Math.round(n * 100) / 100).toString().replace(".", ",");
 
 export function iniciarAjustes(raiz) {
-  const ref = doc(db, "settings", "sessao");
+  // O Lucas guarda em /settings/sessao; um profissional, no campo "sessao" da sua conta (/pros/{uid}).
+  const pro = proPainel();
+  const ref = pro ? doc(db, "pros", pro) : doc(db, "settings", "sessao");
   const estado = raiz.querySelector("[data-aj-estado]");
-  let cfg = JSON.parse(JSON.stringify(PADRAO));
+  let cfg = JSON.parse(JSON.stringify(pro ? PADRAO_PRO : PADRAO));
   let timer = null;
 
   function guardar() {
@@ -50,7 +66,8 @@ export function iniciarAjustes(raiz) {
     clearTimeout(timer);
     timer = setTimeout(async () => {
       try {
-        await setDoc(ref, { ...cfg, atualizado: new Date() });
+        if (pro) await updateDoc(ref, { sessao: cfg, atualizado: new Date() });
+        else await setDoc(ref, { ...cfg, atualizado: new Date() });
         estado.textContent = "Guardado.";
       } catch (err) {
         estado.textContent = "Não consegui guardar. Tente de novo.";
@@ -117,6 +134,12 @@ export function iniciarAjustes(raiz) {
   const locaisBox = raiz.querySelector("[data-aj-locais]");
   function pintarLocais() {
     locaisBox.textContent = "";
+    if (!Object.keys(cfg.locais).length) {
+      const vazio = document.createElement("p");
+      vazio.className = "muted";
+      vazio.textContent = "Ainda sem locais. Adicione o primeiro abaixo.";
+      locaisBox.append(vazio);
+    }
     Object.keys(cfg.locais).forEach((nome) => {
       const lab = document.createElement("label");
       lab.className = "aj-check";
@@ -127,6 +150,16 @@ export function iniciarAjustes(raiz) {
       locaisBox.append(lab);
     });
   }
+
+  // Adicionar um local novo (ex.: "Em casa do cliente", "Online").
+  const novoLocal = raiz.querySelector("[data-aj-local-novo]");
+  raiz.querySelector("[data-aj-local-add]")?.addEventListener("click", () => {
+    const nome = (novoLocal.value || "").trim().slice(0, 60);
+    if (!nome || nome in cfg.locais || /[.\/~*\[\]]/.test(nome)) { novoLocal.focus(); return; }
+    cfg.locais[nome] = true;
+    novoLocal.value = "";
+    pintarLocais(); guardar();
+  });
 
   // ---------- resumo dos preços com desconto
   const resumo = raiz.querySelector("[data-aj-resumo]");
@@ -148,7 +181,7 @@ export function iniciarAjustes(raiz) {
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
-        cfg = { ...cfg, ...snap.data() };
+        cfg = { ...cfg, ...(pro ? snap.data().sessao || {} : snap.data()) };
         estado.textContent = "Guardado.";
         pintarTudo();
       } else {
@@ -165,6 +198,11 @@ export function iniciarAjustes(raiz) {
 /** Para a Agenda: a semana padrão guardada (ou a combinada, se ainda não houver). */
 export async function lerSemanaPadrao() {
   try {
+    const pro = proPainel();
+    if (pro) {
+      const s = await getDoc(doc(db, "pros", pro));
+      return (s.exists() && s.data().sessao?.semana) || PADRAO_PRO.semana;
+    }
     const snap = await getDoc(doc(db, "settings", "sessao"));
     return (snap.exists() && snap.data().semana) || PADRAO.semana;
   } catch (err) {

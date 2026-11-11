@@ -6,6 +6,7 @@
  * Componentes do design system: ProfileHeader, VerifiedBadge, LocationCard, Testimonial (decididos a 10 nov 2026).
  */
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
+import { updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 export const PERFIL_PADRAO = {
   nome: "Lucas Nunes",
@@ -37,7 +38,12 @@ export async function lerPerfil(proId = "") {
   }
 }
 
-export function guardarPerfil(perfil) {
+export function guardarPerfil(perfil, proId = "") {
+  if (proId) {
+    // "verificado" não se guarda: vem do estado da conta (só o Lucas aprova).
+    const { verificado, ...resto } = perfil;
+    return updateDoc(doc(db, "pros", proId), { perfil: resto, atualizado: new Date() });
+  }
   return setDoc(doc(db, "settings", "perfil"), { ...perfil, atualizado: new Date() });
 }
 

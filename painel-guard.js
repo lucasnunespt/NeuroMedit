@@ -6,7 +6,8 @@
  * Este ficheiro só decide o que a página mostra: entrar, sem acesso ou painel.
  */
 import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc, getDoc } from "./firebase-init.js";
-import { collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { lerContaPro } from "./conta-pro.js";
 
 async function isAdmin(user) {
   if (!user) return false;
@@ -20,15 +21,18 @@ async function isAdmin(user) {
 }
 
 /**
- * Chama onState(estado, user) sempre que o login muda.
- * estado: "a-verificar" | "sem-login" | "sem-acesso" | "admin"
+ * Chama onState(estado, user, conta) sempre que o login muda.
+ * estado: "a-verificar" | "sem-login" | "sem-acesso" | "admin" | "pro"
+ * "pro" = profissional com conta em /pros/{uid}; conta = o documento dele (estado, perfil, sessao).
  */
 export function watchPainel(onState) {
   onState("a-verificar", null);
   return onAuthStateChanged(auth, async (user) => {
     if (!user) return onState("sem-login", null);
     onState("a-verificar", user);
-    onState((await isAdmin(user)) ? "admin" : "sem-acesso", user);
+    if (await isAdmin(user)) return onState("admin", user, null);
+    const conta = await lerContaPro(user.uid);
+    onState(conta ? "pro" : "sem-acesso", user, conta);
   });
 }
 
@@ -53,8 +57,11 @@ export async function todosPedidos() {
 }
 
 /** Escuta os pedidos em tempo real: onLista(lista) a cada mudança, onLista(null) se falhar. Devolve a função para parar. */
-export function ouvirPedidos(onLista) {
-  return onSnapshot(collection(db, "bookings"),
-    (snap) => onLista(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+export function ouvirPedidos(onLista, proId = "") {
+  // Um profissional só pode pedir os seus (as regras recusam a coleção inteira).
+  // O Lucas lê tudo, mas no painel dele só entram os pedidos sem proId, que são os dele.
+  const fonte = proId ? query(collection(db, "bookings"), where("proId", "==", proId)) : collection(db, "bookings");
+  return onSnapshot(fonte,
+    (snap) => onLista(snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((b) => (proId ? true : !b.proId))),
     () => onLista(null));
 }

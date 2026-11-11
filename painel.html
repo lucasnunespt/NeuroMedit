@@ -183,8 +183,10 @@
 
   <main class="shell" data-estado="sem-acesso" hidden>
     <h1>Sem acesso</h1>
-    <p class="lead">Esta conta não tem acesso ao painel. Se quer marcar uma sessão, a página é outra.</p>
+    <p class="lead">Esta conta ainda não tem um painel. Se quer marcar uma sessão, a página é outra.</p>
     <a class="btn btn--primary" href="home.html">Ir para o início</a>
+    <p class="lead" style="margin-top: 32px;">É professor ou terapeuta e quer receber reservas pelo NeuroMedit?</p>
+    <a class="btn btn--secondary" href="profissional.html">Criar a minha página</a>
     <button type="button" class="btn btn--secondary" data-sair>Sair</button>
   </main>
 
@@ -200,7 +202,7 @@
       </div>
       <div class="nav-conta">
         <div class="nav-quem"><img data-foto-conta alt="" width="36" height="36" hidden><span><b data-nome-conta>Lucas</b><small data-email-curto></small></span></div>
-        <a href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
+        <a data-link-perfil href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
         <button type="button" data-sair>Sair da conta</button>
       </div>
     </nav>
@@ -213,10 +215,31 @@
       </div>
       <p class="lead">Obrigado por estar aqui. Você está no controle do seu futuro, e as coisas vão dar certo.</p>
 
-      <p class="label">A visão de hoje</p>
-      <div class="card">
-        <p class="visao" data-visao></p>
-        <p class="muted" style="margin-top: 16px;">Feche os olhos por um momento e veja isto acontecer.</p>
+      <div data-so-lucas>
+        <p class="label">A visão de hoje</p>
+        <div class="card">
+          <p class="visao" data-visao></p>
+          <p class="muted" style="margin-top: 16px;">Feche os olhos por um momento e veja isto acontecer.</p>
+        </div>
+      </div>
+
+      <div data-conta-estado hidden>
+        <p class="label">A sua página</p>
+        <div class="card">
+          <p class="pedido-nome" data-conta-titulo></p>
+          <p class="muted" data-conta-texto></p>
+          <p class="muted pedido-motivo" data-conta-nota hidden></p>
+          <div class="conta-links">
+            <button type="button" class="btn btn--primary" data-conta-pedir hidden>Pedir aprovação</button>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+          </div>
+          <p class="ag-estado" data-conta-aviso aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="bloco" data-aprovacoes hidden>
+        <p class="label">Perfis à espera de aprovação</p>
+        <div class="card" data-aprovacoes-lista></div>
       </div>
 
       <div class="bloco">
@@ -232,7 +255,7 @@
       <div class="bloco">
         <p class="label">Sessões canceladas</p>
         <div class="card" data-canceladas><p class="muted">Carregando…</p></div>
-        <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
+        <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" data-link-reservar style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
       </div>
     </main>
 
@@ -353,7 +376,12 @@
 
       <div class="bloco">
         <p class="label">Locais</p>
-        <div class="card"><p class="muted">Onde aceita sessões. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div></div>
+        <div class="card"><p class="muted">Onde aceita sessões. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div>
+          <div class="aj-grelha" style="margin-top: 16px;">
+            <label class="aj-campo-rot">Outro local<input class="aj-campo" type="text" maxlength="60" placeholder="Ex.: Em casa do cliente" data-aj-local-novo></label>
+            <div style="display: flex; align-items: flex-end;"><button type="button" class="btn btn--secondary" data-aj-local-add>Adicionar local</button></div>
+          </div>
+        </div>
       </div>
 
       <div class="bloco">
@@ -378,7 +406,7 @@
           </div>
           <div class="conta-links">
             <button type="button" class="btn btn--secondary" data-pf-foto>Usar a foto da conta Google</button>
-            <a class="btn btn--secondary" href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
           </div>
         </div>
         <div class="card">
@@ -393,7 +421,7 @@
         <div class="card">
           <div class="item"><span>Entrou como</span><span data-email></span></div>
           <div class="conta-links">
-            <a class="btn btn--secondary" href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
             <button type="button" class="btn btn--secondary" data-sair>Sair da conta</button>
           </div>
         </div>
@@ -410,6 +438,8 @@
     import { iniciarAgenda } from "./painel-agenda.js";
     import { iniciarAjustes } from "./painel-ajustes.js";
     import { iniciarPerfil } from "./painel-perfil.js";
+    import { definirProPainel, pedirAprovacao, perfisPendentes, aprovarPro, devolverPro } from "./conta-pro.js";
+    import { comPro } from "./reservas-dados.js";
     let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
@@ -434,9 +464,10 @@
       if (!desenharDinheiro) desenharDinheiro = iniciarDinheiro(document.querySelector("[data-dinheiro]"), () => lista);
       desenharDinheiro();
     }
+    let proId = ""; // "" = o Lucas; uid = o profissional com sessão iniciada
     function carregarPedidos() {
       if (pararEscuta) return;
-      pararEscuta = ouvirPedidos((l) => { lista = l; desenharTudo(); });
+      pararEscuta = ouvirPedidos((l) => { lista = l; desenharTudo(); }, proId);
       setInterval(desenharTudo, 60000); // "Como correu?" aparece sozinho quando a hora da sessão passa
     }
 
@@ -455,10 +486,81 @@
     setInterval(atualizarDia, 60000);
     document.addEventListener("visibilitychange", () => { if (!document.hidden) atualizarDia(); });
 
-    watchPainel((estado, user) => {
-      estados.forEach((s) => { s.hidden = s.dataset.estado !== estado; });
-      if (estado === "admin") {
-        if (user?.displayName) document.querySelector("[data-nome]").textContent = user.displayName.split(" ")[0];
+    const $ = (s) => document.querySelector(s);
+    const novo = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+    // ---------- profissional: o estado da página dele (rascunho → pendente → aprovado)
+    function pintarConta(user, conta) {
+      $("[data-so-lucas]").hidden = true;
+      $("[data-conta-estado]").hidden = false;
+      const t = {
+        rascunho: ["Rascunho: só você vê", "Preencha os Ajustes e a Agenda. Quando a página estiver como quer, peça a aprovação: só depois ela fica pública e as pessoas podem reservar."],
+        pendente: ["À espera de aprovação", "O pedido foi enviado. O Lucas vai ver a sua página e responde em breve. Pode continuar a editar."],
+        aprovado: ["Publicada", "A sua página está pública. O que mudar nos Ajustes aparece logo."]
+      }[conta.estado] || ["", ""];
+      $("[data-conta-titulo]").textContent = t[0];
+      $("[data-conta-texto]").textContent = t[1];
+      const nota = $("[data-conta-nota]");
+      nota.hidden = !(conta.estado === "rascunho" && conta.notaRevisao);
+      nota.textContent = conta.notaRevisao ? `O Lucas pediu: "${conta.notaRevisao}"` : "";
+      const pedir = $("[data-conta-pedir]");
+      pedir.hidden = conta.estado !== "rascunho";
+      pedir.onclick = async () => {
+        pedir.disabled = true;
+        try { await pedirAprovacao(user.uid); pintarConta(user, { ...conta, estado: "pendente", notaRevisao: "" }); }
+        catch (e) { pedir.disabled = false; $("[data-conta-aviso]").textContent = "Não consegui enviar o pedido. Tente de novo."; }
+      };
+    }
+
+    // ---------- Lucas: perfis à espera de aprovação
+    async function pintarAprovacoes() {
+      const bloco = $("[data-aprovacoes]"), caixa = $("[data-aprovacoes-lista]");
+      let pend = [];
+      try { pend = await perfisPendentes(); } catch (e) { return; }
+      bloco.hidden = !pend.length;
+      caixa.textContent = "";
+      pend.forEach((c) => {
+        const pf = c.perfil || {};
+        const item = novo("div", "pedido");
+        item.append(
+          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · ")),
+          novo("p", "muted pedido-contacto", [c.sessao?.emailAvisos, c.sessao?.whatsapp].filter(Boolean).join(" · "))
+        );
+        const acoes = novo("div", "pedido-acoes");
+        const ver = novo("a", "btn btn--link", "Ver a página"); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
+        const ok = novo("button", "btn btn--primary", "Aprovar"); ok.type = "button";
+        const mudar = novo("button", "btn btn--secondary", "Pedir alterações"); mudar.type = "button";
+        ok.onclick = async () => { ok.disabled = true; try { await aprovarPro(c.id); } catch (e) { ok.disabled = false; return; } pintarAprovacoes(); };
+        mudar.onclick = () => {
+          if (item.querySelector("textarea")) return;
+          const campo = novo("textarea", "campo-texto"); campo.rows = 2; campo.maxLength = 300;
+          campo.setAttribute("aria-label", `O que ${pf.nome || "a pessoa"} deve mudar`);
+          campo.placeholder = "O que falta ou deve mudar (a pessoa lê isto no painel dela)";
+          const enviar = novo("button", "btn btn--secondary", "Enviar pedido de alterações"); enviar.type = "button";
+          enviar.onclick = async () => { if (!campo.value.trim()) { campo.focus(); return; } enviar.disabled = true; try { await devolverPro(c.id, campo.value.trim()); } catch (e) { enviar.disabled = false; return; } pintarAprovacoes(); };
+          item.append(campo, enviar);
+          campo.focus();
+        };
+        acoes.append(ok, mudar, ver);
+        item.append(acoes);
+        caixa.append(item);
+      });
+    }
+
+    watchPainel((estado, user, conta) => {
+      estados.forEach((s) => { s.hidden = s.dataset.estado !== (estado === "pro" ? "admin" : estado); });
+      if (estado === "pro") {
+        proId = user.uid;
+        definirProPainel(proId);
+        pintarConta(user, conta);
+        document.querySelectorAll("[data-link-perfil]").forEach((a) => { a.href = comPro("perfil.html", proId); });
+        const lr = $("[data-link-reservar]"); lr.href = comPro("reservar.html", proId); lr.textContent = "abrir a minha página de reserva";
+      }
+      if (estado === "admin") pintarAprovacoes();
+      if (estado === "admin" || estado === "pro") {
+        const nome = conta?.perfil?.nome || user?.displayName;
+        if (nome) document.querySelector("[data-nome]").textContent = nome.split(" ")[0];
         document.querySelector("[data-email]").textContent = user?.email || "";
         document.querySelector("[data-email-curto]").textContent = user?.email || "";
         if (user?.displayName) document.querySelector("[data-nome-conta]").textContent = user.displayName;
@@ -467,12 +569,13 @@
         }
         mostrarSecao();
         carregarPedidos();
-        lerPerfil().then((p) => { definirMoradas(p.moradas); if (lista) desenharTudo(); });
+        lerPerfil(proId).then((p) => { definirMoradas(p?.moradas); if (lista) desenharTudo(); });
         if (!agendaIniciada) { agendaIniciada = true; iniciarAgenda(document.querySelector("[data-agenda]")); iniciarAjustes(document.querySelector("[data-ajustes]")); iniciarPerfil(document.querySelector("[data-perfil-publico]"), user); }
       }
     });
     document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));
-    document.querySelectorAll("[data-sair]").forEach((b) => b.addEventListener("click", () => sair()));
+    // Ao sair, recarrega: o painel seguinte pode ser de outra pessoa e não pode herdar dados deste.
+    document.querySelectorAll("[data-sair]").forEach((b) => b.addEventListener("click", () => sair().finally(() => location.reload())));
   </script>
 </body>
 </html>

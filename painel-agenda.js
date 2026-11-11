@@ -8,6 +8,7 @@
  */
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
 import { lerSemanaPadrao } from "./painel-ajustes.js";
+import { proPainel } from "./conta-pro.js";
 
 const H0 = 6, H1 = 21;              // roda de horas: 06:00 a 21:00
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -97,7 +98,9 @@ export function iniciarAgenda(raiz) {
   });
 
   // ---------- dados
-  const doMes = () => doc(db, "availability", chave(st.ano, st.mes));
+  // O Lucas: /availability/{AAAA-MM}; um profissional: /pros/{uid}/availability/{AAAA-MM}.
+  const pro = proPainel();
+  const doMes = () => (pro ? doc(db, "pros", pro, "availability", chave(st.ano, st.mes)) : doc(db, "availability", chave(st.ano, st.mes)));
   async function carregar() {
     st.carregado = false;
     el.estado.textContent = "Carregando…";
@@ -107,7 +110,7 @@ export function iniciarAgenda(raiz) {
       if (snap.exists()) {
         st.dias = snap.data().dias || {};
         el.estado.textContent = "Guardado.";
-      } else if (st.ano === 2026 && st.mes === 10) {
+      } else if (!pro && st.ano === 2026 && st.mes === 10) {
         st.dias = JSON.parse(JSON.stringify(NOVEMBRO_2026));
         await guardarJa();
       } else {

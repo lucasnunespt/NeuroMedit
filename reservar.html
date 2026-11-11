@@ -267,7 +267,7 @@
       }
       $("[data-precos]").innerHTML = p.planos.map((pl) =>
         `<div class="linha"><span>${pl.nome} de ${c.duracao} min</span><span>${pl.antes ? `<span class="antes">${euro(pl.antes)}</span>` : ""}${euro(pl.valor)}</span></div>`
-      ).join("") + `<div class="linha"><span>Pacotes válidos por</span><span>${c.validadePacoteMeses} meses</span></div>`;
+      ).join("") + (p.planos.length > 1 ? `<div class="linha"><span>Pacotes válidos por</span><span>${c.validadePacoteMeses} meses</span></div>` : "");
       const msg = `Olá, ${NOME}! Gostaria de saber mais sobre ${PRO ? "as sessões" : "a meditação presencial"}.`;
       $$("[data-wa]").forEach((a) => { a.href = waLink(msg); a.target = "_blank"; a.rel = "noopener"; });
       const mail = $("[data-mail]");

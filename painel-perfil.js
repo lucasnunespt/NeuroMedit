@@ -6,9 +6,11 @@
  */
 import { lerPerfil, guardarPerfil } from "./perfil-dados.js";
 import { lerAjustes } from "./reservas-dados.js";
+import { proPainel } from "./conta-pro.js";
 
 export function iniciarPerfil(raiz, user) {
   if (!raiz) return;
+  const pro = proPainel();
   const estado = raiz.querySelector("[data-pf-estado]");
   let perfil = null;
   let timer = null;
@@ -18,7 +20,7 @@ export function iniciarPerfil(raiz, user) {
     clearTimeout(timer);
     timer = setTimeout(async () => {
       try {
-        await guardarPerfil(perfil);
+        await guardarPerfil(perfil, pro);
         estado.textContent = "Guardado.";
       } catch (err) {
         estado.textContent = "Não consegui guardar. Tente de novo.";
@@ -44,7 +46,7 @@ export function iniciarPerfil(raiz, user) {
 
   async function pintarMoradas() {
     const box = raiz.querySelector("[data-pf-moradas]");
-    const cfg = await lerAjustes();
+    const cfg = await lerAjustes(pro);
     box.textContent = "";
     Object.entries(cfg.locais || {}).filter(([, on]) => on).forEach(([nome]) => {
       const lab = document.createElement("label");
@@ -69,7 +71,7 @@ export function iniciarPerfil(raiz, user) {
 
   (async () => {
     estado.textContent = "Carregando…";
-    perfil = await lerPerfil();
+    perfil = (await lerPerfil(pro)) || {};
     raiz.querySelectorAll("[data-pf]").forEach((inp) => { inp.value = perfil[inp.dataset.pf] || ""; });
     estado.textContent = "";
     pintarMoradas();

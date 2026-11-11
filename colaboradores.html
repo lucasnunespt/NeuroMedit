@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Colaboradores · NeuroMedit</title>
+  <meta name="description" content="Professores e terapeutas que oferecem sessões pelo NeuroMedit. Veja o perfil e reserve um horário.">
+  <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="theme-sync.css">
+  <script src="theme-sync.js"></script>
+  <style>
+    /* Lista de colaboradores: um cartão por perfil aprovado (ProfileHeader em versão de lista, VerifiedBadge).
+       Sem ranking, sem estrelas: a ordem é a de entrada. Só tokens do design system NeuroMedit. */
+    body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
+      background: linear-gradient(to bottom, var(--bg), var(--bg-soft)); }
+    a { color: var(--link-text); }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    [hidden] { display: none !important; }
+    .topo, .pagina { box-sizing: border-box; max-width: var(--container); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+    .topo { padding-top: max(16px, env(safe-area-inset-top)); }
+    .redondo { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-pill); background: var(--surface-strong);
+      border: 1px solid var(--line); color: var(--text); }
+    .redondo svg { width: 22px; height: 22px; }
+    .pagina { padding-top: 24px; padding-bottom: 64px; }
+    h1 { margin: 0 0 8px; font-size: 2.6rem; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+    .lead { margin: 0 0 24px; color: var(--text-soft); line-height: 1.7; max-width: 54ch; }
+    .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .pill { min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--text-muted); background: var(--surface-strong); color: var(--text); }
+    .pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--button-text); box-shadow: var(--shadow-soft); }
+    .lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .cartao { box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 24px 20px; border-radius: var(--radius-lg); background: var(--surface);
+      border: 1px solid var(--line); box-shadow: var(--shadow-card), var(--glass-highlight); color: var(--text); text-decoration: none;
+      transition: background-color var(--duration-quick) var(--easing-calm); }
+    .cartao:hover { background: var(--surface-strong); }
+    .quem { display: flex; align-items: center; gap: 14px; }
+    .foto { flex: none; width: 64px; height: 64px; border-radius: var(--radius-pill); object-fit: cover; background: var(--luz-glow-core); box-shadow: 0 0 0 3px var(--luz-glow-core); }
+    .foto--simbolo { padding: 12px; box-sizing: border-box; object-fit: contain; }
+    h2 { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+    .cartao p { margin: 0; color: var(--text-soft); }
+    .factos { display: flex; flex-wrap: wrap; gap: 4px 12px; color: var(--text-soft); font-size: 0.9rem; }
+    .factos span { display: inline-flex; align-items: center; gap: 5px; }
+    .factos svg { width: 18px; height: 18px; flex: none; }
+    .verificado svg { color: var(--accent-dark); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { padding: 0.3rem 0.7rem; border-radius: var(--radius-chip); background: var(--surface-strong); border: 1px solid var(--line); font-size: 0.85rem; color: var(--text); }
+    .ver { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--text); }
+    .ver svg { width: 20px; height: 20px; }
+    .convite { margin-top: 40px; color: var(--text-soft); }
+    @media (max-width: 640px) { h1 { font-size: 2rem; } }
+  </style>
+</head>
+<body>
+  <header class="topo">
+    <a class="redondo" href="home.html" aria-label="Voltar ao início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
+  </header>
+  <main class="pagina">
+    <h1>Colaboradores</h1>
+    <p class="lead">Pessoas que oferecem sessões pelo NeuroMedit. Cada perfil foi visto e aprovado antes de aparecer aqui.</p>
+    <div class="filtros" role="group" aria-label="Filtrar por forma de trabalhar" data-filtros hidden></div>
+    <div class="lista" data-lista aria-live="polite"><p class="lead">Carregando…</p></div>
+    <p class="convite">É professor ou terapeuta? <a href="profissional.html">Crie a sua página</a>.</p>
+  </main>
+
+  <script type="module">
+    import { lerPerfil } from "./perfil-dados.js";
+    import { lerAjustes, comPro } from "./reservas-dados.js";
+    import { prosAprovados } from "./conta-pro.js";
+
+    const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+    const PIN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-6.5-5.6-6.5-10.7a6.5 6.5 0 0 1 13 0c0 5.1-6.5 10.7-6.5 10.7z"/><circle cx="12" cy="9.8" r="2.4"/></svg>';
+    const VER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l7 2.8v5.2c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6.3z"/><path d="M8.8 12.2l2.3 2.3 4.2-4.4"/></svg>';
+    const SETA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12H19M13.5 6.5L19 12L13.5 17.5"/></svg>';
+
+    // O Lucas (caminhos de sempre) primeiro; depois os profissionais aprovados, por ordem de entrada.
+    const [lucasPerfil, lucasCfg, outros] = await Promise.all([lerPerfil(), lerAjustes(), prosAprovados()]);
+    const ms = (c) => (c.criado?.toMillis ? c.criado.toMillis() : 0);
+    const pessoas = [{ id: "", perfil: lucasPerfil, sessao: lucasCfg }]
+      .concat(outros.sort((a, b) => ms(a) - ms(b)).map((c) => ({ id: c.id, perfil: { ...(c.perfil || {}), verificado: true }, sessao: c.sessao || {} })))
+      .filter((p) => p.perfil?.nome);
+    const locaisDe = (p) => Object.entries(p.sessao.locais || {}).filter(([, on]) => on).map(([n]) => n);
+    // Os nomes dos locais são livres; os filtros juntam-nos em quatro formas de trabalhar.
+    const forma = (n) => (/online|v[ií]deo/i.test(n) ? "Online" : /casa d[oa] cliente|em sua casa|domic/i.test(n) ? "Em casa" : /ar livre|parque|natureza|jardim|praia/i.test(n) ? "Ao ar livre" : "Num espaço");
+    const formasDe = (p) => [...new Set(locaisDe(p).map(forma))];
+
+    let filtro = "";
+    const lista = document.querySelector("[data-lista]");
+    function pintar() {
+      lista.textContent = "";
+      const visiveis = pessoas.filter((p) => !filtro || formasDe(p).includes(filtro));
+      if (!visiveis.length) { lista.append(el("p", "lead", "Ninguém com esta forma de trabalhar, por agora.")); return; }
+      visiveis.forEach((p) => {
+        const pf = p.perfil;
+        const a = el("a", "cartao"); a.href = comPro("perfil.html", p.id);
+        const quem = el("div", "quem");
+        const foto = el("img", "foto" + (pf.foto ? "" : " foto--simbolo"));
+        foto.src = pf.foto || "assets/neuromedit-symbol-vector.svg"; foto.alt = ""; foto.width = 64; foto.height = 64; foto.loading = "lazy"; foto.referrerPolicy = "no-referrer";
+        const txt = el("div"); txt.append(el("h2", "", pf.nome), el("p", "", pf.profissao || ""));
+        quem.append(foto, txt);
+        const factos = el("div", "factos");
+        if (pf.cidade) { const s = el("span"); s.innerHTML = PIN; s.append(pf.cidade); factos.append(s); }
+        if (pf.verificado) { const s = el("span", "verificado"); s.innerHTML = VER; s.append("Verificado"); factos.append(s); }
+        const chips = el("div", "chips");
+        formasDe(p).forEach((n) => chips.append(el("span", "chip", n)));
+        const ver = el("span", "ver"); ver.append("Ver o perfil"); ver.insertAdjacentHTML("beforeend", SETA);
+        a.append(quem, factos, chips, ver);
+        lista.append(a);
+      });
+    }
+
+    // Filtros pelas formas de trabalhar que existem (só aparecem quando há mais de uma pessoa).
+    const formas = ["Num espaço", "Ao ar livre", "Em casa", "Online"].filter((f) => pessoas.some((p) => formasDe(p).includes(f)));
+    const box = document.querySelector("[data-filtros]");
+    if (pessoas.length > 1 && formas.length > 1) {
+      box.hidden = false;
+      [["", "Todos"], ...formas.map((f) => [f, f])].forEach(([v, t]) => {
+        const b = el("button", "pill", t); b.type = "button"; b.setAttribute("aria-pressed", v === filtro ? "true" : "false");
+        b.addEventListener("click", () => { filtro = v; box.querySelectorAll(".pill").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false")); pintar(); });
+        box.append(b);
+      });
+    }
+    pintar();
+  </script>
+</body>
+</html>

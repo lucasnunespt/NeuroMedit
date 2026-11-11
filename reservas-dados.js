@@ -9,7 +9,7 @@
  */
 import { db, doc, getDoc } from "./firebase-init.js";
 import { collection, getDocs, query, where, documentId } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { PADRAO } from "./painel-ajustes.js";
+import { PADRAO, PADRAO_PRO } from "./painel-ajustes.js";
 
 export const pad2 = (n) => String(n).padStart(2, "0");
 export const chaveMes = (a, m) => `${a}-${pad2(m + 1)}`;
@@ -33,9 +33,9 @@ export async function lerAjustes(proId = "") {
       return s.exists() ? { ...PADRAO, ...s.data() } : { ...PADRAO };
     }
     const s = await getDoc(doc(db, "pros", proId));
-    return s.exists() ? { ...PADRAO, ...(s.data().sessao || {}) } : { ...PADRAO };
+    return s.exists() ? { ...PADRAO_PRO, ...(s.data().sessao || {}) } : { ...PADRAO_PRO };
   } catch (e) {
-    return { ...PADRAO };
+    return proId ? { ...PADRAO_PRO } : { ...PADRAO };
   }
 }
 
@@ -51,7 +51,7 @@ export function precos(cfg, hoje = new Date()) {
       { n: 1, nome: "1 sessão", valor: Math.round(cfg.precoAvulsa * f), antes: ativo ? cfg.precoAvulsa : null },
       { n: 3, nome: "3 sessões", valor: Math.round(cfg.pacote3 * f), antes: ativo ? cfg.pacote3 : null },
       { n: 4, nome: "4 sessões", valor: Math.round(cfg.pacote4), antes: null }
-    ]
+    ].filter((pl, i) => i === 0 || pl.valor > 0) // um pacote sem preço não existe (profissionais sem pacotes)
   };
 }
 

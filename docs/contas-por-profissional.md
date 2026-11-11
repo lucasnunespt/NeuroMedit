@@ -30,10 +30,22 @@ Primeiro passo para abrir o NeuroMedit a outros profissionais (nov 2026). Ainda 
 - Apagada sozinha 2 dias depois da sessão, pela função `apagarMoradas` dos avisos por e-mail (Apps Script, às 3h).
 - Nunca aparece no perfil público.
 
-## Ainda falta
+## O caminho de um profissional (11 nov 2026)
 
-1. **Painel para cada profissional:** hoje o painel só abre para o admin. Falta abrir para quem tem `/pros/{uid}`, com os módulos (Agenda, Ajustes, Pedidos, Dinheiro) a ler e escrever no caminho do profissional.
-2. **Formulário de entrada** (uma pergunta por vez) que cria `/pros/{uid}` em rascunho.
-3. **Aprovação** no painel do Lucas: lista de perfis pendentes, com Aprovar e Pedir alterações.
-4. **Página de colaboradores** a partir dos perfis aprovados.
-5. **Publicar as regras** (`firebase deploy --only firestore:rules`) depois de as testar no emulador. Ainda não foram testadas.
+1. `profissional.html`: entra com o Google e responde a seis perguntas (nome, área, onde, sessão, contacto, conferir). Cria `/pros/{uid}` em **rascunho**.
+2. `painel.html`: o mesmo painel do Lucas, a ler e escrever na conta dele (Agenda, Ajustes, Pedidos, Dinheiro). No Início, o cartão "A sua página" mostra o estado e o botão **Pedir aprovação**.
+3. No painel do Lucas aparece "Perfis à espera de aprovação": **Aprovar** ou **Pedir alterações** (com uma nota que a pessoa lê no painel dela).
+4. Aprovado: entra em `colaboradores.html` e as páginas `perfil.html?p=` e `reservar.html?p=` ficam públicas.
+
+Limites de hoje: a reserva pede sempre um sinal por MB Way (mínimo 1 €); os pacotes só aparecem se tiverem preço; depois de aprovado, o que o profissional editar fica público sem nova revisão.
+
+## Antes de divulgar a outros profissionais
+
+1. **Publicar as regras**: `firebase deploy --only firestore:rules`. Sem isto, ninguém além do Lucas consegue criar conta (as regras antigas recusam `/pros`).
+2. **Testar as regras** no emulador (`firebase emulators:start --only firestore`). Não foi possível nesta sessão (o emulador não descarregou). Casos a verificar:
+   - um profissional cria a sua conta em rascunho, edita, pede aprovação, e **não** consegue pôr `estado: "aprovado"`;
+   - um visitante sem login lê um perfil aprovado e **não** lê um rascunho;
+   - um profissional lê e confirma os seus pedidos (`where proId == uid`) e **não** lê os do Lucas;
+   - um cliente reserva com `?p=` (horário `{proId}_AAAA-MM-DD_HH` + pedido com `proId`) e cancela;
+   - as reservas do Lucas continuam a funcionar como antes.
+3. Formulário, aprovação e colaboradores foram testados só com uma base de dados falsa, sem regras.

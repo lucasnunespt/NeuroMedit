@@ -7,7 +7,7 @@
  */
 import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, doc, getDoc } from "./firebase-init.js";
 import { collection, getDocs, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { lerContaPro } from "./conta-pro.js";
+import { lerContaPro, reclamarConvite } from "./conta-pro.js";
 
 async function isAdmin(user) {
   if (!user) return false;
@@ -31,7 +31,8 @@ export function watchPainel(onState) {
     if (!user) return onState("sem-login", null);
     onState("a-verificar", user);
     if (await isAdmin(user)) return onState("admin", user, null);
-    const conta = await lerContaPro(user.uid);
+    // Quem o Lucas convidou pelo e-mail reclama aqui a página que ele reservou.
+    const conta = (await lerContaPro(user.uid)) || (await reclamarConvite(user));
     onState(conta ? "pro" : "sem-acesso", user, conta);
   });
 }

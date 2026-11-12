@@ -145,6 +145,32 @@ function situacaoSinal(b) {
   return `sinal de ${euro(b.sinal)} ficou`;
 }
 
+// Um pedido já arrumado pode sair do histórico. Nunca um com reembolso por fazer (as regras também o impedem).
+const arrumada = (b) => b.estado === "libertada" || b.estado === "reembolsada"
+  || (b.estado === "cancelada" && !(b.reembolsoPedido && !b.reembolsoFeito));
+// Cancelada com sinal que ficou: apagá-la tira esse sinal das contas do Dinheiro.
+const contaNoDinheiro = (b) => b.estado === "cancelada" && b.sinalRecebido;
+
+/** Pergunta no próprio cartão antes de apagar (sem janelas do navegador). */
+function confirmarApagar(item, lista, texto, rotulo) {
+  if (item.querySelector("[data-confirmar]")) return;
+  const caixa = el("div", "pedido-cancelar"); caixa.dataset.confirmar = "";
+  const aviso = el("p", "muted", texto);
+  const acoes = el("div", "pedido-acoes");
+  const sim = el("button", "btn btn--primary", rotulo); sim.type = "button";
+  const nao = el("button", "btn btn--secondary", "Não"); nao.type = "button";
+  nao.addEventListener("click", () => caixa.remove());
+  sim.addEventListener("click", async () => {
+    sim.disabled = true; nao.disabled = true;
+    try { await Promise.all(lista.map((b) => deleteDoc(doc(db, "bookings", b.id)))); }
+    catch (e) { sim.disabled = false; nao.disabled = false; aviso.textContent = "Não consegui apagar tudo. Tente de novo."; }
+    // Com sucesso, a lista chega sozinha (tempo real) e o cartão desaparece.
+  });
+  acoes.append(sim, nao);
+  caixa.append(aviso, acoes);
+  item.append(caixa);
+}
+
 function desenharCanceladas(caixa, lista) {
   const canceladas = lista
     .filter((b) => ["cancelada", "reembolsada", "libertada"].includes(b.estado))
@@ -161,8 +187,31 @@ function desenharCanceladas(caixa, lista) {
       el("p", "muted", `${quando(b)} · ${situacaoSinal(b)}`)
     );
     if (b.motivo) item.append(el("p", "muted pedido-motivo", `"${b.motivo}"`));
+    if (arrumada(b)) {
+      const acoes = el("div", "pedido-acoes");
+      const apagar = el("button", "btn btn--secondary", "Apagar do histórico"); apagar.type = "button";
+      apagar.addEventListener("click", () => confirmarApagar(item, [b],
+        contaNoDinheiro(b) ? "Apagar esta sessão do histórico? O sinal que ficou deixa de contar nas contas do Dinheiro." : "Apagar esta sessão do histórico?",
+        "Apagar"));
+      acoes.append(apagar);
+      item.append(acoes);
+    }
     caixa.append(item);
   });
+  // Limpar tudo o que já está arrumado, mesmo o que passou das 30 mostradas.
+  const todas = lista.filter((b) => ["cancelada", "reembolsada", "libertada"].includes(b.estado) && arrumada(b));
+  if (todas.length > 1) {
+    const rodape = el("div", "pedido");
+    const acoes = el("div", "pedido-acoes");
+    const limpar = el("button", "btn btn--secondary", `Limpar o histórico (${todas.length})`); limpar.type = "button";
+    const dinheiro = todas.filter(contaNoDinheiro).length;
+    limpar.addEventListener("click", () => confirmarApagar(rodape, todas,
+      `Apagar ${todas.length} sessões do histórico?${dinheiro ? ` ${dinheiro === 1 ? "O sinal que ficou deixa" : "Os sinais que ficaram deixam"} de contar nas contas do Dinheiro.` : ""}`,
+      "Limpar"));
+    acoes.append(limpar);
+    rodape.append(acoes);
+    caixa.append(rodape);
+  }
 }
 
 export function desenharPedidos(caixa, proxCaixa, cancCaixa, lista) {

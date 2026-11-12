@@ -237,3 +237,104 @@ describe("a disponibilidade de cada profissional", () => {
     await assertFails(getDoc(doc(semLogin(), "pros", ANA, "availability", "2026-12")));
   });
 });
+
+// ---------- convites, lixeira e apagar histórico (nov 2026)
+const CONVIDADA = "carla-uid";
+const comCarla = (verificado = true) =>
+  env.authenticatedContext(CONVIDADA, { email: "Carla@Gmail.com", email_verified: verificado }).firestore();
+const PERFIL_CARLA = { nome: "Carla", profissao: "Yoga", area: "Yoga", cidade: "Porto" };
+
+describe("convites: a página reservada a um e-mail", () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "convites", "carla@gmail.com"), { email: "carla@gmail.com", perfil: PERFIL_CARLA, criadoEm: new Date() });
+    });
+  });
+
+  test("só o admin cria um convite", async () => {
+    const novo = { email: "rui@gmail.com", perfil: { nome: "Rui" }, criadoEm: new Date() };
+    await assertSucceeds(setDoc(doc(comoAdmin(), "convites", "rui@gmail.com"), novo));
+    await assertFails(setDoc(doc(comoAna(), "convites", "rui@gmail.com"), novo));
+  });
+
+  test("o id do convite tem de ser o e-mail em minúsculas", async () => {
+    await assertFails(setDoc(doc(comoAdmin(), "convites", "outro"), { email: "rui@gmail.com", perfil: { nome: "Rui" }, criadoEm: new Date() }));
+  });
+
+  test("a convidada lê o seu convite (mesmo com maiúsculas no login); outra pessoa NÃO", async () => {
+    await assertSucceeds(getDoc(doc(comCarla(), "convites", "carla@gmail.com")));
+    await assertFails(getDoc(doc(comoAna(), "convites", "carla@gmail.com")));
+  });
+
+  test("com e-mail por verificar, NÃO lê o convite", async () => {
+    await assertFails(getDoc(doc(comCarla(false), "convites", "carla@gmail.com")));
+  });
+
+  test("reclama a página: cria /pros/{uid} aprovado com o perfil do convite", async () => {
+    await assertSucceeds(setDoc(doc(comCarla(), "pros", CONVIDADA), { estado: "aprovado", perfil: PERFIL_CARLA, sessao: {} }));
+  });
+
+  test("NÃO reclama com um perfil diferente do convite", async () => {
+    await assertFails(setDoc(doc(comCarla(), "pros", CONVIDADA), { estado: "aprovado", perfil: { ...PERFIL_CARLA, nome: "Outra" }, sessao: {} }));
+  });
+
+  test("NÃO se aprova sem convite", async () => {
+    await assertFails(setDoc(doc(comoCliente(), "pros", CLIENTE), { estado: "aprovado", perfil: PERFIL_CARLA, sessao: {} }));
+  });
+
+  test("com e-mail por verificar, NÃO reclama", async () => {
+    await assertFails(setDoc(doc(comCarla(false), "pros", CONVIDADA), { estado: "aprovado", perfil: PERFIL_CARLA, sessao: {} }));
+  });
+
+  test("a convidada apaga o convite depois de reclamar; outra pessoa NÃO", async () => {
+    await assertFails(deleteDoc(doc(comoAna(), "convites", "carla@gmail.com")));
+    await assertSucceeds(deleteDoc(doc(comCarla(), "convites", "carla@gmail.com")));
+  });
+});
+
+describe("lixeira", () => {
+  test("o admin move para a lixeira; a página deixa de ser pública", async () => {
+    await assertSucceeds(updateDoc(doc(comoAdmin(), "pros", BRUNO), { estado: "lixeira", estadoAnterior: "aprovado" }));
+    await assertFails(getDoc(doc(semLogin(), "pros", BRUNO)));
+  });
+
+  test("o dono NÃO mexe numa página que está na lixeira (nem a restaura)", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => { await updateDoc(doc(ctx.firestore(), "pros", BRUNO), { estado: "lixeira" }); });
+    await assertFails(updateDoc(doc(comoBruno(), "pros", BRUNO), { estado: "aprovado" }));
+    await assertFails(updateDoc(doc(comoBruno(), "pros", BRUNO), { perfil: { nome: "Bruno" } }));
+    await assertSucceeds(updateDoc(doc(comoAdmin(), "pros", BRUNO), { estado: "aprovado" }));
+  });
+
+  test("o admin apaga para sempre", async () => {
+    await assertSucceeds(deleteDoc(doc(comoAdmin(), "pros", ANA)));
+  });
+});
+
+describe("apagar o histórico de sessões", () => {
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      const base = { userId: CLIENTE, proId: ANA, valor: 30, sinal: 5 };
+      await setDoc(doc(db, "bookings", "libertada"), { ...base, estado: "libertada" });
+      await setDoc(doc(db, "bookings", "cancelada-ok"), { ...base, estado: "cancelada", sinalRecebido: true, reembolsoPedido: false });
+      await setDoc(doc(db, "bookings", "cancelada-por-devolver"), { ...base, estado: "cancelada", sinalRecebido: true, reembolsoPedido: true });
+      await setDoc(doc(db, "bookings", "confirmada"), { ...base, estado: "confirmada", sinalRecebido: true });
+      await setDoc(doc(db, "bookings", "do-bruno"), { ...base, proId: BRUNO, estado: "libertada" });
+    });
+  });
+
+  test("a profissional apaga o que já está arrumado", async () => {
+    await assertSucceeds(deleteDoc(doc(comoAna(), "bookings", "libertada")));
+    await assertSucceeds(deleteDoc(doc(comoAna(), "bookings", "cancelada-ok")));
+  });
+
+  test("NÃO apaga uma sessão viva nem dinheiro por devolver", async () => {
+    await assertFails(deleteDoc(doc(comoAna(), "bookings", "confirmada")));
+    await assertFails(deleteDoc(doc(comoAna(), "bookings", "cancelada-por-devolver")));
+  });
+
+  test("NÃO apaga os pedidos de outro profissional, nem o cliente os seus", async () => {
+    await assertFails(deleteDoc(doc(comoAna(), "bookings", "do-bruno")));
+    await assertFails(deleteDoc(doc(comoCliente(), "bookings", "libertada")));
+  });
+});

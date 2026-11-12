@@ -32,6 +32,9 @@ const POR_AREA = {
  * As áreas, por ordem de apresentação, com a marca de saúde: quem trabalha com saúde
  * tem deveres diferentes, e o aviso de "não é terapia" não se aplica.
  */
+/** Aviso que as áreas que não são de saúde levam na página (não é terapia nem tratamento). */
+export const AVISO_BEM_ESTAR = "É uma prática de bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.";
+
 export const AREAS = [
   ["Meditação", false], ["Yoga", false], ["Pilates", false], ["Treino e educação física", false],
   ["Massagem", false], ["Terapias holísticas", false], ["Coaching", false],

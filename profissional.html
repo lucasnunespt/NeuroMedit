@@ -180,16 +180,15 @@
 
   <script type="module">
     import { auth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, db, doc, getDoc } from "./firebase-init.js";
-    import { lerContaPro, criarContaPro } from "./conta-pro.js";
+    import { lerContaPro, criarContaPro, reclamarConvite } from "./conta-pro.js";
     import { PADRAO_PRO } from "./painel-ajustes.js";
     // A lista de áreas vive em termos.js, com as palavras que cada uma usa.
-    import { AREAS } from "./termos.js";
+    import { AREAS, AVISO_BEM_ESTAR } from "./termos.js";
 
     const $ = (s) => document.querySelector(s);
     const ORDEM = ["nome", "area", "onde", "sessao", "contato", "resumo"];
     const NOMES = { nome: "O seu nome", area: "O que faz", onde: "Onde", sessao: "Sessão", contato: "Contato", resumo: "Conferir" };
 
-    const AVISO_BEM_ESTAR = "É uma prática de bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.";
     const d = { nome: "", area: "", saude: false, profissao: "", cidade: "", modos: [], duracao: 60, precoAvulsa: "", sinal: 5, mbway: "", whatsapp: "", emailAvisos: "" };
     let user = null, passo = "carregar";
 
@@ -337,7 +336,7 @@
       if (!u) { if (passo === "carregar") mostrar("convite"); return; }
       const [admin, conta] = await Promise.all([
         getDoc(doc(db, "admins", u.uid)).then((s) => s.exists()).catch(() => false),
-        lerContaPro(u.uid)
+        lerContaPro(u.uid).then((c) => c || reclamarConvite(u)) // convite do Lucas: a página já está à espera deste e-mail
       ]);
       if (admin || conta) { location.replace("painel.html"); return; }
       d.nome = d.nome || u.displayName || "";

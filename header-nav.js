@@ -447,3 +447,183 @@
   updateScrolledState();
   syncMeditationChromeState();
 })();
+
+
+/* ==========================================================
+   Barra do topo no computador (mockup da home, nov 2026):
+   Voltar e Avançar à esquerda da marca; o Avatar (pessoa de luz)
+   à direita do Globo, com o menu da conta. Comunidade e Novidades
+   ficam para quando existirem. No telemóvel nada disto aparece:
+   a BottomNav já tem Voltar e a conta vive em Ajustes.
+   ========================================================== */
+(() => {
+  const header = document.querySelector("[data-header]");
+  const shell = header?.querySelector(".header-shell");
+  const brand = shell?.querySelector(".brand");
+  const actions = shell?.querySelector(".header-actions");
+  if (!shell || !brand || !actions || shell.querySelector("[data-header-history]")) return;
+
+  const ICON_BACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg>';
+  const ICON_FORWARD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 5.5L16 12L9.5 18.5"/></svg>';
+  // Avatar: a cabeça da figura de luz, com o detalhe dos ombros (design system, Avatar).
+  const AVATAR_SVG = `<svg class="cab" viewBox="60 14 80 80" aria-hidden="true" focusable="false"><defs><radialGradient id="@d"><stop offset="0" style="stop-color:var(--cabeca-core)" stop-opacity="1"/><stop offset=".22" style="stop-color:var(--cabeca-mid)" stop-opacity=".6"/><stop offset=".55" style="stop-color:var(--cabeca-edge)" stop-opacity=".2"/><stop offset="1" style="stop-color:var(--cabeca-edge)" stop-opacity="0"/></radialGradient><radialGradient id="@m"><stop offset="0" style="stop-color:var(--cabeca-core)" stop-opacity=".55"/><stop offset="1" style="stop-color:var(--cabeca-mid)" stop-opacity="0"/></radialGradient><clipPath id="@c"><rect x="40" y="10" width="120" height="82"/></clipPath><radialGradient id="@g" gradientUnits="userSpaceOnUse" cx="100" cy="58" r="42" gradientTransform="translate(100 58) scale(1 .9) translate(-100 -58)"><stop offset="0" stop-color="#fff"/><stop offset=".7" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="@k" maskUnits="userSpaceOnUse" x="60" y="14" width="80" height="80"><rect x="60" y="14" width="80" height="80" fill="url(#@g)"/></mask><filter id="@b1" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter><filter id="@b2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2"/></filter></defs><g mask="url(#@k)"><g clip-path="url(#@c)" style="fill:var(--cabeca-edge)"><g filter="url(#@b1)" opacity=".5"><path fill-rule="evenodd" d="M100 66 C92 66 86 68 82 72 C72 74 64 78 60 88 C56 100 54 114 50 128 C47 138 40 146 32 152 C22 158 18 168 26 174 C40 182 70 182 100 180 C130 182 160 182 174 174 C182 168 178 158 168 152 C160 146 153 138 150 128 C146 114 144 100 140 88 C136 78 128 74 118 72 C114 68 108 66 100 66 Z M70 106 C68 120 62 134 55 146 C66 147 76 143 82 136 C77 127 73 118 70 106 Z M130 106 C132 120 138 134 145 146 C134 147 124 143 118 136 C123 127 127 118 130 106 Z"/><circle cx="100" cy="46" r="16.8"/><rect x="92" y="57" width="16" height="20" rx="6"/></g><g filter="url(#@b2)" opacity=".4"><path fill-rule="evenodd" d="M100 66 C92 66 86 68 82 72 C72 74 64 78 60 88 C56 100 54 114 50 128 C47 138 40 146 32 152 C22 158 18 168 26 174 C40 182 70 182 100 180 C130 182 160 182 174 174 C182 168 178 158 168 152 C160 146 153 138 150 128 C146 114 144 100 140 88 C136 78 128 74 118 72 C114 68 108 66 100 66 Z M70 106 C68 120 62 134 55 146 C66 147 76 143 82 136 C77 127 73 118 70 106 Z M130 106 C132 120 138 134 145 146 C134 147 124 143 118 136 C123 127 127 118 130 106 Z"/><circle cx="100" cy="46" r="16.8"/><rect x="92" y="57" width="16" height="20" rx="6"/></g></g><g fill="url(#@d)"><circle cx="108.9" cy="89.6" r="4.64" opacity="0.26"/><circle cx="122.3" cy="73.7" r="3.52" opacity="0.29"/><circle cx="109.1" cy="38" r="2.62" opacity="0.53"/><circle cx="92.1" cy="33.5" r="4.9" opacity="0.52"/><circle cx="73.4" cy="79.5" r="1.47" opacity="0.47"/><circle cx="114.7" cy="81" r="3.78" opacity="0.61"/><circle cx="84.6" cy="43.7" r="4.83" opacity="0.31"/><circle cx="108" cy="42.5" r="5.41" opacity="0.35"/><circle cx="106.2" cy="58.1" r="4.77" opacity="0.37"/><circle cx="106.7" cy="57.1" r="2.05" opacity="0.47"/><circle cx="119.1" cy="84.9" r="3.36" opacity="0.74"/><circle cx="114.3" cy="45.1" r="3.04" opacity="0.48"/><circle cx="108.5" cy="42" r="2.4" opacity="0.84"/><circle cx="95.3" cy="49.6" r="2.21" opacity="0.33"/><circle cx="113.1" cy="48.8" r="4.83" opacity="0.44"/><circle cx="86.4" cy="50" r="2.34" opacity="0.74"/><circle cx="104.5" cy="69.9" r="3.2" opacity="0.37"/><circle cx="103.4" cy="76.1" r="5.41" opacity="0.75"/><circle cx="101.3" cy="33.5" r="4.32" opacity="0.67"/><circle cx="118.8" cy="78.8" r="2.4" opacity="0.65"/><circle cx="87.6" cy="81" r="3.9" opacity="0.65"/><circle cx="109.9" cy="38.6" r="4.32" opacity="0.48"/><circle cx="98.1" cy="62.9" r="3.1" opacity="0.32"/><circle cx="100.9" cy="69.8" r="2.14" opacity="0.59"/><circle cx="92.1" cy="39.9" r="3.87" opacity="0.31"/><circle cx="88.4" cy="72.8" r="3.01" opacity="0.37"/><circle cx="106.4" cy="73.6" r="3.07" opacity="0.46"/><circle cx="102.7" cy="77.8" r="3.39" opacity="0.62"/><circle cx="92.4" cy="76.6" r="1.5" opacity="0.48"/><circle cx="113.5" cy="40.6" r="3.87" opacity="0.74"/><circle cx="95.3" cy="67.1" r="4.99" opacity="0.82"/><circle cx="69.8" cy="76.4" r="2.69" opacity="0.81"/><circle cx="99.1" cy="74" r="2.82" opacity="0.46"/><circle cx="76.4" cy="82.1" r="1.92" opacity="0.34"/><circle cx="90.6" cy="76.5" r="5.25" opacity="0.58"/><circle cx="97.1" cy="58.1" r="4.93" opacity="0.68"/><circle cx="107.4" cy="53.4" r="3.07" opacity="0.37"/><circle cx="88.7" cy="68.2" r="4.86" opacity="0.7"/><circle cx="96.9" cy="37.6" r="2.59" opacity="0.58"/><circle cx="109.8" cy="45.5" r="4.8" opacity="0.58"/><circle cx="90.9" cy="82.7" r="4.96" opacity="0.61"/><circle cx="95.3" cy="35.6" r="3.17" opacity="0.68"/><circle cx="114.6" cy="43.9" r="2.21" opacity="0.64"/><circle cx="110.7" cy="67.8" r="3.04" opacity="0.62"/><circle cx="110.8" cy="50.1" r="2.05" opacity="0.79"/><circle cx="102.1" cy="50.1" r="2.05" opacity="0.74"/><circle cx="90.3" cy="37.6" r="1.92" opacity="0.34"/><circle cx="111" cy="43.1" r="2.11" opacity="0.73"/><circle cx="117.5" cy="86.5" r="1.98" opacity="0.74"/><circle cx="119.2" cy="81.9" r="3.23" opacity="0.61"/><circle cx="79.9" cy="73.9" r="2.75" opacity="0.42"/><circle cx="111.9" cy="50.5" r="2.98" opacity="0.54"/><circle cx="83.9" cy="79.9" r="3.49" opacity="0.82"/><circle cx="109.5" cy="78.3" r="1.86" opacity="0.62"/><circle cx="88.6" cy="78.7" r="4.19" opacity="0.36"/><circle cx="89.1" cy="72" r="4.06" opacity="0.42"/><circle cx="95.9" cy="46.6" r="4.58" opacity="0.42"/><circle cx="79.4" cy="74.6" r="5.02" opacity="0.32"/><circle cx="83.8" cy="81" r="1.92" opacity="0.68"/><circle cx="97.1" cy="38.2" r="4.32" opacity="0.38"/><circle cx="88.3" cy="50.7" r="3.58" opacity="0.79"/><circle cx="98.5" cy="51.8" r="4.03" opacity="0.42"/><circle cx="91.1" cy="68.1" r="2.53" opacity="0.48"/><circle cx="101.3" cy="34" r="4.51" opacity="0.46"/><circle cx="106.4" cy="48.9" r="3.42" opacity="0.65"/><circle cx="94.6" cy="50.5" r="3.36" opacity="0.65"/><circle cx="95.2" cy="43.2" r="4.77" opacity="0.72"/><circle cx="113.7" cy="53.3" r="3.39" opacity="0.36"/><circle cx="103.8" cy="61.8" r="2.18" opacity="0.65"/><circle cx="128.7" cy="77.3" r="3.65" opacity="0.59"/><circle cx="87.7" cy="47.4" r="2.46" opacity="0.31"/><circle cx="104.5" cy="34.1" r="4.99" opacity="0.35"/><circle cx="107.1" cy="48" r="2.27" opacity="0.78"/><circle cx="106.6" cy="47.5" r="2.5" opacity="0.84"/><circle cx="104.3" cy="72.1" r="3.65" opacity="0.41"/><circle cx="118.6" cy="74.7" r="2.82" opacity="0.37"/><circle cx="86.2" cy="53.7" r="2.08" opacity="0.63"/><circle cx="96.4" cy="33.8" r="3.33" opacity="0.72"/><circle cx="98.8" cy="49.2" r="1.66" opacity="0.67"/><circle cx="86.9" cy="41" r="3.52" opacity="0.69"/><circle cx="113.4" cy="48.9" r="2.82" opacity="0.43"/><circle cx="115.4" cy="42.2" r="1.6" opacity="0.83"/><circle cx="111.1" cy="71.7" r="2.24" opacity="0.68"/><circle cx="105.1" cy="48.2" r="3.55" opacity="0.7"/><circle cx="105.1" cy="66.1" r="4.51" opacity="0.44"/><circle cx="87.8" cy="72.6" r="5.25" opacity="0.77"/><circle cx="104.9" cy="86.7" r="4.1" opacity="0.64"/><circle cx="85.6" cy="45.6" r="2.02" opacity="0.67"/><circle cx="77" cy="81.8" r="2.88" opacity="0.43"/><circle cx="96" cy="61.2" r="4.8" opacity="0.65"/><circle cx="92.4" cy="44.1" r="3.58" opacity="0.82"/><circle cx="105.7" cy="57" r="4.19" opacity="0.77"/><circle cx="85.6" cy="48.5" r="2.94" opacity="0.77"/><circle cx="80.8" cy="83.4" r="2.5" opacity="0.59"/><circle cx="106.8" cy="44.1" r="5.34" opacity="0.4"/><circle cx="105.5" cy="64.3" r="4.45" opacity="0.67"/><circle cx="94.8" cy="61.4" r="2.18" opacity="0.27"/><circle cx="99.2" cy="60.1" r="3.07" opacity="0.71"/><circle cx="101.7" cy="62.7" r="1.79" opacity="0.8"/><circle cx="90.6" cy="35.5" r="3.04" opacity="0.3"/><circle cx="109.6" cy="75.7" r="5.06" opacity="0.46"/><circle cx="91.1" cy="36.7" r="2.3" opacity="0.4"/><circle cx="101.2" cy="65.9" r="3.94" opacity="0.59"/><circle cx="112" cy="35.5" r="4.8" opacity="0.68"/><circle cx="99.3" cy="43.1" r="3.2" opacity="0.48"/><circle cx="103.1" cy="60" r="5.41" opacity="0.59"/><circle cx="103" cy="38.8" r="4.19" opacity="0.42"/><circle cx="92.5" cy="32.3" r="2.34" opacity="0.38"/><circle cx="106" cy="34.8" r="1.76" opacity="0.28"/><circle cx="117.8" cy="82.5" r="3.71" opacity="0.74"/><circle cx="72.5" cy="85.3" r="1.76" opacity="0.57"/><circle cx="110.5" cy="36.2" r="4.42" opacity="0.77"/><circle cx="94.2" cy="40.5" r="1.47" opacity="0.67"/><circle cx="111.8" cy="49" r="5.02" opacity="0.33"/><circle cx="98.3" cy="68.1" r="4.22" opacity="0.48"/><circle cx="84.4" cy="79.6" r="1.66" opacity="0.42"/><circle cx="122.7" cy="75.9" r="2.72" opacity="0.3"/><circle cx="100.5" cy="73" r="3.55" opacity="0.42"/><circle cx="113.6" cy="52.7" r="3.1" opacity="0.6"/><circle cx="101.4" cy="70.1" r="4.19" opacity="0.48"/><circle cx="89.8" cy="70.9" r="4.0" opacity="0.77"/><circle cx="104.5" cy="53.4" r="2.05" opacity="0.56"/><circle cx="97.6" cy="39" r="2.62" opacity="0.81"/><circle cx="87.5" cy="75.9" r="3.52" opacity="0.81"/><circle cx="125.1" cy="77.3" r="4.35" opacity="0.53"/><circle cx="111.9" cy="41.6" r="1.5" opacity="0.41"/><circle cx="94.4" cy="70.1" r="4.16" opacity="0.49"/><circle cx="107.6" cy="36.3" r="2.91" opacity="0.35"/><circle cx="93.7" cy="34.6" r="4.99" opacity="0.61"/><circle cx="91" cy="44.9" r="5.06" opacity="0.77"/><circle cx="101.3" cy="57.8" r="3.3" opacity="0.37"/><circle cx="111.4" cy="45.2" r="2.37" opacity="0.66"/><circle cx="97.1" cy="53.3" r="2.34" opacity="0.76"/><circle cx="93.4" cy="35.6" r="3.36" opacity="0.81"/><circle cx="106" cy="67.1" r="3.97" opacity="0.61"/><circle cx="84.1" cy="80.5" r="3.49" opacity="0.4"/><circle cx="105.4" cy="42.2" r="1.73" opacity="0.61"/><circle cx="63.7" cy="89.1" r="3.33" opacity="0.31"/><circle cx="99.3" cy="83.8" r="1.76" opacity="0.79"/><circle cx="71.3" cy="84.1" r="1.76" opacity="0.38"/><circle cx="98.5" cy="45.3" r="2.88" opacity="0.41"/><circle cx="107.1" cy="83.5" r="2.4" opacity="0.52"/><circle cx="107.8" cy="34.4" r="3.2" opacity="0.81"/><circle cx="110.6" cy="49.6" r="5.34" opacity="0.78"/><circle cx="98.3" cy="38.2" r="3.2" opacity="0.28"/><circle cx="84.7" cy="77.3" r="5.38" opacity="0.79"/><circle cx="107.1" cy="69.4" r="2.5" opacity="0.39"/><circle cx="101.6" cy="52.8" r="4.48" opacity="0.63"/><circle cx="112.1" cy="55.4" r="5.25" opacity="0.49"/><circle cx="94.2" cy="51" r="3.36" opacity="0.42"/><circle cx="101" cy="43.4" r="1.6" opacity="0.48"/><circle cx="105.6" cy="55.2" r="5.02" opacity="0.26"/><circle cx="98.3" cy="71.9" r="5.28" opacity="0.71"/><circle cx="99.2" cy="42.6" r="3.49" opacity="0.5"/><circle cx="91.9" cy="40.7" r="4.64" opacity="0.73"/><circle cx="123.8" cy="74.8" r="2.62" opacity="0.36"/><circle cx="101.9" cy="71.6" r="4.74" opacity="0.8"/><circle cx="114.2" cy="40.6" r="5.25" opacity="0.54"/><circle cx="74" cy="83.1" r="3.68" opacity="0.76"/><circle cx="110.1" cy="50.8" r="3.65" opacity="0.68"/><circle cx="86" cy="78.7" r="3.3" opacity="0.78"/><circle cx="114.2" cy="46.6" r="2.34" opacity="0.65"/><circle cx="106" cy="32.5" r="1.89" opacity="0.47"/><circle cx="100.8" cy="53.5" r="4.06" opacity="0.66"/><circle cx="102" cy="56.2" r="2.27" opacity="0.73"/><circle cx="110.1" cy="48.6" r="1.66" opacity="0.31"/><circle cx="89.2" cy="52.1" r="4.77" opacity="0.37"/><circle cx="98.3" cy="59.6" r="5.22" opacity="0.79"/><circle cx="110.1" cy="38.4" r="1.82" opacity="0.82"/><circle cx="90.6" cy="39.1" r="3.68" opacity="0.64"/><circle cx="102.9" cy="52.8" r="3.1" opacity="0.37"/><circle cx="127.5" cy="87.5" r="1.57" opacity="0.61"/><circle cx="113.1" cy="77" r="2.14" opacity="0.8"/><circle cx="110.6" cy="46.5" r="2.27" opacity="0.38"/><circle cx="91.7" cy="39.1" r="4.86" opacity="0.67"/><circle cx="97.3" cy="76.1" r="2.53" opacity="0.58"/><circle cx="97.9" cy="64.2" r="4.93" opacity="0.65"/><circle cx="75.6" cy="83.3" r="2.24" opacity="0.36"/><circle cx="106.8" cy="66.8" r="5.09" opacity="0.83"/><circle cx="95.3" cy="40.6" r="5.15" opacity="0.37"/><circle cx="62.4" cy="89.9" r="2.98" opacity="0.6"/><circle cx="89.3" cy="34.7" r="3.9" opacity="0.83"/><circle cx="109.8" cy="45.1" r="2.82" opacity="0.6"/><circle cx="92.1" cy="75" r="4.83" opacity="0.58"/><circle cx="99.7" cy="31" r="2.46" opacity="0.65"/><circle cx="107.9" cy="37.9" r="2.72" opacity="0.28"/><circle cx="114.7" cy="50.1" r="4.48" opacity="0.5"/><circle cx="119.6" cy="85.1" r="1.89" opacity="0.44"/><circle cx="112.6" cy="38.4" r="1.76" opacity="0.55"/><circle cx="94.9" cy="32.3" r="3.81" opacity="0.39"/></g><circle cx="100" cy="46" r="20" fill="url(#@m)"/></g></svg>`;
+  let avatarCount = 0;
+  const avatarMarkup = () => {
+    avatarCount += 1;
+    return AVATAR_SVG.replace(/@/g, `hav${avatarCount}`);
+  };
+
+  const translate = () => {
+    if (typeof applyTranslations === "function" && typeof getPreferredLanguage === "function") {
+      applyTranslations(getPreferredLanguage());
+    }
+  };
+
+  /* ---------- Voltar e Avançar ---------- */
+  const start = document.createElement("div");
+  start.className = "header-start";
+  brand.replaceWith(start);
+
+  const history = document.createElement("div");
+  history.className = "header-history";
+  history.dataset.headerHistory = "";
+  history.innerHTML = `
+    <button type="button" class="header-dot" data-history-back aria-label="Voltar" title="Voltar" data-i18n="header_back" data-i18n-attr="aria-label,title">${ICON_BACK}</button>
+    <button type="button" class="header-dot" data-history-forward aria-label="Avançar" title="Avançar" data-i18n="header_forward" data-i18n-attr="aria-label,title">${ICON_FORWARD}</button>
+  `;
+  start.append(history, brand);
+
+  const backButton = history.querySelector("[data-history-back]");
+  const forwardButton = history.querySelector("[data-history-forward]");
+  const nav = window.navigation;
+
+  function syncHistoryButtons() {
+    // Navigation API: sabe se há para onde voltar e avançar. Sem ela, deixa os dois ativos.
+    if (nav && "canGoBack" in nav) {
+      backButton.disabled = !nav.canGoBack;
+      forwardButton.disabled = !nav.canGoForward;
+    } else {
+      backButton.disabled = window.history.length < 2;
+    }
+  }
+
+  backButton.addEventListener("click", () => window.history.back());
+  forwardButton.addEventListener("click", () => window.history.forward());
+  nav?.addEventListener?.("currententrychange", syncHistoryButtons);
+  window.addEventListener("pageshow", syncHistoryButtons);
+  syncHistoryButtons();
+
+  /* ---------- Avatar e menu da conta ---------- */
+  const account = document.createElement("div");
+  account.className = "header-account";
+  account.innerHTML = `
+    <button type="button" class="header-avatar" data-account-trigger aria-expanded="false" aria-controls="headerAccountMenu" aria-label="Minha conta" title="Minha conta" data-i18n="account_menu" data-i18n-attr="aria-label,title">${avatarMarkup()}</button>
+    <div class="header-pop" id="headerAccountMenu" data-account-menu hidden>
+      <div class="header-pop-me">
+        <span class="header-avatar header-avatar--static" aria-hidden="true">${avatarMarkup()}</span>
+        <div class="header-pop-who">
+          <span class="header-pop-name" data-account-name></span>
+          <small data-account-detail></small>
+        </div>
+      </div>
+      <div class="header-pop-sep"></div>
+      <div data-account-in hidden>
+        <a class="header-pop-item" href="reservar.html#minhas" data-i18n="account_my_sessions">Minhas sessões</a>
+        <button type="button" class="header-pop-item" data-account-settings data-i18n="account_settings">Ajustes</button>
+        <a class="header-pop-item" href="painel.html" data-account-pro hidden data-i18n="account_pro_panel">Painel de profissional</a>
+        <div class="header-pop-sep"></div>
+        <button type="button" class="header-pop-item header-pop-item--soft" data-account-signout data-i18n="account_sign_out">Sair da conta</button>
+      </div>
+      <div data-account-out>
+        <button type="button" class="header-pop-item" data-account-signin data-i18n="account_sign_in">Entrar com o Google</button>
+        <button type="button" class="header-pop-item" data-account-settings data-i18n="account_settings">Ajustes</button>
+      </div>
+    </div>
+  `;
+  const languageSlot = actions.querySelector(".header-language-slot");
+  if (languageSlot) languageSlot.after(account);
+  else actions.append(account);
+
+  const trigger = account.querySelector("[data-account-trigger]");
+  const menu = account.querySelector("[data-account-menu]");
+  const nameEl = account.querySelector("[data-account-name]");
+  const detailEl = account.querySelector("[data-account-detail]");
+  const inGroup = account.querySelector("[data-account-in]");
+  const outGroup = account.querySelector("[data-account-out]");
+  const proLink = account.querySelector("[data-account-pro]");
+  const settings = () => window.NeuroMeditSettings;
+
+  function setOpen(isOpen, { restoreFocus = false } = {}) {
+    menu.hidden = !isOpen;
+    trigger.setAttribute("aria-expanded", String(isOpen));
+    account.classList.toggle("is-open", isOpen);
+    if (!isOpen && restoreFocus) trigger.focus();
+  }
+
+  trigger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setOpen(menu.hidden);
+  });
+  document.addEventListener("click", (event) => {
+    if (!menu.hidden && !account.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !menu.hidden) setOpen(false, { restoreFocus: true });
+  });
+
+  account.querySelectorAll("[data-account-settings]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setOpen(false);
+      settings()?.open?.();
+    });
+  });
+  account.querySelector("[data-account-signin]").addEventListener("click", () => {
+    setOpen(false);
+    settings()?.signIn?.();
+  });
+  account.querySelector("[data-account-signout]").addEventListener("click", () => {
+    setOpen(false);
+    settings()?.signOut?.();
+  });
+
+  async function isProfessional(user) {
+    try {
+      const fb = await import("./firebase-init.js");
+      const [admin, pro] = await Promise.all([
+        fb.getDoc(fb.doc(fb.db, "admins", user.uid)).then((snap) => snap.exists()).catch(() => false),
+        fb.getDoc(fb.doc(fb.db, "pros", user.uid)).then((snap) => snap.exists()).catch(() => false)
+      ]);
+      return admin || pro;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  let authToken = 0;
+  async function renderAccount(user) {
+    const token = ++authToken;
+    inGroup.hidden = !user;
+    outGroup.hidden = Boolean(user);
+    proLink.hidden = true;
+    if (user) {
+      nameEl.textContent = user.displayName || user.email || "";
+      nameEl.removeAttribute("data-i18n");
+      detailEl.textContent = user.displayName && user.email ? user.email : "";
+      detailEl.removeAttribute("data-i18n");
+      if (await isProfessional(user) && token === authToken) proLink.hidden = false;
+    } else {
+      nameEl.dataset.i18n = "account_menu";
+      nameEl.textContent = "Minha conta";
+      detailEl.dataset.i18n = "account_guest";
+      detailEl.textContent = "Ainda sem sessão iniciada";
+      translate();
+    }
+    // Ajustes só aparece onde o painel de ajustes existe.
+    const canOpenSettings = Boolean(settings()?.canOpen?.());
+    account.querySelectorAll("[data-account-settings]").forEach((button) => { button.hidden = !canOpenSettings; });
+  }
+
+  window.addEventListener("neuromedit:authchange", (event) => renderAccount(event.detail?.user || null));
+  renderAccount(settings()?.getUser?.() || null);
+  translate();
+})();

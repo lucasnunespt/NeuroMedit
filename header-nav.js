@@ -554,6 +554,7 @@
   const settings = () => window.NeuroMeditSettings;
 
   function setOpen(isOpen, { restoreFocus = false } = {}) {
+    if (isOpen) window.dispatchEvent(new CustomEvent("neuromedit:headerpop", { detail: { owner: account } }));
     menu.hidden = !isOpen;
     trigger.setAttribute("aria-expanded", String(isOpen));
     account.classList.toggle("is-open", isOpen);
@@ -563,6 +564,9 @@
   trigger.addEventListener("click", (event) => {
     event.stopPropagation();
     setOpen(menu.hidden);
+  });
+  window.addEventListener("neuromedit:headerpop", (event) => {
+    if (event.detail?.owner !== account && !menu.hidden) setOpen(false);
   });
   document.addEventListener("click", (event) => {
     if (!menu.hidden && !account.contains(event.target)) setOpen(false);
@@ -622,6 +626,63 @@
     const canOpenSettings = Boolean(settings()?.canOpen?.());
     account.querySelectorAll("[data-account-settings]").forEach((button) => { button.hidden = !canOpenSettings; });
   }
+
+  /* ---------- Comunidade e Novidades: ainda em preparação ----------
+     Os botões já estão no lugar do mockup, mas só abrem um aviso calmo
+     de que a página está a ser preparada. Sem conteúdo falso, sem ponto
+     de aviso a chamar a atenção. */
+  const ICON_PEOPLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3.1 2.4-5.2 5.5-5.2s5.5 2.1 5.5 5.2"/><path d="M15.2 5.8a2.8 2.8 0 0 1 0 5.4"/><path d="M17 14.2c2.2.4 3.5 2.2 3.5 4.8"/></svg>';
+  const ICON_BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 17.5V11a5.5 5.5 0 0 1 11 0v6.5"/><path d="M4.5 17.5h15"/><path d="M10 20.5h4"/></svg>';
+
+  function buildSoon({ key, icon, label, text }) {
+    const wrap = document.createElement("div");
+    wrap.className = "header-soon";
+    wrap.innerHTML = `
+      <button type="button" class="header-dot" aria-expanded="false" aria-controls="headerSoon-${key}" aria-label="${label}" title="${label}" data-i18n="header_${key}" data-i18n-attr="aria-label,title">${icon}</button>
+      <div class="header-pop header-pop--soon" id="headerSoon-${key}" role="dialog" aria-labelledby="headerSoonTitle-${key}" hidden>
+        <span class="header-pop-eyebrow" data-i18n="header_soon">Em breve</span>
+        <span class="header-pop-title" id="headerSoonTitle-${key}" data-i18n="header_${key}">${label}</span>
+        <span class="header-pop-text" data-i18n="header_${key}_soon">${text}</span>
+      </div>
+    `;
+    const button = wrap.querySelector("button");
+    const pop = wrap.querySelector(".header-pop");
+    const set = (isOpen, restoreFocus = false) => {
+      if (isOpen) window.dispatchEvent(new CustomEvent("neuromedit:headerpop", { detail: { owner: wrap } }));
+      pop.hidden = !isOpen;
+      button.setAttribute("aria-expanded", String(isOpen));
+      if (!isOpen && restoreFocus) button.focus();
+    };
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      set(pop.hidden);
+    });
+    document.addEventListener("click", (event) => {
+      if (!pop.hidden && !wrap.contains(event.target)) set(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !pop.hidden) set(false, true);
+    });
+    window.addEventListener("neuromedit:headerpop", (event) => {
+      if (event.detail?.owner !== wrap && !pop.hidden) set(false);
+    });
+    return wrap;
+  }
+
+  const community = buildSoon({
+    key: "community",
+    icon: ICON_PEOPLE,
+    label: "Comunidade",
+    text: "A comunidade está sendo preparada com calma. Quando estiver pronta, você a encontra aqui."
+  });
+  const news = buildSoon({
+    key: "news",
+    icon: ICON_BELL,
+    label: "Novidades",
+    text: "As novidades ainda estão sendo preparadas. Quando houver alguma, ela aparece aqui, sem pressa."
+  });
+  const soonAnchor = actions.querySelector(".header-language-slot") || account;
+  soonAnchor.before(community, news);
 
   window.addEventListener("neuromedit:authchange", (event) => renderAccount(event.detail?.user || null));
   renderAccount(settings()?.getUser?.() || null);

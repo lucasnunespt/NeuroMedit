@@ -14,27 +14,19 @@
 
 /* ==========================================================
    Globo — seletor de idioma (design system, componente Globo)
-   O globo de pontos de luz e o código da língua dentro de um
-   contorno, sem fundo, sem vidro, sem sombra. Ao abrir, o próprio
+   Só o código da língua dentro de um contorno redondo, sem fundo,
+   sem vidro, sem sombra. (O globo de pontos saiu em teste, nov 2026:
+   o código sozinho identifica melhor e polui menos.) Ao abrir, o próprio
    contorno cresce para baixo e mostra as línguas só pelas iniciais.
    Só tokens: line, radius-lg, control-height, text-soft, text,
-   accent, accent-dark, luz-*, duration-quick, easing-calm.
+   accent-dark, duration-quick, easing-calm.
    ========================================================== */
 .lang-globo {
-  --globo-core: var(--accent);
-  --globo-mid: var(--accent-dark);
-  --globo-edge: var(--accent-dark);
   position: relative;
   flex-shrink: 0;
-  width: 84px;
+  width: var(--control-height);
   height: var(--control-height);
   z-index: 6;
-}
-
-:is(html, body):is(.theme-sunset, .theme-evening, .theme-night, .theme-warm-night, .theme-sleep, .theme-late-night, .theme-luz) .lang-globo {
-  --globo-core: var(--luz-glow-core);
-  --globo-mid: var(--luz-glow-mid);
-  --globo-edge: var(--luz-gold);
 }
 
 /* O contorno é o único elemento visível: cresce para baixo, nunca para os lados. */
@@ -82,13 +74,6 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
-}
-
-.lang-globo-mark {
-  display: block;
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
 }
 
 .lang-globo-current {

@@ -205,9 +205,7 @@ body:is(.theme-sunset, .theme-evening, .theme-night, .theme-late-night, .theme-s
 .header-nav-link:focus-visible,
 .header-mobile-link:focus-visible,
 .header-menu-toggle:focus-visible,
-.header-mobile-close:focus-visible,
-.header-language-slot .language-trigger:focus-visible,
-.header-language-slot .language-options button:focus-visible {
+.header-mobile-close:focus-visible {
   outline: 2px solid var(--header-focus);
   outline-offset: 2px;
 }
@@ -249,50 +247,10 @@ body:is(.theme-sunset, .theme-evening, .theme-night, .theme-late-night, .theme-s
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  width: 74px;
-  height: 44px;
+  width: var(--control-height);
+  height: var(--control-height);
   overflow: visible;
   z-index: 90;
-}
-
-.header-language-slot .language-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: none;
-  width: 72px;
-  max-width: min(92px, calc(100vw - 32px));
-  border-color: var(--header-border);
-  background: var(--header-control-bg);
-  box-shadow: var(--shadow-soft);
-}
-
-.header-language-slot .language-wrapper.is-open {
-  background: var(--header-control-hover-bg);
-  color: var(--header-link-hover);
-}
-
-.header-language-slot .language-trigger {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .header-language-slot .language-wrapper:hover,
-  .header-language-slot .language-wrapper:focus-within {
-    background: var(--header-control-hover-bg);
-    color: var(--header-link-hover);
-  }
-}
-
-.header-language-slot .language-options {
-  right: 0;
-}
-
-.header-language-slot .language-options button.is-active {
-  background: var(--accent);
-  color: var(--button-text);
 }
 
 .header-menu-toggle,
@@ -546,14 +504,6 @@ body.is-meditating .site-footer {
     gap: 0.42rem;
   }
 
-  .header-language-slot {
-    width: 74px;
-    height: 46px;
-  }
-
-  .header-language-slot .language-wrapper {
-    width: 74px;
-  }
 }
 
 @media (max-width: 620px) {
@@ -616,18 +566,6 @@ body.is-meditating .site-footer {
     gap: 0.32rem;
   }
 
-  .header-language-slot {
-    width: 68px;
-    height: 42px;
-  }
-
-  .header-language-slot .language-wrapper {
-    width: 68px;
-  }
-
-  .header-language-slot .language-trigger {
-    height: 42px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -681,5 +619,261 @@ body.is-meditating .site-footer {
   .site-header .header-shell {
     width: 100%;
     max-width: 100%;
+  }
+}
+
+/* ==========================================================
+   BARRA DO TOPO NO COMPUTADOR — Voltar, Avançar e Avatar
+   (mockup da home, design system: BottomNav › círculo e Avatar).
+   Só tokens. No telemóvel (≤ 940px) não aparecem.
+   ========================================================== */
+.header-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.header-history {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-dot {
+  appearance: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: color var(--duration-quick) var(--easing-calm),
+    background-color var(--duration-quick) var(--easing-calm);
+}
+
+.header-dot svg {
+  width: 22px;
+  height: 22px;
+}
+
+.header-dot:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.header-dot:disabled {
+  color: var(--text-subtle);
+  cursor: default;
+}
+
+.header-account {
+  position: relative;
+  flex-shrink: 0;
+  --cabeca-core: var(--accent-light);
+  --cabeca-mid: var(--accent);
+  --cabeca-edge: var(--accent-dark);
+}
+
+:is(html, body):is(.theme-sunset, .theme-evening, .theme-night, .theme-warm-night, .theme-sleep, .theme-late-night, .theme-luz) .header-account {
+  --cabeca-core: var(--luz-glow-core);
+  --cabeca-mid: var(--luz-glow-mid);
+  --cabeca-edge: var(--luz-gold);
+}
+
+.header-avatar {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  transition: filter var(--duration-quick) var(--easing-calm);
+}
+
+.header-avatar .cab {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.header-avatar:hover,
+.header-account.is-open > .header-avatar {
+  filter: brightness(1.18) saturate(1.1);
+}
+
+.header-avatar--static {
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.header-dot:focus-visible,
+.header-avatar:focus-visible,
+.header-pop-item:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: 2px;
+}
+
+.header-pop {
+  position: absolute;
+  top: calc(var(--control-height) + 12px);
+  right: 0;
+  z-index: 95;
+  box-sizing: border-box;
+  width: 300px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-card), var(--glass-highlight);
+  text-align: left;
+}
+
+.header-pop[hidden] {
+  display: none;
+}
+
+.header-pop-me {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px 12px;
+}
+
+.header-pop-who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.header-pop-name {
+  overflow: hidden;
+  color: var(--text);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-pop-who small {
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-pop-who small:empty {
+  display: none;
+}
+
+.header-pop-sep {
+  height: 1px;
+  margin: 6px 8px;
+  background: var(--line);
+}
+
+.header-pop-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+
+/* theme-sync.css pinta os links com --link-text: no menu, todos os itens têm a mesma cor. */
+.header-pop {
+  --link-text: var(--text);
+}
+
+.header-actions .header-account {
+  order: 3;
+}
+
+.header-pop-item[hidden] {
+  display: none;
+}
+
+.header-pop-item:hover {
+  background: var(--surface-strong);
+}
+
+.header-pop-item--soft {
+  color: var(--text-soft);
+}
+
+/* Comunidade e Novidades: só um aviso de que estão a ser preparadas. */
+.header-soon {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-pop--soon {
+  width: 280px;
+  padding: 18px 20px 20px;
+}
+
+.header-pop-eyebrow {
+  display: block;
+  margin: 0 0 6px;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header-pop-title {
+  display: block;
+  margin: 0 0 6px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.header-pop-text {
+  display: block;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.header-dot[aria-expanded="true"] {
+  color: var(--text);
+}
+
+@media (max-width: 940px) {
+  .header-history,
+  .header-soon,
+  .header-account {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-dot,
+  .header-avatar,
+  .header-pop-item {
+    transition: none;
   }
 }

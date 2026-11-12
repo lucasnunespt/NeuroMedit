@@ -31,31 +31,34 @@ function getTranslation(language, key) {
   return translations[language]?.[key] ?? translations[DEFAULT_LANGUAGE]?.[key] ?? `[${key}]`;
 }
 
-function buildLanguageSwitcherMarkup() {
-  return `
-    <div class="language-wrapper language-pill" data-language-menu>
-      <button
-        class="language-trigger"
-        type="button"
-        aria-label="Choose language"
-        aria-expanded="false"
-        aria-controls="languageOptions"
-        data-language-trigger
-      >
-        <span class="language-current" data-language-current>EN</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
-          <path d="M3.6 9h16.8M3.6 15h16.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          <path d="M12 3c2.2 2.4 3.3 5.4 3.3 9S14.2 18.6 12 21c-2.2-2.4-3.3-5.4-3.3-9S9.8 5.4 12 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
-        </svg>
-      </button>
+const LANGUAGE_OPTIONS = [
+  { code: "pt", name: "Português" },
+  { code: "en", name: "English" },
+  { code: "es", name: "Español" },
+  { code: "it", name: "Italiano" },
+  { code: "ru", name: "Русский" }
+];
 
-      <div class="language-options" id="languageOptions" role="menu" aria-hidden="true" data-language-options>
-        <button type="button" role="menuitem" data-lang-option="pt">PT</button>
-        <button type="button" role="menuitem" data-lang-option="en">EN</button>
-        <button type="button" role="menuitem" data-lang-option="es">ES</button>
-        <button type="button" role="menuitem" data-lang-option="it">IT</button>
-        <button type="button" role="menuitem" data-lang-option="ru">RU</button>
+function buildLanguageSwitcherMarkup() {
+  const optionsMarkup = LANGUAGE_OPTIONS.map(({ code, name }) => `
+        <button type="button" role="menuitem" lang="${code}" aria-label="${name}" data-lang-option="${code}">${code.toUpperCase()}</button>`).join("");
+
+  return `
+    <div class="lang-globo" data-language-menu>
+      <div class="lang-globo-frame">
+        <button
+          class="lang-globo-trigger"
+          type="button"
+          aria-label="Choose language"
+          aria-expanded="false"
+          aria-controls="languageOptions"
+          data-language-trigger
+        >
+          <span class="lang-globo-current" data-language-current>EN</span>
+        </button>
+
+        <div class="lang-globo-options" id="languageOptions" role="menu" aria-hidden="true" data-language-options>${optionsMarkup}
+        </div>
       </div>
     </div>
   `;
@@ -180,6 +183,11 @@ function bindLanguageSwitcherEvents() {
 
     languageTrigger?.addEventListener("click", (event) => {
       event.stopPropagation();
+      // Com rato, o cursor e o foco já abrem a lista: o clique não a deve fechar.
+      if (canUseHover) {
+        openLanguageMenu();
+        return;
+      }
       toggleLanguageMenu();
     });
 

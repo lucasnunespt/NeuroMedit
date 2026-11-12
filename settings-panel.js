@@ -207,6 +207,14 @@
 
   let state = loadSettings();
   let focusIdleTimer = 0;
+  // Conta: partilhada com a barra do topo (avatar e menu da conta, em header-nav.js).
+  let currentUser = null;
+  let openSettingsPanel = null;
+
+  function announceAuth(user) {
+    currentUser = user || null;
+    window.dispatchEvent(new CustomEvent("neuromedit:authchange", { detail: { user: currentUser } }));
+  }
 
   // Firebase integration variables
   let auth, db, doc, getDoc, setDoc, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged;
@@ -228,6 +236,7 @@
     } catch (e) {
       console.warn("Firebase failed to load. Operating in local mode.", e);
       renderAuthUI();
+      announceAuth(null);
     }
   }
 
@@ -299,6 +308,7 @@
 
     onAuthStateChanged(auth, async (user) => {
       renderAuthUI();
+      announceAuth(user);
       if (user) {
         try {
           const userRef = doc(db, "users", user.uid);
@@ -689,6 +699,7 @@
       if (event.key === "Escape") closeSettings();
     }
 
+    openSettingsPanel = openSettings;
     fab.addEventListener("click", openSettings);
     closeBtn.addEventListener("click", closeSettings);
     overlay.addEventListener("click", closeSettings);
@@ -935,6 +946,15 @@
     getVolume: () => 1,
     getAmbientVolume: () => state.ambientVolume / 100,
     // usado pelo convite da home: liga a versão de luz e mostra as boas-vindas
+    // Conta (usado pelo menu do avatar na barra do topo)
+    getUser: () => currentUser,
+    open: () => openSettingsPanel?.(),
+    canOpen: () => Boolean(openSettingsPanel),
+    signIn: () => openAuthModal(),
+    signOut: async () => {
+      if (!auth || !signOut) return;
+      try { await signOut(auth); } catch (error) { console.error("Sign out failed", error); }
+    },
     enableAltDesign: () => {
       const was = Boolean(state.altDesign);
       setSettings({ altDesign: true });

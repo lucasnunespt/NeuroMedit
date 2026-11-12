@@ -248,6 +248,35 @@
         <div class="card" data-aprovacoes-lista></div>
       </div>
 
+      <div class="bloco" data-pessoas hidden>
+        <p class="label">Professores</p>
+        <div class="card" data-pros-lista><p class="muted">Carregando…</p></div>
+      </div>
+
+      <div class="bloco" data-convidar hidden>
+        <p class="label">Adicionar um professor</p>
+        <div class="card">
+          <p class="muted">Reserve uma página para o e-mail da pessoa. Quando ela entrar com esse e-mail Google, a página passa a ser dela, já aprovada. Até lá não é pública.</p>
+          <div class="aj-grelha" style="margin-top: 16px;">
+            <label class="aj-campo-rot aj-largo">E-mail Google da pessoa<input class="aj-campo" type="email" autocomplete="off" data-cv="email"></label>
+            <label class="aj-campo-rot">Nome<input class="aj-campo" type="text" autocomplete="off" data-cv="nome"></label>
+            <label class="aj-campo-rot">Cidade<input class="aj-campo" type="text" autocomplete="off" data-cv="cidade"></label>
+            <label class="aj-campo-rot">Área<select class="aj-campo" data-cv="area" data-cv-areas></select></label>
+            <label class="aj-campo-rot">O que faz (uma linha)<input class="aj-campo" type="text" maxlength="80" autocomplete="off" data-cv="profissao"></label>
+          </div>
+          <div class="conta-links">
+            <button type="button" class="btn btn--primary" data-cv-criar>Reservar a página</button>
+          </div>
+          <p class="ag-estado" data-cv-aviso aria-live="polite"></p>
+          <div data-cv-lista></div>
+        </div>
+      </div>
+
+      <div class="bloco" data-lixeira hidden>
+        <p class="label">Lixeira</p>
+        <div class="card" data-lixeira-lista></div>
+      </div>
+
       <div class="bloco">
         <p class="label">À espera de você</p>
         <div class="card" data-pedidos><p class="muted">Carregando…</p></div>
@@ -467,7 +496,8 @@
     import { iniciarAgenda } from "./painel-agenda.js";
     import { iniciarAjustes } from "./painel-ajustes.js";
     import { iniciarPerfil } from "./painel-perfil.js";
-    import { definirProPainel, pedirAprovacao, perfisPendentes, aprovarPro, devolverPro } from "./conta-pro.js";
+    import { definirProPainel, pedirAprovacao, perfisPendentes, aprovarPro, devolverPro, todosPros, moverParaLixeira, restaurarPro, apagarProParaSempre, criarConvite, listarConvites, apagarConvite, emailValido } from "./conta-pro.js";
+    import { AREAS } from "./termos.js";
     import { comPro } from "./reservas-dados.js";
     import { aplicarTermos } from "./termos.js";
     let agendaIniciada = false;
@@ -526,7 +556,8 @@
       const t = {
         rascunho: ["Rascunho: só você vê", "Preencha os Ajustes e a Agenda. Quando a página estiver como quer, peça a aprovação: só depois ela fica pública e as pessoas podem reservar."],
         pendente: ["À espera de aprovação", "O pedido foi enviado. O Lucas vai ver a sua página e responde em breve. Pode continuar a editar."],
-        aprovado: ["Publicada", "A sua página está pública. O que mudar nos Ajustes aparece logo."]
+        aprovado: ["Publicada", "A sua página está pública. O que mudar nos Ajustes aparece logo."],
+        lixeira: ["Página retirada", "O Lucas retirou a sua página, por isso já não está pública. Se foi por engano, fale com ele."]
       }[conta.estado] || ["", ""];
       $("[data-conta-titulo]").textContent = t[0];
       $("[data-conta-texto]").textContent = t[1];
@@ -535,6 +566,7 @@
       nota.textContent = conta.notaRevisao ? `O Lucas pediu: "${conta.notaRevisao}"` : "";
       const pedir = $("[data-conta-pedir]");
       pedir.hidden = conta.estado !== "rascunho";
+      document.querySelectorAll("[data-conta-estado] [data-link-perfil]").forEach((a) => { a.hidden = conta.estado === "lixeira"; });
       pedir.onclick = async () => {
         pedir.disabled = true;
         try { await pedirAprovacao(user.uid); pintarConta(user, { ...conta, estado: "pendente", notaRevisao: "" }); }
@@ -561,7 +593,7 @@
         const ver = novo("a", "btn btn--link", "Ver a página"); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
         const ok = novo("button", "btn btn--primary", "Aprovar"); ok.type = "button";
         const mudar = novo("button", "btn btn--secondary", "Pedir alterações"); mudar.type = "button";
-        ok.onclick = async () => { ok.disabled = true; try { await aprovarPro(c.id); } catch (e) { ok.disabled = false; return; } pintarAprovacoes(); };
+        ok.onclick = async () => { ok.disabled = true; try { await aprovarPro(c.id); } catch (e) { ok.disabled = false; return; } pintarAprovacoes(); pintarPessoas(); };
         mudar.onclick = () => {
           if (item.querySelector("textarea")) return;
           const campo = novo("textarea", "campo-texto"); campo.rows = 2; campo.maxLength = 300;
@@ -578,6 +610,115 @@
       });
     }
 
+    // ---------- Lucas: professores, convites e lixeira
+    const NOME_ESTADO = { rascunho: "Rascunho", pendente: "À espera de aprovação", aprovado: "Publicada", lixeira: "Na lixeira" };
+    const confirmarCom = (item, texto, rotulo, fazer) => {
+      // Duas fases no próprio cartão, sem janelas do navegador: primeiro o aviso, depois a confirmação.
+      if (item.querySelector("[data-confirmar]")) return;
+      const caixa = novo("div", "pedido-cancelar"); caixa.dataset.confirmar = "";
+      const acoes = novo("div", "pedido-acoes");
+      const sim = novo("button", "btn btn--primary", rotulo); sim.type = "button";
+      const nao = novo("button", "btn btn--secondary", "Não"); nao.type = "button";
+      nao.onclick = () => caixa.remove();
+      sim.onclick = async () => { sim.disabled = true; nao.disabled = true; try { await fazer(); } catch (e) { sim.disabled = false; nao.disabled = false; caixa.querySelector("p").textContent = "Não consegui. Tente de novo."; } };
+      caixa.append(novo("p", "muted", texto), acoes); acoes.append(sim, nao);
+      item.append(caixa);
+    };
+
+    async function pintarPessoas() {
+      const blocoP = $("[data-pessoas]"), listaP = $("[data-pros-lista]");
+      const blocoL = $("[data-lixeira]"), listaL = $("[data-lixeira-lista]");
+      let todos = [];
+      try { todos = await todosPros(); } catch (e) { listaP.textContent = ""; listaP.append(novo("p", "muted", "Não consegui ler os professores agora.")); blocoP.hidden = false; return; }
+      const ativos = todos.filter((c) => c.estado !== "lixeira").sort((a, b) => String(a.perfil?.nome || "").localeCompare(String(b.perfil?.nome || "")));
+      const fora = todos.filter((c) => c.estado === "lixeira");
+      blocoP.hidden = false;
+      listaP.textContent = "";
+      if (!ativos.length) listaP.append(novo("p", "muted", "Ainda não há professores. Quando alguém criar uma página, ou entrar com um convite, aparece aqui."));
+      ativos.forEach((c) => {
+        const pf = c.perfil || {};
+        const item = novo("div", "pedido");
+        item.append(
+          novo("p", "label pedido-meta", NOME_ESTADO[c.estado] || c.estado),
+          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · "))
+        );
+        const acoes = novo("div", "pedido-acoes");
+        const ver = novo("a", "btn btn--link", "Ver a página"); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
+        const lixo = novo("button", "btn btn--secondary", "Mover para a lixeira"); lixo.type = "button";
+        lixo.onclick = () => confirmarCom(item,
+          `Retirar a página de ${pf.nome || "esta pessoa"}? Deixa de ser pública e de aceitar reservas. Pode restaurá-la na lixeira.`,
+          "Mover para a lixeira", async () => { await moverParaLixeira(c.id, c.estado); pintarPessoas(); });
+        acoes.append(ver, lixo);
+        item.append(acoes);
+        listaP.append(item);
+      });
+      blocoL.hidden = !fora.length;
+      listaL.textContent = "";
+      fora.forEach((c) => {
+        const pf = c.perfil || {};
+        const item = novo("div", "pedido");
+        item.append(
+          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · "))
+        );
+        const acoes = novo("div", "pedido-acoes");
+        const volta = novo("button", "btn btn--primary", "Restaurar"); volta.type = "button";
+        volta.onclick = async () => { volta.disabled = true; try { await restaurarPro(c.id, c.estadoAnterior); } catch (e) { volta.disabled = false; return; } pintarPessoas(); pintarAprovacoes(); };
+        const fim = novo("button", "btn btn--secondary", "Apagar para sempre"); fim.type = "button";
+        fim.onclick = () => confirmarCom(item,
+          `Apagar para sempre a página de ${pf.nome || "esta pessoa"}, com a agenda? Não há volta. Os pedidos de sessão já feitos ficam como estão.`,
+          "Apagar para sempre", async () => { await apagarProParaSempre(c.id); pintarPessoas(); });
+        acoes.append(volta, fim);
+        item.append(acoes);
+        listaL.append(item);
+      });
+    }
+
+    async function pintarConvites() {
+      const caixa = $("[data-cv-lista]");
+      let lista = [];
+      try { lista = await listarConvites(); } catch (e) { return; }
+      caixa.textContent = "";
+      if (!lista.length) return;
+      caixa.append(novo("p", "label", "À espera de entrarem"));
+      lista.forEach((c) => {
+        const item = novo("div", "pedido");
+        item.append(novo("p", "pedido-nome", c.perfil?.nome || c.email), novo("p", "muted", c.email));
+        const acoes = novo("div", "pedido-acoes");
+        const tirar = novo("button", "btn btn--secondary", "Remover o convite"); tirar.type = "button";
+        tirar.onclick = () => confirmarCom(item, `Remover o convite para ${c.email}? A página reservada deixa de existir.`, "Remover", async () => { await apagarConvite(c.email); pintarConvites(); });
+        acoes.append(tirar); item.append(acoes); caixa.append(item);
+      });
+    }
+
+    function iniciarConvidar() {
+      const bloco = $("[data-convidar]");
+      bloco.hidden = false;
+      const campo = (k) => bloco.querySelector(`[data-cv="${k}"]`);
+      const sel = campo("area");
+      if (!sel.options.length) AREAS.forEach(([nome]) => { const o = document.createElement("option"); o.value = nome; o.textContent = nome; sel.append(o); });
+      pintarConvites();
+      const aviso = $("[data-cv-aviso]");
+      $("[data-cv-criar]").onclick = async (ev) => {
+        const btn = ev.currentTarget;
+        const email = campo("email").value.trim();
+        if (!emailValido(email)) { aviso.textContent = "Escreva o e-mail Google da pessoa."; campo("email").focus(); return; }
+        if (!campo("nome").value.trim()) { aviso.textContent = "Falta o nome."; campo("nome").focus(); return; }
+        btn.disabled = true; aviso.textContent = "";
+        try {
+          await criarConvite(email, {
+            nome: campo("nome").value.trim(), profissao: campo("profissao").value.trim(), area: sel.value, cidade: campo("cidade").value.trim(),
+            desde: String(new Date().getFullYear()), sobre: "", foto: "", moradas: {}, depoimentos: []
+          });
+          ["email", "nome", "cidade", "profissao"].forEach((k) => { campo(k).value = ""; });
+          aviso.textContent = "Página reservada. Diga à pessoa para entrar em neuromedit.com/profissional.html com esse e-mail.";
+          pintarConvites();
+        } catch (e) { aviso.textContent = "Não consegui reservar. Tente de novo."; }
+        btn.disabled = false;
+      };
+    }
+
     watchPainel((estado, user, conta) => {
       estados.forEach((s) => { s.hidden = s.dataset.estado !== (estado === "pro" ? "admin" : estado); });
       if (estado === "pro") {
@@ -587,7 +728,7 @@
         document.querySelectorAll("[data-link-perfil]").forEach((a) => { a.href = comPro("perfil.html", proId); });
         const lr = $("[data-link-reservar]"); lr.href = comPro("reservar.html", proId); lr.textContent = "abrir a minha página de reserva";
       }
-      if (estado === "admin") pintarAprovacoes();
+      if (estado === "admin") { pintarAprovacoes(); pintarPessoas(); iniciarConvidar(); }
       if (estado === "admin" || estado === "pro") {
         const nome = conta?.perfil?.nome || user?.displayName;
         if (nome) document.querySelector("[data-nome]").textContent = nome.split(" ")[0];

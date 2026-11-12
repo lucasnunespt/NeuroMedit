@@ -42,7 +42,7 @@ Limites de hoje: a reserva pede sempre um sinal por MB Way (mínimo 1 €); os p
 ## Antes de divulgar a outros profissionais
 
 1. **Publicar as regras**: `firebase deploy --only firestore:rules`. Sem isto, ninguém além do Lucas consegue criar conta (as regras antigas recusam `/pros`).
-2. **Testar as regras.** Os 26 casos abaixo estão escritos em `tests/regras.test.mjs`. Para correr, numa máquina com Java e acesso à Google:
+2. **Testar as regras.** Os 41 casos abaixo estão escritos em `tests/regras.test.mjs`. Para correr, numa máquina com Java e acesso à Google:
 
    ```
    npm install
@@ -54,5 +54,8 @@ Limites de hoje: a reserva pede sempre um sinal por MB Way (mínimo 1 €); os p
    - um visitante sem login lê um perfil aprovado e **não** lê um rascunho;
    - um profissional lê e confirma os seus pedidos (`where proId == uid`) e **não** lê os do Lucas;
    - um cliente reserva com `?p=` (horário `{proId}_AAAA-MM-DD_HH` + pedido com `proId`) e cancela;
-   - as reservas do Lucas continuam a funcionar como antes.
+   - as reservas do Lucas continuam a funcionar como antes;
+   - **convites** (nov 2026): o Lucas reserva uma página para um e-mail em `/convites/{e-mail em minúsculas}`; só quem entra com esse e-mail **verificado** reclama a página (cria `/pros/{uid}` aprovado, com o perfil exatamente igual ao do convite) e apaga o convite; sem convite, ninguém se cria aprovado;
+   - **lixeira**: o Lucas põe `estado: "lixeira"` (deixa de ser pública); o dono não mexe numa página na lixeira; só o Lucas a restaura ou apaga para sempre (a agenda, que é uma subcoleção, apaga-a o código antes do documento);
+   - **apagar histórico**: um profissional só apaga os seus pedidos já arrumados (libertada, reembolsada, ou cancelada sem reembolso por fazer), nunca uma sessão viva nem dinheiro por devolver.
 3. Formulário, aprovação e colaboradores foram testados só com uma base de dados falsa, sem regras.

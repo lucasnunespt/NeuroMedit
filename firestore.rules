@@ -58,6 +58,10 @@ service cloud.firestore {
     function isProDoPedido(data) {
       return isSignedIn() && data.proId == request.auth.uid;
     }
+    function podeApagarPedido(b) {
+      return b.estado in ['libertada', 'reembolsada']
+        || (b.estado == 'cancelada' && !(b.get('reembolsoPedido', false) == true && b.get('reembolsoFeito', false) != true));
+    }
     match /bookings/{bookingId} {
       allow read: if isAdmin()
         || isProDoPedido(resource.data)
@@ -80,7 +84,10 @@ service cloud.firestore {
             && request.resource.data.estado == 'cancelada'
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'canceladoEm', 'reembolsoPedido', 'canceladoPor', 'motivo'])
             && (!('motivo' in request.resource.data) || (request.resource.data.motivo is string && request.resource.data.motivo.size() <= 300)));
-      allow delete: if isAdmin();
+      // Apagar histórico: o Lucas apaga o que quiser; o profissional só apaga os seus pedidos já arrumados
+      // (libertada, reembolsada, ou cancelada sem reembolso por fazer). Nunca um pedido vivo nem dinheiro por devolver.
+      allow delete: if isAdmin()
+        || (isProDoPedido(resource.data) && podeApagarPedido(resource.data));
     }
 
     // Disponibilidade por mês: todos leem meses publicados; só o Lucas escreve.
@@ -98,16 +105,50 @@ service cloud.firestore {
     // ---------- Contas por profissional (nov 2026) ----------
     // /pros/{proId}: proId = uid da conta Google do profissional. Campos: perfil (público), sessao (preços, locais,
     // semana, contactos), estado: rascunho → pendente → aprovado. Só o Lucas (admin) aprova.
+    // 'lixeira' = retirada pelo Lucas (não é pública; só ele a restaura ou apaga para sempre).
     // Público só depois de aprovado; o próprio profissional e o Lucas veem sempre.
     function isDono(proId) {
       return isSignedIn() && request.auth.uid == proId;
     }
+    // ---------- Convites (nov 2026): o Lucas reserva uma página para um e-mail ----------
+    // /convites/{e-mail em minúsculas}: { email, perfil, criadoEm }. Quem entra com esse e-mail (verificado) reclama a página:
+    // cria /pros/{uid} aprovado com este perfil e apaga o convite. Antes disso a página não é pública nem aceita reservas.
+    function emailDoLogin() {
+      return request.auth.token.email.lower();
+    }
+    function ehOConvidado(conviteId) {
+      return isSignedIn() && request.auth.token.email_verified == true && emailDoLogin() == conviteId;
+    }
+    function temConvite() {
+      return isSignedIn() && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/convites/$(emailDoLogin()));
+    }
+    function conviteDoUtilizador() {
+      return get(/databases/$(database)/documents/convites/$(emailDoLogin())).data;
+    }
+    match /convites/{conviteId} {
+      allow read: if isAdmin() || ehOConvidado(conviteId);
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['email', 'perfil', 'criadoEm'])
+        && request.resource.data.email is string
+        && conviteId == request.resource.data.email.lower()
+        && request.resource.data.perfil is map;
+      allow delete: if isAdmin() || ehOConvidado(conviteId);
+    }
+
     match /pros/{proId} {
       allow read: if isAdmin() || isDono(proId) || resource.data.estado == 'aprovado';
-      allow create: if isDono(proId) && request.resource.data.estado == 'rascunho';
+      // Dois caminhos: rascunho (a pessoa cria a sua página sozinha) ou, se o Lucas a convidou pelo e-mail,
+      // a página já aprovada, com o perfil exatamente como o Lucas o escreveu no convite.
+      allow create: if isDono(proId)
+        && (request.resource.data.estado == 'rascunho'
+            || (request.resource.data.estado == 'aprovado'
+                && temConvite()
+                && request.resource.data.perfil == conviteDoUtilizador().perfil));
       // O profissional edita o seu perfil, mas não se aprova: o estado só pode ficar igual ou ir de rascunho a pendente.
       allow update: if isAdmin()
         || (isDono(proId)
+            && resource.data.estado != 'lixeira'
             && (request.resource.data.estado == resource.data.estado
                 || (resource.data.estado == 'rascunho' && request.resource.data.estado == 'pendente')));
       allow delete: if isAdmin() || isDono(proId);

@@ -12,135 +12,150 @@
   margin-bottom: 1.5rem;
 }
 
-.language-wrapper {
+/* ==========================================================
+   Globo — seletor de idioma (design system, componente Globo)
+   O globo de pontos de luz e o código da língua dentro de um
+   contorno, sem fundo, sem vidro, sem sombra. Ao abrir, o próprio
+   contorno cresce para baixo e mostra as línguas só pelas iniciais.
+   Só tokens: line, radius-lg, control-height, text-soft, text,
+   accent, accent-dark, luz-*, duration-quick, easing-calm.
+   ========================================================== */
+.lang-globo {
+  --globo-core: var(--accent);
+  --globo-mid: var(--accent-dark);
+  --globo-edge: var(--accent-dark);
   position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  width: 72px;
-  max-height: 44px; /* Repose height */
-  border-radius: var(--radius-lg, 28px);
-  background: color-mix(in srgb, var(--surface, #160c0f) 58%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text, #f4f4f1) 14%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    0 10px 34px rgba(0, 0, 0, 0.22),
-    inset 0 0 24px rgba(255, 255, 255, 0.04);
-  overflow: hidden;
-  transition:
-    max-height 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background 300ms ease,
-    border-color 300ms ease,
-    box-shadow 300ms ease;
-  z-index: 80;
+  flex-shrink: 0;
+  width: 84px;
+  height: var(--control-height);
+  z-index: 6;
 }
 
-.language-trigger {
+:is(html, body):is(.theme-sunset, .theme-evening, .theme-night, .theme-warm-night, .theme-sleep, .theme-late-night, .theme-luz) .lang-globo {
+  --globo-core: var(--luz-glow-core);
+  --globo-mid: var(--luz-glow-mid);
+  --globo-edge: var(--luz-gold);
+}
+
+/* O contorno é o único elemento visível: cresce para baixo, nunca para os lados. */
+.lang-globo-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  height: var(--control-height);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-soft);
+  transition: height var(--duration-quick) var(--easing-calm),
+    color var(--duration-quick) var(--easing-calm);
+}
+
+.lang-globo.is-open .lang-globo-frame {
+  height: calc(var(--control-height) * 6);
+  color: var(--text);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lang-globo:hover .lang-globo-frame {
+    color: var(--text);
+  }
+}
+
+.lang-globo-trigger {
   appearance: none;
-  position: relative;
-  z-index: 2;
-  flex: 0 0 44px;
-  width: 100%;
-  height: 44px;
-  border: 0;
-  border-radius: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  color: var(--text, #f4f4f1);
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(var(--control-height) - 2px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
   background: transparent;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
 }
 
-.language-current {
-  font-size: 0.76rem;
+.lang-globo-mark {
+  display: block;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.lang-globo-current {
+  font-size: 0.78rem;
+  font-weight: 500;
   letter-spacing: 0.08em;
   line-height: 1;
 }
 
-.language-trigger:focus-visible {
-  outline: none;
-}
-
-.language-options {
-  width: 100%;
-  padding: 0 0.42rem 0.6rem;
+.lang-globo-options {
   display: grid;
-  align-items: center;
-  gap: 0.22rem;
-  box-sizing: border-box;
+  visibility: hidden;
   opacity: 0;
-  transform: translateY(-10px);
-  transition:
-    opacity 300ms ease,
-    transform 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity var(--duration-quick) var(--easing-calm),
+    visibility 0s linear var(--duration-quick);
 }
 
-/* Estado Expandido - Classe .is-open ou .is-expanded */
-.language-wrapper.is-open,
-.language-wrapper.is-expanded {
-  max-height: 300px; /* Expansão fluida para baixo */
-  background: color-mix(in srgb, var(--surface-strong, #1d0f12) 88%, transparent);
-  border-color: color-mix(in srgb, var(--text, #f4f4f1) 24%, transparent);
-  box-shadow:
-    0 18px 60px rgba(0, 0, 0, 0.30),
-    inset 0 0 28px rgba(255, 255, 255, 0.05);
-}
-
-.language-wrapper.is-open .language-options,
-.language-wrapper.is-expanded .language-options {
+.lang-globo.is-open .lang-globo-options {
+  visibility: visible;
   opacity: 1;
-  transform: translateY(0);
+  transition-delay: 0s;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .language-wrapper:hover {
-    max-height: 300px;
-    background: color-mix(in srgb, var(--surface-strong, #1d0f12) 88%, transparent);
-    border-color: color-mix(in srgb, var(--text, #f4f4f1) 24%, transparent);
-    box-shadow:
-      0 18px 60px rgba(0, 0, 0, 0.30),
-      inset 0 0 28px rgba(255, 255, 255, 0.05);
-  }
-
-  .language-wrapper:hover .language-options {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.language-options button {
+.lang-globo-options button {
   appearance: none;
-  min-width: 54px;
-  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(var(--control-height) - 2px);
+  margin: 0;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
-  color: color-mix(in srgb, var(--text, #f4f4f1) 70%, transparent);
   background: transparent;
+  color: var(--text-soft);
   font: inherit;
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   letter-spacing: 0.08em;
   cursor: pointer;
-  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  transition: color var(--duration-quick) var(--easing-calm);
 }
 
-.language-options button:hover,
-.language-options button:focus-visible {
-  color: var(--text, #f4f4f1);
-  background: color-mix(in srgb, var(--text, #f4f4f1) 10%, transparent);
-  outline: none;
+.lang-globo-options button:hover {
+  color: var(--text);
 }
 
-.language-options button.is-active {
-  color: #ffffff;
-  background-color: var(--earth, #c88f53);
-  outline: none;
+/* A língua atual brilha: só cor, sem ponto, sem peso, sem fundo. */
+.lang-globo-options button.is-active,
+.lang-globo-options button.is-active:hover {
+  color: var(--accent-dark);
 }
 
-.language-options button:active {
-  transform: scale(0.96);
+.lang-globo-trigger:focus-visible,
+.lang-globo-options button:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: -2px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-globo-frame,
+  .lang-globo-options,
+  .lang-globo-options button {
+    transition: none;
+  }
+}
+
 
 :root:lang(ru),
 html[lang="ru"],
@@ -175,148 +190,6 @@ html[lang="ru"] .meditation-label {
   }
 }
 
-@media (max-width: 768px) {
-  /* CORREÇÃO: nunca fixar a altura do pill — a revelação vertical
-     das opções depende de max-height + overflow:hidden. Uma altura
-     fixa deixava o menu "aberto" porém invisível no mobile. */
-  .language-pill {
-    width: 74px;
-    max-height: 46px;
-  }
-
-  .language-pill.is-open,
-  .language-pill.is-expanded {
-    max-height: 320px;
-  }
-
-  .language-trigger {
-    width: 100%;
-    height: 46px;
-  }
-
-  .language-pill.is-open {
-    width: 74px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .language-pill,
-  .language-trigger,
-  .language-options,
-  .language-options button {
-    transition: none;
-  }
-}
-
-/* ==========================================================
-   CORREÇÃO — SELETOR DE IDIOMA NO HEADER
-   Em páginas que também carregam neuro.css (case-study, states),
-   o padrão horizontal de .language-pill (position: fixed, opções
-   absolutas à esquerda do gatilho) vazava para o pill do header e
-   quebrava a revelação vertical. Este bloco, com especificidade
-   maior, garante o padrão vertical em qualquer ordem de carga.
-   ========================================================== */
-.header-language-slot .language-wrapper.language-pill {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: auto;
-  max-height: 44px;
-  overflow: hidden;
-}
-
-.header-language-slot .language-wrapper.language-pill.is-open,
-.header-language-slot .language-wrapper.language-pill.is-expanded {
-  width: 72px;
-  max-height: 320px;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .header-language-slot .language-wrapper.language-pill:hover {
-    max-height: 320px;
-  }
-}
-
-.header-language-slot .language-wrapper.language-pill .language-options {
-  position: static;
-  right: auto;
-  left: auto;
-  width: 100%;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-@media (max-width: 940px) {
-  .header-language-slot .language-wrapper.language-pill {
-    max-height: 46px;
-  }
-
-  .header-language-slot .language-wrapper.language-pill.is-open,
-  .header-language-slot .language-wrapper.language-pill.is-expanded {
-    width: 74px;
-    max-height: 320px;
-  }
-}
-
-@media (max-width: 420px) {
-  .header-language-slot .language-wrapper.language-pill {
-    max-height: 42px;
-  }
-
-  .header-language-slot .language-wrapper.language-pill.is-open,
-  .header-language-slot .language-wrapper.language-pill.is-expanded {
-    width: 68px;
-    max-height: 320px;
-  }
-}
-
-/* ==========================================================
-   TAMANHO REDUZIDO — BOTÃO DE IDIOMAS NO HEADER
-   Versão mais discreta do pill (38px de altura, 64px de
-   largura), uniforme em todos os breakpoints. Especificidade
-   maior que header.css/neuro.css e posição no fim do arquivo
-   garantem prioridade em qualquer ordem de carga.
-   ========================================================== */
-.header-actions .header-language-slot {
-  width: 64px;
-  height: 38px;
-}
-
-.header-language-slot .language-wrapper.language-pill {
-  width: 64px;
-  max-height: 38px;
-}
-
-.header-language-slot .language-wrapper.language-pill.is-open,
-.header-language-slot .language-wrapper.language-pill.is-expanded {
-  width: 64px;
-  max-height: 300px;
-}
-
-.header-actions .header-language-slot .language-trigger {
-  flex: 0 0 38px;
-  height: 38px;
-  gap: 0.28rem;
-}
-
-.header-language-slot .language-trigger svg {
-  width: 15px;
-  height: 15px;
-}
-
-.header-language-slot .language-current {
-  font-size: 0.7rem;
-}
-
-.header-language-slot .language-options {
-  padding: 0 0.32rem 0.5rem;
-}
-
-.header-language-slot .language-options button {
-  min-width: 46px;
-  height: 30px;
-  font-size: 0.72rem;
-}
 
 /* Aviso: meditações guiadas só em português (escondido quando o site está em PT) */
 .audio-language-note {

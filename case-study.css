@@ -2957,26 +2957,6 @@ body.case-study-body[data-theme="late-night"] .case-final {
 
 
 /* =========================
-   LANGUAGE SWITCHER — NEUTRALIZAÇÃO DO PILL FLUTUANTE (neuro.css)
-   O neuro.css (carregado apenas nesta página) estiliza .language-pill como
-   pill flutuante do index.html. Aqui anulamos SOMENTE esses resíduos que
-   i18n.css/header.css não cobrem; todo o visual do seletor vem dos arquivos
-   compartilhados, exatamente como nas outras páginas.
-========================= */
-.header-language-slot .language-pill {
-  height: auto; /* neuro.css fixa 44px e impede a expansão vertical */
-  justify-content: initial;
-}
-
-.header-language-slot .language-options {
-  position: static; /* neuro.css usa absolute p/ expansão horizontal */
-  left: auto;
-  visibility: visible; /* i18n.css controla exibição via opacity + clip */
-  pointer-events: auto;
-}
-
-
-/* =========================
    CTA FINAL — CONVERSA (Calendly)
 ========================= */
 .case-cta-row {

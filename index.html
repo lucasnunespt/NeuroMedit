@@ -9,6 +9,7 @@
   <title data-i18n="index_meta_title">NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="i18n.css">
   <link rel="stylesheet" href="settings-panel.css">
   <script src="translations-en.js"></script>
   <script src="translations-pt.js"></script>
@@ -418,197 +419,14 @@
     }
 
     .intro-language {
-      --language-text: var(--text);
-      --language-muted: var(--text-soft);
-      --language-bg: var(--surface);
-      --language-bg-open: var(--surface-strong);
-      --language-border: var(--line);
-      --language-border-open: var(--line);
-      --language-active-bg: var(--surface-strong);
-      --language-shadow: var(--shadow-soft);
-      --language-shadow-open: var(--shadow-card);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.6rem;
       flex-wrap: wrap;
       margin: 0 0 1.25rem;
-      color: var(--language-muted);
+      color: var(--text-soft);
       font-size: 0.78rem;
-    }
-
-    .intro-language .language-pill {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-      width: 44px;
-      height: 44px;
-      border: 1px solid var(--language-border);
-      border-radius: var(--radius-pill);
-      overflow: hidden;
-      background: var(--language-bg);
-      color: var(--language-text);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow: var(--language-shadow);
-      transition:
-        width 420ms cubic-bezier(.2,.8,.2,1),
-        background 260ms ease,
-        color var(--theme-transition-duration) ease,
-        border-color 260ms ease,
-        box-shadow 260ms ease;
-      z-index: 80;
-    }
-
-    .intro-language .language-pill.is-open {
-      width: min(280px, calc(100vw - 2rem));
-      border-color: var(--language-border-open);
-      background: var(--language-bg-open);
-      color: var(--language-text);
-      box-shadow: var(--language-shadow-open);
-    }
-
-    .intro-language .language-trigger {
-      appearance: none;
-      position: relative;
-      z-index: 2;
-      flex: 0 0 44px;
-      width: 44px;
-      height: 44px;
-      border: 0;
-      border-radius: var(--radius-pill);
-      display: inline-grid;
-      place-items: center;
-      background: transparent;
-      color: inherit;
-      cursor: pointer;
-    }
-
-    .intro-language .language-current {
-      color: currentColor;
-      font-size: 0.76rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      line-height: 1;
-    }
-
-    .intro-language .language-trigger:focus-visible {
-      outline: none;
-    }
-
-    .intro-language .language-options {
-      position: absolute;
-      right: 44px;
-      left: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-evenly;
-      gap: 4px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateX(18px);
-      pointer-events: none;
-      transition:
-        opacity 220ms ease,
-        visibility 0s linear 220ms,
-        transform 420ms cubic-bezier(.2,.8,.2,1);
-    }
-
-    .intro-language .language-pill.is-open .language-options {
-      opacity: 1;
-      visibility: visible;
-      transform: translateX(0);
-      pointer-events: auto;
-      transition-delay: 0s;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .intro-language .language-pill:hover,
-      .intro-language .language-pill:focus-within {
-        width: min(280px, calc(100vw - 2rem));
-        border-color: var(--language-border-open);
-        background: var(--language-bg-open);
-        color: var(--language-text);
-        box-shadow: var(--language-shadow-open);
-      }
-
-      .intro-language .language-pill:hover .language-options,
-      .intro-language .language-pill:focus-within .language-options {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(0);
-        pointer-events: auto;
-        transition-delay: 0s;
-      }
-    }
-
-    .intro-language .language-options button {
-      appearance: none;
-      min-width: 38px;
-      height: 32px;
-      border: 0;
-      border-radius: var(--radius-pill);
-      color: var(--language-muted);
-      background: transparent;
-      font: inherit;
-      font-size: 0.76rem;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
-    }
-
-    .intro-language .language-options button:hover,
-    .intro-language .language-options button:focus-visible,
-    .intro-language .language-options button.is-active {
-      color: var(--language-text);
-      background: var(--language-active-bg);
-      outline: none;
-    }
-
-    .intro-language .language-options button:active {
-      transform: scale(0.96);
-    }
-
-    @media (max-width: 768px) {
-      .intro-language {
-        gap: 0.5rem;
-        max-width: calc(100vw - 2rem);
-      }
-
-      .intro-language .language-pill {
-        width: 46px;
-        height: 46px;
-      }
-
-      .intro-language .language-trigger {
-        flex-basis: 46px;
-        width: 46px;
-        height: 46px;
-      }
-
-      .intro-language .language-pill.is-open {
-        width: min(286px, calc(100vw - 2rem));
-      }
-
-      .intro-language .language-options {
-        right: 46px;
-        left: 8px;
-        gap: 2px;
-      }
-
-      .intro-language .language-options button {
-        min-width: clamp(32px, 11vw, 38px);
-        padding-inline: 0.32rem;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .intro-language .language-pill,
-      .intro-language .language-options,
-      .intro-language .language-options button {
-        transition: none;
-      }
     }
 
     html[lang="ru"],
@@ -1143,82 +961,6 @@
 
     html:is(.theme-morning, .theme-afternoon, .theme-day) body.video-atmosphere-active:not([data-index-phase="meditation-active"]):not([data-index-phase="meditation-complete"]) :is(.intro-headphones, .intro-meta-dot, .intro-language-note) {
       color: var(--text-soft);
-    }
-
-    /* Seletor de idioma compacto: pílula horizontal (globo + código) */
-    .intro-language {
-      gap: 0;
-    }
-
-    .intro-language .language-pill,
-    .intro-language .language-trigger {
-      height: 32px;
-    }
-
-    .intro-language .language-pill {
-      width: 62px;
-    }
-
-    .intro-language .language-trigger {
-      flex: 0 0 62px;
-      width: 62px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.3rem;
-    }
-
-    .intro-language .language-trigger svg {
-      width: 13px;
-      height: 13px;
-      order: -1;
-      opacity: 0.8;
-    }
-
-    .intro-language .language-current {
-      font-size: 0.66rem;
-      letter-spacing: 0.1em;
-    }
-
-    .intro-language .language-options {
-      right: 62px;
-      left: 6px;
-    }
-
-    .intro-language .language-options button {
-      min-width: 32px;
-      height: 26px;
-      font-size: 0.66rem;
-    }
-
-    /* Toque (telemóvel): alvo maior, mantendo o visual discreto */
-    @media (pointer: coarse), (max-width: 768px) {
-      .intro-language .language-pill,
-      .intro-language .language-trigger {
-        height: 40px;
-      }
-
-      .intro-language .language-pill {
-        width: 68px;
-      }
-
-      .intro-language .language-trigger {
-        flex-basis: 68px;
-        width: 68px;
-      }
-
-      .intro-language .language-pill.is-open {
-        width: min(290px, calc(100vw - 2rem));
-      }
-
-      .intro-language .language-options {
-        right: 68px;
-      }
-
-      .intro-language .language-options button {
-        height: 32px;
-        min-width: clamp(32px, 10vw, 38px);
-      }
     }
 
     /* Ecrãs baixos (telemóvel na horizontal, portáteis pequenos) */

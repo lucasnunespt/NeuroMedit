@@ -31,31 +31,39 @@ function getTranslation(language, key) {
   return translations[language]?.[key] ?? translations[DEFAULT_LANGUAGE]?.[key] ?? `[${key}]`;
 }
 
-function buildLanguageSwitcherMarkup() {
-  return `
-    <div class="language-wrapper language-pill" data-language-menu>
-      <button
-        class="language-trigger"
-        type="button"
-        aria-label="Choose language"
-        aria-expanded="false"
-        aria-controls="languageOptions"
-        data-language-trigger
-      >
-        <span class="language-current" data-language-current>EN</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
-          <path d="M3.6 9h16.8M3.6 15h16.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          <path d="M12 3c2.2 2.4 3.3 5.4 3.3 9S14.2 18.6 12 21c-2.2-2.4-3.3-5.4-3.3-9S9.8 5.4 12 3Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
-        </svg>
-      </button>
+const LANGUAGE_OPTIONS = [
+  { code: "pt", name: "Português" },
+  { code: "en", name: "English" },
+  { code: "es", name: "Español" },
+  { code: "it", name: "Italiano" },
+  { code: "ru", name: "Русский" }
+];
 
-      <div class="language-options" id="languageOptions" role="menu" aria-hidden="true" data-language-options>
-        <button type="button" role="menuitem" data-lang-option="pt">PT</button>
-        <button type="button" role="menuitem" data-lang-option="en">EN</button>
-        <button type="button" role="menuitem" data-lang-option="es">ES</button>
-        <button type="button" role="menuitem" data-lang-option="it">IT</button>
-        <button type="button" role="menuitem" data-lang-option="ru">RU</button>
+// Globo: a Terra em pontos de brilho (design system, componente Globo).
+// Fica em linha porque lê as variáveis de cor do tema.
+const LANGUAGE_GLOBE_MARKUP = `<svg class="lang-globo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><defs><radialGradient id="globoHalo"><stop offset="0" style="stop-color:var(--globo-core)" stop-opacity=".30"/><stop offset=".62" style="stop-color:var(--globo-mid)" stop-opacity=".12"/><stop offset="1" style="stop-color:var(--globo-edge)" stop-opacity="0"/></radialGradient><filter id="globoBlur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.6"/></filter></defs><circle cx="20" cy="20" r="17" fill="url(#globoHalo)"/><g style="fill:var(--globo-edge)" filter="url(#globoBlur)" opacity=".55"><circle cx="20.0" cy="6.0" r="1.23" opacity="0.97"/><circle cx="24.3" cy="6.7" r="1.33" opacity="0.95"/><circle cx="28.2" cy="8.7" r="1.24" opacity="0.98"/><circle cx="31.3" cy="11.8" r="1.36" opacity="0.95"/><circle cx="33.3" cy="15.7" r="1.30" opacity="0.92"/><circle cx="34.0" cy="20.0" r="1.20" opacity="0.94"/><circle cx="33.3" cy="24.3" r="1.32" opacity="0.91"/><circle cx="31.3" cy="28.2" r="1.36" opacity="0.92"/><circle cx="28.2" cy="31.3" r="1.24" opacity="0.90"/><circle cx="24.3" cy="33.3" r="1.40" opacity="0.97"/><circle cx="20.0" cy="34.0" r="1.38" opacity="0.96"/><circle cx="15.7" cy="33.3" r="1.20" opacity="0.93"/><circle cx="11.8" cy="31.3" r="1.30" opacity="0.91"/><circle cx="8.7" cy="28.2" r="1.39" opacity="0.94"/><circle cx="6.7" cy="24.3" r="1.23" opacity="0.98"/><circle cx="6.0" cy="20.0" r="1.22" opacity="0.99"/><circle cx="6.7" cy="15.7" r="1.29" opacity="0.96"/><circle cx="8.7" cy="11.8" r="1.27" opacity="0.95"/><circle cx="11.8" cy="8.7" r="1.23" opacity="0.90"/><circle cx="15.7" cy="6.7" r="1.38" opacity="0.92"/><circle cx="30.4" cy="22.1" r="1.10" opacity="0.74"/><circle cx="26.0" cy="23.6" r="1.13" opacity="0.79"/><circle cx="20.0" cy="24.2" r="1.09" opacity="0.78"/><circle cx="14.0" cy="23.6" r="1.06" opacity="0.78"/><circle cx="9.6" cy="22.1" r="0.99" opacity="0.76"/><circle cx="9.6" cy="17.9" r="1.10" opacity="0.74"/><circle cx="14.0" cy="16.4" r="1.12" opacity="0.79"/><circle cx="20.0" cy="15.8" r="1.03" opacity="0.75"/><circle cx="26.0" cy="16.4" r="1.04" opacity="0.75"/><circle cx="30.4" cy="17.9" r="1.13" opacity="0.75"/><circle cx="16.9" cy="30.4" r="0.97" opacity="0.73"/><circle cx="14.5" cy="26.0" r="1.09" opacity="0.80"/><circle cx="13.7" cy="20.0" r="1.05" opacity="0.76"/><circle cx="14.5" cy="14.0" r="1.06" opacity="0.78"/><circle cx="16.9" cy="9.6" r="1.00" opacity="0.77"/><circle cx="23.1" cy="9.6" r="1.06" opacity="0.77"/><circle cx="25.5" cy="14.0" r="1.00" opacity="0.73"/><circle cx="26.3" cy="20.0" r="1.02" opacity="0.79"/><circle cx="25.5" cy="26.0" r="1.02" opacity="0.77"/><circle cx="23.2" cy="30.4" r="1.02" opacity="0.73"/></g><g style="fill:var(--globo-core)"><circle cx="20.0" cy="6.0" r="1.23" opacity="0.97"/><circle cx="24.3" cy="6.7" r="1.33" opacity="0.95"/><circle cx="28.2" cy="8.7" r="1.24" opacity="0.98"/><circle cx="31.3" cy="11.8" r="1.36" opacity="0.95"/><circle cx="33.3" cy="15.7" r="1.30" opacity="0.92"/><circle cx="34.0" cy="20.0" r="1.20" opacity="0.94"/><circle cx="33.3" cy="24.3" r="1.32" opacity="0.91"/><circle cx="31.3" cy="28.2" r="1.36" opacity="0.92"/><circle cx="28.2" cy="31.3" r="1.24" opacity="0.90"/><circle cx="24.3" cy="33.3" r="1.40" opacity="0.97"/><circle cx="20.0" cy="34.0" r="1.38" opacity="0.96"/><circle cx="15.7" cy="33.3" r="1.20" opacity="0.93"/><circle cx="11.8" cy="31.3" r="1.30" opacity="0.91"/><circle cx="8.7" cy="28.2" r="1.39" opacity="0.94"/><circle cx="6.7" cy="24.3" r="1.23" opacity="0.98"/><circle cx="6.0" cy="20.0" r="1.22" opacity="0.99"/><circle cx="6.7" cy="15.7" r="1.29" opacity="0.96"/><circle cx="8.7" cy="11.8" r="1.27" opacity="0.95"/><circle cx="11.8" cy="8.7" r="1.23" opacity="0.90"/><circle cx="15.7" cy="6.7" r="1.38" opacity="0.92"/><circle cx="30.4" cy="22.1" r="1.10" opacity="0.74"/><circle cx="26.0" cy="23.6" r="1.13" opacity="0.79"/><circle cx="20.0" cy="24.2" r="1.09" opacity="0.78"/><circle cx="14.0" cy="23.6" r="1.06" opacity="0.78"/><circle cx="9.6" cy="22.1" r="0.99" opacity="0.76"/><circle cx="9.6" cy="17.9" r="1.10" opacity="0.74"/><circle cx="14.0" cy="16.4" r="1.12" opacity="0.79"/><circle cx="20.0" cy="15.8" r="1.03" opacity="0.75"/><circle cx="26.0" cy="16.4" r="1.04" opacity="0.75"/><circle cx="30.4" cy="17.9" r="1.13" opacity="0.75"/><circle cx="16.9" cy="30.4" r="0.97" opacity="0.73"/><circle cx="14.5" cy="26.0" r="1.09" opacity="0.80"/><circle cx="13.7" cy="20.0" r="1.05" opacity="0.76"/><circle cx="14.5" cy="14.0" r="1.06" opacity="0.78"/><circle cx="16.9" cy="9.6" r="1.00" opacity="0.77"/><circle cx="23.1" cy="9.6" r="1.06" opacity="0.77"/><circle cx="25.5" cy="14.0" r="1.00" opacity="0.73"/><circle cx="26.3" cy="20.0" r="1.02" opacity="0.79"/><circle cx="25.5" cy="26.0" r="1.02" opacity="0.77"/><circle cx="23.2" cy="30.4" r="1.02" opacity="0.73"/></g></svg>`;
+
+function buildLanguageSwitcherMarkup() {
+  const optionsMarkup = LANGUAGE_OPTIONS.map(({ code, name }) => `
+        <button type="button" role="menuitem" lang="${code}" aria-label="${name}" data-lang-option="${code}">${code.toUpperCase()}</button>`).join("");
+
+  return `
+    <div class="lang-globo" data-language-menu>
+      <div class="lang-globo-frame">
+        <button
+          class="lang-globo-trigger"
+          type="button"
+          aria-label="Choose language"
+          aria-expanded="false"
+          aria-controls="languageOptions"
+          data-language-trigger
+        >
+          ${LANGUAGE_GLOBE_MARKUP}
+          <span class="lang-globo-current" data-language-current>EN</span>
+        </button>
+
+        <div class="lang-globo-options" id="languageOptions" role="menu" aria-hidden="true" data-language-options>${optionsMarkup}
+        </div>
       </div>
     </div>
   `;
@@ -180,6 +188,11 @@ function bindLanguageSwitcherEvents() {
 
     languageTrigger?.addEventListener("click", (event) => {
       event.stopPropagation();
+      // Com rato, o cursor e o foco já abrem a lista: o clique não a deve fechar.
+      if (canUseHover) {
+        openLanguageMenu();
+        return;
+      }
       toggleLanguageMenu();
     });
 

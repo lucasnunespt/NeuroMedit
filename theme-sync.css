@@ -337,11 +337,6 @@ body.theme-night .audio-unavailable {
   border-color: var(--line);
 }
 
-body.theme-night .header-language-slot .language-options button.is-active,
-body.theme-late-night .header-language-slot .language-options button.is-active {
-  color: var(--button-text);
-}
-
 body.theme-morning :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
 body.theme-afternoon :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
 body.theme-day :is(.quick-card, .upcoming-card, .why-card, .principle-card, .design-card, .why-system-card, .why-benefit-card, .why-feature-card, .why-step-card, .why-science-note, .why-cta-box, .founder-card, .contributor-card, .contributors-cta-box, .progress-module, .session-chip, .why-resistance-list li, .principles-list li),
@@ -394,13 +389,13 @@ body.theme-late-night:not(.case-study-body) :is(a:not(.button):not(.primary-butt
   color: var(--link-text);
 }
 
-body.theme-morning :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-afternoon :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-day :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-sunset :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-evening :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-night :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active),
-body.theme-late-night :is(.primary-button, .session-start-button, .header-language-slot .language-options button.is-active) {
+body.theme-morning :is(.primary-button, .session-start-button),
+body.theme-afternoon :is(.primary-button, .session-start-button),
+body.theme-day :is(.primary-button, .session-start-button),
+body.theme-sunset :is(.primary-button, .session-start-button),
+body.theme-evening :is(.primary-button, .session-start-button),
+body.theme-night :is(.primary-button, .session-start-button),
+body.theme-late-night :is(.primary-button, .session-start-button) {
   color: var(--button-text);
 }
 

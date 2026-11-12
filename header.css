@@ -205,9 +205,7 @@ body:is(.theme-sunset, .theme-evening, .theme-night, .theme-late-night, .theme-s
 .header-nav-link:focus-visible,
 .header-mobile-link:focus-visible,
 .header-menu-toggle:focus-visible,
-.header-mobile-close:focus-visible,
-.header-language-slot .language-trigger:focus-visible,
-.header-language-slot .language-options button:focus-visible {
+.header-mobile-close:focus-visible {
   outline: 2px solid var(--header-focus);
   outline-offset: 2px;
 }
@@ -249,50 +247,10 @@ body:is(.theme-sunset, .theme-evening, .theme-night, .theme-late-night, .theme-s
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  width: 74px;
-  height: 44px;
+  width: 84px;
+  height: var(--control-height);
   overflow: visible;
   z-index: 90;
-}
-
-.header-language-slot .language-wrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: none;
-  width: 72px;
-  max-width: min(92px, calc(100vw - 32px));
-  border-color: var(--header-border);
-  background: var(--header-control-bg);
-  box-shadow: var(--shadow-soft);
-}
-
-.header-language-slot .language-wrapper.is-open {
-  background: var(--header-control-hover-bg);
-  color: var(--header-link-hover);
-}
-
-.header-language-slot .language-trigger {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .header-language-slot .language-wrapper:hover,
-  .header-language-slot .language-wrapper:focus-within {
-    background: var(--header-control-hover-bg);
-    color: var(--header-link-hover);
-  }
-}
-
-.header-language-slot .language-options {
-  right: 0;
-}
-
-.header-language-slot .language-options button.is-active {
-  background: var(--accent);
-  color: var(--button-text);
 }
 
 .header-menu-toggle,
@@ -546,14 +504,6 @@ body.is-meditating .site-footer {
     gap: 0.42rem;
   }
 
-  .header-language-slot {
-    width: 74px;
-    height: 46px;
-  }
-
-  .header-language-slot .language-wrapper {
-    width: 74px;
-  }
 }
 
 @media (max-width: 620px) {
@@ -616,18 +566,6 @@ body.is-meditating .site-footer {
     gap: 0.32rem;
   }
 
-  .header-language-slot {
-    width: 68px;
-    height: 42px;
-  }
-
-  .header-language-slot .language-wrapper {
-    width: 68px;
-  }
-
-  .header-language-slot .language-trigger {
-    height: 42px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

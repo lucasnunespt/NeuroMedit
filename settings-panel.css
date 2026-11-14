@@ -1124,3 +1124,13 @@ body.settings-focus-idle:not(.settings-open) .site-footer {
   transform: none;
   pointer-events: auto;
 }
+
+
+/* O botão flutuante de Ajustes sai das páginas com a barra do topo:
+   os Ajustes vivem no menu do perfil (computador) e no Menu da barra
+   de baixo (telemóvel). O botão continua no código, escondido, porque
+   o Menu do telemóvel o usa para abrir o painel. Páginas sem barra
+   (a entrada e a Luz) mantêm-no. */
+body:has([data-header]) .settings-fab {
+  display: none;
+}

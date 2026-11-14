@@ -681,8 +681,139 @@
     label: "Novidades",
     text: "As novidades ainda estão sendo preparadas. Quando houver alguma, ela aparece aqui, sem pressa."
   });
+  /* ---------- Busca (a lupa): procura em todo o site ----------
+     Páginas da navegação e todas as práticas da Biblioteca, na língua
+     em que o site está. As práticas vêm de library.html, lido na
+     primeira busca; ignora acentos e maiúsculas. */
+  const ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16L20 20"/></svg>';
+  const search = document.createElement("div");
+  search.className = "header-soon header-search";
+  search.innerHTML = `
+    <button type="button" class="header-dot" aria-expanded="false" aria-controls="headerSearch" aria-label="Buscar" title="Buscar" data-i18n="header_search" data-i18n-attr="aria-label,title">${ICON_SEARCH}</button>
+    <div class="header-pop header-pop--search" id="headerSearch" role="dialog" aria-label="Buscar" data-i18n="header_search" data-i18n-attr="aria-label" hidden>
+      <div class="header-search-field">
+        ${ICON_SEARCH}
+        <input type="search" autocomplete="off" spellcheck="false" aria-label="Buscar" placeholder="Buscar práticas e páginas" data-i18n="header_search_placeholder" data-i18n-attr="placeholder,aria-label">
+      </div>
+      <div class="header-search-results" data-search-results aria-live="polite"></div>
+    </div>
+  `;
+  const searchButton = search.querySelector(".header-dot");
+  const searchPop = search.querySelector(".header-pop");
+  const searchInput = search.querySelector("input");
+  const searchResults = search.querySelector("[data-search-results]");
+
+  const lang = () => (typeof getPreferredLanguage === "function" ? getPreferredLanguage() : "pt");
+  const tr = (key, fallback) => {
+    if (!key || typeof getTranslation !== "function") return fallback || "";
+    const value = getTranslation(lang(), key);
+    return value && value !== key ? value : (fallback || "");
+  };
+  const normalize = (text) => (text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const escapeHtml = (text) => (text || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  let practices = null;
+  async function loadPractices() {
+    if (practices) return practices;
+    try {
+      const html = await fetch("library.html", { credentials: "same-origin" }).then((r) => r.text());
+      const page = new DOMParser().parseFromString(html, "text/html");
+      practices = [...page.querySelectorAll(".session-card")].map((card) => {
+        const section = card.closest("section");
+        const keyOf = (el) => el?.dataset.i18n || "";
+        const meta = card.querySelector(".session-meta");
+        const title = card.querySelector("h3");
+        const text = [...card.querySelectorAll("p")].find((el) => el !== meta);
+        const heading = section?.querySelector("h2");
+        return {
+          href: card.getAttribute("href") || "",
+          locked: card.classList.contains("session-card--locked"),
+          section: section?.id || "",
+          keys: { meta: keyOf(meta), title: keyOf(title), text: keyOf(text), heading: keyOf(heading) },
+          raw: { meta: meta?.textContent, title: title?.textContent, text: text?.textContent, heading: heading?.textContent }
+        };
+      });
+    } catch (error) {
+      practices = [];
+    }
+    return practices;
+  }
+
+  function pages() {
+    const seen = new Set();
+    return [...document.querySelectorAll(".header-nav-desktop a.header-nav-link")]
+      .map((link) => ({ href: link.getAttribute("href"), title: (link.querySelector(".header-nav-text")?.textContent || link.textContent).trim() }))
+      .filter((page) => page.href && !seen.has(page.href) && seen.add(page.href));
+  }
+
+  async function runSearch() {
+    const terms = normalize(searchInput.value).split(" ").filter(Boolean);
+    if (!terms.length) {
+      searchResults.innerHTML = "";
+      return;
+    }
+    const matches = (text) => terms.every((term) => normalize(text).includes(term));
+    const pageHits = pages().filter((page) => matches(page.title));
+    const items = await loadPractices();
+    const practiceHits = items.map((item) => ({
+      ...item,
+      title: tr(item.keys.title, item.raw.title),
+      meta: tr(item.keys.meta, item.raw.meta),
+      text: tr(item.keys.text, item.raw.text),
+      heading: tr(item.keys.heading, item.raw.heading)
+    })).filter((item) => matches(`${item.title} ${item.text} ${item.meta} ${item.heading}`));
+
+    const query = searchInput.value;
+    if (normalize(query).split(" ").filter(Boolean).join(" ") !== terms.join(" ")) return;
+
+    if (!pageHits.length && !practiceHits.length) {
+      searchResults.innerHTML = `<div class="header-search-empty">${escapeHtml(tr("header_search_empty", "Nada encontrado com essa palavra. Tente outra, mais simples."))}</div>`;
+      return;
+    }
+    const soonLabel = escapeHtml(tr("library_locked_badge", "Em breve"));
+    const practiceHtml = practiceHits.slice(0, 8).map((item) => {
+      const sub = escapeHtml([item.heading, item.meta].filter(Boolean).join(" · "));
+      const inner = `<span class="header-search-title">${escapeHtml(item.title)}</span><small>${sub}${item.locked ? ` · ${soonLabel}` : ""}</small>`;
+      return item.locked || !item.href
+        ? `<span class="header-pop-item header-search-hit is-locked">${inner}</span>`
+        : `<a class="header-pop-item header-search-hit" href="${escapeHtml(item.href)}">${inner}</a>`;
+    }).join("");
+    const pageHtml = pageHits.map((page) => `<a class="header-pop-item header-search-hit" href="${escapeHtml(page.href)}"><span class="header-search-title">${escapeHtml(page.title)}</span></a>`).join("");
+    searchResults.innerHTML = [
+      practiceHtml && `<div class="header-pop-eyebrow">${escapeHtml(tr("header_search_practices", "Práticas"))}</div>${practiceHtml}`,
+      pageHtml && `<div class="header-pop-eyebrow">${escapeHtml(tr("header_search_pages", "Páginas"))}</div>${pageHtml}`
+    ].filter(Boolean).join("");
+  }
+
+  const setSearch = (isOpen, restoreFocus = false) => {
+    if (isOpen) window.dispatchEvent(new CustomEvent("neuromedit:headerpop", { detail: { owner: search } }));
+    searchPop.hidden = !isOpen;
+    searchButton.setAttribute("aria-expanded", String(isOpen));
+    if (isOpen) {
+      searchInput.focus();
+      loadPractices();
+    } else if (restoreFocus) {
+      searchButton.focus();
+    }
+  };
+  searchButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setSearch(searchPop.hidden);
+  });
+  searchInput.addEventListener("input", runSearch);
+  document.addEventListener("click", (event) => {
+    if (!searchPop.hidden && !search.contains(event.target)) setSearch(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !searchPop.hidden) setSearch(false, true);
+  });
+  window.addEventListener("neuromedit:headerpop", (event) => {
+    if (event.detail?.owner !== search && !searchPop.hidden) setSearch(false);
+  });
+  window.addEventListener("neuromedit:languagechange", () => requestAnimationFrame(runSearch));
+
   const soonAnchor = actions.querySelector(".header-language-slot") || account;
-  soonAnchor.before(community, news);
+  soonAnchor.before(search, community, news);
 
   window.addEventListener("neuromedit:authchange", (event) => renderAccount(event.detail?.user || null));
   renderAccount(settings()?.getUser?.() || null);

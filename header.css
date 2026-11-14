@@ -862,6 +862,100 @@ body.is-meditating .site-footer {
   color: var(--text);
 }
 
+/* Busca: o campo dentro do mesmo menu flutuante, resultados por baixo. */
+.header-pop--search {
+  width: 380px;
+  padding: 10px;
+}
+
+.header-search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-sizing: border-box;
+  min-height: var(--control-height);
+  padding: 0 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  transition: border-color var(--duration-quick) var(--easing-calm);
+}
+
+.header-search-field:focus-within {
+  border-color: var(--accent-dark);
+}
+
+.header-search-field svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
+.header-search-field input {
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(var(--control-height) - 2px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+
+.header-search-field input::placeholder {
+  color: var(--text-subtle);
+}
+
+.header-search-field input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.header-search-results {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.header-search-results:not(:empty) {
+  margin-top: 6px;
+}
+
+.header-search-results .header-pop-eyebrow {
+  margin: 10px 16px 4px;
+}
+
+.header-search-hit {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+}
+
+.header-search-hit small {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.header-search-hit.is-locked {
+  cursor: default;
+}
+
+.header-search-hit.is-locked .header-search-title {
+  color: var(--text-soft);
+}
+
+.header-search-hit.is-locked:hover {
+  background: transparent;
+}
+
+.header-search-empty {
+  margin: 12px 16px 6px;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 @media (max-width: 940px) {
   .header-history,
   .header-soon,
@@ -875,5 +969,43 @@ body.is-meditating .site-footer {
   .header-avatar,
   .header-pop-item {
     transition: none;
+  }
+}
+
+/* ==========================================================
+   COMPUTADOR: UMA SÓ BARRA, ENVOLTA EM FUMAÇA (mockup da home, nov 2026)
+   A moldura de fora (pílula com linha e vidro à volta de tudo) sai:
+   ficava uma barra dentro de outra. No lugar dela, uma fumaça redonda,
+   sem contorno nem borda marcada, que ainda diz "isto é uma barra só".
+   Só a navegação (Início, Biblioteca, Filosofia, Creators) tem contorno.
+   Ao rolar, um véu da cor do fundo impede o conteúdo de passar por trás.
+   ========================================================== */
+@media (min-width: 941px) {
+  /* :root:root body sobe a especificidade acima das regras por tema de theme-sync.css. */
+  :root:root body .site-header .header-shell,
+  :root:root body .site-header.scrolled .header-shell {
+    position: relative;
+    z-index: 0;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .site-header .header-shell::before {
+    content: "";
+    position: absolute;
+    inset: 6px 10px;
+    z-index: -1;
+    border-radius: var(--radius-pill);
+    background: var(--surface-strong);
+    filter: blur(14px);
+    pointer-events: none;
+  }
+
+  /* Ao rolar: um véu da cor do fundo, de ponta a ponta, por trás da fumaça. */
+  :root:root body .site-header.scrolled {
+    background: linear-gradient(to bottom, var(--bg) 70%, transparent) !important;
   }
 }

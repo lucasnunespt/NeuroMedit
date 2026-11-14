@@ -261,7 +261,8 @@ service cloud.firestore {
     match /comPartilhas/{partilhaId} {
       allow read: if ehMembro();
       allow create: if ehMembro()
-        && request.resource.data.keys().hasOnly(['circulo', 'uid', 'nome', 'anon', 'pratica', 'texto', 'criadoEm', 'denunciada'])
+        && request.resource.data.keys().hasOnly(['circulo', 'uid', 'nome', 'foto', 'anon', 'pratica', 'texto', 'criadoEm', 'denunciada'])
+        && (!('foto' in request.resource.data) || (request.resource.data.foto is string && request.resource.data.foto.size() <= 500))
         && textoAte(request.resource.data.texto, 2000)
         && request.resource.data.circulo is string
         && exists(/databases/$(database)/documents/comCirculos/$(request.resource.data.circulo))
@@ -271,6 +272,7 @@ service cloud.firestore {
             || (request.resource.data.anon == true
                 && !('uid' in request.resource.data)
                 && !('nome' in request.resource.data)
+                && !('foto' in request.resource.data)
                 && getAfter(/databases/$(database)/documents/comPartilhas/$(partilhaId)/privado/autor).data.uid == request.auth.uid));
       // O autor só muda o texto. Qualquer membro pode denunciar (e só isso). O Lucas resolve a denúncia.
       allow update: if isAdmin()
@@ -296,13 +298,17 @@ service cloud.firestore {
       match /respostas/{respostaId} {
         allow read: if ehMembro();
         allow create: if ehMembro()
-          && request.resource.data.keys().hasOnly(['uid', 'nome', 'professor', 'texto', 'criadoEm'])
+          && request.resource.data.keys().hasOnly(['uid', 'nome', 'foto', 'professor', 'texto', 'criadoEm'])
+          && (!('foto' in request.resource.data) || (request.resource.data.foto is string && request.resource.data.foto.size() <= 500))
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.professor == ehProfessor()
           && textoAte(request.resource.data.texto, 1500)
           && request.resource.data.criadoEm == request.time;
         allow update: if false;
-        allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+        allow delete: if isAdmin()
+          || (isSignedIn() && resource.data.uid == request.auth.uid)
+          || ehAutorDaPartilha(partilhaId, get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data)
+          || criouOCirculo(get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data.circulo);
       }
 
       // "Isto ressoou em mim": cada pessoa só vê o seu. Não existe contagem.

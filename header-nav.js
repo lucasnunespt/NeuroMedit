@@ -159,7 +159,8 @@
     return (
       links.find((link) => link.classList.contains("active")) ||
       links.find((link) => link.getAttribute("aria-current") === "page") ||
-      links[0] ||
+      // Páginas fora da navegação (ex.: Comunidade) não marcam nenhum item.
+      (document.body.dataset.semNav !== undefined ? null : links[0]) ||
       null
     );
   }

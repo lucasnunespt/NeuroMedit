@@ -64,6 +64,10 @@ function quando(t) {
 }
 const dataHora = (t) => new Date(t.toMillis()).toLocaleString(lingua(), { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
 const inicial = (nome) => (nome || "·").trim().charAt(0).toUpperCase() || "·";
+/** Rosto de quem escreveu: a foto da conta Google; sem foto (ou sem nome), a inicial ou um ponto. */
+const rosto = (foto, nome, anon) => (!anon && foto
+  ? `<span class="com-ini com-ini--foto" aria-hidden="true"><img src="${esc(foto)}" alt="" referrerpolicy="no-referrer" loading="lazy"></span>`
+  : `<span class="com-ini" aria-hidden="true">${anon ? "·" : esc(inicial(nome))}</span>`);
 const rota = () => {
   const h = location.hash.replace(/^#/, "");
   const [chave, valor] = h.split("=");
@@ -212,7 +216,7 @@ function cartaoPartilha(p, { aberta = false } = {}) {
     ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">Editar partilha</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">Guardar</button><button class="com-acao" type="button" data-a="cancelar-edicao">Cancelar</button></div></form>`
     : `<p class="com-texto">${esc(p.texto)}</p>`;
   return `<article class="com-cartao">
-    <div class="com-linha"><span class="com-ini" aria-hidden="true">${p.anon ? "·" : esc(inicial(p.nome))}</span><div class="com-quem"><strong>${esc(autor)}</strong><span>${quando(p.criadoEm)}${p.editadoEm ? " · editada" : ""}</span></div>
+    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><strong>${esc(autor)}</strong><span>${quando(p.criadoEm)}${p.editadoEm ? " · editada" : ""}</span></div>
       ${p.pratica && p.pratica !== PRATICAS[0] ? `<span class="com-etq">Depois de: ${esc(p.pratica)}</span>` : ""}${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">Denunciada</span>` : ""}</div>
     ${corpo}
     <div class="com-linha com-linha--acoes">
@@ -253,7 +257,7 @@ function telaPartilha() {
   return `<a class="com-acao com-acao--solta" href="#c=${p.circulo}">${IC.voltar}<span>Voltar a ${esc(c?.nome || "círculo")}</span></a>
     ${cartaoPartilha(p, { aberta: true })}
     <p class="com-cap">Respostas</p>
-    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp"><span class="com-ini" aria-hidden="true">${esc(inicial(r.nome))}</span><div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? "Você" : r.nome)}${r.professor ? " · professor" : ""}</strong><span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>Apagar</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">Ainda sem respostas.</p>`}
+    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? "Você" : r.nome)}${r.professor ? " · professor" : ""}</strong><span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>Apagar</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">Ainda sem respostas.</p>`}
     <form class="com-cartao com-novo com-recuo" data-f="responder"><label for="com-resp"><strong>Responder com cuidado</strong></label><p class="com-suave com-peq">Antes de aconselhar, pergunte. Muitas vezes, quem partilhou só quer ser ouvido.</p><textarea id="com-resp" class="com-campo" name="texto" maxlength="1500" placeholder="Escreva a sua resposta" required></textarea><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">Responder</button></div></form>`;
 }
 
@@ -454,10 +458,10 @@ const FORMS = {
   publicar: async (f) => {
     const d = new FormData(f);
     const texto = d.get("texto").trim(); if (!texto) return;
-    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome }))) { aviso("Partilha publicada."); await carregarRota(); }
+    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto }))) { aviso("Partilha publicada."); await carregarRota(); }
   },
   editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso("Partilha editada."); await carregarRota(); } },
-  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor }))) { aviso("Resposta publicada."); await carregarRota(); } },
+  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso("Resposta publicada."); await carregarRota(); } },
   "novo-circulo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarCirculo({ nome: d.get("nome").trim(), proposito: d.get("proposito").trim() }); })) { aviso("Círculo criado."); S.circulos = await dados.circulos(); ir(`#c=${id}`); } },
   "novo-grupo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarGrupo({ nome: d.get("nome").trim(), tipo: d.get("tipo") }); })) ir(`#g=${id}`); },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },

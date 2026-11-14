@@ -111,6 +111,15 @@ describe("Partilhas", () => {
     await assertSucceeds(deleteDoc(doc(de(ANA), "comPartilhas", "p-anon"))); // o círculo é da Ana
     await assertSucceeds(deleteDoc(doc(de(RUI), "comPartilhas", "p-rui")));
   });
+  test("partilha sem nome: a autora apaga-a (a ficha do autor só sai depois)", async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "comPartilhas", "p-anon", "respostas", "r1"), { uid: RUI, nome: "Rui", professor: false, texto: "oi" }));
+    await assertSucceeds(deleteDoc(doc(de(EVA), "comPartilhas", "p-anon", "respostas", "r1")));
+    await assertSucceeds(deleteDoc(doc(de(EVA), "comPartilhas", "p-anon")));
+    await assertSucceeds(deleteDoc(doc(de(EVA), "comPartilhas", "p-anon", "privado", "autor")));
+  });
+  test("partilha com nome pode levar a foto da conta; sem nome, nunca", async () => {
+    await assertSucceeds(addDoc(collection(de(RUI), "comPartilhas"), { circulo: "c-lucas", uid: RUI, nome: "Rui", foto: "https://lh3.googleusercontent.com/a/x", anon: false, pratica: "", texto: "t", denunciada: false, criadoEm: serverTimestamp() }));
+  });
   test("ressoou: cada pessoa só vê o seu", async () => {
     await assertSucceeds(setDoc(doc(de(EVA), "comPartilhas", "p-rui", "ressoou", EVA), { em: serverTimestamp() }));
     await assertFails(getDoc(doc(de(RUI), "comPartilhas", "p-rui", "ressoou", EVA)));

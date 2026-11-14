@@ -202,10 +202,10 @@ function bindLanguageSwitcherEvents() {
         setLanguageMenuExpanded(true);
       });
 
+      // Ao sair com o rato, a lista recolhe sempre (mesmo que o botão tenha ficado com o foco do clique).
       languageMenu.addEventListener("mouseleave", () => {
-        if (!languageMenu.contains(document.activeElement)) {
-          closeLanguageMenuNow();
-        }
+        if (languageMenu.contains(document.activeElement)) document.activeElement.blur();
+        closeLanguageMenuNow();
       });
     }
 
@@ -234,13 +234,22 @@ function bindLanguageSwitcherEvents() {
       });
     });
 
-    document.addEventListener("click", (event) => {
-      if (languageMenu.contains(event.target)) {
-        return;
-      }
-
+    // Tocar ou clicar fora recolhe a lista. pointerdown apanha também os toques em zonas
+    // que não são botões (no iPhone esses toques não geram "click").
+    document.addEventListener("pointerdown", (event) => {
+      if (!languageMenu.classList.contains("is-open") || languageMenu.contains(event.target)) return;
       closeLanguageMenuNow();
     });
+
+    // Rolar a página também recolhe a lista.
+    // (captura: apanha também páginas em que quem rola é um contentor, não a janela)
+    const recolherAoRolar = () => {
+      if (languageMenu.classList.contains("is-open")) closeLanguageMenuNow();
+    };
+    document.addEventListener("scroll", recolherAoRolar, { passive: true, capture: true });
+    document.addEventListener("touchmove", (event) => {
+      if (!languageMenu.contains(event.target)) recolherAoRolar();
+    }, { passive: true });
 
     document.addEventListener("keydown", (event) => {
       if (event.key !== "Escape") {

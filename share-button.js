@@ -144,7 +144,7 @@
 
   buttons.forEach((button) => {
     if (!button.querySelector("svg")) button.insertAdjacentHTML("afterbegin", ICON);
-    if (!button.getAttribute("aria-label")) button.setAttribute("aria-label", "Compartilhar esta meditação");
+    if (!button.getAttribute("aria-label")) button.setAttribute("aria-label", t("share_meditation_aria", "Compartilhar esta meditação"));
     button.addEventListener("click", () => share(button));
   });
 

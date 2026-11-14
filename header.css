@@ -1003,6 +1003,10 @@ body.is-meditating .site-footer {
     pointer-events: none;
   }
 
+  /* Em russo os nomes da navegação são mais longos e a barra não cabe inteira:
+     fica só o símbolo da marca, para o nome não passar por baixo da navegação. */
+  html:lang(ru) .site-header .brand-wordmark { display: none; }
+
   /* Ao rolar: um véu da cor do fundo, de ponta a ponta, por trás da fumaça. */
   :root:root body .site-header.scrolled {
     background: linear-gradient(to bottom, var(--bg) 70%, transparent) !important;

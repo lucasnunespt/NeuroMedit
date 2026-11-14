@@ -228,6 +228,7 @@ textarea.com-campo { min-height: 96px; padding: 0.85rem 1rem; resize: vertical; 
 .com-sel--larga { max-width: none; }
 .com-chk { display: inline-flex; flex: 1 1 200px; align-items: center; gap: 0.6rem; min-height: 44px; color: var(--text-soft); cursor: pointer; }
 .com-chk input { width: 18px; height: 18px; accent-color: var(--accent); }
+.com-cartao > .com-chk { flex: 0 0 auto; }
 
 details.com-mais summary { display: flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: var(--radius-sm); color: var(--text-soft); cursor: pointer; }
 details.com-mais summary:hover { color: var(--text); }

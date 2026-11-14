@@ -1,0 +1,318 @@
+/* ==========================================================
+   comunidade.css — a página da Comunidade.
+   Só tokens do design system (cores, raios, sombras, durações).
+   Componentes novos, ainda por levar ao design system
+   (ver docs/comunidade.md): com-cartao (partilha), com-novo (campo de
+   publicar), com-msg (mensagem), com-dialogo (confirmação), com-aviso.
+   ========================================================== */
+.com-pagina {
+  box-sizing: border-box;
+  max-width: 1240px;
+  min-height: 80vh;
+  padding-top: clamp(6rem, 9vw, 6.75rem);
+  padding-bottom: 6rem;
+  color: var(--text);
+}
+
+.com-pagina h1,
+.com-pagina h2,
+.com-pagina h3,
+.com-pagina p,
+.com-pagina ol {
+  margin: 0;
+}
+
+.com-pagina h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.04; font-weight: 500; letter-spacing: -0.03em; }
+.com-pagina h2 { font-size: 1.5rem; line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; }
+.com-pagina h3 { font-size: 1.08rem; line-height: 1.3; font-weight: 600; }
+.com-pagina .com-h1 { font-size: clamp(1.7rem, 3.4vw, 2.1rem); font-weight: 600; }
+.com-pagina .com-h2 { font-size: 1.4rem; font-weight: 600; }
+.com-pagina a { color: var(--accent-dark); }
+
+.com-sobre { color: var(--accent-dark); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.com-cap { padding: 0 1rem; color: var(--text-soft); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.com-lead { max-width: 60ch; color: var(--text-soft); font-size: 1.08rem; }
+.com-suave { color: var(--text-soft); }
+.com-peq { font-size: 0.9rem; }
+.com-centro { align-items: center; text-align: center; }
+.com-espera { padding: 6rem 0; }
+.com-esp { flex: 1; }
+.com-recuo { margin-left: 1.5rem; }
+.com-texto { font-size: 1.04rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.com-so-leitor { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Estrutura ---------- */
+.com-entrada { display: flex; flex-direction: column; gap: 2rem; max-width: 760px; }
+.com-capa,
+.com-topo,
+.com-bloco { display: flex; flex-direction: column; gap: 0.9rem; }
+.com-lay { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.75rem; }
+.com-esq { flex: 1 1 240px; max-width: 280px; min-width: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.com-meio { flex: 999 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+.com-dir { flex: 1 1 280px; max-width: 320px; display: flex; flex-direction: column; gap: 1.25rem; }
+.com-lista { display: flex; flex-direction: column; gap: 0.25rem; }
+.com-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.com-linha--fim { justify-content: flex-end; }
+.com-linha--base { align-items: flex-end; }
+.com-linha--topo { flex-wrap: nowrap; align-items: flex-start; }
+.com-linha--acoes { gap: 0.15rem; }
+.com-grade { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.com-grade--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ---------- Cartão (partilha e blocos) ---------- */
+.com-cartao {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--glass-highlight);
+}
+.com-cartao--p { padding: 1.1rem 1.25rem; }
+.com-cartao--p > span,
+.com-cartao--p > strong { display: block; }
+.com-cartao.com-linha { flex-direction: row; }
+
+.com-quem { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.com-quem--larga { flex: 1 1 180px; }
+.com-quem span { color: var(--text-soft); font-size: 0.9rem; overflow-wrap: anywhere; }
+
+.com-ini,
+.com-ic,
+.com-foto {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+}
+.com-ini { background: var(--surface-strong); color: var(--text-soft); font-size: 0.9rem; }
+.com-ic { border: 1px solid var(--line); color: var(--accent-dark); }
+.com-ic svg { width: 20px; height: 20px; }
+.com-foto { width: 88px; height: 88px; overflow: hidden; border: 1px solid var(--line); color: var(--text-soft); }
+.com-foto img { width: 100%; height: 100%; object-fit: cover; }
+.com-foto svg { width: 40px; height: 40px; }
+
+.com-etq {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-left: auto;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+.com-topo .com-etq,
+.com-linha > .com-etq:first-child { margin-left: 0; }
+.com-etq--alerta { margin-left: 0; border-color: var(--exit); color: var(--exit); }
+
+.com-cuidados { display: flex; flex-direction: column; gap: 0.7rem; padding-left: 1.2rem; }
+.com-cuidados span { color: var(--text-soft); }
+
+.com-fim { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 1.5rem 0; text-align: center; }
+.com-fim span { color: var(--text-soft); font-size: 0.9rem; }
+
+/* ---------- Botões ---------- */
+.com-pri,
+.com-opt,
+.com-acao,
+.com-perigo {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--duration-quick) var(--easing-calm),
+    border-color var(--duration-quick) var(--easing-calm),
+    background-color var(--duration-quick) var(--easing-calm);
+}
+.com-pri {
+  min-height: var(--control-height);
+  padding: 0 var(--button-pad-x);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--button-text);
+  box-shadow: var(--shadow-soft);
+}
+.com-pri:hover { background: var(--accent-dark); }
+.com-pri:disabled,
+.com-perigo:disabled,
+.com-acao:disabled { opacity: 0.5; cursor: default; }
+.com-opt {
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-soft);
+}
+.com-pagina a.com-opt { color: var(--text-soft); }
+.com-opt:hover,
+.com-pagina a.com-opt:hover { color: var(--text); }
+.com-opt.is-on { border-color: var(--accent-dark); background: var(--surface-strong); color: var(--text); }
+.com-acao {
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+.com-pagina a.com-acao { color: var(--text-soft); }
+.com-acao:hover:not(:disabled) { background: var(--surface); color: var(--text); }
+.com-acao.is-on { color: var(--accent-dark); }
+.com-acao--perigo,
+.com-acao--perigo:hover:not(:disabled) { color: var(--exit); }
+.com-acao--solta { align-self: flex-start; }
+.com-acao--mini { min-height: 32px; padding: 0 0.4rem; }
+.com-perigo {
+  min-height: var(--control-height);
+  padding: 0 var(--button-pad-x);
+  border: 1px solid var(--exit);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--exit);
+}
+.com-pri svg,
+.com-opt svg,
+.com-acao svg { flex: none; width: 18px; height: 18px; }
+
+/* ---------- Círculos (navegação lateral) ---------- */
+.com-circ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+.com-pagina a.com-circ { color: var(--text); }
+.com-circ small { color: var(--text-soft); font-size: 0.86rem; }
+.com-circ:hover { background: var(--surface); }
+.com-circ.is-on { background: var(--surface-strong); }
+
+/* ---------- Campos (publicar, responder, criar) ---------- */
+.com-novo { display: flex; flex-direction: column; gap: 0.6rem; }
+.com-esq .com-novo { padding: 0.6rem 1rem 0; }
+.com-esq .com-novo label { color: var(--text-soft); font-size: 0.9rem; }
+.com-dir .com-novo { padding-top: 0.6rem; border-top: 1px solid var(--line); }
+.com-campo {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+textarea.com-campo { min-height: 96px; padding: 0.85rem 1rem; resize: vertical; }
+.com-campo::placeholder { color: var(--text-subtle); }
+.com-campo--cresce { flex: 1 1 200px; width: auto; }
+.com-sel { flex: 1 1 200px; max-width: 280px; display: flex; flex-direction: column; gap: 0.25rem; }
+.com-sel--larga { max-width: none; }
+.com-chk { display: inline-flex; flex: 1 1 200px; align-items: center; gap: 0.6rem; min-height: 44px; color: var(--text-soft); cursor: pointer; }
+.com-chk input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+details.com-mais summary { display: flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: var(--radius-sm); color: var(--text-soft); cursor: pointer; }
+details.com-mais summary:hover { color: var(--text); }
+details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+
+/* ---------- Respostas, conversa, denúncias, encontros ---------- */
+.com-resp { display: flex; gap: 0.75rem; padding: 0.25rem 0.5rem 0.25rem 1.5rem; }
+.com-conversa { gap: 0.6rem; min-height: 320px; max-height: 60vh; overflow-y: auto; }
+.com-msg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  max-width: 78%;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  overflow-wrap: anywhere;
+}
+.com-msg.is-minha { align-self: flex-end; border: 1px solid var(--line); background: var(--surface); }
+.com-den,
+.com-enc { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.4rem 0; }
+
+/* ---------- Confirmação e aviso ---------- */
+.com-dialogo {
+  box-sizing: border-box;
+  width: min(460px, calc(100% - 2rem));
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-soft);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+}
+.com-dialogo::backdrop { background: var(--bg); opacity: 0.72; }
+.com-dlg { display: flex; flex-direction: column; gap: 0.9rem; margin: 0; padding: 1.75rem; }
+.com-dlg h2 { margin: 0; font-size: 1.3rem; }
+.com-dlg p { margin: 0; color: var(--text-soft); }
+.com-dlg label { color: var(--text-soft); font-size: 0.9rem; }
+.com-dlg strong { color: var(--text); }
+.com-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 1.75rem;
+  z-index: 120;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2rem);
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--bg-soft);
+  color: var(--text);
+  box-shadow: var(--shadow-card);
+  font-size: 0.95rem;
+}
+.com-aviso[hidden] { display: none; }
+
+.com-pri:focus-visible,
+.com-opt:focus-visible,
+.com-acao:focus-visible,
+.com-perigo:focus-visible,
+.com-circ:focus-visible,
+.com-campo:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+
+/* ---------- Tablet e telemóvel ---------- */
+@media (max-width: 1100px) {
+  .com-dir { flex: 1 1 100%; max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}
+@media (max-width: 940px) {
+  .com-pagina { padding-top: 5.5rem; padding-bottom: 8rem; }
+  .com-esq { flex: 1 1 100%; width: 100%; max-width: 100%; }
+  .com-esq .com-novo { padding: 0; }
+  .com-esq .com-cap { display: none; }
+  .com-lista { flex-direction: row; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
+  .com-circ { flex: none; padding: 0.55rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-pill); }
+  .com-circ small { display: none; }
+  .com-aviso { bottom: 6rem; }
+}
+@media (max-width: 640px) {
+  .com-dir,
+  .com-grade,
+  .com-grade--3 { grid-template-columns: minmax(0, 1fr); }
+  .com-cartao { padding: 1.15rem; }
+  .com-msg { max-width: 90%; }
+  .com-recuo,
+  .com-resp { margin-left: 0; padding-left: 0.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .com-pri, .com-opt, .com-acao, .com-perigo { transition: none; }
+}

@@ -8,6 +8,7 @@ import { lerPerfil, guardarPerfil } from "./perfil-dados.js";
 import { lerAjustes } from "./reservas-dados.js";
 import { proPainel } from "./conta-pro.js";
 import { AREAS, aplicarTermos } from "./termos.js";
+import { tr, local, lingua } from "./traduzir.js";
 
 export function iniciarPerfil(raiz, user) {
   if (!raiz) return;
@@ -17,14 +18,14 @@ export function iniciarPerfil(raiz, user) {
   let timer = null;
 
   function guardar() {
-    estado.textContent = "Guardando…";
+    estado.textContent = tr("pn_saving", "Guardando…");
     clearTimeout(timer);
     timer = setTimeout(async () => {
       try {
         await guardarPerfil(perfil, pro);
-        estado.textContent = "Guardado.";
+        estado.textContent = tr("pn_saved", "Guardado.");
       } catch (err) {
-        estado.textContent = "Não consegui guardar. Tente de novo.";
+        estado.textContent = tr("pn_e_save", "Não consegui guardar. Tente de novo.");
       }
     }, 700);
   }
@@ -63,12 +64,12 @@ export function iniciarPerfil(raiz, user) {
   function pintarFoto() {
     const tem = !!perfil?.foto;
     preFoto.src = tem ? perfil.foto : SIMBOLO;
-    preFoto.alt = tem ? "A sua foto" : "";
+    preFoto.alt = tem ? tr("pn_your_photo", "A sua foto") : "";
     preFoto.referrerPolicy = "no-referrer";
     if (tem) preFoto.removeAttribute("data-simbolo");
     else preFoto.setAttribute("data-simbolo", "");
     btnTirar.hidden = !tem;
-    nota.textContent = tem ? "" : "Sem foto, a sua página mostra o símbolo do NeuroMedit.";
+    nota.textContent = tem ? "" : tr("pn_s069", "Sem foto, a sua página mostra o símbolo do NeuroMedit.");
   }
 
   // Corta ao centro, reduz e comprime, no próprio navegador. Nada sai do dispositivo antes disto.
@@ -106,15 +107,15 @@ export function iniciarPerfil(raiz, user) {
     const f = ficheiro.files?.[0];
     ficheiro.value = "";
     if (!perfil || !f) return;
-    nota.textContent = "Preparando a foto…";
+    nota.textContent = tr("pn_photo_preparing", "Preparando a foto…");
     try {
       const dados = await encolher(f);
-      if (dados.length > MAXIMO) { nota.textContent = "Essa imagem é grande demais. Tente outra."; return; }
+      if (dados.length > MAXIMO) { nota.textContent = tr("pn_photo_big", "Essa imagem é grande demais. Tente outra."); return; }
       perfil.foto = dados;
       pintarFoto();
       guardar();
     } catch {
-      nota.textContent = "Não consegui ler essa imagem. Tente um JPEG ou PNG.";
+      nota.textContent = tr("pn_photo_e", "Não consegui ler essa imagem. Tente um JPEG ou PNG.");
     }
   });
 
@@ -141,7 +142,7 @@ export function iniciarPerfil(raiz, user) {
     if (!lista.length) {
       const p = document.createElement("p");
       p.className = "muted";
-      p.textContent = "Ainda nenhum. A sua página mostra uma frase a dizer que os primeiros aparecem depois.";
+      p.textContent = tr("pn_dep_none", "Ainda nenhum. A sua página mostra uma frase a dizer que os primeiros aparecem depois.");
       caixaDep.append(p);
       return;
     }
@@ -153,7 +154,7 @@ export function iniciarPerfil(raiz, user) {
       const tirar = document.createElement("button");
       tirar.type = "button";
       tirar.className = "btn btn--secondary";
-      tirar.textContent = "Remover";
+      tirar.textContent = tr("pn_remove", "Remover");
       tirar.addEventListener("click", () => {
         perfil.depoimentos = lista.filter((_, j) => j !== i);
         pintarDepoimentos();
@@ -168,8 +169,8 @@ export function iniciarPerfil(raiz, user) {
     if (!perfil) return;
     const texto = depTexto.value.trim();
     const nome = depNome.value.trim();
-    if (!texto) { depErro.textContent = "Escreva o que a pessoa disse."; depTexto.focus(); return; }
-    if (!nome) { depErro.textContent = "Falta quem escreveu. Pode ser só as iniciais."; depNome.focus(); return; }
+    if (!texto) { depErro.textContent = tr("pn_dep_v_text", "Escreva o que a pessoa disse."); depTexto.focus(); return; }
+    if (!nome) { depErro.textContent = tr("pn_dep_v_name", "Falta quem escreveu. Pode ser só as iniciais."); depNome.focus(); return; }
     depErro.textContent = "";
     const novo = { texto, nome };
     const quando = depData.value.trim();
@@ -192,7 +193,7 @@ export function iniciarPerfil(raiz, user) {
       inp.className = "aj-campo";
       inp.type = "text";
       inp.autocomplete = "off";
-      inp.placeholder = "Rua, número, código postal";
+      inp.placeholder = tr("pn_address_ph", "Rua, número, código postal");
       inp.value = (perfil.moradas || {})[nome] || "";
       inp.addEventListener("input", () => {
         perfil.moradas = { ...(perfil.moradas || {}) };
@@ -206,7 +207,7 @@ export function iniciarPerfil(raiz, user) {
   }
 
   (async () => {
-    estado.textContent = "Carregando…";
+    estado.textContent = tr("pn_s023", "Carregando…");
     perfil = (await lerPerfil(pro)) || {};
     raiz.querySelectorAll("[data-pf]").forEach((inp) => { inp.value = perfil[inp.dataset.pf] || ""; });
     estado.textContent = "";

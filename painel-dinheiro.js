@@ -6,8 +6,10 @@
  * Por receber: o restante das sessões confirmadas que ainda não aconteceram.
  */
 import { euro } from "./reservas-dados.js";
+import { tr, local, lingua } from "./traduzir.js";
 
-const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const MESES = lingua() === "pt" ? ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+  : [...Array(12)].map((_, i) => new Date(2026, i, 1).toLocaleDateString(local(), { month: "long" }));
 
 export function iniciarDinheiro(raiz, obterLista) {
   const hoje = new Date();
@@ -19,7 +21,7 @@ export function iniciarDinheiro(raiz, obterLista) {
   function desenhar() {
     $("[data-din-mes]").textContent = `${MESES[mes].replace(/^./, (c) => c.toUpperCase())} ${ano}`;
     const lista = obterLista();
-    if (lista === null) { $("[data-din-total]").textContent = "—"; $("[data-din-nota]").textContent = "Não consegui ler os pedidos agora."; return; }
+    if (lista === null) { $("[data-din-total]").textContent = "—"; $("[data-din-nota]").textContent = tr("pn_din_e_read", "Não consegui ler os pedidos agora."); return; }
     const prefixo = `${ano}-${String(mes + 1).padStart(2, "0")}`;
     const doMes = lista.filter((b) => (b.data || "").startsWith(prefixo));
     let sinais = 0, restante = 0, devolvido = 0, porReceber = 0;
@@ -36,19 +38,19 @@ export function iniciarDinheiro(raiz, obterLista) {
     const total = sinais - devolvido + restante;
     $("[data-din-total]").textContent = euro(total);
     $("[data-din-linhas]").innerHTML = [
-      ["Sinais que ficaram", euro(sinais - devolvido)],
-      ["Pago na hora", euro(restante)],
-      ["Sinais recebidos e já devolvidos", devolvido ? `${euro(devolvido)} (não contam)` : euro(0)]
+      [tr("pn_din_kept", "Sinais que ficaram"), euro(sinais - devolvido)],
+      [tr("pn_din_paid", "Pago na hora"), euro(restante)],
+      [tr("pn_din_refunded", "Sinais recebidos e já devolvidos"), devolvido ? tr("pn_din_not_count", "{v} (não contam)", { v: euro(devolvido) }) : euro(0)]
     ].map(([a, b]) => `<div class="item"><span>${a}</span><span>${b}</span></div>`).join("");
     $("[data-din-sessoes]").innerHTML = [
-      ["Feitas", cont.realizada],
-      ["Confirmadas, ainda por fazer", cont.confirmada],
-      ["Faltou (sinal ficou)", cont.falta],
-      ["Canceladas", cont.cancelada],
-      ["Pacotes vendidos", cont.pacotes]
+      [tr("pn_din_done", "Feitas"), cont.realizada],
+      [tr("pn_din_confirmed", "Confirmadas, ainda por fazer"), cont.confirmada],
+      [tr("pn_din_noshow", "Faltou (sinal ficou)"), cont.falta],
+      [tr("pn_din_cancelled", "Canceladas"), cont.cancelada],
+      [tr("pn_din_packs", "Pacotes vendidos"), cont.pacotes]
     ].map(([a, b]) => `<div class="item"><span>${a}</span><span>${b}</span></div>`).join("");
     $("[data-din-receber]").textContent = euro(porReceber);
-    $("[data-din-nota]").textContent = doMes.length ? "" : "Ainda não há sessões neste mês.";
+    $("[data-din-nota]").textContent = doMes.length ? "" : tr("pn_din_none", "Ainda não há sessões neste mês.");
   }
   return desenhar;
 }

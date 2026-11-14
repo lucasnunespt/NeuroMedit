@@ -9,22 +9,28 @@ import { db, doc } from "./firebase-init.js";
 import { updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { euro } from "./reservas-dados.js";
 import { linkRota } from "./perfil-dados.js";
+import { tr, local, lingua } from "./traduzir.js";
 
-// Moradas dos locais (Ajustes › Perfil público › Moradas). Com morada, a sessão ganha o botão "Rota".
+// Moradas dos locais (Ajustes › Perfil público › Moradas). Com morada, a sessão ganha o botão tr("pn_route", "Rota").
 let moradas = {};
 export function definirMoradas(m) { moradas = m || {}; }
 function linkRotaSessao(b) {
   const morada = moradas[b.local];
   if (!morada) return null;
-  const a = el("a", "btn btn--link", "Rota"); a.target = "_blank"; a.rel = "noopener";
+  const a = el("a", "btn btn--link", tr("pn_route", "Rota")); a.target = "_blank"; a.rel = "noopener";
   a.href = linkRota(morada);
-  a.setAttribute("aria-label", `Rota até ${b.local}, no Google Maps`);
+  a.setAttribute("aria-label", tr("pn_route_aria", "Rota até {l}, no Google Maps", { l: b.local }));
   return a;
 }
 
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 const SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
-const quando = (b) => { const d = new Date(`${b.data}T${b.hora}`); return `${SEMANA[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} · ${b.hora}`; };
+const quando = (b) => {
+  const d = new Date(`${b.data}T${b.hora}`);
+  if (lingua() !== "pt") return `${d.toLocaleDateString(local(), { weekday: "short", day: "numeric", month: "short" })} · ${b.hora}`;
+  return `${SEMANA[d.getDay()]}, ${d.getDate()} ${MESES[d.getMonth()]} · ${b.hora}`;
+};
+const pacote = (n) => tr("pn_pack_of", "pacote de {n}", { n });
 const passou = (b) => new Date(`${b.data}T${b.hora}`) < new Date();
 const ordem = (a, b) => (a.data + a.hora).localeCompare(b.data + b.hora);
 
@@ -54,7 +60,7 @@ const libertarHorario = (b) => (b.slotId ? deleteDoc(doc(db, "slots", b.slotId))
 /** Cancelamento feito pelo Lucas: pergunta o motivo (opcional) e se o sinal é devolvido. */
 function blocoCancelar(b) {
   const caixa = el("div", "pedido-cancelar"); caixa.hidden = true;
-  const rot = el("label", "rotulo-campo", "Motivo (opcional, só você vê)");
+  const rot = el("label", "rotulo-campo", tr("pn_reason", "Motivo (opcional, só você vê)"));
   const motivo = el("textarea", "campo-texto"); motivo.rows = 2;
   rot.append(motivo);
   const acoes = el("div", "pedido-acoes");
@@ -67,10 +73,10 @@ function blocoCancelar(b) {
     await libertarHorario(b);
   };
   if (b.sinalRecebido) {
-    botao(acoes, "Cancelar e devolver o sinal", "primary", () => cancelar(true));
-    botao(acoes, "Cancelar, o sinal fica", "secondary", () => cancelar(false));
+    botao(acoes, tr("pn_cancel_refund", "Cancelar e devolver o sinal"), "primary", () => cancelar(true));
+    botao(acoes, tr("pn_cancel_keep", "Cancelar, o sinal fica"), "secondary", () => cancelar(false));
   } else {
-    botao(acoes, "Cancelar o pedido", "primary", () => cancelar(false));
+    botao(acoes, tr("pn_cancel_request", "Cancelar o pedido"), "primary", () => cancelar(false));
   }
   caixa.append(rot, acoes);
   return caixa;
@@ -83,28 +89,28 @@ function desenharAcoes(caixa, lista) {
     ...lista.filter((b) => b.estado === "confirmada" && passou(b)).map((b) => ({ b, tipo: "fechar" }))
   ].sort((x, y) => ordem(x.b, y.b));
   caixa.textContent = "";
-  if (!acao.length) { caixa.append(el("p", "muted", "Nada por agora. Quando alguém pedir uma sessão, aparece aqui.")); return; }
+  if (!acao.length) { caixa.append(el("p", "muted", tr("pn_nothing", "Nada por agora. Quando alguém pedir uma sessão, aparece aqui."))); return; }
   acao.forEach(({ b, tipo }) => {
     const item = el("div", "pedido");
     item.append(
-      el("p", "label pedido-meta", { sinal: "Pedido novo · à espera do sinal", reembolso: "Reembolso a fazer", fechar: "Como correu?" }[tipo]),
-      el("p", "pedido-nome", b.nome || b.email || "Sem nome"),
+      el("p", "label pedido-meta", { sinal: tr("pn_new_request", "Pedido novo · à espera do sinal"), reembolso: tr("pn_refund_todo", "Reembolso a fazer"), fechar: tr("pn_how_went", "Como correu?") }[tipo]),
+      el("p", "pedido-nome", b.nome || b.email || tr("pn_no_name", "Sem nome")),
       el("p", "muted", tipo === "reembolso"
-        ? `Devolver ${euro(b.sinal)} do sinal por MB Way · era ${quando(b)}`
-        : `${quando(b)} · ${euro(b.valor)}${b.plano > 1 ? ` · pacote de ${b.plano}` : ""}`),
+        ? tr("pn_refund_line", "Devolver {s} do sinal por MB Way · era {q}", { s: euro(b.sinal), q: quando(b) })
+        : `${quando(b)} · ${euro(b.valor)}${b.plano > 1 ? ` · ${pacote(b.plano)}` : ""}`),
       el("p", "muted pedido-contacto", [b.telefone, b.email, b.local].filter(Boolean).join(" · "))
     );
     if (tipo === "reembolso" && b.motivo) item.append(el("p", "muted pedido-motivo", `"${b.motivo}"`));
     const acoes = el("div", "pedido-acoes");
     const ref = doc(db, "bookings", b.id);
     if (tipo === "sinal") {
-      botao(acoes, "Recebi o sinal e confirmar", "primary", () => updateDoc(ref, { estado: "confirmada", sinalRecebido: true, confirmadoEm: serverTimestamp() }));
-      botao(acoes, "Libertar o horário", "secondary", async () => { await updateDoc(ref, { estado: "libertada" }); await libertarHorario(b); });
+      botao(acoes, tr("pn_got_deposit", "Recebi o sinal e confirmar"), "primary", () => updateDoc(ref, { estado: "confirmada", sinalRecebido: true, confirmadoEm: serverTimestamp() }));
+      botao(acoes, tr("pn_release", "Libertar o horário"), "secondary", async () => { await updateDoc(ref, { estado: "libertada" }); await libertarHorario(b); });
     }
-    if (tipo === "reembolso") botao(acoes, "Já devolvi", "primary", () => updateDoc(ref, { reembolsoFeito: true, estado: "reembolsada", reembolsadoEm: serverTimestamp() }));
+    if (tipo === "reembolso") botao(acoes, tr("pn_refunded", "Já devolvi"), "primary", () => updateDoc(ref, { reembolsoFeito: true, estado: "reembolsada", reembolsadoEm: serverTimestamp() }));
     if (tipo === "fechar") {
-      botao(acoes, "Sessão feita", "primary", () => updateDoc(ref, { estado: "realizada", realizadaEm: serverTimestamp() }));
-      botao(acoes, "Faltou", "secondary", () => updateDoc(ref, { estado: "falta" }));
+      botao(acoes, tr("pn_done", "Sessão feita"), "primary", () => updateDoc(ref, { estado: "realizada", realizadaEm: serverTimestamp() }));
+      botao(acoes, tr("pn_noshow", "Faltou"), "secondary", () => updateDoc(ref, { estado: "falta" }));
     }
     const wa = linkWhatsApp(b); if (wa) acoes.append(wa);
     item.append(acoes);
@@ -115,19 +121,19 @@ function desenharAcoes(caixa, lista) {
 function desenharProximas(caixa, lista) {
   const proximas = lista.filter((b) => b.estado === "confirmada" && !passou(b)).sort(ordem);
   caixa.textContent = "";
-  if (!proximas.length) { caixa.append(el("p", "muted", "Nenhuma sessão confirmada por agora.")); return; }
+  if (!proximas.length) { caixa.append(el("p", "muted", tr("pn_none_confirmed", "Nenhuma sessão confirmada por agora."))); return; }
   proximas.forEach((b) => {
     const item = el("div", "pedido");
     item.append(
-      el("p", "pedido-nome", b.nome || b.email || "Sem nome"),
-      el("p", "muted", `${quando(b)} · ${euro(b.valor)}${b.plano > 1 ? ` · pacote de ${b.plano}` : ""} · ${b.local || "a combinar"}`)
+      el("p", "pedido-nome", b.nome || b.email || tr("pn_no_name", "Sem nome")),
+      el("p", "muted", `${quando(b)} · ${euro(b.valor)}${b.plano > 1 ? ` · ${pacote(b.plano)}` : ""} · ${b.local && b.local !== "A combinar" ? b.local : tr("pn_tbd", "a combinar")}`)
     );
     const acoes = el("div", "pedido-acoes");
     const cancelar = blocoCancelar(b);
-    const abrir = el("button", "btn btn--secondary", "Cancelar esta sessão"); abrir.type = "button";
+    const abrir = el("button", "btn btn--secondary", tr("pn_cancel_this", "Cancelar esta sessão")); abrir.type = "button";
     abrir.addEventListener("click", () => {
       cancelar.hidden = !cancelar.hidden;
-      abrir.textContent = cancelar.hidden ? "Cancelar esta sessão" : "Não cancelar";
+      abrir.textContent = cancelar.hidden ? tr("pn_cancel_this", "Cancelar esta sessão") : tr("pn_dont_cancel", "Não cancelar");
     });
     acoes.append(abrir);
     const wa = linkWhatsApp(b); if (wa) acoes.append(wa);
@@ -138,11 +144,11 @@ function desenharProximas(caixa, lista) {
 }
 
 function situacaoSinal(b) {
-  if (b.estado === "libertada") return "sem sinal, horário libertado";
-  if (!b.sinalRecebido) return "o sinal ainda não tinha chegado";
-  if (b.estado === "reembolsada") return `sinal de ${euro(b.sinal)} devolvido`;
-  if (b.reembolsoPedido) return `sinal de ${euro(b.sinal)} por devolver`;
-  return `sinal de ${euro(b.sinal)} ficou`;
+  if (b.estado === "libertada") return tr("pn_sig_released", "sem sinal, horário libertado");
+  if (!b.sinalRecebido) return tr("pn_sig_not_arrived", "o sinal ainda não tinha chegado");
+  if (b.estado === "reembolsada") return tr("pn_sig_refunded", "sinal de {s} devolvido", { s: euro(b.sinal) });
+  if (b.reembolsoPedido) return tr("pn_sig_to_refund", "sinal de {s} por devolver", { s: euro(b.sinal) });
+  return tr("pn_sig_kept", "sinal de {s} ficou", { s: euro(b.sinal) });
 }
 
 // Um pedido já arrumado pode sair do histórico. Nunca um com reembolso por fazer (as regras também o impedem).
@@ -158,12 +164,12 @@ function confirmarApagar(item, lista, texto, rotulo) {
   const aviso = el("p", "muted", texto);
   const acoes = el("div", "pedido-acoes");
   const sim = el("button", "btn btn--primary", rotulo); sim.type = "button";
-  const nao = el("button", "btn btn--secondary", "Não"); nao.type = "button";
+  const nao = el("button", "btn btn--secondary", tr("pn_no", "Não")); nao.type = "button";
   nao.addEventListener("click", () => caixa.remove());
   sim.addEventListener("click", async () => {
     sim.disabled = true; nao.disabled = true;
     try { await Promise.all(lista.map((b) => deleteDoc(doc(db, "bookings", b.id)))); }
-    catch (e) { sim.disabled = false; nao.disabled = false; aviso.textContent = "Não consegui apagar tudo. Tente de novo."; }
+    catch (e) { sim.disabled = false; nao.disabled = false; aviso.textContent = tr("pn_e_delete", "Não consegui apagar tudo. Tente de novo."); }
     // Com sucesso, a lista chega sozinha (tempo real) e o cartão desaparece.
   });
   acoes.append(sim, nao);
@@ -177,22 +183,22 @@ function desenharCanceladas(caixa, lista) {
     .sort((a, b) => ordem(b, a))
     .slice(0, 30);
   caixa.textContent = "";
-  if (!canceladas.length) { caixa.append(el("p", "muted", "Nenhuma sessão cancelada.")); return; }
+  if (!canceladas.length) { caixa.append(el("p", "muted", tr("pn_none_cancelled", "Nenhuma sessão cancelada."))); return; }
   canceladas.forEach((b) => {
     const item = el("div", "pedido");
-    const quem = b.estado === "libertada" ? "Libertada por você" : b.canceladoPor === "lucas" ? "Cancelada por você" : "Cancelada pela pessoa";
+    const quem = b.estado === "libertada" ? tr("pn_by_you_released", "Libertada por você") : b.canceladoPor === "lucas" ? tr("pn_by_you", "Cancelada por você") : tr("pn_by_person", "Cancelada pela pessoa");
     item.append(
       el("p", "label pedido-meta", quem),
-      el("p", "pedido-nome", b.nome || b.email || "Sem nome"),
+      el("p", "pedido-nome", b.nome || b.email || tr("pn_no_name", "Sem nome")),
       el("p", "muted", `${quando(b)} · ${situacaoSinal(b)}`)
     );
     if (b.motivo) item.append(el("p", "muted pedido-motivo", `"${b.motivo}"`));
     if (arrumada(b)) {
       const acoes = el("div", "pedido-acoes");
-      const apagar = el("button", "btn btn--secondary", "Apagar do histórico"); apagar.type = "button";
+      const apagar = el("button", "btn btn--secondary", tr("pn_del_history", "Apagar do histórico")); apagar.type = "button";
       apagar.addEventListener("click", () => confirmarApagar(item, [b],
-        contaNoDinheiro(b) ? "Apagar esta sessão do histórico? O sinal que ficou deixa de contar nas contas do Dinheiro." : "Apagar esta sessão do histórico?",
-        "Apagar"));
+        contaNoDinheiro(b) ? tr("pn_del_q_money", "Apagar esta sessão do histórico? O sinal que ficou deixa de contar nas contas do Dinheiro.") : tr("pn_del_q", "Apagar esta sessão do histórico?"),
+        tr("pn_delete", "Apagar")));
       acoes.append(apagar);
       item.append(acoes);
     }
@@ -203,11 +209,11 @@ function desenharCanceladas(caixa, lista) {
   if (todas.length > 1) {
     const rodape = el("div", "pedido");
     const acoes = el("div", "pedido-acoes");
-    const limpar = el("button", "btn btn--secondary", `Limpar o histórico (${todas.length})`); limpar.type = "button";
+    const limpar = el("button", "btn btn--secondary", tr("pn_clear_history", "Limpar o histórico ({n})", { n: todas.length })); limpar.type = "button";
     const dinheiro = todas.filter(contaNoDinheiro).length;
     limpar.addEventListener("click", () => confirmarApagar(rodape, todas,
-      `Apagar ${todas.length} sessões do histórico?${dinheiro ? ` ${dinheiro === 1 ? "O sinal que ficou deixa" : "Os sinais que ficaram deixam"} de contar nas contas do Dinheiro.` : ""}`,
-      "Limpar"));
+      tr("pn_clear_q", "Apagar {n} sessões do histórico?", { n: todas.length }) + (dinheiro ? " " + (dinheiro === 1 ? tr("pn_clear_money_1", "O sinal que ficou deixa de contar nas contas do Dinheiro.") : tr("pn_clear_money_n", "Os sinais que ficaram deixam de contar nas contas do Dinheiro.")) : ""),
+      tr("pn_clear", "Limpar")));
     acoes.append(limpar);
     rodape.append(acoes);
     caixa.append(rodape);
@@ -216,7 +222,7 @@ function desenharCanceladas(caixa, lista) {
 
 export function desenharPedidos(caixa, proxCaixa, cancCaixa, lista) {
   if (lista === null) {
-    [caixa, proxCaixa, cancCaixa].forEach((c) => { c.textContent = ""; c.append(el("p", "muted", "Não consegui ler os pedidos agora. Verifique a ligação; atualiza sozinho quando voltar.")); });
+    [caixa, proxCaixa, cancCaixa].forEach((c) => { c.textContent = ""; c.append(el("p", "muted", tr("pn_e_requests", "Não consegui ler os pedidos agora. Verifique a ligação; atualiza sozinho quando voltar."))); });
     return;
   }
   desenharAcoes(caixa, lista);

@@ -3,13 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Criar a minha página · NeuroMedit</title>
-  <meta name="description" content="Para professores e terapeutas: crie a sua página de reservas no NeuroMedit.">
+  <title data-i18n="pr_meta_title">Criar a minha página · NeuroMedit</title>
+  <meta name="description" data-i18n="pr_meta_desc" data-i18n-attr="content" content="Para professores e terapeutas: crie a sua página de reservas no NeuroMedit.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="theme-sync.css">
   <script src="theme-sync.js"></script>
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
   <style>
     /* Formulário de entrada do profissional: uma pergunta por vez, como a conversa da reserva.
        Componentes do design system NeuroMedit: StepIndicator, TextField, Checkbox, Chip/pill. Só tokens. */
@@ -91,90 +97,90 @@
   <div class="progresso"><p data-passo-texto aria-live="polite"></p><div class="trilho" aria-hidden="true"><div class="feito" data-feito></div></div></div>
 
   <main style="display: contents;">
-    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
+    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha" data-i18n="col_loading">Um momento…</div></section>
 
     <section tabindex="-1" class="passo" data-passo="convite" hidden>
-      <h1 class="convite-titulo">Tenha a sua página de reservas no NeuroMedit.</h1>
-      <p class="convite-lead">Para quem ensina ou acompanha pessoas: meditação, yoga, massagem, terapias, treino.</p>
+      <h1 class="convite-titulo" data-i18n="pr_h1">Tenha a sua página de reservas no NeuroMedit.</h1>
+      <p class="convite-lead" data-i18n="pr_lead">Para quem ensina ou acompanha pessoas: meditação, yoga, massagem, terapias, treino.</p>
       <div class="pontos">
         <div class="ponto">
-          <h2>O que fica seu</h2>
-          <p>Uma página com o seu nome, o que faz e onde trabalha. As pessoas veem os seus horários livres e pedem a sessão. Não precisa de site, nem de combinar horas por mensagem.</p>
+          <h2 data-i18n="pr_p1_t">O que fica seu</h2>
+          <p data-i18n="pr_p1_d">Uma página com o seu nome, o que faz e onde trabalha. As pessoas veem os seus horários livres e pedem a sessão. Não precisa de site, nem de combinar horas por mensagem.</p>
         </div>
         <div class="ponto">
-          <h2>Quanto trabalho dá</h2>
-          <p>Seis perguntas curtas, cerca de cinco minutos. Depois é só abrir os horários que quiser, no seu painel. Pode mudar tudo mais tarde.</p>
+          <h2 data-i18n="pr_p2_t">Quanto trabalho dá</h2>
+          <p data-i18n="pr_p2_d">Seis perguntas curtas, cerca de cinco minutos. Depois é só abrir os horários que quiser, no seu painel. Pode mudar tudo mais tarde.</p>
         </div>
         <div class="ponto">
-          <h2>Quem decide</h2>
-          <p>A página fica em rascunho, só para você. Vai ao ar quando você pedir e a sua entrada for aprovada.</p>
+          <h2 data-i18n="pr_p3_t">Quem decide</h2>
+          <p data-i18n="pr_p3_d">A página fica em rascunho, só para você. Vai ao ar quando você pedir e a sua entrada for aprovada.</p>
         </div>
       </div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="entrar" hidden>
-      <div class="bolha">Que bom ter você aqui. O NeuroMedit pode ser a sua página de reservas: as pessoas veem os seus horários livres e pedem uma sessão.</div>
-      <div class="bolha">São seis perguntas curtas. No fim, a página fica em rascunho, só para você. Só vai ao ar depois de você pedir e de ser aprovada.</div>
-      <div class="bolha">Para começar, entre com a sua conta Google. É com ela que vai abrir o seu painel.</div>
+      <div class="bolha" data-i18n="pr_e1">Que bom ter você aqui. O NeuroMedit pode ser a sua página de reservas: as pessoas veem os seus horários livres e pedem uma sessão.</div>
+      <div class="bolha" data-i18n="pr_e2">São seis perguntas curtas. No fim, a página fica em rascunho, só para você. Só vai ao ar depois de você pedir e de ser aprovada.</div>
+      <div class="bolha" data-i18n="pr_e3">Para começar, entre com a sua conta Google. É com ela que vai abrir o seu painel.</div>
       <p class="erro" data-erro-entrar aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="nome" hidden>
-      <div class="bolha">Como você se chama?</div>
-      <label class="rotulo">O seu nome<small>Como as pessoas vão ver na sua página.</small><input class="campo" type="text" autocomplete="name" maxlength="60" data-c="nome"></label>
+      <div class="bolha" data-i18n="pr_q_name">Como você se chama?</div>
+      <label class="rotulo"><span data-i18n="pr_name">O seu nome</span><small data-i18n="pr_name_h">Como as pessoas vão ver na sua página.</small><input class="campo" type="text" autocomplete="name" maxlength="60" data-c="nome"></label>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="area" hidden>
-      <div class="bolha">Prazer, <span data-primeiro></span>. Qual é a sua área?</div>
-      <div class="pills" role="group" aria-label="Área" data-areas></div>
-      <label class="rotulo">O que você faz, numa linha<small>Aparece por baixo do seu nome.</small><input class="campo" type="text" maxlength="80" data-c="profissao" placeholder="Ex.: Professora de yoga e meditação"></label>
-      <p class="nota" data-nota-saude hidden>Na sua página, a reserva e as mensagens servem para combinar sessões, não para acompanhamento clínico. Depoimentos nunca falam de diagnósticos.</p>
+      <div class="bolha" data-prazer></div>
+      <div class="pills" role="group" aria-label="Área" data-i18n="pr_area" data-i18n-attr="aria-label" data-areas></div>
+      <label class="rotulo"><span data-i18n="pr_what">O que você faz, numa linha</span><small data-i18n="pr_what_h">Aparece por baixo do seu nome.</small><input class="campo" type="text" maxlength="80" data-c="profissao" placeholder="Ex.: Professora de yoga e meditação" data-i18n="pr_what_ph" data-i18n-attr="placeholder"></label>
+      <p class="nota" data-nota-saude hidden data-i18n="pr_health_note">Na sua página, a reserva e as mensagens servem para combinar sessões, não para acompanhamento clínico. Depoimentos nunca falam de diagnósticos.</p>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="onde" hidden>
-      <div class="bolha">Onde acontecem as suas sessões?</div>
-      <label class="rotulo">Cidade<input class="campo" type="text" autocomplete="address-level2" maxlength="60" data-c="cidade" placeholder="Ex.: Lisboa"></label>
+      <div class="bolha" data-i18n="pr_q_where">Onde acontecem as suas sessões?</div>
+      <label class="rotulo"><span data-i18n="pr_city">Cidade</span><input class="campo" type="text" autocomplete="address-level2" maxlength="60" data-c="cidade" placeholder="Ex.: Lisboa" data-i18n="pr_city_ph" data-i18n-attr="placeholder"></label>
       <fieldset>
-        <legend>Como você trabalha? Pode escolher mais de uma.</legend>
-        <label class="op"><input type="checkbox" value="No meu espaço" data-modo> No meu espaço</label>
-        <label class="op"><input type="checkbox" value="Ao ar livre" data-modo> Ao ar livre</label>
-        <label class="op"><input type="checkbox" value="Em casa do cliente" data-modo> Em casa do cliente</label>
-        <label class="op"><input type="checkbox" value="Online" data-modo> Online</label>
+        <legend data-i18n="pr_how">Como você trabalha? Pode escolher mais de uma.</legend>
+        <label class="op"><input type="checkbox" value="No meu espaço" data-modo> <span data-i18n="pr_m_space">No meu espaço</span></label>
+        <label class="op"><input type="checkbox" value="Ao ar livre" data-modo> <span data-i18n="col_form_outdoor">Ao ar livre</span></label>
+        <label class="op"><input type="checkbox" value="Em casa do cliente" data-modo> <span data-i18n="pr_m_home">Em casa do cliente</span></label>
+        <label class="op"><input type="checkbox" value="Online" data-modo> <span data-i18n="col_form_online">Online</span></label>
       </fieldset>
-      <p class="nota">Em casa do cliente: a morada dele é pedida na reserva e apagada sozinha dois dias depois da sessão.</p>
+      <p class="nota" data-i18n="pr_home_note">Em casa do cliente: a morada dele é pedida na reserva e apagada sozinha dois dias depois da sessão.</p>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="sessao" hidden>
-      <div class="bolha">Quanto tempo dura uma sessão, e quanto custa?</div>
-      <div class="pills" role="group" aria-label="Duração" data-duracoes></div>
+      <div class="bolha" data-i18n="pr_q_session">Quanto tempo dura uma sessão, e quanto custa?</div>
+      <div class="pills" role="group" aria-label="Duração" data-i18n="pr_duration" data-i18n-attr="aria-label" data-duracoes></div>
       <div class="duas">
-        <label class="rotulo">Preço (€)<input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="precoAvulsa"></label>
-        <label class="rotulo">Sinal (€)<input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="sinal"></label>
+        <label class="rotulo"><span data-i18n="pr_price">Preço (€)</span><input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="precoAvulsa"></label>
+        <label class="rotulo"><span data-i18n="pr_deposit">Sinal (€)</span><input class="campo" type="number" min="1" step="1" inputmode="numeric" data-c="sinal"></label>
       </div>
-      <label class="rotulo">O seu número MB Way<small>O sinal confirma o horário e entra no valor. A pessoa paga para este número; o resto, no dia.</small><input class="campo" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" data-c="mbway" placeholder="9XX XXX XXX"></label>
+      <label class="rotulo"><span data-i18n="pr_mbway">O seu número MB Way</span><small data-i18n="pr_mbway_h">O sinal confirma o horário e entra no valor. A pessoa paga para este número; o resto, no dia.</small><input class="campo" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" data-c="mbway" placeholder="9XX XXX XXX"></label>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="contato" hidden>
-      <div class="bolha">Por onde as pessoas falam com você, e para onde mando os avisos de pedidos novos?</div>
+      <div class="bolha" data-i18n="pr_q_contact">Por onde as pessoas falam com você, e para onde mando os avisos de pedidos novos?</div>
       <label class="rotulo">WhatsApp<input class="campo" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" data-c="whatsapp" placeholder="+351 …"></label>
-      <label class="rotulo">E-mail para avisos<input class="campo" type="email" autocomplete="email" maxlength="120" data-c="emailAvisos"></label>
+      <label class="rotulo"><span data-i18n="pr_email">E-mail para avisos</span><input class="campo" type="email" autocomplete="email" maxlength="120" data-c="emailAvisos"></label>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="resumo" hidden>
-      <div class="bolha">É isto. Confira antes de criar: depois pode mudar tudo no painel.</div>
+      <div class="bolha" data-i18n="pr_q_summary">É isto. Confira antes de criar: depois pode mudar tudo no painel.</div>
       <div class="resumo" data-resumo></div>
-      <p class="nota">A página fica em rascunho. No painel, você escolhe os dias livres na Agenda, completa o perfil e pede a aprovação quando quiser.</p>
+      <p class="nota" data-i18n="pr_summary_note">A página fica em rascunho. No painel, você escolhe os dias livres na Agenda, completa o perfil e pede a aprovação quando quiser.</p>
       <p class="erro" data-erro aria-live="polite"></p>
     </section>
   </main>
 
   <div class="barra" data-barra hidden>
-    <button type="button" class="voltar" data-voltar aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></button>
+    <button type="button" class="voltar" data-voltar aria-label="Voltar" data-i18n="rs_back" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></button>
     <button type="button" class="btn btn--primary" data-seguir>Continuar</button>
   </div>
 
@@ -183,11 +189,13 @@
     import { lerContaPro, criarContaPro, reclamarConvite } from "./conta-pro.js";
     import { PADRAO_PRO } from "./painel-ajustes.js";
     // A lista de áreas vive em termos.js, com as palavras que cada uma usa.
-    import { AREAS, AVISO_BEM_ESTAR } from "./termos.js";
+    import { AREAS, AVISO_BEM_ESTAR, nomeArea } from "./termos.js";
+    import { tr } from "./traduzir.js";
+    const MODOS = { "No meu espaço": "pr_m_space", "Ao ar livre": "col_form_outdoor", "Em casa do cliente": "pr_m_home", "Online": "col_form_online" };
 
     const $ = (s) => document.querySelector(s);
     const ORDEM = ["nome", "area", "onde", "sessao", "contato", "resumo"];
-    const NOMES = { nome: "O seu nome", area: "O que faz", onde: "Onde", sessao: "Sessão", contato: "Contato", resumo: "Conferir" };
+    const NOMES = { nome: tr("pr_name", "O seu nome"), area: tr("pr_s_area", "O que faz"), onde: tr("pf_where", "Onde"), sessao: tr("pr_s_session", "Sessão"), contato: tr("pr_s_contact", "Contato"), resumo: tr("pr_s_check", "Conferir") };
 
     const d = { nome: "", area: "", saude: false, profissao: "", cidade: "", modos: [], duracao: 60, precoAvulsa: "", sinal: 5, mbway: "", whatsapp: "", emailAvisos: "" };
     let user = null, passo = "carregar";
@@ -206,7 +214,7 @@
       const sec = document.querySelector(`[data-passo="${p}"]`);
       [...sec.children].forEach((c, i) => { c.classList.add("chega"); c.style.setProperty("--ordem", Math.min(i, 3)); });
       const i = ORDEM.indexOf(p);
-      $("[data-passo-texto]").textContent = i >= 0 ? `Passo ${i + 1} de ${ORDEM.length} · ${NOMES[p]}` : "";
+      $("[data-passo-texto]").textContent = i >= 0 ? tr("pr_step", "Passo {i} de {n} · {nome}", { i: i + 1, n: ORDEM.length, nome: NOMES[p] }) : "";
       $("[data-feito]").style.width = i >= 0 ? `${((i + 1) / ORDEM.length) * 100}%` : "0";
       $(".progresso").hidden = i < 0;
       const barra = $("[data-barra]"), seguir = $("[data-seguir]"), voltar = $("[data-voltar]");
@@ -214,10 +222,10 @@
       voltar.hidden = i <= 0;
       seguir.className = "btn " + (p === "entrar" ? "btn--google" : "btn--primary");
       seguir.disabled = false;
-      if (p === "entrar") seguir.innerHTML = '<img src="assets/google-g.svg" alt="" width="20" height="20"><span>Continuar com o Google</span>';
-      else if (p === "convite") seguir.textContent = "Começar";
-      else seguir.textContent = p === "resumo" ? "Criar a minha página" : "Continuar";
-      if (p === "area") { $("[data-primeiro]").textContent = d.nome.split(" ")[0]; }
+      if (p === "entrar") seguir.innerHTML = `<img src="assets/google-g.svg" alt="" width="20" height="20"><span>${tr("set_auth_google", "Continuar com o Google")}</span>`;
+      else if (p === "convite") seguir.textContent = tr("pr_start", "Começar");
+      else seguir.textContent = p === "resumo" ? tr("pr_create", "Criar a minha página") : tr("rs_continue", "Continuar");
+      if (p === "area") { $("[data-prazer]").textContent = tr("pr_q_area", "Prazer, {n}. Qual é a sua área?", { n: d.nome.split(" ")[0] }); }
       if (p === "resumo") pintarResumo();
       erro("");
       sec.focus({ preventScroll: true });
@@ -231,7 +239,7 @@
     const areasBox = $("[data-areas]");
     AREAS.forEach(([nome, saude]) => {
       const b = document.createElement("button");
-      b.type = "button"; b.className = "pill"; b.textContent = nome; b.setAttribute("aria-pressed", "false");
+      b.type = "button"; b.className = "pill"; b.textContent = nomeArea(nome); b.setAttribute("aria-pressed", "false");
       b.addEventListener("click", () => {
         d.area = nome; d.saude = saude;
         areasBox.querySelectorAll(".pill").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
@@ -253,24 +261,24 @@
     // ---------- validação: o que falta + porquê
     const so = (t) => String(t || "").replace(/\D/g, "");
     function validar() {
-      if (passo === "nome" && d.nome.length < 2) return "Falta o seu nome, para as pessoas saberem com quem reservam.";
+      if (passo === "nome" && d.nome.length < 2) return tr("pr_v_name", "Falta o seu nome, para as pessoas saberem com quem reservam.");
       if (passo === "area") {
-        if (!d.area) return "Escolha a área mais próxima do seu trabalho.";
-        if (d.profissao.length < 3) return "Falta dizer numa linha o que você faz.";
+        if (!d.area) return tr("pr_v_area", "Escolha a área mais próxima do seu trabalho.");
+        if (d.profissao.length < 3) return tr("pr_v_what", "Falta dizer numa linha o que você faz.");
       }
       if (passo === "onde") {
-        if (d.cidade.length < 2) return "Falta a cidade, para as pessoas saberem se você fica perto.";
-        if (!d.modos.length) return "Escolha pelo menos uma forma de trabalhar.";
+        if (d.cidade.length < 2) return tr("pr_v_city", "Falta a cidade, para as pessoas saberem se você fica perto.");
+        if (!d.modos.length) return tr("pr_v_mode", "Escolha pelo menos uma forma de trabalhar.");
       }
       if (passo === "sessao") {
-        if (!(Number(d.precoAvulsa) >= 1)) return "Falta o preço de uma sessão.";
-        if (!(Number(d.sinal) >= 1)) return "Falta o valor do sinal (pelo menos 1 €).";
-        if (Number(d.sinal) > Number(d.precoAvulsa)) return "O sinal não pode ser maior do que o preço.";
-        if (so(d.mbway).length < 9) return "Falta o número MB Way, para as pessoas enviarem o sinal.";
+        if (!(Number(d.precoAvulsa) >= 1)) return tr("pr_v_price", "Falta o preço de uma sessão.");
+        if (!(Number(d.sinal) >= 1)) return tr("pr_v_deposit", "Falta o valor do sinal (pelo menos 1 €).");
+        if (Number(d.sinal) > Number(d.precoAvulsa)) return tr("pr_v_deposit_max", "O sinal não pode ser maior do que o preço.");
+        if (so(d.mbway).length < 9) return tr("pr_v_mbway", "Falta o número MB Way, para as pessoas enviarem o sinal.");
       }
       if (passo === "contato") {
-        if (so(d.whatsapp).length < 9) return "Falta o WhatsApp, para as pessoas conseguirem falar com você.";
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.emailAvisos)) return "Falta um e-mail válido, para receber os avisos de pedidos.";
+        if (so(d.whatsapp).length < 9) return tr("pr_v_wa", "Falta o WhatsApp, para as pessoas conseguirem falar com você.");
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.emailAvisos)) return tr("pr_v_email", "Falta um e-mail válido, para receber os avisos de pedidos.");
       }
       return "";
     }
@@ -278,8 +286,8 @@
     function pintarResumo() {
       const box = $("[data-resumo]");
       box.textContent = "";
-      [["Nome", d.nome], ["O que faz", d.profissao], ["Área", d.area], ["Cidade", d.cidade], ["Onde", d.modos.join(", ")],
-       ["Sessão", `${d.duracao} min · €${d.precoAvulsa}`], ["Sinal", `€${d.sinal} por MB Way (${d.mbway})`], ["WhatsApp", d.whatsapp], ["Avisos", d.emailAvisos]]
+      [[tr("pr_r_name", "Nome"), d.nome], [tr("pr_s_area", "O que faz"), d.profissao], [tr("pr_area", "Área"), nomeArea(d.area)], [tr("pr_city", "Cidade"), d.cidade], [tr("pf_where", "Onde"), d.modos.map((m) => tr(MODOS[m], m)).join(", ")],
+       [tr("pr_s_session", "Sessão"), `${d.duracao} min · €${d.precoAvulsa}`], [tr("pr_r_deposit", "Sinal"), tr("pr_r_deposit_v", "€{s} por MB Way ({mb})", { s: d.sinal, mb: d.mbway })], ["WhatsApp", d.whatsapp], [tr("pr_r_notices", "Avisos"), d.emailAvisos]]
         .forEach(([k, v]) => {
           const l = document.createElement("div"); l.className = "linha";
           const a = document.createElement("span"); a.textContent = k;
@@ -310,7 +318,7 @@
           await signInWithPopup(auth, provider);
         } catch (e) {
           if (e?.code !== "auth/popup-closed-by-user" && e?.code !== "auth/cancelled-popup-request")
-            erro("Não consegui abrir a janela do Google. Se está dentro do Instagram ou do WhatsApp, abra esta página no navegador.");
+            erro(tr("pr_e_google", "Não consegui abrir a janela do Google. Se está dentro do Instagram ou do WhatsApp, abra esta página no navegador."));
         }
         return;
       }
@@ -318,7 +326,7 @@
       if (falta) { erro(falta); return; }
       if (passo === "resumo") {
         seguir.disabled = true;
-        try { await criar(); } catch (e) { seguir.disabled = false; erro("Não consegui criar a página. Verifique a ligação e tente de novo."); }
+        try { await criar(); } catch (e) { seguir.disabled = false; erro(tr("pr_e_create", "Não consegui criar a página. Verifique a ligação e tente de novo.")); }
         return;
       }
       mostrar(ORDEM[ORDEM.indexOf(passo) + 1]);

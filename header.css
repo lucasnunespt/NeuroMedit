@@ -247,7 +247,7 @@ body:is(.theme-sunset, .theme-evening, .theme-night, .theme-late-night, .theme-s
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  width: var(--control-height);
+  width: 84px;
   height: var(--control-height);
   overflow: visible;
   z-index: 90;
@@ -676,45 +676,44 @@ body.is-meditating .site-footer {
 .header-account {
   position: relative;
   flex-shrink: 0;
-  --cabeca-core: var(--accent-light);
-  --cabeca-mid: var(--accent);
-  --cabeca-edge: var(--accent-dark);
 }
 
-:is(html, body):is(.theme-sunset, .theme-evening, .theme-night, .theme-warm-night, .theme-sleep, .theme-late-night, .theme-luz) .header-account {
-  --cabeca-core: var(--luz-glow-core);
-  --cabeca-mid: var(--luz-glow-mid);
-  --cabeca-edge: var(--luz-gold);
-}
-
+/* Perfil: círculo igual aos outros botões da barra; a foto (se houver) enche o círculo. */
 .header-avatar {
-  appearance: none;
-  position: relative;
-  display: block;
-  width: var(--control-height);
-  height: var(--control-height);
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  cursor: pointer;
-  transition: filter var(--duration-quick) var(--easing-calm);
+  overflow: hidden;
 }
 
-.header-avatar .cab {
-  display: block;
+.header-avatar-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
 }
 
-.header-avatar:hover,
-.header-account.is-open > .header-avatar {
-  filter: brightness(1.18) saturate(1.1);
+.header-avatar-face svg {
+  width: 22px;
+  height: 22px;
+}
+
+.header-avatar-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-pill);
 }
 
 .header-avatar--static {
+  display: inline-flex;
   flex-shrink: 0;
-  cursor: default;
+  box-sizing: border-box;
+  width: var(--control-height);
+  height: var(--control-height);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
 }
 
 .header-dot:focus-visible,

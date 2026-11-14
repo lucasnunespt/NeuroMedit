@@ -41,9 +41,31 @@ export const AREAS = [
   ["Fisioterapia", true], ["Psicologia", true], ["Nutrição", true], ["Outra", false]
 ];
 
+/** Nome da área na língua do site (o valor guardado fica em português). */
+export function nomeArea(area) {
+  const i = AREAS.findIndex(([n]) => n === area);
+  if (i < 0 || typeof getTranslation !== "function" || typeof getPreferredLanguage !== "function") return area;
+  const k = "area_" + i, v = getTranslation(getPreferredLanguage(), k);
+  return v && v !== k && v !== `[${k}]` ? v : area;
+}
+
 /** As quatro formas da palavra para uma área. Área desconhecida ou vazia: "sessão". */
 export function termosDe(area) {
-  return POR_AREA[area] || SESSAO;
+  const base = POR_AREA[area] || SESSAO;
+  if (typeof getTranslation !== "function" || typeof getPreferredLanguage !== "function") return base;
+  const lang = getPreferredLanguage();
+  if (lang === "pt") return base;
+  const id = base === AULA ? "aula" : base === CONSULTA ? "consulta" : base === TREINO ? "treino" : "sessao";
+  const ler = (f) => { const k = `term_${id}_${f}`, v = getTranslation(lang, k); return v && v !== k && v !== `[${k}]` ? v : base[f]; };
+  const sg = ler("sg"), pl = ler("pl"), cap = (x) => x.charAt(0).toUpperCase() + x.slice(1);
+  return { sg, pl, Sg: cap(sg), Pl: cap(pl) };
+}
+
+/** O aviso de bem-estar na língua do site, quando é o texto padrão. */
+export function avisoNaLingua(texto) {
+  if (texto !== AVISO_BEM_ESTAR || typeof getTranslation !== "function" || typeof getPreferredLanguage !== "function") return texto;
+  const v = getTranslation(getPreferredLanguage(), "term_wellbeing");
+  return v && v !== "term_wellbeing" && v !== "[term_wellbeing]" ? v : texto;
 }
 
 /** Troca o texto de todos os [data-t] dentro de raiz. Chamar quando o perfil chega. */
@@ -52,6 +74,15 @@ export function aplicarTermos(raiz, area) {
   (raiz || document).querySelectorAll("[data-t]").forEach((el) => {
     const forma = el.dataset.t;
     if (t[forma]) el.textContent = t[forma];
+  });
+  // Frases inteiras com a palavra dentro (data-tt = chave, data-tt-pt = modelo em português com {sg} {pl} {Sg} {Pl}).
+  (raiz || document).querySelectorAll("[data-tt]").forEach((el) => {
+    let modelo = el.dataset.ttPt || "";
+    if (typeof getTranslation === "function" && typeof getPreferredLanguage === "function") {
+      const k = el.dataset.tt, v = getTranslation(getPreferredLanguage(), k);
+      if (v && v !== k && v !== `[${k}]`) modelo = v;
+    }
+    el.textContent = modelo.replace(/\{(sg|pl|Sg|Pl)\}/g, (_, f) => t[f]);
   });
   return t;
 }

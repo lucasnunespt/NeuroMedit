@@ -3,12 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Meditação presencial com o Lucas · NeuroMedit</title>
-  <meta name="description" content="Sessões individuais de meditação de 30 minutos em Lisboa, com o Lucas, criador do NeuroMedit.">
+  <title data-i18n="rs_meta_title">Meditação presencial com o Lucas · NeuroMedit</title>
+  <meta name="description" data-i18n="rs_meta_desc" data-i18n-attr="content" content="Sessões individuais de meditação de 30 minutos em Lisboa, com o Lucas, criador do NeuroMedit.">
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="theme-sync.css">
   <script src="theme-sync.js"></script>
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
   <style>
     /* Reserva da sessão presencial: uma conversa com o Lucas, um passo por ecrã.
        Só tokens do design system NeuroMedit. Voltar e ação principal ficam em baixo, na zona do polegar. */
@@ -117,87 +123,87 @@
     <img class="orbe" src="assets/neuromedit-symbol-vector.svg" alt="" width="40" height="40">
     <strong data-nome-pro>Lucas</strong>
     <div class="topo-acoes" data-topo-conta hidden>
-      <a href="#minhas" class="topo-link">As minhas sessões</a>
+      <a href="#minhas" class="topo-link" data-i18n="account_my_sessions">As minhas sessões</a>
     </div>
   </header>
   <p class="progresso" data-progresso aria-live="polite"></p>
 
   <main id="conteudo" aria-live="polite" style="display: contents;">
-    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
+    <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha" data-i18n="col_loading">Um momento…</div></section>
 
     <section tabindex="-1" class="passo" data-passo="pausa" hidden>
-      <div class="bolha">Neste momento não estou recebendo novos pedidos de sessão presencial.</div>
-      <div class="bolha">Se quiser falar comigo, é só escrever. Respondo assim que puder.</div>
-      <div class="empilhar"><a class="btn btn--secondary" data-wa href="#">Falar no WhatsApp</a></div>
+      <div class="bolha" data-i18n="rs_paused1">Neste momento não estou recebendo novos pedidos de sessão presencial.</div>
+      <div class="bolha" data-i18n="rs_paused2">Se quiser falar comigo, é só escrever. Respondo assim que puder.</div>
+      <div class="empilhar"><a class="btn btn--secondary" data-wa href="#" data-i18n="rs_wa_talk">Falar no WhatsApp</a></div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="convite" hidden>
       <div class="bolha"><span data-ola>Que bom ter você aqui.</span> <span data-oferta>Ofereço sessões individuais de meditação, de <span data-duracao>30</span> minutos, aqui em Lisboa.</span></div>
-      <div class="bolha">Podemos nos encontrar num destes lugares: <span data-locais></span>. Escolhemos juntos.</div>
+      <div class="bolha" data-locais-frase></div>
       <div class="bolha" data-desconto hidden></div>
       <div class="card" data-precos></div>
-      <div class="bolha">Para confirmar o horário, peço um sinal de <span data-sinal>€4</span>, que entra no valor. Você paga por MB Way, e o restante na hora.</div>
-      <div class="bolha">Cancelar e remarcar é simples. <a href="#politica">Veja como funciona</a>.</div>
-      <div class="bolha" data-aviso-pratica>É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
-      <div class="bolha" data-aviso-conta hidden>Para reservar, você vai precisar de uma conta no NeuroMedit. É rápido: ela é criada com a sua conta Google.</div>
-      <div class="bolha">Quer ver quando estou livre?</div>
+      <div class="bolha" data-sinal-frase></div>
+      <div class="bolha"><span data-i18n="rs_cancel_simple">Cancelar e remarcar é simples.</span> <a href="#politica" data-i18n="rs_see_how">Veja como funciona</a>.</div>
+      <div class="bolha" data-aviso-pratica data-i18n="rs_practice_note">É uma prática de meditação e bem-estar. Não é terapia nem tratamento, e não substitui psicólogo ou médico.</div>
+      <div class="bolha" data-aviso-conta hidden data-i18n="rs_need_account">Para reservar, você vai precisar de uma conta no NeuroMedit. É rápido: ela é criada com a sua conta Google.</div>
+      <div class="bolha" data-i18n="rs_want_see">Quer ver quando estou livre?</div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="entrar" hidden>
-      <div class="bolha">Obrigado pelo interesse. Para reservar um horário, você precisa de uma conta no NeuroMedit.</div>
-      <div class="bolha">Se ainda não tem, ela é criada agora, com a sua conta Google, sem senha nova. Se já tem, é só entrar.</div>
-      <div class="bolha">Assim as suas sessões ficam guardadas, e você não precisa preencher nada de novo da próxima vez.</div>
-      <div class="bolha" data-app-aviso hidden>Parece que você abriu este link dentro de outro aplicativo, como o WhatsApp ou o Instagram. O Google não deixa entrar por aqui. Abra a página no navegador do celular (Safari ou Chrome) e tente de novo.</div>
+      <div class="bolha" data-i18n="rs_enter1">Obrigado pelo interesse. Para reservar um horário, você precisa de uma conta no NeuroMedit.</div>
+      <div class="bolha" data-i18n="rs_enter2">Se ainda não tem, ela é criada agora, com a sua conta Google, sem senha nova. Se já tem, é só entrar.</div>
+      <div class="bolha" data-i18n="rs_enter3">Assim as suas sessões ficam guardadas, e você não precisa preencher nada de novo da próxima vez.</div>
+      <div class="bolha" data-app-aviso hidden data-i18n="rs_inapp">Parece que você abriu este link dentro de outro aplicativo, como o WhatsApp ou o Instagram. O Google não deixa entrar por aqui. Abra a página no navegador do celular (Safari ou Chrome) e tente de novo.</div>
       <p class="nota erro" data-erro-entrar></p>
       <div class="empilhar">
-        <button type="button" class="btn btn--secondary" data-copiar-link hidden>Copiar o link da página</button>
-        <a class="btn btn--link" href="#contato">Prefiro conversar antes</a>
+        <button type="button" class="btn btn--secondary" data-copiar-link hidden data-i18n="rs_copy_link">Copiar o link da página</button>
+        <a class="btn btn--link" href="#contato" data-i18n="rs_talk_first">Prefiro conversar antes</a>
       </div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="dias" hidden>
       <div class="dias-col">
-        <div class="bolha">Estes são os dias em que posso receber você. Escolha o que for melhor.</div>
+        <div class="bolha" data-i18n="rs_days_intro">Estes são os dias em que posso receber você. Escolha o que for melhor.</div>
         <div class="card">
           <div class="topo-cal">
-            <button type="button" class="seta" data-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="seta" data-ant aria-label="Mês anterior" data-i18n="rs_prev_month" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <p data-mes></p>
-            <button type="button" class="seta" data-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="seta" data-seg aria-label="Mês seguinte" data-i18n="rs_next_month" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
-          <div class="semana" aria-hidden="true"><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
+          <div class="semana" aria-hidden="true" data-semana-cab><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
           <div class="grelha" data-grelha></div>
         </div>
-        <div class="bolha" data-sem-dias hidden>Ainda não há dias livres neste mês. Veja o mês seguinte, ou <a href="#contato">fale comigo</a>.</div>
+        <div class="bolha" data-sem-dias hidden><span data-i18n="rs_no_days">Ainda não há dias livres neste mês. Veja o mês seguinte, ou</span> <a href="#contato" data-i18n="rs_talk_to_me">fale comigo</a>.</div>
       </div>
       <div class="dias-col">
-        <div class="bolha" data-dia-frase>Toque num dia para ver as horas.</div>
+        <div class="bolha" data-dia-frase></div>
         <div class="opcoes" data-horas-lista></div>
         <div class="bolha minha" data-escolha-curta hidden></div>
-        <div class="empilhar"><a class="btn btn--link" href="#contato">Prefiro conversar antes</a></div>
+        <div class="empilhar"><a class="btn btn--link" href="#contato" data-i18n="rs_talk_first">Prefiro conversar antes</a></div>
       </div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="detalhes" hidden>
       <div class="bolha minha" data-escolha></div>
-      <div class="bolha">Combinado. Quantas sessões você quer reservar?</div>
+      <div class="bolha" data-i18n="rs_how_many">Combinado. Quantas sessões você quer reservar?</div>
       <div class="opcoes" data-planos></div>
       <div class="bolha" data-plano-nota></div>
-      <div class="bolha">Onde prefere?</div>
-      <label class="rotulo">Lugar<select class="campo" data-local></select></label>
-      <label class="rotulo" data-morada-caixa hidden>A sua morada<input class="campo" type="text" autocomplete="street-address" maxlength="200" data-morada placeholder="Rua, número, andar, código postal"></label>
-      <p class="nota" data-morada-nota hidden>A morada só serve para chegar até você. É apagada sozinha dois dias depois da sessão.</p>
-      <div class="bolha">E o seu WhatsApp? É por ele que posso falar com você se precisar.</div>
-      <label class="rotulo">Telefone (WhatsApp)<input class="campo" type="tel" autocomplete="tel" inputmode="tel" data-tel placeholder="+351 …"></label>
-      <p class="nota">Ao pedir, você concorda com a <a href="#politica">política de cancelamento</a>. Uso estes dados só para cuidar das suas sessões.</p>
+      <div class="bolha" data-i18n="rs_where">Onde prefere?</div>
+      <label class="rotulo"><span data-i18n="rs_place">Lugar</span><select class="campo" data-local></select></label>
+      <label class="rotulo" data-morada-caixa hidden><span data-i18n="rs_address">A sua morada</span><input class="campo" type="text" autocomplete="street-address" maxlength="200" data-morada placeholder="Rua, número, andar, código postal" data-i18n="rs_address_ph" data-i18n-attr="placeholder"></label>
+      <p class="nota" data-morada-nota hidden data-i18n="rs_address_note">A morada só serve para chegar até você. É apagada sozinha dois dias depois da sessão.</p>
+      <div class="bolha" data-i18n="rs_whatsapp_q">E o seu WhatsApp? É por ele que posso falar com você se precisar.</div>
+      <label class="rotulo"><span data-i18n="rs_phone">Telefone (WhatsApp)</span><input class="campo" type="tel" autocomplete="tel" inputmode="tel" data-tel placeholder="+351 …"></label>
+      <p class="nota"><span data-i18n="rs_agree_a">Ao pedir, você concorda com a</span> <a href="#politica" data-i18n="rs_agree_link">política de cancelamento</a>. <span data-i18n="rs_agree_b">Uso estes dados só para cuidar das suas sessões.</span></p>
       <p class="nota erro" data-erro></p>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="feito" hidden>
       <div class="bolha minha" data-feito-resumo></div>
-      <div class="bolha">Recebi o seu pedido. Obrigado.</div>
+      <div class="bolha" data-i18n="rs_received">Recebi o seu pedido. Obrigado.</div>
       <div class="bolha" data-feito-sinal></div>
-      <div class="bolha">Quando o sinal chegar, confirmo o horário. Se não chegar em 24 horas, o horário volta a ficar livre para outra pessoa.</div>
-      <div class="empilhar"><a class="btn btn--secondary" data-mbway-wa href="#">Avisar pelo WhatsApp que enviei</a></div>
+      <div class="bolha" data-i18n="rs_confirm_when">Quando o sinal chegar, confirmo o horário. Se não chegar em 24 horas, o horário volta a ficar livre para outra pessoa.</div>
+      <div class="empilhar"><a class="btn btn--secondary" data-mbway-wa href="#" data-i18n="rs_wa_sent">Avisar pelo WhatsApp que enviei</a></div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="minhas" hidden>
@@ -205,20 +211,20 @@
       <div class="bolha" data-minhas-intro>Um momento…</div>
       <div class="empilhar" data-minhas-lista></div>
       <div data-minhas-antes hidden style="display: contents;">
-        <p class="progresso" style="padding: 16px 0 0;">Antes</p>
+        <p class="progresso" style="padding: 16px 0 0;" data-i18n="rs_before">Antes</p>
         <div class="card" data-minhas-antes-lista></div>
       </div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="politica" hidden>
-      <div class="bolha">Deixo tudo claro para nós dois.</div>
+      <div class="bolha" data-i18n="rs_policy1">Deixo tudo claro para nós dois.</div>
       <div class="card"><ul class="lista-regras" data-regras></ul></div>
-      <div class="bolha">E se não estiver bem no dia da sessão, é só me dizer. Cuidar de você vem primeiro.</div>
+      <div class="bolha" data-i18n="rs_policy2">E se não estiver bem no dia da sessão, é só me dizer. Cuidar de você vem primeiro.</div>
     </section>
 
     <section tabindex="-1" class="passo" data-passo="contato" hidden>
-      <div class="bolha">Prefere conversar antes? Sem problema.</div>
-      <div class="bolha">Escolha o canal que for mais fácil para você. Já deixei uma mensagem escrita; pode mudar o texto antes de enviar.</div>
+      <div class="bolha" data-i18n="rs_contact1">Prefere conversar antes? Sem problema.</div>
+      <div class="bolha" data-i18n="rs_contact2">Escolha o canal que for mais fácil para você. Já deixei uma mensagem escrita; pode mudar o texto antes de enviar.</div>
       <div class="empilhar">
         <a class="btn btn--secondary" data-wa href="#">WhatsApp</a>
         <a class="btn btn--secondary" data-mail href="#">E-mail</a>
@@ -226,7 +232,7 @@
     </section>
   </main>
 
-  <nav class="barra" aria-label="Navegação da reserva">
+  <nav class="barra" aria-label="Navegação da reserva" data-i18n="rs_nav_aria" data-i18n-attr="aria-label">
     <button type="button" class="voltar" data-voltar><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-voltar-texto>Voltar</span></button>
     <button type="button" class="btn btn--primary" data-principal hidden>Continuar</button>
   </nav>
@@ -241,11 +247,26 @@
     let NOME = "Lucas";
     const emCasa = (local) => /casa d[oa] cliente|em sua casa|ao domic/i.test(local || "");
     import { PADRAO } from "./painel-ajustes.js";
+    import { tr, local, lingua, diasSemana } from "./traduzir.js";
+    import { avisoNaLingua } from "./termos.js";
 
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
-    const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
-    const SEMANA = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+    const MESES = lingua() === "pt"
+      ? ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+      : [...Array(12)].map((_, i) => new Date(2026, i, 1).toLocaleDateString(local(), { month: "long" }));
+    const SEMANA = lingua() === "pt" ? ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"] : diasSemana("long");
+    // Data por extenso na língua escolhida: "terça, 3 de março, às 10:00".
+    const dataLonga = (d, hora) => {
+      if (lingua() === "pt") return `${cap(SEMANA[d.getDay()])}, ${d.getDate()} de ${MESES[d.getMonth()]}` + (hora ? `, às ${hora}` : "");
+      return cap(d.toLocaleDateString(local(), { weekday: "long", day: "numeric", month: "long" })) + (hora ? `, ${hora}` : "");
+    };
+    const dataCurta = (d) => (lingua() === "pt" ? `${d.getDate()} de ${MESES[d.getMonth()]}` : d.toLocaleDateString(local(), { day: "numeric", month: "long" }));
+    const nomePlano = (pl) => tr(pl.n === 1 ? "plan_1" : "plan_n", pl.nome, { n: pl.n });
+    if (lingua() !== "pt") {
+      const curtos = diasSemana("short");
+      document.querySelectorAll("[data-semana-cab] span").forEach((sp, i) => { sp.textContent = curtos[(i + 1) % 7]; });
+    }
     const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
     const hoje = new Date();
     const st = { cfg: null, p: null, user: undefined, ano: hoje.getFullYear(), mes: hoje.getMonth(), agenda: {}, ocupados: new Set(),
@@ -260,44 +281,44 @@
       const c = st.cfg, p = st.p;
       const du = $("[data-duracao]"); if (du) du.textContent = c.duracao;
       const locais = Object.keys(c.locais || {}).filter((k) => c.locais[k]).map((k) => (k === "Casa do Ser" ? k : k.charAt(0).toLowerCase() + k.slice(1)));
-      $("[data-locais]").textContent = locais.length ? locais.join(", ") : "um lugar a combinar";
-      $("[data-sinal]").textContent = euro(c.sinal);
+      $("[data-locais-frase]").textContent = tr("rs_places", "Podemos nos encontrar num destes lugares: {l}. Escolhemos juntos.", { l: locais.length ? locais.join(", ") : tr("rs_place_tbd", "um lugar a combinar") });
+      $("[data-sinal-frase]").textContent = tr("rs_deposit", "Para confirmar o horário, peço um sinal de {s}, que entra no valor. Você paga por MB Way, e o restante na hora.", { s: euro(c.sinal) });
       if (p.desconto) {
-        const ate = p.ate.toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
-        $("[data-desconto]").textContent = `Até ${ate} tenho um preço de lançamento: ${p.desconto}% de desconto para quem reservar.`;
+        const ate = p.ate.toLocaleDateString(local(), { day: "numeric", month: "long" });
+        $("[data-desconto]").textContent = tr("rs_discount", "Até {ate} tenho um preço de lançamento: {d}% de desconto para quem reservar.", { ate, d: p.desconto });
         $("[data-desconto]").hidden = false;
       }
       $("[data-precos]").innerHTML = p.planos.map((pl) =>
-        `<div class="linha"><span>${pl.nome} de ${c.duracao} min</span><span>${pl.antes ? `<span class="antes">${euro(pl.antes)}</span>` : ""}${euro(pl.valor)}</span></div>`
-      ).join("") + (p.planos.length > 1 ? `<div class="linha"><span>Pacotes válidos por</span><span>${c.validadePacoteMeses} meses</span></div>` : "");
-      const msg = `Olá, ${NOME}! Gostaria de saber mais sobre ${PRO ? "as sessões" : "a meditação presencial"}.`;
+        `<div class="linha"><span>${tr("rs_plan_of", "{plano} de {min} min", { plano: nomePlano(pl), min: c.duracao })}</span><span>${pl.antes ? `<span class="antes">${euro(pl.antes)}</span>` : ""}${euro(pl.valor)}</span></div>`
+      ).join("") + (p.planos.length > 1 ? `<div class="linha"><span>${tr("rs_valid_for", "Pacotes válidos por")}</span><span>${tr("rs_months", "{n} meses", { n: c.validadePacoteMeses })}</span></div>` : "");
+      const msg = PRO ? tr("rs_msg_info_pro", "Olá, {nome}! Gostaria de saber mais sobre as sessões.", { nome: NOME }) : tr("rs_msg_info", "Olá, {nome}! Gostaria de saber mais sobre a meditação presencial.", { nome: NOME });
       $$("[data-wa]").forEach((a) => { a.href = waLink(msg); a.target = "_blank"; a.rel = "noopener"; });
       const mail = $("[data-mail]");
-      mail.href = `mailto:${c.emailAvisos}?subject=${encodeURIComponent("Meditação presencial")}&body=${encodeURIComponent(msg)}`;
-      mail.textContent = `E-mail · ${c.emailAvisos}`;
+      mail.href = `mailto:${c.emailAvisos}?subject=${encodeURIComponent(tr("set_inperson", "Meditação presencial"))}&body=${encodeURIComponent(msg)}`;
+      mail.textContent = `${tr("col_email", "E-mail")} · ${c.emailAvisos}`;
       $("[data-regras]").innerHTML = [
-        `Para confirmar a sessão, peço um sinal de ${euro(c.sinal)}, que entra no valor. Você paga por MB Way para o ${c.mbway}, e o restante na hora.`,
-        `Até ${c.cancelarAteHoras} horas antes, você pode cancelar sem custo, e eu devolvo o sinal.`,
-        `Com menos de ${c.cancelarAteHoras} horas, remarco uma vez, sem custo, se eu tiver outro horário livre. Se preferir cancelar, o sinal não é devolvido.`,
-        `Se você não puder vir e não avisar, o sinal não é devolvido e a sessão conta como realizada.`,
-        `Se chegar mais tarde, a sessão termina no horário previsto.`,
-        `Se eu precisar cancelar, aviso assim que souber e remarcamos sem custo. Se não for possível, devolvo o valor.`,
-        `Nos pacotes, cada sessão segue estas mesmas regras. Cada pacote vale por ${c.validadePacoteMeses} meses, a partir da primeira sessão.`,
-        `Você cancela direto em "As minhas sessões", nesta página.`
+        tr("rs_rule1", "Para confirmar a sessão, peço um sinal de {s}, que entra no valor. Você paga por MB Way para o {mb}, e o restante na hora.", { s: euro(c.sinal), mb: c.mbway }),
+        tr("rs_rule2", "Até {h} horas antes, você pode cancelar sem custo, e eu devolvo o sinal.", { h: c.cancelarAteHoras }),
+        tr("rs_rule3", "Com menos de {h} horas, remarco uma vez, sem custo, se eu tiver outro horário livre. Se preferir cancelar, o sinal não é devolvido.", { h: c.cancelarAteHoras }),
+        tr("rs_rule4", "Se você não puder vir e não avisar, o sinal não é devolvido e a sessão conta como realizada."),
+        tr("rs_rule5", "Se chegar mais tarde, a sessão termina no horário previsto."),
+        tr("rs_rule6", "Se eu precisar cancelar, aviso assim que souber e remarcamos sem custo. Se não for possível, devolvo o valor."),
+        tr("rs_rule7", "Nos pacotes, cada sessão segue estas mesmas regras. Cada pacote vale por {m} meses, a partir da primeira sessão.", { m: c.validadePacoteMeses }),
+        tr("rs_rule8", "Você cancela direto em \"As minhas sessões\", nesta página.")
       ].map((t) => `<li>${t}</li>`).join("");
     }
 
     // ---------- navegação por passos (o botão voltar do navegador também funciona)
     const PASSOS = {
-      convite:  { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", progresso: "Passo 1 de 4 · Conhecer", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
-      entrar:   { voltar: "convite", progresso: "Passo 2 de 4 · Sua conta", textoVoltar: "", principal: "Continuar com o Google", google: true, acao: entrar },
-      dias:     { voltar: "convite", progresso: "Passo 2 de 4 · Dia e hora", principal: "Continuar", acao: () => ir("detalhes"), ativo: () => st.hora != null },
-      detalhes: { voltar: "dias", progresso: "Passo 3 de 4 · Detalhes", principal: "Pedir esta sessão", acao: pedir },
-      feito:    { voltar: "convite", progresso: "Passo 4 de 4 · Pedido enviado", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
-      minhas:   { voltar: "convite", principal: "Marcar outra sessão", acao: () => ir("dias") },
-      politica: { voltar: "anterior", principal: "Entendi", acao: () => voltarAnterior() },
+      convite:  { voltar: () => { location.href = "home.html"; }, textoVoltar: tr("rs_home", "Início"), rotuloVoltar: tr("rs_back_home", "Voltar ao início do NeuroMedit"), progresso: tr("rs_step1", "Passo 1 de 4 · Conhecer"), principal: tr("inperson_cta", "Ver dias e horários"), acao: () => ir(st.user ? "dias" : "entrar") },
+      entrar:   { voltar: "convite", progresso: tr("rs_step2a", "Passo 2 de 4 · Sua conta"), textoVoltar: "", principal: tr("set_auth_google", "Continuar com o Google"), google: true, acao: entrar },
+      dias:     { voltar: "convite", progresso: tr("rs_step2b", "Passo 2 de 4 · Dia e hora"), principal: tr("rs_continue", "Continuar"), acao: () => ir("detalhes"), ativo: () => st.hora != null },
+      detalhes: { voltar: "dias", progresso: tr("rs_step3", "Passo 3 de 4 · Detalhes"), principal: tr("rs_request", "Pedir esta sessão"), acao: pedir },
+      feito:    { voltar: "convite", progresso: tr("rs_step4", "Passo 4 de 4 · Pedido enviado"), principal: tr("rs_see_mine", "Ver as minhas sessões"), acao: () => ir("minhas") },
+      minhas:   { voltar: "convite", principal: tr("rs_book_another", "Marcar outra sessão"), acao: () => ir("dias") },
+      politica: { voltar: "anterior", principal: tr("rs_understood", "Entendi"), acao: () => voltarAnterior() },
       contato:  { voltar: "anterior", principal: null },
-      pausa:    { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", principal: null }
+      pausa:    { voltar: () => { location.href = "home.html"; }, textoVoltar: tr("rs_home", "Início"), rotuloVoltar: tr("rs_back_home", "Voltar ao início do NeuroMedit"), principal: null }
     };
     function ir(passo) { if (location.hash !== "#" + passo) location.hash = passo; else mostrar(); }
     function voltarAnterior() { ir(st.ultimo && st.ultimo !== location.hash.slice(1) ? st.ultimo : "convite"); }
@@ -323,8 +344,8 @@
         else pr.textContent = cfg.principal;
         pr.disabled = cfg.ativo ? !cfg.ativo() : false;
       }
-      $("[data-voltar]").setAttribute("aria-label", cfg.rotuloVoltar || "Voltar ao passo anterior");
-      $("[data-voltar-texto]").textContent = cfg.textoVoltar ?? "Voltar";
+      $("[data-voltar]").setAttribute("aria-label", cfg.rotuloVoltar || tr("rs_back_step", "Voltar ao passo anterior"));
+      $("[data-voltar-texto]").textContent = cfg.textoVoltar ?? tr("rs_back", "Voltar");
       $("[data-progresso]").textContent = cfg.progresso || "";
       window.scrollTo(0, 0);
       const sec = document.querySelector(`[data-passo="${passo}"]`);
@@ -364,7 +385,7 @@
     $("[data-copiar-link]").hidden = !emApp;
     $("[data-copiar-link]").addEventListener("click", async (ev) => {
       const bt = ev.currentTarget, url = location.origin + location.pathname;
-      try { await navigator.clipboard.writeText(url); bt.textContent = "Link copiado. Cole no navegador."; }
+      try { await navigator.clipboard.writeText(url); bt.textContent = tr("rs_link_copied", "Link copiado. Cole no navegador."); }
       catch (e) { bt.textContent = url; }
     });
     async function entrar() {
@@ -373,12 +394,12 @@
       try { await signInWithPopup(auth, p); }
       catch (e) {
         const c = e?.code || "";
-        if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") erro.textContent = "Tudo bem. Quando quiser, é só tentar de novo.";
-        else if (c === "auth/popup-blocked") erro.textContent = "O navegador bloqueou a janela do Google. Permita janelas deste site e tente de novo.";
-        else if (c === "auth/network-request-failed") erro.textContent = "Parece que a ligação à internet falhou. Tente de novo daqui a pouco.";
+        if (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") erro.textContent = tr("rs_err_closed", "Tudo bem. Quando quiser, é só tentar de novo.");
+        else if (c === "auth/popup-blocked") erro.textContent = tr("rs_err_popup", "O navegador bloqueou a janela do Google. Permita janelas deste site e tente de novo.");
+        else if (c === "auth/network-request-failed") erro.textContent = tr("rs_err_net", "Parece que a ligação à internet falhou. Tente de novo daqui a pouco.");
         else erro.textContent = emApp
-          ? "Não deu para entrar por aqui. Abra a página no navegador do celular e tente de novo."
-          : "Não consegui abrir o login. Tente de novo, ou fale comigo se continuar.";
+          ? tr("rs_err_inapp", "Não deu para entrar por aqui. Abra a página no navegador do celular e tente de novo.")
+          : tr("rs_err_login", "Não consegui abrir o login. Tente de novo, ou fale comigo se continuar.");
       }
     }
 
@@ -408,7 +429,7 @@
         b.className = "dia" + (livres.length ? " tem" : "") + (n === st.dia ? " sel" : "");
         b.disabled = !livres.length;
         b.setAttribute("aria-pressed", n === st.dia ? "true" : "false");
-        b.setAttribute("aria-label", `${n} de ${MESES[st.mes]}, ${livres.length ? livres.length + " horários livres" : "sem horários"}`);
+        b.setAttribute("aria-label", `${dataCurta(new Date(st.ano, st.mes, n))}, ${livres.length ? tr(livres.length === 1 ? "pf_free_1" : "pf_free_n", "{n} horários livres", { n: livres.length }) : tr("pf_no_times", "sem horários")}`);
         if (livres.length) { algum = true; b.addEventListener("click", () => { st.dia = n; st.hora = null; desenharMes(); desenharHoras(); }); }
         g.append(b);
       }
@@ -420,10 +441,10 @@
     function desenharHoras() {
       const lista = $("[data-horas-lista]"); lista.textContent = "";
       $("[data-escolha-curta]").hidden = st.hora == null;
-      if (st.dia == null) { $("[data-dia-frase]").textContent = "Toque num dia para ver as horas."; atualizarPrincipal(); return; }
-      const wd = SEMANA[new Date(st.ano, st.mes, st.dia).getDay()];
+      if (st.dia == null) { $("[data-dia-frase]").textContent = tr("rs_tap_day", "Toque num dia para ver as horas."); atualizarPrincipal(); return; }
       const d = st.agenda[st.dia];
-      $("[data-dia-frase]").textContent = `Na ${wd}, dia ${st.dia}, ` + (d.k === "free" ? "estou livre o dia todo." : `consigo a partir das ${pad2(d.h)}:00.`) + " Que horas ficam melhor?";
+      const dia = lingua() === "pt" ? `Na ${SEMANA[new Date(st.ano, st.mes, st.dia).getDay()]}, dia ${st.dia}` : dataLonga(new Date(st.ano, st.mes, st.dia));
+      $("[data-dia-frase]").textContent = (d.k === "free" ? tr("rs_day_free", "{dia}, estou livre o dia todo.", { dia }) : tr("rs_day_from", "{dia}, consigo a partir das {h}.", { dia, h: `${pad2(d.h)}:00` })) + " " + tr("rs_which_time", "Que horas ficam melhor?");
       livresDe(st.dia).forEach((h) => {
         const b = document.createElement("button");
         b.type = "button"; b.className = "pill"; b.textContent = `${pad2(h)}:00`;
@@ -436,7 +457,7 @@
       if (window.innerWidth < 720 && st.hora == null) $("[data-dia-frase]").scrollIntoView({ behavior: "smooth", block: "center" });
     }
     function atualizarPrincipal() { if (st.atual === "dias") $("[data-principal]").disabled = st.hora == null; }
-    const textoEscolha = () => `${cap(SEMANA[new Date(st.ano, st.mes, st.dia).getDay()])}, ${st.dia} de ${MESES[st.mes]}, às ${pad2(st.hora)}:00`;
+    const textoEscolha = () => dataLonga(new Date(st.ano, st.mes, st.dia), `${pad2(st.hora)}:00`);
     function mudarMes(d) {
       const m = new Date(st.ano, st.mes + d, 1);
       st.ano = m.getFullYear(); st.mes = m.getMonth(); st.dia = null; st.hora = null;
@@ -452,18 +473,18 @@
       st.p.planos.forEach((pl) => {
         const b = document.createElement("button");
         b.type = "button"; b.className = "pill"; b.setAttribute("aria-pressed", pl.n === st.plano ? "true" : "false");
-        b.innerHTML = `<small>${pl.nome}</small>${euro(pl.valor)}`;
+        b.innerHTML = `<small>${nomePlano(pl)}</small>${euro(pl.valor)}`;
         b.addEventListener("click", () => { st.plano = pl.n; desenharDetalhes(); });
         box.append(b);
       });
       const pl = st.p.planos.find((x) => x.n === st.plano);
       $("[data-plano-nota]").textContent = pl.n === 1
-        ? `Uma sessão individual de ${st.cfg.duracao} minutos: ${euro(pl.valor)}. O restante na hora: ${euro(pl.valor - st.cfg.sinal)}.`
-        : `O pacote de ${pl.n} sessões custa ${euro(pl.valor)}. Este é o horário da primeira; as outras combinamos por mensagem.`;
+        ? tr("rs_plan1_note", "Uma sessão individual de {min} minutos: {v}. O restante na hora: {r}.", { min: st.cfg.duracao, v: euro(pl.valor), r: euro(pl.valor - st.cfg.sinal) })
+        : tr("rs_plann_note", "O pacote de {n} sessões custa {v}. Este é o horário da primeira; as outras combinamos por mensagem.", { n: pl.n, v: euro(pl.valor) });
       const sel = $("[data-local]");
       if (!sel.options.length) {
         Object.keys(st.cfg.locais || {}).filter((k) => st.cfg.locais[k]).forEach((k) => sel.append(new Option(k, k)));
-        sel.append(new Option("Combinamos depois", "A combinar"));
+        sel.append(new Option(tr("rs_decide_later", "Combinamos depois"), "A combinar"));
         const mostrarMorada = () => { const on = emCasa(sel.value); $("[data-morada-caixa]").hidden = !on; $("[data-morada-nota]").hidden = !on; };
         sel.addEventListener("change", mostrarMorada); mostrarMorada();
       }
@@ -471,13 +492,13 @@
     async function pedir() {
       const erro = $("[data-erro]"); erro.textContent = "";
       const tel = $("[data-tel]").value.trim();
-      if (tel.replace(/\D/g, "").length < 9) { erro.textContent = "Escreva o seu número de WhatsApp, por favor."; $("[data-tel]").focus(); return; }
+      if (tel.replace(/\D/g, "").length < 9) { erro.textContent = tr("rs_err_phone", "Escreva o seu número de WhatsApp, por favor."); $("[data-tel]").focus(); return; }
       const pl = st.p.planos.find((x) => x.n === st.plano);
       const data = chaveDia(st.ano, st.mes, st.dia), hora = `${pad2(st.hora)}:00`;
       const slotId = `${prefixoSlot(PRO)}${data}_${pad2(st.hora)}`;
       const local = $("[data-local]").value;
       const morada = emCasa(local) ? $("[data-morada]").value.trim() : "";
-      if (emCasa(local) && !morada) { erro.textContent = "Falta a sua morada, para eu conseguir chegar até você."; $("[data-morada]").focus(); return; }
+      if (emCasa(local) && !morada) { erro.textContent = tr("rs_err_address", "Falta a sua morada, para eu conseguir chegar até você."); $("[data-morada]").focus(); return; }
       const bRef = doc(collection(db, "bookings"));
       const lote = writeBatch(db);
       lote.set(doc(db, "slots", slotId), PRO ? { uid: st.user.uid, bookingId: bRef.id, proId: PRO } : { uid: st.user.uid, bookingId: bRef.id });
@@ -487,21 +508,21 @@
         estado: "pedida", criado: serverTimestamp(),
         ...(PRO ? { proId: PRO } : {}), ...(morada ? { moradaCliente: morada } : {})
       });
-      const pr = $("[data-principal]"); pr.disabled = true; pr.textContent = "Enviando…";
+      const pr = $("[data-principal]"); pr.disabled = true; pr.textContent = tr("rs_sending", "Enviando…");
       try {
         await lote.commit();
       } catch (e) {
-        pr.disabled = false; pr.textContent = "Pedir esta sessão";
-        erro.textContent = "Este horário acabou de ser reservado por outra pessoa, ou houve um problema de ligação. Volte e escolha outro, por favor.";
+        pr.disabled = false; pr.textContent = tr("rs_request", "Pedir esta sessão");
+        erro.textContent = tr("rs_err_taken", "Este horário acabou de ser reservado por outra pessoa, ou houve um problema de ligação. Volte e escolha outro, por favor.");
         st.mesCarregado = null; st.hora = null;
         return;
       }
       const escolha = textoEscolha();
       st.feito = true;
-      $("[data-feito-resumo]").textContent = `${escolha} · ${pl.nome} · ${euro(pl.valor)}`;
-      $("[data-feito-sinal]").textContent = `Para confirmar, envie o sinal de ${euro(st.cfg.sinal)} por MB Way para o ${st.cfg.mbway}.`;
+      $("[data-feito-resumo]").textContent = `${escolha} · ${nomePlano(pl)} · ${euro(pl.valor)}`;
+      $("[data-feito-sinal]").textContent = tr("rs_send_deposit", "Para confirmar, envie o sinal de {s} por MB Way para o {mb}.", { s: euro(st.cfg.sinal), mb: st.cfg.mbway });
       const a = $("[data-mbway-wa]");
-      a.href = waLink(`Olá, ${NOME}! Pedi a sessão de ${escolha} e enviei o sinal de ${euro(st.cfg.sinal)} por MB Way.`);
+      a.href = waLink(tr("rs_msg_sent", "Olá, {nome}! Pedi a sessão de {quando} e enviei o sinal de {s} por MB Way.", { nome: NOME, quando: escolha, s: euro(st.cfg.sinal) }));
       a.target = "_blank"; a.rel = "noopener";
       st.mesCarregado = null; st.dia = null; st.hora = null;
       ir("feito");
@@ -514,7 +535,7 @@
         return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       } catch (e) { return null; }
     }
-    const ESTADO_ANTES = { realizada: "feita", falta: "não compareceu", cancelada: "cancelada", reembolsada: "cancelada, sinal devolvido", libertada: "não confirmada (sem sinal)" };
+    const ESTADO_ANTES = { realizada: tr("rs_st_done", "feita"), falta: tr("rs_st_noshow", "não compareceu"), cancelada: tr("rs_st_cancelled", "cancelada"), reembolsada: tr("rs_st_refunded", "cancelada, sinal devolvido"), libertada: tr("rs_st_released", "não confirmada (sem sinal)") };
     function desenharAnteriores(todas) {
       const antes = todas.filter((b) => !(["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date()))
         .sort((a, b) => (b.data + b.hora).localeCompare(a.data + a.hora)).slice(0, 10);
@@ -522,8 +543,8 @@
       antes.forEach((b) => {
         const q = new Date(`${b.data}T${b.hora}`);
         const l = document.createElement("div"); l.className = "linha";
-        const a = document.createElement("span"); a.textContent = `${q.getDate()} de ${MESES[q.getMonth()]}, ${b.hora}`;
-        const c = document.createElement("span"); c.textContent = ESTADO_ANTES[b.estado] || (b.estado === "confirmada" ? "feita" : b.estado);
+        const a = document.createElement("span"); a.textContent = `${dataCurta(q)}, ${b.hora}`;
+        const c = document.createElement("span"); c.textContent = ESTADO_ANTES[b.estado] || (b.estado === "confirmada" ? ESTADO_ANTES.realizada : b.estado);
         l.append(a, c); box.append(l);
       });
       $("[data-minhas-antes]").hidden = !antes.length;
@@ -531,38 +552,38 @@
 
     async function desenharMinhas() {
       const intro = $("[data-minhas-intro]"), box = $("[data-minhas-lista]");
-      intro.textContent = "Um momento…"; box.textContent = "";
+      intro.textContent = tr("col_loading", "Um momento…"); box.textContent = "";
       const todas = await lerMinhas();
-      if (todas === null) { intro.textContent = "Não consegui ler as suas sessões agora. Tente de novo daqui a pouco."; return; }
+      if (todas === null) { intro.textContent = tr("rs_err_read", "Não consegui ler as suas sessões agora. Tente de novo daqui a pouco."); return; }
       desenharAnteriores(todas);
       const lista = todas.filter((b) => ["pedida", "confirmada"].includes(b.estado) && new Date(`${b.data}T${b.hora}`) > new Date())
         .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
-      if (!lista.length) { intro.textContent = "Ainda não tem nenhuma sessão marcada comigo. Quando quiser, é só escolher um dia."; return; }
-      intro.textContent = lista.length === 1 ? "Esta é a sua sessão comigo:" : "Estas são as suas sessões comigo:";
+      if (!lista.length) { intro.textContent = tr("rs_none_yet", "Ainda não tem nenhuma sessão marcada comigo. Quando quiser, é só escolher um dia."); return; }
+      intro.textContent = lista.length === 1 ? tr("rs_yours_1", "Esta é a sua sessão comigo:") : tr("rs_yours_n", "Estas são as suas sessões comigo:");
       lista.forEach((b) => {
         const quando = new Date(`${b.data}T${b.hora}`);
         const card = document.createElement("div"); card.className = "card";
-        const titulo = `${cap(SEMANA[quando.getDay()])}, ${quando.getDate()} de ${MESES[quando.getMonth()]}, às ${b.hora}`;
-        card.innerHTML = `<div class="linha"><span></span><span>${b.estado === "pedida" ? "à espera do sinal" : "confirmada"}</span></div><div class="linha"><span>Lugar</span><span></span></div>`;
+        const titulo = dataLonga(quando, b.hora);
+        card.innerHTML = `<div class="linha"><span></span><span>${b.estado === "pedida" ? tr("rs_st_waiting", "à espera do sinal") : tr("rs_st_confirmed", "confirmada")}</span></div><div class="linha"><span>${tr("rs_place", "Lugar")}</span><span></span></div>`;
         card.querySelectorAll(".linha span")[0].textContent = titulo;
-        card.querySelectorAll(".linha span")[3].textContent = b.local || "A combinar";
+        card.querySelectorAll(".linha span")[3].textContent = (b.local && b.local !== "A combinar" ? b.local : tr("rs_tbd", "A combinar"));
         const horasAntes = (quando - new Date()) / 3600000;
         const semCusto = horasAntes >= st.cfg.cancelarAteHoras;
         const acoes = document.createElement("div"); acoes.className = "empilhar"; acoes.style.marginTop = "12px";
-        const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn btn--secondary"; btn.textContent = "Preciso cancelar";
-        const rem = document.createElement("a"); rem.className = "btn btn--link"; rem.textContent = "Prefiro remarcar"; rem.target = "_blank"; rem.rel = "noopener";
-        rem.href = waLink(`Olá, ${NOME}! Gostaria de remarcar a sessão de ${titulo}.`);
+        const btn = document.createElement("button"); btn.type = "button"; btn.className = "btn btn--secondary"; btn.textContent = tr("rs_need_cancel", "Preciso cancelar");
+        const rem = document.createElement("a"); rem.className = "btn btn--link"; rem.textContent = tr("rs_reschedule", "Prefiro remarcar"); rem.target = "_blank"; rem.rel = "noopener";
+        rem.href = waLink(tr("rs_msg_resched", "Olá, {nome}! Gostaria de remarcar a sessão de {quando}.", { nome: NOME, quando: titulo }));
         const conf = document.createElement("div"); conf.hidden = true; conf.className = "empilhar";
         const nota = document.createElement("p"); nota.className = "nota";
         nota.textContent = semCusto
-          ? (b.estado === "confirmada" ? `Faltam mais de ${st.cfg.cancelarAteHoras} horas: devolvo o sinal de ${euro(b.sinal)}.` : "Ainda não enviou o sinal, por isso não há nada a devolver.")
-          : `Faltam menos de ${st.cfg.cancelarAteHoras} horas, por isso o sinal não é devolvido. Se preferir, posso remarcar uma vez.`;
-        const rot = document.createElement("label"); rot.className = "rotulo"; rot.textContent = "Quer contar o que aconteceu? (opcional)";
+          ? (b.estado === "confirmada" ? tr("rs_cancel_refund", "Faltam mais de {h} horas: devolvo o sinal de {s}.", { h: st.cfg.cancelarAteHoras, s: euro(b.sinal) }) : tr("rs_cancel_nothing", "Ainda não enviou o sinal, por isso não há nada a devolver."))
+          : tr("rs_cancel_late", "Faltam menos de {h} horas, por isso o sinal não é devolvido. Se preferir, posso remarcar uma vez.", { h: st.cfg.cancelarAteHoras });
+        const rot = document.createElement("label"); rot.className = "rotulo"; rot.textContent = tr("rs_why", "Quer contar o que aconteceu? (opcional)");
         const motivo = document.createElement("textarea"); motivo.className = "campo"; motivo.rows = 2; motivo.maxLength = 300;
         motivo.style.padding = "12px 16px"; motivo.style.minHeight = "0"; rot.append(motivo);
-        const sim = document.createElement("button"); sim.type = "button"; sim.className = "btn btn--primary"; sim.textContent = "Sim, cancelar";
+        const sim = document.createElement("button"); sim.type = "button"; sim.className = "btn btn--primary"; sim.textContent = tr("rs_yes_cancel", "Sim, cancelar");
         conf.append(nota, rot, sim);
-        btn.addEventListener("click", () => { conf.hidden = !conf.hidden; btn.textContent = conf.hidden ? "Preciso cancelar" : "Não, manter a sessão"; });
+        btn.addEventListener("click", () => { conf.hidden = !conf.hidden; btn.textContent = conf.hidden ? tr("rs_need_cancel", "Preciso cancelar") : tr("rs_keep", "Não, manter a sessão"); });
         sim.addEventListener("click", async () => {
           sim.disabled = true;
           try {
@@ -570,12 +591,12 @@
             await deleteDoc(doc(db, "slots", b.slotId)).catch(() => {});
             card.innerHTML = "";
             const p = document.createElement("p"); p.className = "nota";
-            p.textContent = `Sessão de ${titulo} cancelada. Tudo bem, acontece.` + (semCusto && b.estado === "confirmada" ? " Faço a devolução do sinal assim que puder." : "");
+            p.textContent = tr("rs_cancelled", "Sessão de {quando} cancelada. Tudo bem, acontece.", { quando: titulo }) + (semCusto && b.estado === "confirmada" ? " " + tr("rs_refund_soon", "Faço a devolução do sinal assim que puder.") : "");
             card.append(p);
             st.mesCarregado = null;
           } catch (e) {
             sim.disabled = false;
-            nota.textContent = "Não consegui cancelar agora. Tente de novo, ou fale comigo no WhatsApp.";
+            nota.textContent = tr("rs_err_cancel", "Não consegui cancelar agora. Tente de novo, ou fale comigo no WhatsApp.");
           }
         });
         acoes.append(btn, conf, rem);
@@ -595,7 +616,7 @@
         // Profissional que não existe ou ainda não foi aprovado: nada para reservar.
         st.cfg.receberPedidos = false;
         const pausa = $('[data-passo="pausa"]');
-        pausa.innerHTML = '<div class="bolha">Esta página de reserva não está disponível. Pode ainda não ter sido aprovada, ou o endereço mudou.</div><div class="empilhar"><a class="btn btn--secondary" href="home.html">Ir para o início</a></div>';
+        pausa.innerHTML = `<div class="bolha">${tr("rs_unavailable", "Esta página de reserva não está disponível. Pode ainda não ter sido aprovada, ou o endereço mudou.")}</div><div class="empilhar"><a class="btn btn--secondary" href="home.html">${tr("pf_go_home", "Ir para o início")}</a></div>`;
       }
       if (perfil?.nome) {
         NOME = perfil.nome.split(" ")[0];
@@ -607,22 +628,25 @@
         linkPerfil.href = comPro("perfil.html", PRO);
         linkPerfil.textContent = perfil.nome;
         alvoNome.append(linkPerfil);
-        document.title = `Reservar com ${perfil.nome} · NeuroMedit`;
+        document.title = tr("rs_title_pro", "Reservar com {n} · NeuroMedit", { n: perfil.nome });
       }
       // Texto geral para outros profissionais; o aviso sobre a prática só aparece se o profissional o escreveu.
-      $("[data-oferta]").textContent = `Ofereço sessões individuais de ${st.cfg.duracao} minutos${perfil?.cidade ? `, em ${perfil.cidade}` : ""}.`;
-      if (st.cfg.avisoPratica) $("[data-aviso-pratica]").textContent = st.cfg.avisoPratica;
+      $("[data-oferta]").textContent = perfil?.cidade
+        ? tr("rs_offer_city", "Ofereço sessões individuais de {min} minutos, em {c}.", { min: st.cfg.duracao, c: perfil.cidade })
+        : tr("rs_offer_pro", "Ofereço sessões individuais de {min} minutos.", { min: st.cfg.duracao });
+      if (st.cfg.avisoPratica) $("[data-aviso-pratica]").textContent = avisoNaLingua(st.cfg.avisoPratica);
       else $("[data-aviso-pratica]").hidden = true;
     }
     st.p = precos(st.cfg);
+    if (!PRO) $("[data-oferta]").textContent = tr("rs_offer", "Ofereço sessões individuais de meditação, de {min} minutos, aqui em Lisboa.", { min: st.cfg.duracao });
     preencherTextos();
     function aplicarConta(user) {
       st.user = user;
       $("[data-topo-conta]").hidden = !user;
       $("[data-aviso-conta]").hidden = !!user;
       const primeiro = (user?.displayName || "").split(" ")[0];
-      $("[data-ola]").textContent = primeiro ? `Que bom ter você aqui, ${primeiro}.` : "Que bom ter você aqui.";
-      $("[data-minhas-ola]").textContent = primeiro ? `Olá, ${primeiro}.` : "As suas sessões";
+      $("[data-ola]").textContent = primeiro ? tr("rs_hello_name", "Que bom ter você aqui, {n}.", { n: primeiro }) : tr("rs_hello", "Que bom ter você aqui.");
+      $("[data-minhas-ola]").textContent = primeiro ? tr("rs_hi_name", "Olá, {n}.", { n: primeiro }) : tr("rs_yours_title", "As suas sessões");
     }
     // Se o estado da conta não chegar a tempo (navegação privada, bloqueadores), tratamos como visitante.
     const semResposta = setTimeout(() => { if (st.user === undefined) { aplicarConta(null); mostrar(); } }, 4000);

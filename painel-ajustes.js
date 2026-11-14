@@ -8,6 +8,7 @@
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
 import { updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { proPainel } from "./conta-pro.js";
+import { tr, local, lingua } from "./traduzir.js";
 
 export const PADRAO = {
   receberPedidos: true,
@@ -49,7 +50,8 @@ export const PADRAO_PRO = {
   emailAvisos: "", whatsapp: ""
 };
 
-const DIAS = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+const DIAS = lingua() === "pt" ? ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
+  : [...Array(7)].map((_, i) => new Date(2026, 10, 2 + i).toLocaleDateString(local(), { weekday: "long" }).replace(/^./, (c) => c.toUpperCase()));
 const pad = (h) => String(h).padStart(2, "0") + ":00";
 const euro = (n) => "€" + (Math.round(n * 100) / 100).toString().replace(".", ",");
 
@@ -62,15 +64,15 @@ export function iniciarAjustes(raiz) {
   let timer = null;
 
   function guardar() {
-    estado.textContent = "Guardando…";
+    estado.textContent = tr("pn_saving", "Guardando…");
     clearTimeout(timer);
     timer = setTimeout(async () => {
       try {
         if (pro) await updateDoc(ref, { sessao: cfg, atualizado: new Date() });
         else await setDoc(ref, { ...cfg, atualizado: new Date() });
-        estado.textContent = "Guardado.";
+        estado.textContent = tr("pn_saved", "Guardado.");
       } catch (err) {
-        estado.textContent = "Não consegui guardar. Tente de novo.";
+        estado.textContent = tr("pn_e_save", "Não consegui guardar. Tente de novo.");
       }
     }, 700);
   }
@@ -91,7 +93,7 @@ export function iniciarAjustes(raiz) {
   sw.addEventListener("click", () => { cfg.receberPedidos = !cfg.receberPedidos; pintarSwitch(); guardar(); });
   function pintarSwitch() {
     sw.setAttribute("aria-checked", cfg.receberPedidos ? "true" : "false");
-    swNota.textContent = cfg.receberPedidos ? "Ligado: as pessoas veem os seus dias livres." : "Em pausa: ninguém consegue reservar. Nada é apagado.";
+    swNota.textContent = cfg.receberPedidos ? tr("pn_aj_on", "Ligado: as pessoas veem os seus dias livres.") : tr("pn_aj_off", "Em pausa: ninguém consegue reservar. Nada é apagado.");
   }
 
   // ---------- tempo de deslocação
@@ -111,13 +113,13 @@ export function iniciarAjustes(raiz) {
       rot.textContent = nome;
       const tipo = document.createElement("select");
       tipo.className = "aj-campo";
-      tipo.setAttribute("aria-label", `${nome}: disponibilidade`);
-      [["free", "Livre"], ["from", "A partir de"], ["none", "Indisponível"]].forEach(([v, t]) => {
+      tipo.setAttribute("aria-label", tr("pn_aj_avail", "{d}: disponibilidade", { d: nome }));
+      [["free", tr("pn_s038", "Livre")], ["from", tr("pn_aj_from", "A partir de")], ["none", tr("pn_s040", "Indisponível")]].forEach(([v, t]) => {
         const o = new Option(t, v); o.selected = d.k === v; tipo.append(o);
       });
       const hora = document.createElement("select");
       hora.className = "aj-campo";
-      hora.setAttribute("aria-label", `${nome}: a partir de que horas`);
+      hora.setAttribute("aria-label", tr("pn_aj_from_h", "{d}: a partir de que horas", { d: nome }));
       for (let h = 6; h <= 21; h++) { const o = new Option(pad(h), h); o.selected = d.h === h; hora.append(o); }
       hora.hidden = d.k !== "from";
       tipo.addEventListener("change", () => {
@@ -137,7 +139,7 @@ export function iniciarAjustes(raiz) {
     if (!Object.keys(cfg.locais).length) {
       const vazio = document.createElement("p");
       vazio.className = "muted";
-      vazio.textContent = "Ainda sem locais. Adicione o primeiro abaixo.";
+      vazio.textContent = tr("pn_aj_no_places", "Ainda sem locais. Adicione o primeiro abaixo.");
       locaisBox.append(vazio);
     }
     Object.keys(cfg.locais).forEach((nome) => {
@@ -165,10 +167,10 @@ export function iniciarAjustes(raiz) {
   const resumo = raiz.querySelector("[data-aj-resumo]");
   function resumoPrecos() {
     const f = 1 - (cfg.descontoLancamento || 0) / 100;
-    const ate = cfg.descontoAte ? new Date(cfg.descontoAte + "T00:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long" }) : "";
+    const ate = cfg.descontoAte ? new Date(cfg.descontoAte + "T00:00:00").toLocaleDateString(local(), { day: "numeric", month: "long" }) : "";
     resumo.textContent = cfg.descontoLancamento > 0
-      ? `Até ${ate}, quem reserva vê: sessão ${euro(cfg.precoAvulsa * f)}, pacote de 3 ${euro(cfg.pacote3 * f)}, pacote de 4 ${euro(cfg.pacote4)}. Restante a pagar na hora numa sessão avulsa: ${euro(cfg.precoAvulsa * f - cfg.sinal)}.`
-      : `Quem reserva vê: sessão ${euro(cfg.precoAvulsa)}, pacote de 3 ${euro(cfg.pacote3)}, pacote de 4 ${euro(cfg.pacote4)}.`;
+      ? tr("pn_aj_prices_disc", "Até {ate}, quem reserva vê: sessão {a}, pacote de 3 {p3}, pacote de 4 {p4}. Restante a pagar na hora numa sessão avulsa: {r}.", { ate, a: euro(cfg.precoAvulsa * f), p3: euro(cfg.pacote3 * f), p4: euro(cfg.pacote4), r: euro(cfg.precoAvulsa * f - cfg.sinal) })
+      : tr("pn_aj_prices", "Quem reserva vê: sessão {a}, pacote de 3 {p3}, pacote de 4 {p4}.", { a: euro(cfg.precoAvulsa), p3: euro(cfg.pacote3), p4: euro(cfg.pacote4) });
   }
 
   function pintarTudo() {
@@ -177,12 +179,12 @@ export function iniciarAjustes(raiz) {
   }
 
   (async () => {
-    estado.textContent = "Carregando…";
+    estado.textContent = tr("pn_s023", "Carregando…");
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         cfg = { ...cfg, ...(pro ? snap.data().sessao || {} : snap.data()) };
-        estado.textContent = "Guardado.";
+        estado.textContent = tr("pn_saved", "Guardado.");
         pintarTudo();
       } else {
         pintarTudo();
@@ -190,7 +192,7 @@ export function iniciarAjustes(raiz) {
       }
     } catch (err) {
       pintarTudo();
-      estado.textContent = "Não consegui ler os ajustes. Verifique a ligação e recarregue.";
+      estado.textContent = tr("pn_aj_e_read", "Não consegui ler os ajustes. Verifique a ligação e recarregue.");
     }
   })();
 }

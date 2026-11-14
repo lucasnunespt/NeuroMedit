@@ -9,10 +9,14 @@
 import { db, doc, getDoc, setDoc } from "./firebase-init.js";
 import { lerSemanaPadrao } from "./painel-ajustes.js";
 import { proPainel } from "./conta-pro.js";
+import { tr, local, lingua } from "./traduzir.js";
 
 const H0 = 6, H1 = 21;              // roda de horas: 06:00 a 21:00
-const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
-const SEMANA = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+const MESES = lingua() === "pt" ? ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+  : [...Array(12)].map((_, i) => new Date(2026, i, 1).toLocaleDateString(local(), { month: "long" }));
+const SEMANA = lingua() === "pt" ? ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"]
+  : [...Array(7)].map((_, i) => new Date(2026, 10, 1 + i).toLocaleDateString(local(), { weekday: "long" }));
+const diaMes = (n, m, a) => (lingua() === "pt" ? `${n} de ${MESES[m]}` : new Date(a, m, n).toLocaleDateString(local(), { day: "numeric", month: "long" }));
 
 // Novembro de 2026, como combinado na sessão de 7 nov: usado só se o mês ainda não existir no Firebase.
 const NOVEMBRO_2026 = (() => {
@@ -103,23 +107,23 @@ export function iniciarAgenda(raiz) {
   const doMes = () => (pro ? doc(db, "pros", pro, "availability", chave(st.ano, st.mes)) : doc(db, "availability", chave(st.ano, st.mes)));
   async function carregar() {
     st.carregado = false;
-    el.estado.textContent = "Carregando…";
+    el.estado.textContent = tr("pn_s023", "Carregando…");
     desenhar();
     try {
       const snap = await getDoc(doMes());
       if (snap.exists()) {
         st.dias = snap.data().dias || {};
-        el.estado.textContent = "Guardado.";
+        el.estado.textContent = tr("pn_saved", "Guardado.");
       } else if (!pro && st.ano === 2026 && st.mes === 10) {
         st.dias = JSON.parse(JSON.stringify(NOVEMBRO_2026));
         await guardarJa();
       } else {
         st.dias = {};
-        el.estado.textContent = "Mês ainda vazio. Toque num dia para começar.";
+        el.estado.textContent = tr("pn_ag_empty", "Mês ainda vazio. Toque num dia para começar.");
       }
     } catch (err) {
       st.dias = {};
-      el.estado.textContent = "Não consegui ler a agenda. Verifique a ligação e recarregue.";
+      el.estado.textContent = tr("pn_ag_e_read", "Não consegui ler a agenda. Verifique a ligação e recarregue.");
     }
     st.carregado = true;
     desenhar();
@@ -127,13 +131,13 @@ export function iniciarAgenda(raiz) {
   async function guardarJa() {
     try {
       await setDoc(doMes(), { dias: st.dias, publicado: true, atualizado: new Date() });
-      el.estado.textContent = "Guardado. Quem reserva já vê estes dias.";
+      el.estado.textContent = tr("pn_ag_saved", "Guardado. Quem reserva já vê estes dias.");
     } catch (err) {
-      el.estado.textContent = "Não consegui guardar. Tente de novo.";
+      el.estado.textContent = tr("pn_e_save", "Não consegui guardar. Tente de novo.");
     }
   }
   function guardar() {
-    el.estado.textContent = "Guardando…";
+    el.estado.textContent = tr("pn_saving", "Guardando…");
     clearTimeout(st.timer);
     st.timer = setTimeout(guardarJa, 600);
   }
@@ -194,17 +198,17 @@ export function iniciarAgenda(raiz) {
       b.type = "button";
       b.className = `dia dia--${t.k}` + (n === st.sel ? " is-sel" : "") + (passado(n) ? " is-passado" : "");
       b.setAttribute("aria-pressed", n === st.sel ? "true" : "false");
-      const rotulo = t.k === "free" ? "livre" : t.k === "from" ? `livre a partir das ${t.h} horas` : "indisponível";
-      b.setAttribute("aria-label", `${n} de ${MESES[st.mes]}, ${rotulo}`);
+      const rotulo = t.k === "free" ? tr("pn_ag_free", "livre") : t.k === "from" ? tr("pn_ag_from_h", "livre a partir das {h} horas", { h: t.h }) : tr("pn_ag_unavailable", "indisponível");
+      b.setAttribute("aria-label", `${diaMes(n, st.mes, st.ano)}, ${rotulo}`);
       b.innerHTML = `<span>${n}</span><small>${t.k === "from" ? t.h + "h" : ""}</small>`;
       b.addEventListener("click", () => { st.sel = n; desenhar(); });
       el.grelha.append(b);
     }
-    el.resumo.textContent = `${cont.free} livres · ${cont.from} a partir de certa hora · ${cont.none} indisponíveis`;
+    el.resumo.textContent = tr("pn_ag_summary", "{f} livres · {h} a partir de certa hora · {n} indisponíveis", { f: cont.free, h: cont.from, n: cont.none });
 
     const t = tipoDe(st.sel);
     const wd = SEMANA[new Date(st.ano, st.mes, st.sel).getDay()];
-    el.dia.textContent = `${wd.replace(/^./, (c) => c.toUpperCase())}, ${st.sel} de ${MESES[st.mes]}`;
+    el.dia.textContent = `${wd.replace(/^./, (c) => c.toUpperCase())}, ${diaMes(st.sel, st.mes, st.ano)}`;
     const fechado = passado(st.sel);
     el.tipos.forEach((b) => {
       const on = b.dataset.agTipo === t.k;
@@ -215,10 +219,10 @@ export function iniciarAgenda(raiz) {
     el.roda.parentElement.hidden = t.k !== "from" || fechado;
     if (t.k === "from") moverRoda(t.h, false);
     el.nota.textContent = fechado
-      ? "Este dia já passou."
-      : t.k === "free" ? "Quem reserva vê horários de hora em hora, das 09:00 às 20:00."
-      : t.k === "from" ? `Quem reserva vê horários de hora em hora, das ${pad(t.h)} às 21:00.`
-      : "Nada aparece para reservar neste dia.";
+      ? tr("pn_ag_past", "Este dia já passou.")
+      : t.k === "free" ? tr("pn_ag_free_note", "Quem reserva vê horários de hora em hora, das 09:00 às 20:00.")
+      : t.k === "from" ? tr("pn_ag_from_note", "Quem reserva vê horários de hora em hora, das {h} às 21:00.", { h: pad(t.h) })
+      : tr("pn_ag_none_note", "Nada aparece para reservar neste dia.");
   }
 
   carregar();

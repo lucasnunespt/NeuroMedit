@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>Painel · NeuroMedit</title>
+  <title data-i18n="pn_meta_title">Painel · NeuroMedit</title>
   <link rel="icon" href="assets/neuromedit-symbol-vector.svg" type="image/svg+xml">
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="theme-sync.css">
   <script src="theme-sync.js"></script>
+  <script src="translations-en.js"></script>
+  <script src="translations-pt.js"></script>
+  <script src="translations-it.js"></script>
+  <script src="translations-es.js"></script>
+  <script src="translations-ru.js"></script>
+  <script src="translations.js"></script>
   <style>
     /* Painel do Lucas. Tema noturno quente (warm-night) fixo. Só tokens do design system NeuroMedit. */
     body { margin: 0; min-height: 100vh; font-family: var(--font-sans); color: var(--text); line-height: 1.5;
@@ -179,37 +185,37 @@
 </head>
 <body>
   <!-- Antes de entrar -->
-  <main class="shell" data-estado="a-verificar"><p class="muted">Um momento…</p></main>
+  <main class="shell" data-estado="a-verificar"><p class="muted" data-i18n="pn_s001">Um momento…</p></main>
 
   <main class="shell" data-estado="sem-login" hidden>
-    <h1>Painel</h1>
-    <p class="lead">Esta página é só para o Lucas. Entre com a sua conta Google.</p>
-    <button type="button" class="btn btn--primary" data-entrar>Entrar com Google</button>
+    <h1 data-i18n="pn_s002">Painel</h1>
+    <p class="lead" data-i18n="pn_s003">Esta página é só para o Lucas. Entre com a sua conta Google.</p>
+    <button type="button" class="btn btn--primary" data-entrar data-i18n="pn_s004"><span data-i18n="pn_s004">Entrar com Google</span></button>
   </main>
 
   <main class="shell" data-estado="sem-acesso" hidden>
-    <h1>Sem acesso</h1>
-    <p class="lead">Esta conta ainda não tem um painel. Se quer marcar uma <span data-t="sg">sessão</span>, a página é outra.</p>
-    <a class="btn btn--primary" href="home.html">Ir para o início</a>
-    <p class="lead" style="margin-top: 32px;">É professor ou terapeuta e quer receber reservas pelo NeuroMedit?</p>
-    <a class="btn btn--secondary" href="profissional.html">Criar a minha página</a>
-    <button type="button" class="btn btn--secondary" data-sair>Sair</button>
+    <h1 data-i18n="pn_s005">Sem acesso</h1>
+    <p class="lead"><span data-tt="pn_noaccess" data-tt-pt="Esta conta ainda não tem um painel. Se quer marcar uma {sg}, a página é outra.">Esta conta ainda não tem um painel. Se quer marcar uma sessão, a página é outra.</span></p>
+    <a class="btn btn--primary" href="home.html" data-i18n="pn_s006"><span data-i18n="pn_s006">Ir para o início</span></a>
+    <p class="lead" style="margin-top: 32px;" data-i18n="pn_s007">É professor ou terapeuta e quer receber reservas pelo NeuroMedit?</p>
+    <a class="btn btn--secondary" href="profissional.html" data-i18n="pn_s008"><span data-i18n="pn_s008">Criar a minha página</span></a>
+    <button type="button" class="btn btn--secondary" data-sair data-i18n="pn_s009"><span data-i18n="pn_s009">Sair</span></button>
   </main>
 
   <!-- Painel -->
   <div data-estado="admin" hidden>
-    <nav class="nav" aria-label="Painel">
-      <a class="nav-marca" href="#inicio"><img src="assets/neuromedit-symbol-vector.svg" alt="" width="32" height="32">Painel</a>
+    <nav class="nav" aria-label="Painel" data-i18n="pn_s002" data-i18n-attr="aria-label">
+      <a class="nav-marca" href="#inicio"><img src="assets/neuromedit-symbol-vector.svg" alt="" width="32" height="32"><span data-i18n="pn_s002">Painel</span></a>
       <div class="nav-destinos">
-      <a href="#inicio" data-sec="inicio"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Início</span></a>
-      <a href="#agenda" data-sec="agenda"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14.5" rx="3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10.5H20M8.25 3.75V7.25M15.75 3.75V7.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Agenda</span></a>
-      <a href="#dinheiro" data-sec="dinheiro"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.4 7C16.3 5.8 14.7 5 12.9 5C9.6 5 7 7.9 7 12C7 16.1 9.6 19 12.9 19C14.7 19 16.3 18.2 17.4 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.25H13M4.5 13.75H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome">Dinheiro</span></a>
-      <a href="#ajustes" data-sec="ajustes"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 8H6.75M11.25 8H19.5M4.5 16H12.75M17.25 16H19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="8" r="2.25" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="16" r="2.25" stroke="currentColor" stroke-width="1.8"/></svg><span class="nome">Ajustes</span></a>
+      <a href="#inicio" data-sec="inicio"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome" data-i18n="pn_s010"><span data-i18n="pn_s010">Início</span></span></a>
+      <a href="#agenda" data-sec="agenda"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14.5" rx="3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 10.5H20M8.25 3.75V7.25M15.75 3.75V7.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome" data-i18n="pn_s011"><span data-i18n="pn_s011">Agenda</span></span></a>
+      <a href="#dinheiro" data-sec="dinheiro"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.4 7C16.3 5.8 14.7 5 12.9 5C9.6 5 7 7.9 7 12C7 16.1 9.6 19 12.9 19C14.7 19 16.3 18.2 17.4 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10.25H13M4.5 13.75H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nome" data-i18n="pn_s012"><span data-i18n="pn_s012">Dinheiro</span></span></a>
+      <a href="#ajustes" data-sec="ajustes"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.5 8H6.75M11.25 8H19.5M4.5 16H12.75M17.25 16H19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="8" r="2.25" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="16" r="2.25" stroke="currentColor" stroke-width="1.8"/></svg><span class="nome" data-i18n="pn_s013"><span data-i18n="pn_s013">Ajustes</span></span></a>
       </div>
       <div class="nav-conta">
         <div class="nav-quem"><img data-foto-conta alt="" width="36" height="36" hidden><span><b data-nome-conta>Lucas</b><small data-email-curto></small></span></div>
-        <a data-link-perfil href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
-        <button type="button" data-sair>Sair da conta</button>
+        <a data-link-perfil href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg><span data-i18n="pn_s020">Ver a minha página</span></a>
+        <button type="button" data-sair data-i18n="pn_s014"><span data-i18n="pn_s014">Sair da conta</span></button>
       </div>
     </nav>
 
@@ -217,55 +223,55 @@
       <p class="kicker" data-hoje></p>
       <div class="ini-topo">
         <img class="foto" data-foto alt="" width="64" height="64" hidden>
-        <h1>Bem-vindo de volta, <span data-nome>Lucas</span>.</h1>
+        <h1 data-boasvindas>Bem-vindo de volta, Lucas.</h1>
       </div>
-      <p class="lead">Obrigado por estar aqui. Você está no controle do seu futuro, e as coisas vão dar certo.</p>
+      <p class="lead" data-i18n="pn_s015">Obrigado por estar aqui. Você está no controle do seu futuro, e as coisas vão dar certo.</p>
 
       <div data-so-lucas>
-        <p class="label">A visão de hoje</p>
+        <p class="label" data-i18n="pn_s016">A visão de hoje</p>
         <div class="card">
           <p class="visao" data-visao></p>
-          <p class="muted" style="margin-top: 16px;">Feche os olhos por um momento e veja isto acontecer.</p>
+          <p class="muted" style="margin-top: 16px;" data-i18n="pn_s017">Feche os olhos por um momento e veja isto acontecer.</p>
         </div>
       </div>
 
       <div data-conta-estado hidden>
-        <p class="label">A sua página</p>
+        <p class="label" data-i18n="pn_s018">A sua página</p>
         <div class="card">
           <p class="pedido-nome" data-conta-titulo></p>
           <p class="muted" data-conta-texto></p>
           <p class="muted pedido-motivo" data-conta-nota hidden></p>
           <div class="conta-links">
-            <button type="button" class="btn btn--primary" data-conta-pedir hidden>Pedir aprovação</button>
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <button type="button" class="btn btn--primary" data-conta-pedir hidden data-i18n="pn_s019"><span data-i18n="pn_s019">Pedir aprovação</span></button>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener" data-i18n="pn_s020"><span data-i18n="pn_s020">Ver a minha página</span></a>
           </div>
           <p class="ag-estado" data-conta-aviso aria-live="polite"></p>
         </div>
       </div>
 
       <div class="bloco" data-aprovacoes hidden>
-        <p class="label">Perfis à espera de aprovação</p>
+        <p class="label" data-i18n="pn_s021">Perfis à espera de aprovação</p>
         <div class="card" data-aprovacoes-lista></div>
       </div>
 
       <div class="bloco" data-pessoas hidden>
-        <p class="label">Professores</p>
-        <div class="card" data-pros-lista><p class="muted">Carregando…</p></div>
+        <p class="label" data-i18n="pn_s022">Professores</p>
+        <div class="card" data-pros-lista><p class="muted" data-i18n="pn_s023">Carregando…</p></div>
       </div>
 
       <div class="bloco" data-convidar hidden>
-        <p class="label">Adicionar um professor</p>
+        <p class="label" data-i18n="pn_s024">Adicionar um professor</p>
         <div class="card">
-          <p class="muted">Reserve uma página para o e-mail da pessoa. Quando ela entrar com esse e-mail Google, a página passa a ser dela, já aprovada. Até lá não é pública.</p>
+          <p class="muted" data-i18n="pn_s025">Reserve uma página para o e-mail da pessoa. Quando ela entrar com esse e-mail Google, a página passa a ser dela, já aprovada. Até lá não é pública.</p>
           <div class="aj-grelha" style="margin-top: 16px;">
-            <label class="aj-campo-rot aj-largo">E-mail Google da pessoa<input class="aj-campo" type="email" autocomplete="off" data-cv="email"></label>
-            <label class="aj-campo-rot">Nome<input class="aj-campo" type="text" autocomplete="off" data-cv="nome"></label>
-            <label class="aj-campo-rot">Cidade<input class="aj-campo" type="text" autocomplete="off" data-cv="cidade"></label>
-            <label class="aj-campo-rot">Área<select class="aj-campo" data-cv="area" data-cv-areas></select></label>
-            <label class="aj-campo-rot">O que faz (uma linha)<input class="aj-campo" type="text" maxlength="80" autocomplete="off" data-cv="profissao"></label>
+            <label class="aj-campo-rot aj-largo"><span data-i18n="pn_s077">E-mail Google da pessoa</span><input class="aj-campo" type="email" autocomplete="off" data-cv="email"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s078">Nome</span><input class="aj-campo" type="text" autocomplete="off" data-cv="nome"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s079">Cidade</span><input class="aj-campo" type="text" autocomplete="off" data-cv="cidade"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s080">Área</span><select class="aj-campo" data-cv="area" data-cv-areas></select></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s081">O que faz (uma linha)</span><input class="aj-campo" type="text" maxlength="80" autocomplete="off" data-cv="profissao"></label>
           </div>
           <div class="conta-links">
-            <button type="button" class="btn btn--primary" data-cv-criar>Reservar a página</button>
+            <button type="button" class="btn btn--primary" data-cv-criar data-i18n="pn_s026"><span data-i18n="pn_s026">Reservar a página</span></button>
           </div>
           <p class="ag-estado" data-cv-aviso aria-live="polite"></p>
           <div data-cv-lista></div>
@@ -273,214 +279,214 @@
       </div>
 
       <div class="bloco" data-lixeira hidden>
-        <p class="label">Lixeira</p>
+        <p class="label" data-i18n="pn_s027">Lixeira</p>
         <div class="card" data-lixeira-lista></div>
       </div>
 
       <div class="bloco">
-        <p class="label">À espera de você</p>
-        <div class="card" data-pedidos><p class="muted">Carregando…</p></div>
+        <p class="label" data-i18n="pn_s028">À espera de você</p>
+        <div class="card" data-pedidos><p class="muted" data-i18n="pn_s023">Carregando…</p></div>
       </div>
 
       <div class="bloco">
-        <p class="label">Próximas <span data-t="pl">sessões</span></p>
-        <div class="card" data-proximas><p class="muted">Carregando…</p></div>
+        <p class="label"><span data-tt="pn_next" data-tt-pt="Próximas {pl}">Próximas sessões</span></p>
+        <div class="card" data-proximas><p class="muted" data-i18n="pn_s023">Carregando…</p></div>
       </div>
 
       <div class="bloco">
-        <p class="label"><span data-t="Pl">Sessões</span> canceladas</p>
-        <div class="card" data-canceladas><p class="muted">Carregando…</p></div>
-        <p class="muted" style="margin-top: 12px;">A página onde as pessoas reservam: <a href="reservar.html" data-link-reservar style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
+        <p class="label"><span data-tt="pn_cancelled" data-tt-pt="{Pl} canceladas">Sessões canceladas</span></p>
+        <div class="card" data-canceladas><p class="muted" data-i18n="pn_s023">Carregando…</p></div>
+        <p class="muted" style="margin-top: 12px;"><span data-i18n="pn_booking_page">A página onde as pessoas reservam:</span> <a href="reservar.html" data-link-reservar style="color: var(--link-text);">neuromedit.com/reservar.html</a></p>
       </div>
     </main>
 
     <main class="shell" data-sec-painel="agenda" hidden data-agenda>
-      <p class="kicker">Toque num dia para dizer quando está livre.</p>
+      <p class="kicker" data-i18n="pn_s030">Toque num dia para dizer quando está livre.</p>
       <div class="ag-topo">
-        <button type="button" class="ag-seta" data-ag-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ag-seta" data-ag-ant aria-label="Mês anterior" data-i18n="pn_s105" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <h1 data-ag-mes>Agenda</h1>
-        <button type="button" class="ag-seta" data-ag-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ag-seta" data-ag-seg aria-label="Mês seguinte" data-i18n="pn_s106" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
 
       <div class="ag-layout">
         <div class="card ag-cal">
-          <div class="ag-semana" aria-hidden="true"><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
+          <div class="ag-semana" aria-hidden="true"><span data-i18n="pn_s031"><span data-i18n="pn_s031">seg</span></span><span data-i18n="pn_s032"><span data-i18n="pn_s032">ter</span></span><span data-i18n="pn_s033"><span data-i18n="pn_s033">qua</span></span><span data-i18n="pn_s034"><span data-i18n="pn_s034">qui</span></span><span data-i18n="pn_s035"><span data-i18n="pn_s035">sex</span></span><span data-i18n="pn_s036"><span data-i18n="pn_s036">sáb</span></span><span data-i18n="pn_s037"><span data-i18n="pn_s037">dom</span></span></div>
           <div class="ag-grelha" data-ag-grelha></div>
           <div class="ag-legenda">
-            <span><i class="sw sw--free"></i>Livre</span>
-            <span><i class="sw sw--from">19h</i>A partir da hora</span>
-            <span><i class="sw sw--none"></i>Indisponível</span>
+            <span><i class="sw sw--free"></i><span data-i18n="pn_s038">Livre</span></span>
+            <span><i class="sw sw--from">19h</i><span data-i18n="pn_s084">A partir da hora</span></span>
+            <span><i class="sw sw--none"></i><span data-i18n="pn_s040">Indisponível</span></span>
           </div>
         </div>
 
         <div class="ag-painel">
           <p class="label" data-ag-dia></p>
           <div class="ag-tipos">
-            <button type="button" class="pill" data-ag-tipo="free" aria-pressed="false">Livre</button>
-            <button type="button" class="pill" data-ag-tipo="from" aria-pressed="false">A partir de…</button>
-            <button type="button" class="pill" data-ag-tipo="none" aria-pressed="false">Indisponível</button>
+            <button type="button" class="pill" data-ag-tipo="free" aria-pressed="false" data-i18n="pn_s038"><span data-i18n="pn_s038">Livre</span></button>
+            <button type="button" class="pill" data-ag-tipo="from" aria-pressed="false" data-i18n="pn_s039"><span data-i18n="pn_s039">A partir de…</span></button>
+            <button type="button" class="pill" data-ag-tipo="none" aria-pressed="false" data-i18n="pn_s040"><span data-i18n="pn_s040">Indisponível</span></button>
           </div>
           <div class="ag-roda-caixa" hidden>
-            <p class="label" style="margin-top: 24px;">A partir de que horas?</p>
-            <div class="ag-roda" data-ag-roda role="slider" tabindex="0" aria-label="Hora" aria-valuemin="6" aria-valuemax="21">
+            <p class="label" style="margin-top: 24px;" data-i18n="pn_s041">A partir de que horas?</p>
+            <div class="ag-roda" data-ag-roda role="slider" tabindex="0" aria-label="Hora" aria-valuemin="6" aria-valuemax="21" data-i18n="pn_s107" data-i18n-attr="aria-label">
               <ul data-ag-roda-lista></ul>
             </div>
-            <p class="muted" style="margin-top: 8px;">Deslize para cima ou para baixo, ou toque numa hora.</p>
+            <p class="muted" style="margin-top: 8px;" data-i18n="pn_s042">Deslize para cima ou para baixo, ou toque numa hora.</p>
           </div>
           <p class="muted" style="margin-top: 16px;" data-ag-nota></p>
           <p class="muted ag-resumo" data-ag-resumo></p>
-          <div class="ag-acoes"><button type="button" class="btn btn--secondary" data-ag-preencher>Preencher com a semana padrão</button></div>
+          <div class="ag-acoes"><button type="button" class="btn btn--secondary" data-ag-preencher data-i18n="pn_s043"><span data-i18n="pn_s043">Preencher com a semana padrão</span></button></div>
           <p class="ag-estado" data-ag-estado aria-live="polite"></p>
         </div>
       </div>
     </main>
 
     <main class="shell" data-sec-painel="dinheiro" hidden data-dinheiro>
-      <p class="kicker">Só o que entrou. Sem despesas.</p>
+      <p class="kicker" data-i18n="pn_s044">Só o que entrou. Sem despesas.</p>
       <div class="ag-topo">
-        <button type="button" class="ag-seta" data-din-ant aria-label="Mês anterior"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ag-seta" data-din-ant aria-label="Mês anterior" data-i18n="pn_s105" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <h1 data-din-mes>Dinheiro</h1>
-        <button type="button" class="ag-seta" data-din-seg aria-label="Mês seguinte"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="ag-seta" data-din-seg aria-label="Mês seguinte" data-i18n="pn_s106" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9.5 5.5L16 12L9.5 18.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <div class="card">
         <p class="din-total" data-din-total>—</p>
-        <p class="muted" style="margin: 4px 0 12px;">entrou neste mês</p>
+        <p class="muted" style="margin: 4px 0 12px;" data-i18n="pn_s045">entrou neste mês</p>
         <div data-din-linhas></div>
       </div>
       <div class="bloco"><p class="label"><span data-t="Pl">Sessões</span></p><div class="card" data-din-sessoes></div></div>
-      <div class="bloco"><p class="label">Ainda por receber</p><div class="card"><div class="item"><span>Restante das sessões confirmadas</span><span data-din-receber>—</span></div></div></div>
+      <div class="bloco"><p class="label" data-i18n="pn_s046">Ainda por receber</p><div class="card"><div class="item"><span data-i18n="pn_s047"><span data-i18n="pn_s047">Restante das sessões confirmadas</span></span><span data-din-receber>—</span></div></div></div>
       <p class="muted" style="margin-top: 16px;" data-din-nota></p>
     </main>
 
     <main class="shell" data-sec-painel="ajustes" hidden data-ajustes>
-      <p class="kicker">Só você vê isto. Tudo fica guardado sozinho.</p>
-      <h1>Ajustes</h1>
+      <p class="kicker" data-i18n="pn_s048">Só você vê isto. Tudo fica guardado sozinho.</p>
+      <h1 data-i18n="pn_s013">Ajustes</h1>
       <p class="ag-estado" data-aj-estado aria-live="polite"></p>
 
       <div class="card aj-linha">
-        <div><p class="aj-titulo">Receber pedidos</p><p class="muted" data-aj-switch-nota></p></div>
-        <button type="button" class="aj-switch" role="switch" aria-checked="true" aria-label="Receber pedidos" data-aj-switch><span></span></button>
+        <div><p class="aj-titulo" data-i18n="pn_s049">Receber pedidos</p><p class="muted" data-aj-switch-nota></p></div>
+        <button type="button" class="aj-switch" role="switch" aria-checked="true" aria-label="Receber pedidos" data-aj-switch data-i18n="pn_s049" data-i18n-attr="aria-label"><span></span></button>
       </div>
 
       <div class="bloco">
-        <p class="label">Disponibilidade</p>
+        <p class="label" data-i18n="pn_s050">Disponibilidade</p>
         <div class="card">
-          <p class="aj-titulo">Semana padrão</p>
-          <p class="muted">Como é a sua semana tipo. Na Agenda, "Preencher com a semana padrão" usa isto.</p>
+          <p class="aj-titulo" data-i18n="pn_s051">Semana padrão</p>
+          <p class="muted" data-i18n="pn_s052">Como é a sua semana tipo. Na Agenda, "Preencher com a semana padrão" usa isto.</p>
           <div class="aj-semana" data-aj-semana></div>
         </div>
         <div class="card">
-          <p class="aj-titulo">Tempo de deslocação</p>
-          <p class="muted">Tempo livre entre duas <span data-t="pl">sessões</span>, para chegar de um sítio ao outro.</p>
+          <p class="aj-titulo" data-i18n="pn_s053">Tempo de deslocação</p>
+          <p class="muted"><span data-tt="pn_travel_d" data-tt-pt="Tempo livre entre duas {pl}, para chegar de um sítio ao outro.">Tempo livre entre duas sessões, para chegar de um sítio ao outro.</span></p>
           <div class="ag-tipos" style="margin-top: 16px;">
-            <button type="button" class="pill" data-aj-desl="30" aria-pressed="false">30 min</button>
-            <button type="button" class="pill" data-aj-desl="60" aria-pressed="false">1 hora</button>
-            <button type="button" class="pill" data-aj-desl="120" aria-pressed="false">2 horas</button>
+            <button type="button" class="pill" data-aj-desl="30" aria-pressed="false" data-i18n="pn_s054"><span data-i18n="pn_s054">30 min</span></button>
+            <button type="button" class="pill" data-aj-desl="60" aria-pressed="false" data-i18n="pn_s055"><span data-i18n="pn_s055">1 hora</span></button>
+            <button type="button" class="pill" data-aj-desl="120" aria-pressed="false" data-i18n="pn_s056"><span data-i18n="pn_s056">2 horas</span></button>
           </div>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Valores</p>
+        <p class="label" data-i18n="pn_s057">Valores</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot"><span data-t="Sg">Sessão</span> avulsa (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="precoAvulsa"></label>
-          <label class="aj-campo-rot">Pacote de 3 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote3"></label>
-          <label class="aj-campo-rot">Pacote de 4 (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote4"></label>
-          <label class="aj-campo-rot">Desconto de lançamento (%)<input class="aj-campo" type="number" min="0" max="100" step="1" inputmode="numeric" data-aj="descontoLancamento"></label>
-          <label class="aj-campo-rot">Desconto válido até<input class="aj-campo" type="date" data-aj="descontoAte"></label>
+          <label class="aj-campo-rot"><span data-tt="pn_single" data-tt-pt="{Sg} avulsa (€)">Sessão avulsa (€)</span><input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="precoAvulsa"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s088">Pacote de 3 (€)</span><input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote3"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s089">Pacote de 4 (€)</span><input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="pacote4"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s090">Desconto de lançamento (%)</span><input class="aj-campo" type="number" min="0" max="100" step="1" inputmode="numeric" data-aj="descontoLancamento"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s091">Desconto válido até</span><input class="aj-campo" type="date" data-aj="descontoAte"></label>
           <p class="muted aj-largo" data-aj-resumo></p>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Pagamento</p>
+        <p class="label" data-i18n="pn_s058">Pagamento</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot">Sinal (€)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="sinal"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s092">Sinal (€)</span><input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="sinal"></label>
           <label class="aj-campo-rot">MB Way<input class="aj-campo" type="tel" data-aj="mbway"></label>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Regras</p>
+        <p class="label" data-i18n="pn_s059">Regras</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot">Duração da <span data-t="sg">sessão</span> (min)<input class="aj-campo" type="number" min="15" step="5" inputmode="numeric" data-aj="duracao"></label>
-          <label class="aj-campo-rot">Cancelar sem custo até (horas antes)<input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="cancelarAteHoras"></label>
-          <label class="aj-campo-rot">Validade do pacote (meses)<input class="aj-campo" type="number" min="1" step="1" inputmode="numeric" data-aj="validadePacoteMeses"></label>
+          <label class="aj-campo-rot"><span data-tt="pn_duration" data-tt-pt="Duração da {sg} (min)">Duração da sessão (min)</span><input class="aj-campo" type="number" min="15" step="5" inputmode="numeric" data-aj="duracao"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s094">Cancelar sem custo até (horas antes)</span><input class="aj-campo" type="number" min="0" step="1" inputmode="numeric" data-aj="cancelarAteHoras"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s095">Validade do pacote (meses)</span><input class="aj-campo" type="number" min="1" step="1" inputmode="numeric" data-aj="validadePacoteMeses"></label>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Locais</p>
-        <div class="card"><p class="muted">Onde aceita <span data-t="pl">sessões</span>. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div>
+        <p class="label" data-i18n="pn_s060">Locais</p>
+        <div class="card"><p class="muted"><span data-tt="pn_places_d" data-tt-pt="Onde aceita {pl}. Quem reserva só vê os marcados.">Onde aceita sessões. Quem reserva só vê os marcados.</span></p><div class="aj-locais" data-aj-locais></div>
           <div class="aj-grelha" style="margin-top: 16px;">
-            <label class="aj-campo-rot">Outro local<input class="aj-campo" type="text" maxlength="60" placeholder="Ex.: Em casa do cliente" data-aj-local-novo></label>
-            <div style="display: flex; align-items: flex-end;"><button type="button" class="btn btn--secondary" data-aj-local-add>Adicionar local</button></div>
+            <label class="aj-campo-rot"><span data-i18n="pn_s097">Outro local</span><input class="aj-campo" type="text" maxlength="60" placeholder="Ex.: Em casa do cliente" data-aj-local-novo data-i18n="pn_s108" data-i18n-attr="placeholder"></label>
+            <div style="display: flex; align-items: flex-end;"><button type="button" class="btn btn--secondary" data-aj-local-add data-i18n="pn_s061"><span data-i18n="pn_s061">Adicionar local</span></button></div>
           </div>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Avisos</p>
+        <p class="label" data-i18n="pn_s062">Avisos</p>
         <div class="card aj-grelha">
-          <label class="aj-campo-rot">E-mail para avisos<input class="aj-campo" type="email" data-aj="emailAvisos"></label>
+          <label class="aj-campo-rot"><span data-i18n="pn_s098">E-mail para avisos</span><input class="aj-campo" type="email" data-aj="emailAvisos"></label>
           <label class="aj-campo-rot">WhatsApp<input class="aj-campo" type="tel" data-aj="whatsapp"></label>
         </div>
       </div>
 
       <div class="bloco" data-perfil-publico>
-        <p class="label">Perfil público</p>
+        <p class="label" data-i18n="pn_s063">Perfil público</p>
         <div class="card">
-          <p class="muted">O que as pessoas veem na sua página. Guarda sozinho.</p>
+          <p class="muted" data-i18n="pn_s064">O que as pessoas veem na sua página. Guarda sozinho.</p>
           <p class="ag-estado" data-pf-estado aria-live="polite"></p>
           <div class="aj-grelha">
-            <label class="aj-campo-rot">Nome<input class="aj-campo" type="text" autocomplete="name" data-pf="nome"></label>
-            <label class="aj-campo-rot">Cidade<input class="aj-campo" type="text" data-pf="cidade"></label>
-            <label class="aj-campo-rot">Área<select class="aj-campo" data-pf="area" data-pf-areas></select><small>Decide a palavra que o painel usa: aula, consulta, treino ou sessão.</small></label>
-            <label class="aj-campo-rot aj-largo">O que faz (uma linha)<input class="aj-campo" type="text" maxlength="80" data-pf="profissao"></label>
-            <label class="aj-campo-rot aj-largo">Sobre (2 ou 3 frases, na primeira pessoa)<textarea class="campo-texto" rows="4" maxlength="400" data-pf="sobre"></textarea></label>
-            <label class="aj-campo-rot">No NeuroMedit desde (ano)<input class="aj-campo" type="text" inputmode="numeric" maxlength="4" data-pf="desde"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s078">Nome</span><input class="aj-campo" type="text" autocomplete="name" data-pf="nome"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s079">Cidade</span><input class="aj-campo" type="text" data-pf="cidade"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s080">Área</span><select class="aj-campo" data-pf="area" data-pf-areas></select><small data-i18n="pn_s065">Decide a palavra que o painel usa: aula, consulta, treino ou sessão.</small></label>
+            <label class="aj-campo-rot aj-largo"><span data-i18n="pn_s081">O que faz (uma linha)</span><input class="aj-campo" type="text" maxlength="80" data-pf="profissao"></label>
+            <label class="aj-campo-rot aj-largo"><span data-i18n="pn_s099">Sobre (2 ou 3 frases, na primeira pessoa)</span><textarea class="campo-texto" rows="4" maxlength="400" data-pf="sobre"></textarea></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s100">No NeuroMedit desde (ano)</span><input class="aj-campo" type="text" inputmode="numeric" maxlength="4" data-pf="desde"></label>
           </div>
           <div class="pf-foto">
             <img class="pf-foto-pre" data-pf-foto-pre alt="" width="72" height="72">
             <div class="pf-foto-acoes">
-              <button type="button" class="btn btn--secondary" data-pf-foto>Usar a foto da conta Google</button>
-              <button type="button" class="btn btn--secondary" data-pf-foto-escolher>Escolher uma foto</button>
+              <button type="button" class="btn btn--secondary" data-pf-foto data-i18n="pn_s066"><span data-i18n="pn_s066">Usar a foto da conta Google</span></button>
+              <button type="button" class="btn btn--secondary" data-pf-foto-escolher data-i18n="pn_s067"><span data-i18n="pn_s067">Escolher uma foto</span></button>
               <input type="file" accept="image/jpeg,image/png,image/webp" data-pf-foto-ficheiro hidden>
-              <button type="button" class="btn btn--secondary" data-pf-foto-tirar hidden>Remover a foto</button>
+              <button type="button" class="btn btn--secondary" data-pf-foto-tirar hidden data-i18n="pn_s068"><span data-i18n="pn_s068">Remover a foto</span></button>
             </div>
           </div>
-          <p class="muted" data-pf-foto-nota aria-live="polite">Sem foto, a sua página mostra o símbolo do NeuroMedit.</p>
+          <p class="muted" data-pf-foto-nota aria-live="polite" data-i18n="pn_s069">Sem foto, a sua página mostra o símbolo do NeuroMedit.</p>
           <div class="conta-links">
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener" data-i18n="pn_s020"><span data-i18n="pn_s020">Ver a minha página</span></a>
           </div>
         </div>
         <div class="card">
-          <p class="aj-titulo">Depoimentos</p>
-          <p class="muted">O que as pessoas escreveram sobre as suas <span data-t="pl">sessões</span>. Só palavras reais, e só com a autorização de quem as escreveu. Aparecem na sua página pública.</p>
+          <p class="aj-titulo" data-i18n="pn_s070">Depoimentos</p>
+          <p class="muted"><span data-tt="pn_testimonials_d" data-tt-pt="O que as pessoas escreveram sobre as suas {pl}. Só palavras reais, e só com a autorização de quem as escreveu. Aparecem na sua página pública.">O que as pessoas escreveram sobre as suas sessões. Só palavras reais, e só com a autorização de quem as escreveu. Aparecem na sua página pública.</span></p>
           <div data-pf-depoimentos></div>
           <div class="aj-grelha" style="margin-top: 16px;">
-            <label class="aj-campo-rot aj-largo">O que escreveram<textarea class="campo-texto" rows="3" maxlength="300" data-dep-texto></textarea></label>
-            <label class="aj-campo-rot">Quem escreveu<input class="aj-campo" type="text" maxlength="40" placeholder="Nome ou iniciais" data-dep-nome></label>
-            <label class="aj-campo-rot">Quando<input class="aj-campo" type="text" maxlength="20" placeholder="nov 2026" data-dep-data></label>
+            <label class="aj-campo-rot aj-largo"><span data-i18n="pn_s102">O que escreveram</span><textarea class="campo-texto" rows="3" maxlength="300" data-dep-texto></textarea></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s103">Quem escreveu</span><input class="aj-campo" type="text" maxlength="40" placeholder="Nome ou iniciais" data-dep-nome data-i18n="pn_s109" data-i18n-attr="placeholder"></label>
+            <label class="aj-campo-rot"><span data-i18n="pn_s104">Quando</span><input class="aj-campo" type="text" maxlength="20" placeholder="nov 2026" data-dep-data></label>
           </div>
-          <button type="button" class="btn btn--secondary" style="margin-top: 12px;" data-dep-add>Adicionar depoimento</button>
+          <button type="button" class="btn btn--secondary" style="margin-top: 12px;" data-dep-add data-i18n="pn_s071"><span data-i18n="pn_s071">Adicionar depoimento</span></button>
           <p class="ag-estado" data-dep-erro aria-live="polite"></p>
         </div>
 
         <div class="card">
-          <p class="aj-titulo">Moradas</p>
-          <p class="muted">Com morada, o local ganha o botão "Como chegar" na sua página e o botão "Rota" nas suas próximas sessões. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
+          <p class="aj-titulo" data-i18n="pn_s072">Moradas</p>
+          <p class="muted" data-i18n="pn_s073">Com morada, o local ganha o botão "Como chegar" na sua página e o botão "Rota" nas suas próximas sessões. Sem morada, aparece "O ponto de encontro fica combinado na reserva". Nunca ponha aqui a morada de um cliente.</p>
           <div class="aj-grelha" style="margin-top: 16px;" data-pf-moradas></div>
         </div>
       </div>
 
       <div class="bloco">
-        <p class="label">Conta</p>
+        <p class="label" data-i18n="pn_s074">Conta</p>
         <div class="card">
-          <div class="item"><span>Entrou como</span><span data-email></span></div>
+          <div class="item"><span data-i18n="pn_s075"><span data-i18n="pn_s075">Entrou como</span></span><span data-email></span></div>
           <div class="conta-links">
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
-            <button type="button" class="btn btn--secondary" data-sair>Sair da conta</button>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener" data-i18n="pn_s020"><span data-i18n="pn_s020">Ver a minha página</span></a>
+            <button type="button" class="btn btn--secondary" data-sair data-i18n="pn_s014"><span data-i18n="pn_s014">Sair da conta</span></button>
           </div>
         </div>
       </div>
@@ -499,7 +505,11 @@
     import { definirProPainel, pedirAprovacao, perfisPendentes, aprovarPro, devolverPro, todosPros, moverParaLixeira, restaurarPro, apagarProParaSempre, criarConvite, listarConvites, apagarConvite, emailValido } from "./conta-pro.js";
     import { AREAS } from "./termos.js";
     import { comPro } from "./reservas-dados.js";
-    import { aplicarTermos } from "./termos.js";
+    import { aplicarTermos, nomeArea } from "./termos.js";
+    import { tr, local } from "./traduzir.js";
+    aplicarTermos(document, "");
+    const boasVindas = (nome) => { document.querySelector("[data-boasvindas]").textContent = tr("pn_welcome", "Bem-vindo de volta, {nome}.", { nome }); };
+    boasVindas("Lucas");
     let agendaIniciada = false;
 
     const estados = document.querySelectorAll("[data-estado]");
@@ -538,7 +548,7 @@
       if (chave === diaMostrado) return;
       diaMostrado = chave;
       document.querySelector("[data-hoje]").textContent =
-        agora.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
+        agora.toLocaleDateString(local(), { weekday: "long", day: "numeric", month: "long" }).replace(/^./, (c) => c.toUpperCase());
       document.querySelector("[data-visao]").textContent = mensagemDoDia(agora);
       if (lista) desenharTudo();
     }
@@ -554,23 +564,23 @@
       $("[data-so-lucas]").hidden = true;
       $("[data-conta-estado]").hidden = false;
       const t = {
-        rascunho: ["Rascunho: só você vê", "Preencha os Ajustes e a Agenda. Quando a página estiver como quer, peça a aprovação: só depois ela fica pública e as pessoas podem reservar."],
-        pendente: ["À espera de aprovação", "O pedido foi enviado. O Lucas vai ver a sua página e responde em breve. Pode continuar a editar."],
-        aprovado: ["Publicada", "A sua página está pública. O que mudar nos Ajustes aparece logo."],
-        lixeira: ["Página retirada", "O Lucas retirou a sua página, por isso já não está pública. Se foi por engano, fale com ele."]
+        rascunho: [tr("pn_c_draft", "Rascunho: só você vê"), tr("pn_c_draft_d", "Preencha os Ajustes e a Agenda. Quando a página estiver como quer, peça a aprovação: só depois ela fica pública e as pessoas podem reservar.")],
+        pendente: [tr("pn_st_pending", "À espera de aprovação"), tr("pn_c_pending_d", "O pedido foi enviado. O Lucas vai ver a sua página e responde em breve. Pode continuar a editar.")],
+        aprovado: [tr("pn_st_published", "Publicada"), tr("pn_c_published_d", "A sua página está pública. O que mudar nos Ajustes aparece logo.")],
+        lixeira: [tr("pn_c_removed", "Página retirada"), tr("pn_c_removed_d", "O Lucas retirou a sua página, por isso já não está pública. Se foi por engano, fale com ele.")]
       }[conta.estado] || ["", ""];
       $("[data-conta-titulo]").textContent = t[0];
       $("[data-conta-texto]").textContent = t[1];
       const nota = $("[data-conta-nota]");
       nota.hidden = !(conta.estado === "rascunho" && conta.notaRevisao);
-      nota.textContent = conta.notaRevisao ? `O Lucas pediu: "${conta.notaRevisao}"` : "";
+      nota.textContent = conta.notaRevisao ? tr("pn_lucas_asked", "O Lucas pediu: \"{n}\"", { n: conta.notaRevisao }) : "";
       const pedir = $("[data-conta-pedir]");
       pedir.hidden = conta.estado !== "rascunho";
       document.querySelectorAll("[data-conta-estado] [data-link-perfil]").forEach((a) => { a.hidden = conta.estado === "lixeira"; });
       pedir.onclick = async () => {
         pedir.disabled = true;
         try { await pedirAprovacao(user.uid); pintarConta(user, { ...conta, estado: "pendente", notaRevisao: "" }); }
-        catch (e) { pedir.disabled = false; $("[data-conta-aviso]").textContent = "Não consegui enviar o pedido. Tente de novo."; }
+        catch (e) { pedir.disabled = false; $("[data-conta-aviso]").textContent = tr("pn_e_request", "Não consegui enviar o pedido. Tente de novo."); }
       };
     }
 
@@ -585,21 +595,21 @@
         const pf = c.perfil || {};
         const item = novo("div", "pedido");
         item.append(
-          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "pedido-nome", pf.nome || tr("pn_no_name", "Sem nome")),
           novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · ")),
           novo("p", "muted pedido-contacto", [c.sessao?.emailAvisos, c.sessao?.whatsapp].filter(Boolean).join(" · "))
         );
         const acoes = novo("div", "pedido-acoes");
-        const ver = novo("a", "btn btn--link", "Ver a página"); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
-        const ok = novo("button", "btn btn--primary", "Aprovar"); ok.type = "button";
-        const mudar = novo("button", "btn btn--secondary", "Pedir alterações"); mudar.type = "button";
+        const ver = novo("a", "btn btn--link", tr("pn_see_page", "Ver a página")); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
+        const ok = novo("button", "btn btn--primary", tr("pn_approve", "Aprovar")); ok.type = "button";
+        const mudar = novo("button", "btn btn--secondary", tr("pn_ask_changes", "Pedir alterações")); mudar.type = "button";
         ok.onclick = async () => { ok.disabled = true; try { await aprovarPro(c.id); } catch (e) { ok.disabled = false; return; } pintarAprovacoes(); pintarPessoas(); };
         mudar.onclick = () => {
           if (item.querySelector("textarea")) return;
           const campo = novo("textarea", "campo-texto"); campo.rows = 2; campo.maxLength = 300;
-          campo.setAttribute("aria-label", `O que ${pf.nome || "a pessoa"} deve mudar`);
-          campo.placeholder = "O que falta ou deve mudar (a pessoa lê isto no painel dela)";
-          const enviar = novo("button", "btn btn--secondary", "Enviar pedido de alterações"); enviar.type = "button";
+          campo.setAttribute("aria-label", tr("pn_what_change", "O que {n} deve mudar", { n: pf.nome || tr("pn_the_person", "a pessoa") }));
+          campo.placeholder = tr("pn_what_change_ph", "O que falta ou deve mudar (a pessoa lê isto no painel dela)");
+          const enviar = novo("button", "btn btn--secondary", tr("pn_send_changes", "Enviar pedido de alterações")); enviar.type = "button";
           enviar.onclick = async () => { if (!campo.value.trim()) { campo.focus(); return; } enviar.disabled = true; try { await devolverPro(c.id, campo.value.trim()); } catch (e) { enviar.disabled = false; return; } pintarAprovacoes(); };
           item.append(campo, enviar);
           campo.focus();
@@ -611,16 +621,16 @@
     }
 
     // ---------- Lucas: professores, convites e lixeira
-    const NOME_ESTADO = { rascunho: "Rascunho", pendente: "À espera de aprovação", aprovado: "Publicada", lixeira: "Na lixeira" };
+    const NOME_ESTADO = { rascunho: tr("pn_st_draft", "Rascunho"), pendente: tr("pn_st_pending", "À espera de aprovação"), aprovado: tr("pn_st_published", "Publicada"), lixeira: tr("pn_st_trash", "Na lixeira") };
     const confirmarCom = (item, texto, rotulo, fazer) => {
       // Duas fases no próprio cartão, sem janelas do navegador: primeiro o aviso, depois a confirmação.
       if (item.querySelector("[data-confirmar]")) return;
       const caixa = novo("div", "pedido-cancelar"); caixa.dataset.confirmar = "";
       const acoes = novo("div", "pedido-acoes");
       const sim = novo("button", "btn btn--primary", rotulo); sim.type = "button";
-      const nao = novo("button", "btn btn--secondary", "Não"); nao.type = "button";
+      const nao = novo("button", "btn btn--secondary", tr("pn_no", "Não")); nao.type = "button";
       nao.onclick = () => caixa.remove();
-      sim.onclick = async () => { sim.disabled = true; nao.disabled = true; try { await fazer(); } catch (e) { sim.disabled = false; nao.disabled = false; caixa.querySelector("p").textContent = "Não consegui. Tente de novo."; } };
+      sim.onclick = async () => { sim.disabled = true; nao.disabled = true; try { await fazer(); } catch (e) { sim.disabled = false; nao.disabled = false; caixa.querySelector("p").textContent = tr("pn_e_generic", "Não consegui. Tente de novo."); } };
       caixa.append(novo("p", "muted", texto), acoes); acoes.append(sim, nao);
       item.append(caixa);
     };
@@ -629,26 +639,26 @@
       const blocoP = $("[data-pessoas]"), listaP = $("[data-pros-lista]");
       const blocoL = $("[data-lixeira]"), listaL = $("[data-lixeira-lista]");
       let todos = [];
-      try { todos = await todosPros(); } catch (e) { listaP.textContent = ""; listaP.append(novo("p", "muted", "Não consegui ler os professores agora.")); blocoP.hidden = false; return; }
+      try { todos = await todosPros(); } catch (e) { listaP.textContent = ""; listaP.append(novo("p", "muted", tr("pn_e_teachers", "Não consegui ler os professores agora."))); blocoP.hidden = false; return; }
       const ativos = todos.filter((c) => c.estado !== "lixeira").sort((a, b) => String(a.perfil?.nome || "").localeCompare(String(b.perfil?.nome || "")));
       const fora = todos.filter((c) => c.estado === "lixeira");
       blocoP.hidden = false;
       listaP.textContent = "";
-      if (!ativos.length) listaP.append(novo("p", "muted", "Ainda não há professores. Quando alguém criar uma página, ou entrar com um convite, aparece aqui."));
+      if (!ativos.length) listaP.append(novo("p", "muted", tr("pn_no_teachers", "Ainda não há professores. Quando alguém criar uma página, ou entrar com um convite, aparece aqui.")));
       ativos.forEach((c) => {
         const pf = c.perfil || {};
         const item = novo("div", "pedido");
         item.append(
           novo("p", "label pedido-meta", NOME_ESTADO[c.estado] || c.estado),
-          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "pedido-nome", pf.nome || tr("pn_no_name", "Sem nome")),
           novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · "))
         );
         const acoes = novo("div", "pedido-acoes");
-        const ver = novo("a", "btn btn--link", "Ver a página"); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
-        const lixo = novo("button", "btn btn--secondary", "Mover para a lixeira"); lixo.type = "button";
+        const ver = novo("a", "btn btn--link", tr("pn_see_page", "Ver a página")); ver.href = comPro("perfil.html", c.id); ver.target = "_blank"; ver.rel = "noopener";
+        const lixo = novo("button", "btn btn--secondary", tr("pn_to_trash", "Mover para a lixeira")); lixo.type = "button";
         lixo.onclick = () => confirmarCom(item,
-          `Retirar a página de ${pf.nome || "esta pessoa"}? Deixa de ser pública e de aceitar reservas. Pode restaurá-la na lixeira.`,
-          "Mover para a lixeira", async () => { await moverParaLixeira(c.id, c.estado); pintarPessoas(); });
+          tr("pn_trash_q", "Retirar a página de {n}? Deixa de ser pública e de aceitar reservas. Pode restaurá-la na lixeira.", { n: pf.nome || tr("pn_this_person", "esta pessoa") }),
+          tr("pn_to_trash", "Mover para a lixeira"), async () => { await moverParaLixeira(c.id, c.estado); pintarPessoas(); });
         acoes.append(ver, lixo);
         item.append(acoes);
         listaP.append(item);
@@ -659,16 +669,16 @@
         const pf = c.perfil || {};
         const item = novo("div", "pedido");
         item.append(
-          novo("p", "pedido-nome", pf.nome || "Sem nome"),
+          novo("p", "pedido-nome", pf.nome || tr("pn_no_name", "Sem nome")),
           novo("p", "muted", [pf.profissao, pf.cidade].filter(Boolean).join(" · "))
         );
         const acoes = novo("div", "pedido-acoes");
-        const volta = novo("button", "btn btn--primary", "Restaurar"); volta.type = "button";
+        const volta = novo("button", "btn btn--primary", tr("pn_restore", "Restaurar")); volta.type = "button";
         volta.onclick = async () => { volta.disabled = true; try { await restaurarPro(c.id, c.estadoAnterior); } catch (e) { volta.disabled = false; return; } pintarPessoas(); pintarAprovacoes(); };
-        const fim = novo("button", "btn btn--secondary", "Apagar para sempre"); fim.type = "button";
+        const fim = novo("button", "btn btn--secondary", tr("pn_delete_forever", "Apagar para sempre")); fim.type = "button";
         fim.onclick = () => confirmarCom(item,
-          `Apagar para sempre a página de ${pf.nome || "esta pessoa"}, com a agenda? Não há volta. Os pedidos de sessão já feitos ficam como estão.`,
-          "Apagar para sempre", async () => { await apagarProParaSempre(c.id); pintarPessoas(); });
+          tr("pn_delete_q", "Apagar para sempre a página de {n}, com a agenda? Não há volta. Os pedidos de sessão já feitos ficam como estão.", { n: pf.nome || tr("pn_this_person", "esta pessoa") }),
+          tr("pn_delete_forever", "Apagar para sempre"), async () => { await apagarProParaSempre(c.id); pintarPessoas(); });
         acoes.append(volta, fim);
         item.append(acoes);
         listaL.append(item);
@@ -681,13 +691,13 @@
       try { lista = await listarConvites(); } catch (e) { return; }
       caixa.textContent = "";
       if (!lista.length) return;
-      caixa.append(novo("p", "label", "À espera de entrarem"));
+      caixa.append(novo("p", "label", tr("pn_waiting_join", "À espera de entrarem")));
       lista.forEach((c) => {
         const item = novo("div", "pedido");
         item.append(novo("p", "pedido-nome", c.perfil?.nome || c.email), novo("p", "muted", c.email));
         const acoes = novo("div", "pedido-acoes");
-        const tirar = novo("button", "btn btn--secondary", "Remover o convite"); tirar.type = "button";
-        tirar.onclick = () => confirmarCom(item, `Remover o convite para ${c.email}? A página reservada deixa de existir.`, "Remover", async () => { await apagarConvite(c.email); pintarConvites(); });
+        const tirar = novo("button", "btn btn--secondary", tr("pn_remove_invite", "Remover o convite")); tirar.type = "button";
+        tirar.onclick = () => confirmarCom(item, tr("pn_remove_invite_q", "Remover o convite para {e}? A página reservada deixa de existir.", { e: c.email }), tr("pn_remove", "Remover"), async () => { await apagarConvite(c.email); pintarConvites(); });
         acoes.append(tirar); item.append(acoes); caixa.append(item);
       });
     }
@@ -697,14 +707,14 @@
       bloco.hidden = false;
       const campo = (k) => bloco.querySelector(`[data-cv="${k}"]`);
       const sel = campo("area");
-      if (!sel.options.length) AREAS.forEach(([nome]) => { const o = document.createElement("option"); o.value = nome; o.textContent = nome; sel.append(o); });
+      if (!sel.options.length) AREAS.forEach(([nome]) => { const o = document.createElement("option"); o.value = nome; o.textContent = nomeArea(nome); sel.append(o); });
       pintarConvites();
       const aviso = $("[data-cv-aviso]");
       $("[data-cv-criar]").onclick = async (ev) => {
         const btn = ev.currentTarget;
         const email = campo("email").value.trim();
-        if (!emailValido(email)) { aviso.textContent = "Escreva o e-mail Google da pessoa."; campo("email").focus(); return; }
-        if (!campo("nome").value.trim()) { aviso.textContent = "Falta o nome."; campo("nome").focus(); return; }
+        if (!emailValido(email)) { aviso.textContent = tr("pn_v_email", "Escreva o e-mail Google da pessoa."); campo("email").focus(); return; }
+        if (!campo("nome").value.trim()) { aviso.textContent = tr("pn_v_name", "Falta o nome."); campo("nome").focus(); return; }
         btn.disabled = true; aviso.textContent = "";
         try {
           await criarConvite(email, {
@@ -712,9 +722,9 @@
             desde: String(new Date().getFullYear()), sobre: "", foto: "", moradas: {}, depoimentos: []
           });
           ["email", "nome", "cidade", "profissao"].forEach((k) => { campo(k).value = ""; });
-          aviso.textContent = "Página reservada. Diga à pessoa para entrar em neuromedit.com/profissional.html com esse e-mail.";
+          aviso.textContent = tr("pn_reserved", "Página reservada. Diga à pessoa para entrar em neuromedit.com/profissional.html com esse e-mail.");
           pintarConvites();
-        } catch (e) { aviso.textContent = "Não consegui reservar. Tente de novo."; }
+        } catch (e) { aviso.textContent = tr("pn_e_reserve", "Não consegui reservar. Tente de novo."); }
         btn.disabled = false;
       };
     }
@@ -726,12 +736,12 @@
         definirProPainel(proId);
         pintarConta(user, conta);
         document.querySelectorAll("[data-link-perfil]").forEach((a) => { a.href = comPro("perfil.html", proId); });
-        const lr = $("[data-link-reservar]"); lr.href = comPro("reservar.html", proId); lr.textContent = "abrir a minha página de reserva";
+        const lr = $("[data-link-reservar]"); lr.href = comPro("reservar.html", proId); lr.textContent = tr("pn_open_booking", "abrir a minha página de reserva");
       }
       if (estado === "admin") { pintarAprovacoes(); pintarPessoas(); iniciarConvidar(); }
       if (estado === "admin" || estado === "pro") {
         const nome = conta?.perfil?.nome || user?.displayName;
-        if (nome) document.querySelector("[data-nome]").textContent = nome.split(" ")[0];
+        if (nome) boasVindas(nome.split(" ")[0]);
         document.querySelector("[data-email]").textContent = user?.email || "";
         document.querySelector("[data-email-curto]").textContent = user?.email || "";
         if (user?.displayName) document.querySelector("[data-nome-conta]").textContent = user.displayName;

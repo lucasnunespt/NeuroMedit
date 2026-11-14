@@ -49,7 +49,7 @@
   };
 
   const TEMPLATE = `
-<button type="button" id="settings-fab" class="settings-fab" aria-label="Abrir configurações" title="Configurações">
+<button type="button" id="settings-fab" class="settings-fab" aria-label="Abrir configurações" title="Abrir configurações" data-i18n="set_open" data-i18n-attr="aria-label,title">
   <svg class="settings-fab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     <line x1="4" y1="7" x2="20" y2="7"></line>
     <line x1="4" y1="12" x2="20" y2="12"></line>
@@ -62,10 +62,10 @@
 
 <div id="settings-overlay" class="settings-overlay" aria-hidden="true"></div>
 
-<aside id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-label="Configurações" aria-hidden="true">
+<aside id="settings-panel" class="settings-panel" role="dialog" aria-modal="true" aria-label="Configurações" data-i18n="set_title" data-i18n-attr="aria-label" aria-hidden="true">
   <div class="settings-header">
-    <h2 class="settings-title">Configurações</h2>
-    <button type="button" id="settings-close" class="settings-close" aria-label="Fechar configurações" title="Fechar">
+    <h2 class="settings-title" data-i18n="set_title">Configurações</h2>
+    <button type="button" id="settings-close" class="settings-close" aria-label="Fechar configurações" title="Fechar configurações" data-i18n="set_close" data-i18n-attr="aria-label,title">
       <svg class="settings-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M6.5 6.5L17.5 17.5"></path>
         <path d="M17.5 6.5L6.5 17.5"></path>
@@ -81,81 +81,81 @@
       - silenceStart / silenceEnd      → quando houver horário de silêncio
     -->
     <section class="settings-section" aria-labelledby="settings-section-visual">
-      <p class="settings-section-label" id="settings-section-visual">Aparência</p>
+      <p class="settings-section-label" id="settings-section-visual" data-i18n="set_appearance">Aparência</p>
 
       <div class="setting-row setting-row--stacked">
         <div class="setting-info">
-          <p class="setting-label">Tema</p>
+          <p class="setting-label" data-i18n="set_theme">Tema</p>
         </div>
-        <div class="setting-select-group setting-select-group--grid" data-setting-key="visualTheme" role="group" aria-label="Tema">
-          <button type="button" class="setting-select-option" data-value="auto" aria-pressed="false">Automático</button>
-          <button type="button" class="setting-select-option" data-value="light" aria-pressed="false">Claro</button>
-          <button type="button" class="setting-select-option" data-value="dark" aria-pressed="false">Escuro</button>
-          <button type="button" class="setting-select-option" data-value="low-contrast" aria-pressed="false">Baixo contraste</button>
+        <div class="setting-select-group setting-select-group--grid" data-setting-key="visualTheme" role="group" aria-label="Tema" data-i18n="set_theme" data-i18n-attr="aria-label">
+          <button type="button" class="setting-select-option" data-value="auto" aria-pressed="false" data-i18n="set_theme_auto">Automático</button>
+          <button type="button" class="setting-select-option" data-value="light" aria-pressed="false" data-i18n="set_theme_light">Claro</button>
+          <button type="button" class="setting-select-option" data-value="dark" aria-pressed="false" data-i18n="set_theme_dark">Escuro</button>
+          <button type="button" class="setting-select-option" data-value="low-contrast" aria-pressed="false" data-i18n="set_theme_low">Baixo contraste</button>
         </div>
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Reduzir animações</p>
-          <p class="setting-hint">Menos movimento na tela.</p>
+          <p class="setting-label" data-i18n="set_motion">Reduzir animações</p>
+          <p class="setting-hint" data-i18n="set_motion_hint">Menos movimento na tela.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações">
+        <input type="checkbox" class="setting-toggle" data-setting-key="muteAnimations" id="toggle-mute-animations" aria-label="Reduzir animações" data-i18n="set_motion" data-i18n-attr="aria-label">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Versão alternativa do design</p>
-          <p class="setting-hint">Experimental. Ao começar uma meditação, tudo se dissolve numa pessoa feita de luz.</p>
+          <p class="setting-label" data-i18n="set_alt">Versão alternativa do design</p>
+          <p class="setting-hint" data-i18n="set_alt_hint">Experimental. Ao começar uma meditação, tudo se dissolve numa pessoa feita de luz.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="altDesign" id="toggle-alt-design" aria-label="Versão alternativa do design">
+        <input type="checkbox" class="setting-toggle" data-setting-key="altDesign" id="toggle-alt-design" aria-label="Versão alternativa do design" data-i18n="set_alt" data-i18n-attr="aria-label">
       </div>
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-use">
-      <p class="settings-section-label" id="settings-section-use">Uso</p>
+      <p class="settings-section-label" id="settings-section-use" data-i18n="set_use">Uso</p>
 
       <div class="setting-row setting-row--stacked">
         <div class="setting-info">
-          <p class="setting-label">Mão dominante</p>
-          <p class="setting-hint">Põe o menu e a busca do lado do seu polegar.</p>
+          <p class="setting-label" data-i18n="set_hand">Mão dominante</p>
+          <p class="setting-hint" data-i18n="set_hand_hint">Põe o menu e a busca do lado do seu polegar.</p>
         </div>
-        <div class="setting-select-group setting-select-group--grid" data-setting-key="handedness" role="group" aria-label="Mão dominante">
-          <button type="button" class="setting-select-option" data-value="left" aria-pressed="false">Esquerda</button>
-          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false">Direita</button>
+        <div class="setting-select-group setting-select-group--grid" data-setting-key="handedness" role="group" aria-label="Mão dominante" data-i18n="set_hand" data-i18n-attr="aria-label">
+          <button type="button" class="setting-select-option" data-value="left" aria-pressed="false" data-i18n="set_hand_left">Esquerda</button>
+          <button type="button" class="setting-select-option" data-value="right" aria-pressed="false" data-i18n="set_hand_right">Direita</button>
         </div>
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Modo foco</p>
-          <p class="setting-hint">Esconde as barras após 7 segundos sem mexer.</p>
+          <p class="setting-label" data-i18n="set_focus">Modo foco</p>
+          <p class="setting-hint" data-i18n="set_focus_hint">Esconde as barras após 7 segundos sem mexer.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="focusMode" id="toggle-focus-mode" aria-label="Modo foco">
+        <input type="checkbox" class="setting-toggle" data-setting-key="focusMode" id="toggle-focus-mode" aria-label="Modo foco" data-i18n="set_focus" data-i18n-attr="aria-label">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Ocultar progresso</p>
-          <p class="setting-hint">Esconde o bloco de progresso no Início.</p>
+          <p class="setting-label" data-i18n="set_metrics">Ocultar progresso</p>
+          <p class="setting-hint" data-i18n="set_metrics_hint">Esconde o bloco de progresso no Início.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Ocultar progresso">
+        <input type="checkbox" class="setting-toggle" data-setting-key="hideMetrics" id="toggle-hide-metrics" aria-label="Ocultar progresso" data-i18n="set_metrics" data-i18n-attr="aria-label">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Final suave</p>
-          <p class="setting-hint">O som diminui devagar ao terminar a sessão.</p>
+          <p class="setting-label" data-i18n="set_smooth">Final suave</p>
+          <p class="setting-hint" data-i18n="set_smooth_hint">O som diminui devagar ao terminar a sessão.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Final suave">
+        <input type="checkbox" class="setting-toggle" data-setting-key="smoothTransition" id="toggle-smooth-transition" aria-label="Final suave" data-i18n="set_smooth" data-i18n-attr="aria-label">
       </div>
 
       <div class="setting-row">
         <div class="setting-info">
-          <p class="setting-label">Legendas</p>
-          <p class="setting-hint">Mostra o texto da voz guiada, para meditar lendo.</p>
+          <p class="setting-label" data-i18n="set_captions">Legendas</p>
+          <p class="setting-hint" data-i18n="set_captions_hint">Mostra o texto da voz guiada, para meditar lendo.</p>
         </div>
-        <input type="checkbox" class="setting-toggle" data-setting-key="captions" id="toggle-captions" aria-label="Legendas">
+        <input type="checkbox" class="setting-toggle" data-setting-key="captions" id="toggle-captions" aria-label="Legendas" data-i18n="set_captions" data-i18n-attr="aria-label">
       </div>
     </section>
 
@@ -165,11 +165,11 @@
     </section>
 
     <section class="settings-section" aria-labelledby="settings-section-account">
-      <p class="settings-section-label" id="settings-section-account">Conta</p>
+      <p class="settings-section-label" id="settings-section-account" data-i18n="set_account">Conta</p>
 
       <div id="settings-auth-container" class="settings-auth-container"></div>
 
-      <button type="button" class="setting-ghost-btn" id="btn-disconnect">
+      <button type="button" class="setting-ghost-btn" id="btn-disconnect" data-i18n="set_reset">
         Restaurar configurações padrão
       </button>
       <div id="settings-signout-slot"></div>
@@ -181,14 +181,14 @@
   const AUTH_MODAL_TEMPLATE = `
 <div id="auth-modal-overlay" class="auth-modal-overlay" aria-hidden="true">
   <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
-    <button type="button" class="auth-modal-close" id="auth-modal-close" aria-label="Fechar" title="Fechar">
+    <button type="button" class="auth-modal-close" id="auth-modal-close" aria-label="Fechar" title="Fechar" data-i18n="set_close_short" data-i18n-attr="aria-label,title">
       <svg class="auth-modal-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
         <path d="M18 6L6 18M6 6l12 12"></path>
       </svg>
     </button>
     <div class="auth-modal-content">
-      <h2 id="auth-modal-title" class="auth-modal-title">Personalizar o seu silêncio</h2>
-      <p class="auth-modal-desc">Ao criar a sua conta NeuroMedit, guardamos as suas preferências de som e temas, permitindo que a sua experiência seja consistente em qualquer dispositivo.</p>
+      <h2 id="auth-modal-title" class="auth-modal-title" data-i18n="set_auth_title">Personalizar o seu silêncio</h2>
+      <p class="auth-modal-desc" data-i18n="set_auth_desc">Ao criar a sua conta NeuroMedit, guardamos as suas preferências de som e temas, permitindo que a sua experiência seja consistente em qualquer dispositivo.</p>
       
       <button type="button" class="auth-google-btn" id="auth-btn-signin">
         <svg class="google-icon" viewBox="0 0 24 24" width="22" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -197,13 +197,32 @@
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.16l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
-        <span>Continuar com o Google</span>
+        <span data-i18n="set_auth_google">Continuar com o Google</span>
       </button>
       
-      <button type="button" class="auth-modal-cancel" id="auth-btn-cancel">Continuar offline</button>
+      <button type="button" class="auth-modal-cancel" id="auth-btn-cancel" data-i18n="set_auth_offline">Continuar offline</button>
     </div>
   </div>
 </div>`;
+
+  // Tradução: usa translations.js quando a página o carrega; senão fica o português do Brasil.
+  const tr = (key, fallback) => {
+    if (typeof getTranslation !== "function" || typeof getPreferredLanguage !== "function") return fallback;
+    const v = getTranslation(getPreferredLanguage(), key);
+    return v && v !== key && v !== "[" + key + "]" ? v : fallback;
+  };
+  function traduzir(root) {
+    if (!root || typeof getTranslation !== "function") return;
+    const els = [...root.querySelectorAll("[data-i18n]")];
+    if (root.matches && root.matches("[data-i18n]")) els.push(root);
+    els.forEach((el) => {
+      const v = tr(el.dataset.i18n, null);
+      if (v == null) return;
+      const attrs = (el.dataset.i18nAttr || "").split(",").map((a) => a.trim()).filter(Boolean);
+      if (attrs.length) attrs.forEach((a) => el.setAttribute(a, v));
+      else el.textContent = v;
+    });
+  }
 
   let state = loadSettings();
   let focusIdleTimer = 0;
@@ -369,26 +388,26 @@
     if (!sec || !corpo) return;
 
     const convidar = () => {
-      titulo.textContent = "Ensinar";
+      titulo.textContent = tr("set_teach", "Ensinar");
       corpo.innerHTML = `
         <div class="setting-row setting-row--stacked">
           <div class="setting-info">
-            <p class="setting-label">Oferecer sessões</p>
-            <p class="setting-hint">É professor ou terapeuta? Tenha a sua página de reservas no NeuroMedit.</p>
+            <p class="setting-label">${tr("set_teach_offer", "Oferecer sessões")}</p>
+            <p class="setting-hint">${tr("set_teach_offer_hint", "É professor ou terapeuta? Tenha a sua página de reservas no NeuroMedit.")}</p>
           </div>
-          <a class="button setting-ghost-btn" href="profissional.html">Crie a sua página</a>
+          <a class="button setting-ghost-btn" href="profissional.html">${tr("set_teach_create", "Crie a sua página")}</a>
         </div>`;
       sec.hidden = false;
     };
     const painel = () => {
-      titulo.textContent = "A sua página";
+      titulo.textContent = tr("set_teach_page", "A sua página");
       corpo.innerHTML = `
         <div class="setting-row">
           <div class="setting-info">
-            <p class="setting-label">Painel</p>
-            <p class="setting-hint">A sua agenda, os pedidos e o seu perfil público.</p>
+            <p class="setting-label">${tr("set_teach_panel", "Painel")}</p>
+            <p class="setting-hint">${tr("set_teach_panel_hint", "A sua agenda, os pedidos e o seu perfil público.")}</p>
           </div>
-          <a class="button setting-ghost-btn setting-row-acao" href="painel.html">Abrir o painel</a>
+          <a class="button setting-ghost-btn setting-row-acao" href="painel.html">${tr("set_teach_panel_open", "Abrir o painel")}</a>
         </div>`;
       sec.hidden = false;
     };
@@ -421,7 +440,7 @@
     if (!auth) {
       container.innerHTML = `
         <div class="setting-row">
-          <p class="setting-hint">Carregando autenticação...</p>
+          <p class="setting-hint">${tr("set_auth_loading", "Carregando autenticação…")}</p>
         </div>
       `;
       pintarEnsinar(null);
@@ -434,20 +453,20 @@
       container.innerHTML = `
         <div class="setting-row auth-user-row">
           <div class="setting-info" style="max-width: 60%;">
-            <p class="setting-label">Conta</p>
+            <p class="setting-label">${tr("set_account", "Conta")}</p>
             <p class="setting-hint" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${user.email}">${user.email}</p>
           </div>
         </div>
         <div class="setting-row">
           <div class="setting-info">
-            <p class="setting-label">Meditação presencial</p>
-            <p class="setting-hint">As sessões que marcou comigo, em Lisboa.</p>
+            <p class="setting-label">${tr("set_inperson", "Meditação presencial")}</p>
+            <p class="setting-hint">${tr("set_inperson_hint", "As sessões que marcou comigo, em Lisboa.")}</p>
           </div>
-          <a class="setting-ghost-btn setting-row-acao" href="reservar.html#minhas">As minhas sessões</a>
+          <a class="setting-ghost-btn setting-row-acao" href="reservar.html#minhas">${tr("account_my_sessions", "As minhas sessões")}</a>
         </div>
       `;
       const sairSlot = document.getElementById("settings-signout-slot");
-      if (sairSlot) sairSlot.innerHTML = `<button type="button" class="setting-ghost-btn" id="btn-signout">Sair da conta</button>`;
+      if (sairSlot) sairSlot.innerHTML = `<button type="button" class="setting-ghost-btn" id="btn-signout">${tr("account_sign_out", "Sair da conta")}</button>`;
       document.getElementById("btn-signout")?.addEventListener("click", async () => {
         try {
           await signOut(auth);
@@ -461,8 +480,8 @@
       container.innerHTML = `
         <div class="setting-row auth-login-row" style="flex-direction: column; align-items: stretch; gap: 0.75rem; width: 100%;">
           <div class="setting-info" style="margin-bottom: 0.25rem;">
-            <p class="setting-label">Sincronização na nuvem</p>
-            <p class="setting-hint">Sincronize suas preferências em todos os seus dispositivos usando sua conta Google.</p>
+            <p class="setting-label">${tr("set_sync", "Sincronização na nuvem")}</p>
+            <p class="setting-hint">${tr("set_sync_hint", "Sincronize suas preferências em todos os seus dispositivos usando sua conta Google.")}</p>
           </div>
           <button type="button" class="google-signin-btn" id="btn-signin">
             <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -471,7 +490,7 @@
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 6.16l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            <span>Entrar com o Google</span>
+            <span>${tr("set_sync_google", "Entrar com o Google")}</span>
           </button>
         </div>
       `;
@@ -766,7 +785,7 @@
     resetBtn?.addEventListener("click", () => {
       resetSettings();
       if (status) {
-        status.textContent = "Configurações restauradas.";
+        status.textContent = tr("set_reset_done", "Configurações restauradas.");
         window.setTimeout(() => {
           status.textContent = "";
         }, 2400);
@@ -834,7 +853,7 @@
     const reduced = state.muteAnimations || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
     if (reduced) {
       if (status) {
-        status.textContent = "Versão alternativa ligada. Ela aparece quando “Reduzir animações” estiver desligado.";
+        status.textContent = tr("set_alt_on", "Versão alternativa ligada. Ela aparece quando “Reduzir animações” estiver desligado.");
         window.setTimeout(() => { status.textContent = ""; }, 5000);
       }
       return;
@@ -908,8 +927,8 @@
       settingsBtn.type = "button";
       settingsBtn.id = "mobile-menu-settings";
       settingsBtn.className = "header-mobile-link nav-link";
-      settingsBtn.setAttribute("aria-label", "Configurações");
-      settingsBtn.setAttribute("title", "Configurações");
+      settingsBtn.setAttribute("aria-label", tr("mobile_menu_settings", "Configurações"));
+      settingsBtn.setAttribute("title", tr("mobile_menu_settings", "Configurações"));
       settingsBtn.dataset.i18n = "mobile_menu_settings";
       settingsBtn.dataset.i18nAttr = "aria-label,title";
       settingsBtn.innerHTML = `
@@ -923,6 +942,11 @@
       `;
       mobileNav.appendChild(settingsBtn);
     }
+
+    traduzir(document.getElementById("settings-panel"));
+    traduzir(document.getElementById("settings-fab"));
+    traduzir(document.getElementById("auth-modal-overlay"));
+    window.addEventListener("neuromedit:languagechange", () => renderAuthUI());
 
     if (routeToLuzAirlock()) return;
     loadAltDesignForAirlocks();

@@ -284,6 +284,8 @@
     results.className = "library-search-results";
     results.id = "library-search-results";
     results.setAttribute("aria-label", "Search results");
+    results.dataset.i18n = "library_search_results";
+    results.dataset.i18nAttr = "aria-label";
     document.body.appendChild(results);
 
     const input = dock.querySelector("input");

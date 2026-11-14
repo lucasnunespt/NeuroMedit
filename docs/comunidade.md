@@ -56,7 +56,7 @@ Combinado com o Lucas em nov 2026: estes componentes nasceram no código e ainda
 
 ## Por fazer
 
-- Traduzir a página (hoje só em português do Brasil).
+- ~~Traduzir a página~~ Feito (nov 2026): textos em translations-*.js com chaves `com_*`. O que as pessoas escrevem fica como foi escrito; os quatro círculos iniciais e a prática escolhida são traduzidos na hora de mostrar.
 - Barra de baixo no telemóvel ao estilo do mockup (hoje a Comunidade está no Menu).
 - Política de privacidade revista por alguém da área, e decidir a idade mínima.
 - Ao apagar um círculo, as respostas de outras pessoas e os "ressoou" ficam órfãos na base de dados (não aparecem em lado nenhum); limpar exige o plano Blaze ou um script do Lucas.

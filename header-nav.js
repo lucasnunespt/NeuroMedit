@@ -697,6 +697,15 @@
   const newsButton = news.querySelector("button");
   const newsEmpty = () => `<span class="header-pop-eyebrow" data-i18n="header_news">Novidades</span><span class="header-pop-text" data-i18n="header_news_empty">Nada de novo por agora.</span>`;
   newsPop.innerHTML = newsEmpty();
+  // O aviso guarda o texto em português; mostramo-lo na língua do site pelo tipo.
+  const textoAviso = (a) => {
+    if (typeof getTranslation !== "function" || !["aprovado", "papel", "resposta", "grupo"].includes(a.tipo)) return a.texto;
+    const lang = typeof getPreferredLanguage === "function" ? getPreferredLanguage() : "pt";
+    const k = "com_av_" + a.tipo;
+    const v = getTranslation(lang, k);
+    if (!v || v === k || v === `[${k}]`) return a.texto;
+    return v.replace("{g}", (String(a.texto || "").match(/«(.+)»/) || [])[1] || "");
+  };
   newsButton.addEventListener("click", async () => {
     if (newsPop.hidden || !settings()?.getUser?.()) return;
     try {
@@ -704,7 +713,7 @@
       const itens = await dadosCom.avisos();
       if (!itens.length) { newsPop.innerHTML = newsEmpty(); translate(); return; }
       newsPop.innerHTML = `<span class="header-pop-eyebrow" data-i18n="header_news">Novidades</span>` + itens.slice(0, 8).map((a) =>
-        `<a class="header-pop-item header-search-hit" href="${escapeHtml(a.link || "comunidade.html")}"><span class="header-search-title">${escapeHtml(a.texto)}</span></a>`).join("");
+        `<a class="header-pop-item header-search-hit" href="${escapeHtml(a.link || "comunidade.html")}"><span class="header-search-title">${escapeHtml(textoAviso(a))}</span></a>`).join("");
       translate();
       dadosCom.marcarAvisosLidos(itens);
     } catch (error) {

@@ -252,7 +252,13 @@
 
     const journey = new URLSearchParams(window.location.search).get("journey") || "space";
     const safeJourney = DESTINATIONS.has(journey) ? journey : "space";
-    title.textContent = `${safeJourney.charAt(0).toUpperCase()}${safeJourney.slice(1)} Journey`;
+    const pintarTitulo = () => {
+      const lang = typeof getPreferredLanguage === "function" ? getPreferredLanguage() : "en";
+      const v = typeof getTranslation === "function" ? getTranslation(lang, `dream_journey_${safeJourney}`) : "";
+      title.textContent = v && !/^\[?dream_journey_/.test(v) ? v : `${safeJourney.charAt(0).toUpperCase()}${safeJourney.slice(1)} Journey`;
+    };
+    pintarTitulo();
+    window.addEventListener("neuromedit:languagechange", pintarTitulo);
     createStarfield(stars, 190);
     createShootingStarScheduler(stars).start();
   }

@@ -29,9 +29,39 @@ const IC = {
   agenda: I('<rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10.5h16"/>'),
   pessoa: I('<circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c0-3.7 3.1-6.2 7-6.2s7 2.5 7 6.2"/>')
 };
-const MOTIVOS = [["sono", "Dormir melhor"], ["calma", "Acalmar a ansiedade"], ["foco", "Voltar ao foco"], ["prof", "Praticar com um professor"]];
-const PRATICAS = ["Nenhuma em especial", "Respiração Calma", "Quem está falando?", "Desacelerar à Noite", "Antes de Dormir"];
-const PAPEL = { admin: "Administrador", professor: "Professor", membro: "Membro" };
+/* ---------- Língua ----------
+   Os textos vivem em translations-*.js (chaves com_*). Os dados guardados
+   (prática escolhida, os quatro círculos iniciais) ficam em português do
+   Brasil e são traduzidos só na hora de mostrar. */
+const lang = () => (typeof getPreferredLanguage === "function" ? getPreferredLanguage() : "pt");
+function t(chave, v) {
+  const k = "com_" + chave;
+  let s = typeof getTranslation === "function" ? getTranslation(lang(), k) : "";
+  if (!s || s === k || s === `[${k}]`) s = chave;
+  return v ? s.replace(/\{(\w+)\}/g, (_, n) => (v[n] ?? "")) : s;
+}
+function tGlobal(k, reserva) {
+  const s = typeof getTranslation === "function" ? getTranslation(lang(), k) : "";
+  return s && s !== k && s !== `[${k}]` ? s : reserva;
+}
+const MOTIVOS = ["sono", "calma", "foco", "prof"];
+const motivo = (k) => (MOTIVOS.includes(k) ? t("mot_" + k) : k);
+// Valor guardado (português) → chave da prática na Biblioteca.
+const PRATICAS = [
+  ["Nenhuma em especial", ""],
+  ["Respiração Calma", "library_calm_session_1_title"],
+  ["Quem está falando?", "library_radio_1_title"],
+  ["Desacelerar à Noite", "library_sleep_session_1_title"],
+  ["Antes de Dormir", "library_sleep_session_3_title"]
+];
+const pratica = (v) => { const p = PRATICAS.find((x) => x[0] === v); return !p ? v : (p[1] ? tGlobal(p[1], v) : t("prat_nenhuma")); };
+const papel = (p) => t("papel_" + (["admin", "professor", "membro"].includes(p) ? p : "membro"));
+/** Os quatro círculos iniciais são traduzidos ao mostrar; os criados por alguém ficam como foram escritos. */
+function circ(c) {
+  const i = dados.CIRCULOS_INICIAIS.findIndex((x) => x.nome === c?.nome);
+  if (i < 0) return c;
+  return { ...c, nome: t(`c${i}_nome`), sub: t(`c${i}_sub`), proposito: t(`c${i}_prop`), cuidado: c.cuidado ? t(`c${i}_cui`) : "" };
+}
 
 const S = {
   pronto: false, user: null, eu: null, erro: "", ocupado: false,
@@ -53,13 +83,13 @@ function aviso(texto) {
   aviso.t = setTimeout(() => { el.hidden = true; }, 3200);
 }
 const lingua = () => document.documentElement.lang || "pt-BR";
-function quando(t) {
-  const m = t?.toMillis ? t.toMillis() : 0;
-  if (!m) return "agora";
+function quando(ts) {
+  const m = ts?.toMillis ? ts.toMillis() : 0;
+  if (!m) return t("agora");
   const dias = Math.floor((Date.now() - m) / 86400000);
-  if (dias < 1) return "hoje";
-  if (dias === 1) return "ontem";
-  if (dias < 7) return `há ${dias} dias`;
+  if (dias < 1) return t("hoje");
+  if (dias === 1) return t("ontem");
+  if (dias < 7) return t("ha_dias", { n: dias });
   return new Date(m).toLocaleDateString(lingua(), { day: "numeric", month: "long" });
 }
 const dataHora = (t) => new Date(t.toMillis()).toLocaleString(lingua(), { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
@@ -83,9 +113,9 @@ function confirmar({ titulo, texto, botao, nome }) {
       <form method="dialog" class="com-dlg">
         <h2 id="com-dlg-t">${esc(titulo)}</h2>
         <p id="com-dlg-d">${esc(texto)}</p>
-        ${nome ? `<label for="com-dlg-n">Para confirmar, escreva o nome: <strong>${esc(nome)}</strong></label><input id="com-dlg-n" class="com-campo" type="text" autocomplete="off">` : ""}
+        ${nome ? `<label for="com-dlg-n">${esc(t("dlg_escreva"))} <strong>${esc(nome)}</strong></label><input id="com-dlg-n" class="com-campo" type="text" autocomplete="off">` : ""}
         <div class="com-linha com-linha--fim">
-          <button class="com-acao" value="nao" type="submit">Cancelar</button>
+          <button class="com-acao" value="nao" type="submit">${esc(t("cancelar"))}</button>
           <button class="com-perigo" value="sim" type="submit" ${nome ? "disabled" : ""}>${esc(botao)}</button>
         </div>
       </form>`;
@@ -100,7 +130,7 @@ function confirmar({ titulo, texto, botao, nome }) {
   });
 }
 
-async function tentar(fn, falha = "Não foi possível agora. Tente de novo daqui a pouco.") {
+async function tentar(fn, falha = t("erro_geral")) {
   if (S.ocupado) return false;
   S.ocupado = true;
   try { await fn(); return true; } catch (e) { console.error(e); aviso(falha); return false; } finally { S.ocupado = false; }
@@ -109,189 +139,184 @@ async function tentar(fn, falha = "Não foi possível agora. Tente de novo daqui
 /* ---------- Peças ---------- */
 const cuidados = () => `
   <ol class="com-cuidados">
-    <li><strong>Fale do que você viveu.</strong> <span>Partilhe a sua experiência; conselho só quando alguém pedir.</span></li>
-    <li><strong>Nada de vendas nem links para fora.</strong> <span>Professores divulgam o seu trabalho no próprio canal.</span></li>
-    <li><strong>O que é partilhado aqui fica aqui.</strong> <span>Não copie nem leve a história de alguém para outro lugar.</span></li>
-    <li><strong>Isto não substitui ajuda profissional.</strong> <span>Se estiver em crise, procure apoio imediato: na Europa ligue 112; no Brasil, 188 (CVV) ou 192.</span></li>
+    ${[1, 2, 3, 4].map((i) => `<li><strong>${t(`cui${i}_t`)}</strong> <span>${t(`cui${i}_d`)}</span></li>`).join("")}
   </ol>`;
 
 const previa = () => `
   <section class="com-bloco" aria-labelledby="com-pv">
-    <p class="com-sobre">Uma prévia</p>
-    <h2 id="com-pv">O que você vai encontrar lá dentro</h2>
+    <p class="com-sobre">${t("pv_eyebrow")}</p>
+    <h2 id="com-pv">${t("pv_title")}</h2>
     <div class="com-grade">
-      ${(S.circulos.length ? S.circulos : dados.CIRCULOS_INICIAIS).slice(0, 4).map((c) => `<div class="com-cartao com-cartao--p"><strong>${esc(c.nome)}</strong><span>${esc(c.proposito)}</span></div>`).join("")}
+      ${(S.circulos.length ? S.circulos : dados.CIRCULOS_INICIAIS).slice(0, 4).map(circ).map((c) => `<div class="com-cartao com-cartao--p"><strong>${esc(c.nome)}</strong><span>${esc(c.proposito)}</span></div>`).join("")}
     </div>
-    <article class="com-cartao" aria-label="Exemplo de partilha">
-      <div class="com-linha"><span class="com-ini" aria-hidden="true">·</span><div class="com-quem"><strong>Assim é uma partilha</strong><span>Exemplo</span></div><span class="com-etq">Depois de: Respiração Calma</span></div>
-      <p>Alguém conta, em poucas linhas, o que ficou depois de meditar. Quem lê pode dizer que aquilo ressoou ou responder com cuidado, sem contagem de gostos e sem pressa.</p>
+    <article class="com-cartao" aria-label="${t("pv_exemplo_aria")}">
+      <div class="com-linha"><span class="com-ini" aria-hidden="true">·</span><div class="com-quem"><strong>${t("pv_assim")}</strong><span>${t("pv_exemplo")}</span></div><span class="com-etq">${esc(t("depois_de", { p: pratica("Respiração Calma") }))}</span></div>
+      <p>${t("pv_texto")}</p>
     </article>
     <div class="com-grade com-grade--3">
-      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>Dos professores</strong><span>Novas práticas e convites, só de quem ensina.</span></div></div>
-      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>Encontros ao vivo</strong><span>Meditar em grupo, câmara opcional.</span></div></div>
-      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem"><strong>Grupos pequenos</strong><span>Turmas e amigos que praticam juntos.</span></div></div>
+      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>${t("pv_prof_t")}</strong><span>${t("pv_prof_d")}</span></div></div>
+      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>${t("pv_enc_t")}</strong><span>${t("pv_enc_d")}</span></div></div>
+      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem"><strong>${t("pv_grp_t")}</strong><span>${t("pv_grp_d")}</span></div></div>
     </div>
   </section>`;
 
 const capa = () => `
   <div class="com-capa">
-    <p class="com-sobre">Comunidade</p>
-    <h1>Praticar junto, cada um no seu tempo.</h1>
-    <p class="com-lead">Um lugar para partilhar o que a prática deixou em você. Sem seguidores, sem contagens, sem feed infinito e sem pressa de responder.</p>
+    <p class="com-sobre">${t("capa_eyebrow")}</p>
+    <h1>${t("capa_title")}</h1>
+    <p class="com-lead">${t("capa_lead")}</p>
   </div>`;
 
 function telaFora() {
   if (!S.user) {
     return `<main class="com-entrada">${capa()}
-      <section class="com-cartao"><h2>Entre para pedir o seu lugar</h2>
-      <p class="com-suave">A comunidade é fechada: cada pedido é lido pelo Lucas antes de entrar. Usamos a sua conta Google só para saber quem é você.</p>
-      <div class="com-linha"><button class="com-pri" data-a="login" type="button">Entrar com o Google</button></div></section>
+      <section class="com-cartao"><h2>${t("fora_login_t")}</h2>
+      <p class="com-suave">${t("fora_login_d")}</p>
+      <div class="com-linha"><button class="com-pri" data-a="login" type="button">${t("login_google")}</button></div></section>
       ${previa()}</main>`;
   }
   if (S.eu.estado === "removido") {
-    return `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>O seu acesso à comunidade foi retirado.</h2><p class="com-suave">As práticas da Biblioteca continuam abertas para você. Se achar que foi engano, fale com o Lucas pela página de contacto.</p><div class="com-linha"><a class="com-opt" href="library.html">Ir para a Biblioteca</a></div></section></main>`;
+    return `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("removido_t")}</h2><p class="com-suave">${t("removido_d")}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`;
   }
   if (S.eu.estado === "pendente") {
     return `<main class="com-entrada">${capa()}
-      <section class="com-cartao"><h2>Pedido enviado. Obrigado por querer praticar junto.</h2>
+      <section class="com-cartao"><h2>${t("pend_t")}</h2>
         <ol class="com-cuidados">
-          <li><strong>Pedido recebido.</strong> <span>Você não precisa fazer mais nada.</span></li>
-          <li><strong>O Lucas lê cada pedido com calma.</strong> <span>Uma pessoa, não um robô, decide quem entra.</span></li>
-          <li><strong>O aviso aparece aqui no site.</strong> <span>Quando voltar, veja as Novidades (o sino). Nada de mensagens a insistir enquanto espera.</span></li>
+          ${[1, 2, 3].map((i) => `<li><strong>${t(`pend${i}_t`)}</strong> <span>${t(`pend${i}_d`)}</span></li>`).join("")}
         </ol>
-        <div class="com-linha"><a class="com-opt" href="calm.html">Praticar enquanto espera: Respiração Calma</a><button class="com-acao" data-a="cancelar-pedido" type="button">Cancelar o pedido</button></div>
+        <div class="com-linha"><a class="com-opt" href="calm.html">${t("pend_praticar")}</a><button class="com-acao" data-a="cancelar-pedido" type="button">${t("pend_cancelar")}</button></div>
       </section>${previa()}</main>`;
   }
   const convidado = S.eu.convidado;
   return `<main class="com-entrada">${capa()}
-    <section class="com-cartao" aria-labelledby="com-q1"><h2 id="com-q1">O que te traz aqui?</h2>
-      <p class="com-suave">Escolha uma ou mais. Dá para mudar depois.</p>
-      <div class="com-linha">${MOTIVOS.map(([k, n]) => `<button class="com-opt ${S.motivos[k] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.motivos[k])}" data-a="motivo" data-v="${k}">${n}</button>`).join("")}</div>
+    <section class="com-cartao" aria-labelledby="com-q1"><h2 id="com-q1">${t("q1_t")}</h2>
+      <p class="com-suave">${t("q1_d")}</p>
+      <div class="com-linha">${MOTIVOS.map((k) => `<button class="com-opt ${S.motivos[k] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.motivos[k])}" data-a="motivo" data-v="${k}">${motivo(k)}</button>`).join("")}</div>
     </section>
-    <section class="com-cartao" aria-labelledby="com-q2"><h2 id="com-q2">Os cuidados da comunidade</h2>
-      <p class="com-suave">Quatro combinados curtos. Valem para todos, inclusive para os professores.</p>
+    <section class="com-cartao" aria-labelledby="com-q2"><h2 id="com-q2">${t("q2_t")}</h2>
+      <p class="com-suave">${t("q2_d")}</p>
       ${cuidados()}
-      <label class="com-chk"><input type="checkbox" data-a="aceitar" ${S.aceito ? "checked" : ""}>Li e aceito os cuidados</label>
-      <p class="com-suave com-peq">Guardamos o seu nome, a foto da conta Google, o seu e-mail (só o Lucas vê) e o que você escrever. Pode levar ou apagar tudo no seu perfil, a qualquer momento.</p>
-      <div class="com-linha"><button class="com-pri" data-a="pedir" type="button" ${S.aceito ? "" : "disabled"}>${convidado ? "Entrar na comunidade" : "Pedir para entrar"}</button>
-      <span class="com-suave com-peq">${convidado ? "O Lucas convidou você: a entrada é imediata." : "Cada pedido é visto pelo Lucas antes de entrar."}</span></div>
+      <label class="com-chk"><input type="checkbox" data-a="aceitar" ${S.aceito ? "checked" : ""}>${t("aceito")}</label>
+      <p class="com-suave com-peq">${t("dados_aviso")}</p>
+      <div class="com-linha"><button class="com-pri" data-a="pedir" type="button" ${S.aceito ? "" : "disabled"}>${convidado ? t("entrar_com") : t("pedir")}</button>
+      <span class="com-suave com-peq">${convidado ? t("convidado_d") : t("pedido_d")}</span></div>
     </section></main>`;
 }
 
 function lateral(tela) {
   const eu = S.eu;
   const pend = S.gestao.membros.filter((m) => m.estado === "pendente").length;
-  return `<aside class="com-esq" aria-label="Círculos e grupos">
-    <p class="com-cap">Círculos</p>
+  return `<aside class="com-esq" aria-label="${t("lat_aria")}">
+    <p class="com-cap">${t("circulos")}</p>
     <nav class="com-lista">
-      ${S.circulos.map((c) => `<a class="com-circ ${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? "is-on" : ""}" href="#c=${c.id}"><span>${esc(c.nome)}</span><small>${esc(c.sub || "")}</small></a>`).join("")}
-      <a class="com-circ ${tela === "grupos" || tela === "grupo" ? "is-on" : ""}" href="#grupos"><span>Grupos e conversas</span><small>Grupos fechados e chats</small></a>
-      ${eu.admin ? `<a class="com-circ ${tela === "gestao" ? "is-on" : ""}" href="#gestao"><span>Gestão</span><small>${pend ? (pend === 1 ? "1 pedido à espera" : `${pend} pedidos à espera`) : "Membros, convites e denúncias"}</small></a>` : ""}
-      <a class="com-circ ${tela === "perfil" ? "is-on" : ""}" href="#perfil"><span>Meu perfil</span><small>Nome e os meus dados</small></a>
+      ${S.circulos.map(circ).map((c) => `<a class="com-circ ${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? "is-on" : ""}" href="#c=${c.id}"><span>${esc(c.nome)}</span><small>${esc(c.sub || "")}</small></a>`).join("")}
+      <a class="com-circ ${tela === "grupos" || tela === "grupo" ? "is-on" : ""}" href="#grupos"><span>${t("grupos_t")}</span><small>${t("grupos_s")}</small></a>
+      ${eu.admin ? `<a class="com-circ ${tela === "gestao" ? "is-on" : ""}" href="#gestao"><span>${t("gestao")}</span><small>${pend ? (pend === 1 ? t("pend_1") : t("pend_n", { n: pend })) : t("gestao_s")}</small></a>` : ""}
+      <a class="com-circ ${tela === "perfil" ? "is-on" : ""}" href="#perfil"><span>${t("perfil_t")}</span><small>${t("perfil_s")}</small></a>
     </nav>
-    ${eu.professor ? `<details class="com-mais"><summary>Novo círculo</summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">Nome do círculo</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="Nome do círculo" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="Para que serve (uma frase)" aria-label="Propósito do círculo"><button class="com-opt" type="submit">${IC.mais} Criar círculo</button></form></details>` : ""}
+    ${eu.professor ? `<details class="com-mais"><summary>${t("novo_circulo")}</summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">${t("nome_circulo")}</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("nome_circulo")}" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="${t("proposito_ph")}" aria-label="${t("proposito_aria")}"><button class="com-opt" type="submit">${IC.mais} ${t("criar_circulo")}</button></form></details>` : ""}
   </aside>`;
 }
 
 function direita() {
   const eu = S.eu;
-  return `<aside class="com-dir" aria-label="Professores e encontros">
-    <section class="com-cartao com-cartao--p"><h3>Dos professores</h3><p class="com-suave com-peq">Só os professores publicam aqui: novas práticas e convites.</p>
-      ${S.canal.length ? S.canal.slice(0, 5).map((a) => `<div class="com-linha com-linha--topo"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="Apagar aviso">${IC.lixo}</button>` : ""}</div>`).join("") : `<p class="com-suave com-peq">Ainda sem avisos.</p>`}
-      ${eu.professor ? `<form class="com-novo" data-f="canal"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="Título do aviso" aria-label="Título do aviso" required><input class="com-campo" name="texto" type="text" maxlength="300" placeholder="Uma frase (opcional)" aria-label="Texto do aviso"><button class="com-opt" type="submit">Publicar aviso</button></form>` : ""}
+  return `<aside class="com-dir" aria-label="${t("dir_aria")}">
+    <section class="com-cartao com-cartao--p"><h3>${t("pv_prof_t")}</h3><p class="com-suave com-peq">${t("canal_d")}</p>
+      ${S.canal.length ? S.canal.slice(0, 5).map((a) => `<div class="com-linha com-linha--topo"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</div>`).join("") : `<p class="com-suave com-peq">${t("sem_avisos")}</p>`}
+      ${eu.professor ? `<form class="com-novo" data-f="canal"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("aviso_titulo")}" aria-label="${t("aviso_titulo")}" required><input class="com-campo" name="texto" type="text" maxlength="300" placeholder="${t("aviso_frase")}" aria-label="${t("aviso_texto")}"><button class="com-opt" type="submit">${t("publicar_aviso")}</button></form>` : ""}
     </section>
-    <section class="com-cartao com-cartao--p"><h3>Próximos encontros</h3><p class="com-suave com-peq">Meditar em grupo, ao vivo, pelo Google Meet. Câmara opcional.</p>
-      ${S.encontros.length ? S.encontros.map((e) => `<div class="com-enc"><div class="com-linha com-linha--topo"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span><span>com ${esc(e.nome)}</span></div></div>
-        <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? "Lugar guardado" : "Guardar lugar"}</button><a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">Entrar no encontro</a>${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="Apagar encontro">${IC.lixo}</button>` : ""}</div></div>`).join("") : `<p class="com-suave com-peq">Nenhum encontro marcado.</p>`}
-      ${eu.professor ? `<form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="Nome do encontro" aria-label="Nome do encontro" required><label class="com-peq com-suave" for="com-eq">Dia e hora</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">Link do Google Meet</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">Criar sala no Google Meet</a><button class="com-opt" type="submit">Marcar encontro</button></div></form>` : ""}
+    <section class="com-cartao com-cartao--p"><h3>${t("enc_t")}</h3><p class="com-suave com-peq">${t("enc_d")}</p>
+      ${S.encontros.length ? S.encontros.map((e) => `<div class="com-enc"><div class="com-linha com-linha--topo"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span><span>${esc(t("com_nome", { nome: e.nome }))}</span></div></div>
+        <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button><a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
+      ${eu.professor ? `<form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form>` : ""}
     </section>
   </aside>`;
 }
 
 function cartaoPartilha(p, { aberta = false } = {}) {
   const eu = S.eu;
-  const autor = p.minha ? "Você" : (p.anon ? "Partilha sem nome" : (p.nome || "Membro"));
+  const autor = p.minha ? t("voce") : (p.anon ? t("sem_nome") : (p.nome || t("papel_membro")));
   const podeApagar = eu.admin || p.minha || S.circulos.find((c) => c.id === p.circulo)?.criador === eu.uid;
   const corpo = S.editando === p.id
-    ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">Editar partilha</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">Guardar</button><button class="com-acao" type="button" data-a="cancelar-edicao">Cancelar</button></div></form>`
+    ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">${t("editar_partilha")}</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">${t("guardar")}</button><button class="com-acao" type="button" data-a="cancelar-edicao">${t("cancelar")}</button></div></form>`
     : `<p class="com-texto">${esc(p.texto)}</p>`;
   return `<article class="com-cartao">
-    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><strong>${esc(autor)}</strong><span>${quando(p.criadoEm)}${p.editadoEm ? " · editada" : ""}</span></div>
-      ${p.pratica && p.pratica !== PRATICAS[0] ? `<span class="com-etq">Depois de: ${esc(p.pratica)}</span>` : ""}${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">Denunciada</span>` : ""}</div>
+    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><strong>${esc(autor)}</strong><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
+      ${p.pratica && p.pratica !== PRATICAS[0][0] ? `<span class="com-etq">${esc(t("depois_de", { p: pratica(p.pratica) }))}</span>` : ""}${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span>` : ""}</div>
     ${corpo}
     <div class="com-linha com-linha--acoes">
-      <button class="com-acao ${S.ressoou[p.id] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.ressoou[p.id])}" data-a="ressoou" data-v="${p.id}">${IC.folha}<span>${S.ressoou[p.id] ? "Ressoou em você" : "Isto ressoou em mim"}</span></button>
-      ${aberta ? "" : `<a class="com-acao" href="#p=${p.id}">${IC.responder}<span>Ler e responder</span></a>`}
+      <button class="com-acao ${S.ressoou[p.id] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.ressoou[p.id])}" data-a="ressoou" data-v="${p.id}">${IC.folha}<span>${S.ressoou[p.id] ? t("ressoou_em_voce") : t("ressoou")}</span></button>
+      ${aberta ? "" : `<a class="com-acao" href="#p=${p.id}">${IC.responder}<span>${t("ler_responder")}</span></a>`}
       <span class="com-esp"></span>
-      ${p.minha && S.editando !== p.id ? `<button class="com-acao" type="button" data-a="editar" data-v="${p.id}">${IC.editar}<span>Editar</span></button>` : ""}
-      ${podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>Apagar</span></button>` : ""}
-      ${p.minha ? "" : `<button class="com-acao" type="button" data-a="denunciar" data-v="${p.id}" ${p.denunciada ? "disabled" : ""}>${IC.bandeira}<span>${p.denunciada ? "Denunciada" : "Denunciar"}</span></button>`}
+      ${p.minha && S.editando !== p.id ? `<button class="com-acao" type="button" data-a="editar" data-v="${p.id}">${IC.editar}<span>${t("editar")}</span></button>` : ""}
+      ${podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}
+      ${p.minha ? "" : `<button class="com-acao" type="button" data-a="denunciar" data-v="${p.id}" ${p.denunciada ? "disabled" : ""}>${IC.bandeira}<span>${p.denunciada ? t("denunciada") : t("denunciar")}</span></button>`}
     </div></article>`;
 }
 
 function telaCirculo() {
-  const c = S.circulos.find((x) => x.id === S.circuloId);
+  const c = circ(S.circulos.find((x) => x.id === S.circuloId));
   if (!c) {
-    return `<div class="com-cartao"><h2>Ainda não há círculos.</h2>${S.eu.admin ? `<p class="com-suave">Comece pelos quatro círculos do desenho: Partilhas depois da prática, Calma, Sono e Foco.</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear">Criar os quatro círculos</button></div>` : `<p class="com-suave">O Lucas está preparando os primeiros.</p>`}</div>`;
+    return `<div class="com-cartao"><h2>${t("sem_circulos")}</h2>${S.eu.admin ? `<p class="com-suave">${t("semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear">${t("semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
   }
   const podeApagar = S.eu.admin || c.criador === S.eu.uid;
-  return `<div class="com-topo"><div class="com-linha"><p class="com-sobre">Círculo</p><span class="com-esp"></span>${podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>Apagar círculo</span></button>` : ""}</div>
-      <h1 class="com-h1">${esc(c.nome)}</h1><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">Cuidado deste círculo: ${esc(c.cuidado)}</span></div>` : ""}</div>
+  return `<div class="com-topo"><div class="com-linha"><p class="com-sobre">${t("circulo")}</p><span class="com-esp"></span>${podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>${t("apagar_circulo")}</span></button>` : ""}</div>
+      <h1 class="com-h1">${esc(c.nome)}</h1><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</div>
     <form class="com-cartao com-novo" data-f="publicar">
-      <label for="com-partilha"><strong>O que a prática deixou em você hoje?</strong></label>
-      <textarea id="com-partilha" class="com-campo" name="texto" maxlength="2000" placeholder="Pode ser uma frase. Não precisa ser bonito nem certo." required></textarea>
+      <label for="com-partilha"><strong>${t("pub_pergunta")}</strong></label>
+      <textarea id="com-partilha" class="com-campo" name="texto" maxlength="2000" placeholder="${t("pub_ph")}" required></textarea>
       <div class="com-linha com-linha--base">
-        <div class="com-sel"><label class="com-peq com-suave" for="com-pratica">Depois de qual prática? (opcional)</label><select id="com-pratica" class="com-campo" name="pratica">${PRATICAS.map((p) => `<option>${p}</option>`).join("")}</select></div>
-        <label class="com-chk"><input type="checkbox" name="anon">Partilhar sem mostrar meu nome</label>
-        <button class="com-pri" type="submit">Publicar</button>
+        <div class="com-sel"><label class="com-peq com-suave" for="com-pratica">${t("qual_pratica")}</label><select id="com-pratica" class="com-campo" name="pratica">${PRATICAS.map(([v]) => `<option value="${esc(v)}">${esc(pratica(v))}</option>`).join("")}</select></div>
+        <label class="com-chk"><input type="checkbox" name="anon">${t("anon")}</label>
+        <button class="com-pri" type="submit">${t("publicar")}</button>
       </div>
     </form>
-    ${S.posts.length ? S.posts.map((p) => cartaoPartilha(p)).join("") : `<div class="com-cartao com-centro"><strong>Ainda não há partilhas neste círculo.</strong><span class="com-suave">A primeira pode ser sua, quando quiser.</span></div>`}
-    <div class="com-fim"><strong>Você viu tudo.</strong><span>Não há mais nada para rolar. Volte amanhã, sem pressa.</span></div>`;
+    ${S.posts.length ? S.posts.map((p) => cartaoPartilha(p)).join("") : `<div class="com-cartao com-centro"><strong>${t("sem_partilhas")}</strong><span class="com-suave">${t("primeira")}</span></div>`}
+    <div class="com-fim"><strong>${t("fim_t")}</strong><span>${t("fim_d")}</span></div>`;
 }
 
 function telaPartilha() {
   const p = S.aberto;
-  if (!p) return `<div class="com-cartao"><h2>Esta partilha já não existe.</h2><div class="com-linha"><a class="com-opt" href="#">Voltar aos círculos</a></div></div>`;
-  const c = S.circulos.find((x) => x.id === p.circulo);
-  return `<a class="com-acao com-acao--solta" href="#c=${p.circulo}">${IC.voltar}<span>Voltar a ${esc(c?.nome || "círculo")}</span></a>
+  if (!p) return `<div class="com-cartao"><h2>${t("nao_existe")}</h2><div class="com-linha"><a class="com-opt" href="#">${t("voltar_circulos")}</a></div></div>`;
+  const c = circ(S.circulos.find((x) => x.id === p.circulo));
+  return `<a class="com-acao com-acao--solta" href="#c=${p.circulo}">${IC.voltar}<span>${esc(t("voltar_a", { c: c?.nome || t("circulo") }))}</span></a>
     ${cartaoPartilha(p, { aberta: true })}
-    <p class="com-cap">Respostas</p>
-    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? "Você" : r.nome)}${r.professor ? " · professor" : ""}</strong><span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>Apagar</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">Ainda sem respostas.</p>`}
-    <form class="com-cartao com-novo com-recuo" data-f="responder"><label for="com-resp"><strong>Responder com cuidado</strong></label><p class="com-suave com-peq">Antes de aconselhar, pergunte. Muitas vezes, quem partilhou só quer ser ouvido.</p><textarea id="com-resp" class="com-campo" name="texto" maxlength="1500" placeholder="Escreva a sua resposta" required></textarea><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">Responder</button></div></form>`;
+    <p class="com-cap">${t("respostas")}</p>
+    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? t("voce") : r.nome)}${r.professor ? t("professor_tag") : ""}</strong><span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">${t("sem_respostas")}</p>`}
+    <form class="com-cartao com-novo com-recuo" data-f="responder"><label for="com-resp"><strong>${t("responder_cuidado")}</strong></label><p class="com-suave com-peq">${t("responder_d")}</p><textarea id="com-resp" class="com-campo" name="texto" maxlength="1500" placeholder="${t("responder_ph")}" required></textarea><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("responder")}</button></div></form>`;
 }
 
 function telaGrupos() {
   const eu = S.eu;
-  return `<div class="com-topo"><p class="com-sobre">Grupos e conversas</p><h1 class="com-h1">Grupos pequenos, conversa direta.</h1><p class="com-lead">Grupos fechados para turmas, retiros ou amigos que praticam juntos. Cada grupo tem a sua conversa.</p></div>
-    ${eu.professor ? `<form class="com-cartao com-linha com-linha--base" data-f="novo-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-ng">Nome do novo grupo</label><input id="com-ng" class="com-campo" name="nome" type="text" maxlength="60" placeholder="Por exemplo: Turma de quinta" required></div><div class="com-sel"><label class="com-peq com-suave" for="com-tg">Quem pode entrar</label><select id="com-tg" class="com-campo" name="tipo"><option value="privado">Só quem eu incluir</option><option value="aberto">Qualquer membro</option></select></div><button class="com-pri" type="submit">${IC.mais} Criar grupo</button></form>` : `<p class="com-suave com-peq">Os grupos são criados pelos professores e pelo Lucas.</p>`}
+  return `<div class="com-topo"><p class="com-sobre">${t("grupos_t")}</p><h1 class="com-h1">${t("grupos_h1")}</h1><p class="com-lead">${t("grupos_lead")}</p></div>
+    ${eu.professor ? `<form class="com-cartao com-linha com-linha--base" data-f="novo-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-ng">${t("novo_grupo")}</label><input id="com-ng" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("novo_grupo_ph")}" required></div><div class="com-sel"><label class="com-peq com-suave" for="com-tg">${t("quem_entra")}</label><select id="com-tg" class="com-campo" name="tipo"><option value="privado">${t("so_incluir")}</option><option value="aberto">${t("qualquer")}</option></select></div><button class="com-pri" type="submit">${IC.mais} ${t("criar_grupo")}</button></form>` : `<p class="com-suave com-peq">${t("grupos_quem")}</p>`}
     ${S.grupos.length ? S.grupos.map((g) => {
       const dentro = (g.membros || []).includes(eu.uid);
-      return `<div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? "Só por inclusão" : "Aberto a membros"}${g.criador === eu.uid ? " · criado por você" : ""}</span></div>
-        ${dentro || eu.admin ? `<a class="com-opt" href="#g=${g.id}">Abrir conversa</a>` : `<button class="com-opt" type="button" data-a="entrar-grupo" data-v="${g.id}">Entrar no grupo</button>`}
-        ${eu.admin || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-grupo" data-v="${g.id}">${IC.lixo}<span>Apagar</span></button>` : ""}</div>`;
-    }).join("") : `<div class="com-cartao com-centro"><strong>Ainda não há grupos para você.</strong></div>`}`;
+      return `<div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}${g.criador === eu.uid ? t("criado_voce") : ""}</span></div>
+        ${dentro || eu.admin ? `<a class="com-opt" href="#g=${g.id}">${t("abrir_conversa")}</a>` : `<button class="com-opt" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button>`}
+        ${eu.admin || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-grupo" data-v="${g.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div>`;
+    }).join("") : `<div class="com-cartao com-centro"><strong>${t("sem_grupos")}</strong></div>`}`;
 }
 
 function telaGrupo() {
   const g = S.grupo, eu = S.eu;
-  if (!g) return `<div class="com-cartao"><h2>Este grupo já não existe ou você não está nele.</h2><div class="com-linha"><a class="com-opt" href="#grupos">Voltar aos grupos</a></div></div>`;
+  if (!g) return `<div class="com-cartao"><h2>${t("grupo_nao")}</h2><div class="com-linha"><a class="com-opt" href="#grupos">${t("voltar_grupos")}</a></div></div>`;
   const dono = eu.admin || g.criador === eu.uid;
   const fora = S.pessoas.filter((m) => !(g.membros || []).includes(m.id));
   const dentro = S.pessoas.filter((m) => (g.membros || []).includes(m.id));
-  return `<a class="com-acao com-acao--solta" href="#grupos">${IC.voltar}<span>Grupos e conversas</span></a>
-    <div class="com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem"><h1 class="com-h2">${esc(g.nome)}</h1><span>${g.tipo === "privado" ? "Só por inclusão" : "Aberto a membros"}</span></div><span class="com-esp"></span>${g.criador !== eu.uid && (g.membros || []).includes(eu.uid) ? `<button class="com-acao" type="button" data-a="sair-grupo" data-v="${g.id}">Sair do grupo</button>` : ""}</div>
-    <section class="com-cartao com-conversa" id="com-msgs" aria-label="Mensagens" aria-live="polite">${mensagens()}</section>
-    <form class="com-linha" data-f="mensagem"><label class="com-so-leitor" for="com-msg">Mensagem</label><input id="com-msg" class="com-campo com-campo--cresce" name="texto" type="text" maxlength="1000" placeholder="Escreva uma mensagem" autocomplete="off" required><button class="com-pri" type="submit" aria-label="Enviar">${IC.enviar}</button></form>
-    <p class="com-suave com-peq">As conversas dos grupos só são vistas por quem está no grupo e pela moderação.</p>
-    ${dono ? `<section class="com-cartao com-cartao--p"><h3>Quem está no grupo</h3>
-      ${dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><span class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong></span>${m.id !== g.criador ? `<button class="com-acao" type="button" data-a="tirar-do-grupo" data-v="${m.id}">Tirar</button>` : `<span class="com-etq">Criou o grupo</span>`}</div>`).join("")}
-      ${fora.length ? `<form class="com-linha com-linha--base" data-f="por-no-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-pg">Incluir alguém</label><select id="com-pg" class="com-campo" name="pessoa">${fora.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("")}</select></div><button class="com-opt" type="submit">Incluir no grupo</button></form>` : ""}</section>` : ""}`;
+  return `<a class="com-acao com-acao--solta" href="#grupos">${IC.voltar}<span>${t("grupos_t")}</span></a>
+    <div class="com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem"><h1 class="com-h2">${esc(g.nome)}</h1><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}</span></div><span class="com-esp"></span>${g.criador !== eu.uid && (g.membros || []).includes(eu.uid) ? `<button class="com-acao" type="button" data-a="sair-grupo" data-v="${g.id}">${t("sair_grupo")}</button>` : ""}</div>
+    <section class="com-cartao com-conversa" id="com-msgs" aria-label="${t("mensagens")}" aria-live="polite">${mensagens()}</section>
+    <form class="com-linha" data-f="mensagem"><label class="com-so-leitor" for="com-msg">${t("mensagem")}</label><input id="com-msg" class="com-campo com-campo--cresce" name="texto" type="text" maxlength="1000" placeholder="${t("msg_ph")}" autocomplete="off" required><button class="com-pri" type="submit" aria-label="${t("enviar")}">${IC.enviar}</button></form>
+    <p class="com-suave com-peq">${t("privacidade_grupo")}</p>
+    ${dono ? `<section class="com-cartao com-cartao--p"><h3>${t("quem_grupo")}</h3>
+      ${dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><span class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong></span>${m.id !== g.criador ? `<button class="com-acao" type="button" data-a="tirar-do-grupo" data-v="${m.id}">${t("tirar")}</button>` : `<span class="com-etq">${t("criou")}</span>`}</div>`).join("")}
+      ${fora.length ? `<form class="com-linha com-linha--base" data-f="por-no-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-pg">${t("incluir")}</label><select id="com-pg" class="com-campo" name="pessoa">${fora.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("")}</select></div><button class="com-opt" type="submit">${t("incluir_btn")}</button></form>` : ""}</section>` : ""}`;
 }
 function mensagens() {
-  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">Ainda sem mensagens. Comece com um olá.</p>`;
+  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
   const g = S.grupo, eu = S.eu;
-  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu.uid ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu.uid ? "Você" : m.nome)}</span><span>${esc(m.texto)}</span>${eu.admin || m.uid === eu.uid || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-mensagem" data-v="${m.id}" aria-label="Apagar mensagem">${IC.lixo}</button>` : ""}</div>`).join("");
+  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu.uid ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu.uid ? t("voce") : m.nome)}</span><span>${esc(m.texto)}</span>${eu.admin || m.uid === eu.uid || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-mensagem" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
 }
 
 function telaGestao() {
@@ -300,33 +325,33 @@ function telaGestao() {
   const dentro = membros.filter((m) => m.estado === "aprovado");
   const fora = membros.filter((m) => m.estado === "removido");
   const nomeDe = (id) => membros.find((m) => m.id === id)?.nome || "";
-  return `<div class="com-topo"><p class="com-sobre">Gestão da comunidade</p><h1 class="com-h1">Só você vê esta página.</h1><p class="com-lead">Aprove pedidos, convide pessoas, cuide das denúncias e decida quem fica.</p></div>
-    <section class="com-cartao com-cartao--p" aria-labelledby="com-g1"><h3 id="com-g1">Pedidos para entrar</h3>
-      ${pedidos.length ? pedidos.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}${m.motivos?.length ? " · " + esc(m.motivos.map((k) => MOTIVOS.find((x) => x[0] === k)?.[1] || k).join(", ")) : ""}</span></div><button class="com-opt" type="button" data-a="aprovar" data-v="${m.id}">${IC.certo} Aprovar</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">Recusar</button></div>`).join("") : `<p class="com-suave com-peq">Nenhum pedido à espera.</p>`}</section>
-    <section class="com-cartao com-cartao--p" aria-labelledby="com-g2"><h3 id="com-g2">Convidar por e-mail</h3><p class="com-suave com-peq">O convite não envia e-mail: quando a pessoa entrar no site com este e-mail Google, entra logo, sem esperar. Avise-a você mesmo com o link <strong>neuromedit.com/comunidade.html</strong>.</p>
-      <form class="com-linha" data-f="convidar"><label class="com-so-leitor" for="com-cv">E-mail</label><input id="com-cv" class="com-campo com-campo--cresce" name="email" type="email" placeholder="nome@exemplo.com" required><button class="com-pri" type="submit">Guardar convite</button></form>
-      ${convites.map((c) => `<div class="com-linha"><span class="com-etq">Convite à espera</span><span class="com-suave com-peq">${esc(c.email)}</span><button class="com-acao" type="button" data-a="cancelar-convite" data-v="${esc(c.id)}">Cancelar</button></div>`).join("")}</section>
-    <section class="com-cartao com-cartao--p" aria-labelledby="com-g3"><h3 id="com-g3">Denúncias</h3>
-      ${denuncias.length ? denuncias.map((p) => `<div class="com-den"><p class="com-texto">${esc(p.texto)}</p><div class="com-linha"><span class="com-suave com-peq">${esc(S.circulos.find((c) => c.id === p.circulo)?.nome || "")} · ${esc(p.anon ? `sem nome (${nomeDe(p.autorUid) || "autor desconhecido"})` : p.nome)}</span><span class="com-esp"></span><button class="com-opt" type="button" data-a="manter" data-v="${p.id}">Manter</button><button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>Apagar partilha</span></button></div></div>`).join("") : `<p class="com-suave com-peq">Nenhuma denúncia por resolver.</p>`}</section>
-    <section class="com-cartao com-cartao--p" aria-labelledby="com-g4"><h3 id="com-g4">Membros</h3>
-      ${dentro.length ? dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><span class="com-etq">${PAPEL[m.papel] || "Membro"}</span><button class="com-acao" type="button" data-a="papel" data-v="${m.id}" data-p="${m.papel === "professor" ? "membro" : "professor"}">${m.papel === "professor" ? "Tornar membro" : "Tornar professor"}</button><button class="com-acao com-acao--perigo" type="button" data-a="remover" data-v="${m.id}">Remover</button></div>`).join("") : `<p class="com-suave com-peq">Ainda sem membros além de você.</p>`}
-      ${fora.length ? `<p class="com-cap">Removidos</p>${fora.map((m) => `<div class="com-linha"><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><button class="com-acao" type="button" data-a="aprovar" data-v="${m.id}">Deixar voltar</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">Apagar ficha</button></div>`).join("")}` : ""}</section>`;
+  return `<div class="com-topo"><p class="com-sobre">${t("gest_eyebrow")}</p><h1 class="com-h1">${t("gest_h1")}</h1><p class="com-lead">${t("gest_lead")}</p></div>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-g1"><h3 id="com-g1">${t("pedidos")}</h3>
+      ${pedidos.length ? pedidos.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}${m.motivos?.length ? " · " + esc(m.motivos.map(motivo).join(", ")) : ""}</span></div><button class="com-opt" type="button" data-a="aprovar" data-v="${m.id}">${IC.certo} ${t("aprovar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("recusar")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_pedidos")}</p>`}</section>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-g2"><h3 id="com-g2">${t("convidar_t")}</h3><p class="com-suave com-peq">${t("convidar_d")} <strong>neuromedit.com/comunidade.html</strong>.</p>
+      <form class="com-linha" data-f="convidar"><label class="com-so-leitor" for="com-cv">${t("email")}</label><input id="com-cv" class="com-campo com-campo--cresce" name="email" type="email" placeholder="${t("email_ph")}" required><button class="com-pri" type="submit">${t("guardar_convite")}</button></form>
+      ${convites.map((c) => `<div class="com-linha"><span class="com-etq">${t("convite_espera")}</span><span class="com-suave com-peq">${esc(c.email)}</span><button class="com-acao" type="button" data-a="cancelar-convite" data-v="${esc(c.id)}">${t("cancelar")}</button></div>`).join("")}</section>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-g3"><h3 id="com-g3">${t("denuncias")}</h3>
+      ${denuncias.length ? denuncias.map((p) => `<div class="com-den"><p class="com-texto">${esc(p.texto)}</p><div class="com-linha"><span class="com-suave com-peq">${esc(circ(S.circulos.find((c) => c.id === p.circulo))?.nome || "")} · ${esc(p.anon ? t("sem_nome_de", { n: nomeDe(p.autorUid) || t("autor_desconhecido") }) : p.nome)}</span><span class="com-esp"></span><button class="com-opt" type="button" data-a="manter" data-v="${p.id}">${t("manter")}</button><button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>${t("apagar_partilha")}</span></button></div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_denuncias")}</p>`}</section>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-g4"><h3 id="com-g4">${t("membros")}</h3>
+      ${dentro.length ? dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><span class="com-etq">${papel(m.papel)}</span><button class="com-acao" type="button" data-a="papel" data-v="${m.id}" data-p="${m.papel === "professor" ? "membro" : "professor"}">${m.papel === "professor" ? t("tornar_membro") : t("tornar_prof")}</button><button class="com-acao com-acao--perigo" type="button" data-a="remover" data-v="${m.id}">${t("remover")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_membros")}</p>`}
+      ${fora.length ? `<p class="com-cap">${t("removidos")}</p>${fora.map((m) => `<div class="com-linha"><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><button class="com-acao" type="button" data-a="aprovar" data-v="${m.id}">${t("deixar_voltar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("apagar_ficha")}</button></div>`).join("")}` : ""}</section>`;
 }
 
 function telaPerfil() {
   const eu = S.eu;
-  return `<div class="com-topo"><p class="com-sobre">Meu perfil</p><h1 class="com-h1">Como os outros veem você.</h1></div>
-    <section class="com-cartao com-linha"><span class="com-foto">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span><div class="com-quem"><strong>${esc(eu.nome)}</strong><span>${PAPEL[eu.papel] || "Membro"}</span><span>A foto é a da sua conta Google.</span></div></section>
-    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">Nome que aparece na comunidade</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">Guardar nome</button></div></form>` : ""}
-    <section class="com-cartao com-novo"><h3>Os meus dados</h3><p class="com-suave">Tudo o que você escreveu aqui é seu. Pode levar uma cópia ou apagar tudo quando quiser.</p>
-      <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">Descarregar os meus dados</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">Sair da comunidade e apagar o que é meu</button>`}</div></section>
-    <section class="com-cartao com-novo"><h3>Os cuidados da comunidade</h3>${cuidados()}</section>`;
+  return `<div class="com-topo"><p class="com-sobre">${t("perfil_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
+    <section class="com-cartao com-linha"><span class="com-foto">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span><div class="com-quem"><strong>${esc(eu.nome)}</strong><span>${papel(eu.papel)}</span><span>${t("foto_google")}</span></div></section>
+    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_nome")}</button></div></form>` : ""}
+    <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
+      <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
+    <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
 }
 
 /* ---------- Desenhar ---------- */
 function desenhar() {
-  if (!S.pronto) { app.innerHTML = `<p class="com-suave com-centro com-espera">Um momento…</p>`; return; }
-  if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>A comunidade ainda está sendo ligada.</h2><p class="com-suave">${esc(S.erro)}</p><div class="com-linha"><a class="com-opt" href="library.html">Ir para a Biblioteca</a></div></section></main>`; return; }
+  if (!S.pronto) { app.innerHTML = `<p class="com-suave com-centro com-espera">${t("um_momento")}</p>`; return; }
+  if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
   if (!S.user || S.eu.estado !== "aprovado") { app.innerHTML = telaFora(); return; }
   const { chave } = rota();
   const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil" }[chave] || "circulo";
@@ -370,7 +395,7 @@ async function carregarRota() {
       S.posts = S.circuloId ? await dados.partilhas(S.circuloId) : [];
       await carregarRessoou(S.posts);
     }
-  } catch (e) { console.error(e); aviso("Não foi possível carregar esta parte. Tente de novo daqui a pouco."); }
+  } catch (e) { console.error(e); aviso(t("erro_carregar")); }
   desenhar();
 }
 async function carregarLados() {
@@ -388,7 +413,7 @@ async function arrancar(user) {
     }
   } catch (e) {
     console.error(e);
-    S.erro = "Volte daqui a pouco. Se continuar assim, avise o Lucas.";
+    S.erro = "erro_volte";
   }
   S.pronto = true;
   await carregarRota();
@@ -397,48 +422,48 @@ const recarregar = async () => { S.eu = await dados.carregarEu(); S.circulos = a
 
 /* ---------- Ações (cliques) ---------- */
 const ACOES = {
-  login: () => tentar(() => dados.entrar(), "Não foi possível entrar com o Google."),
+  login: () => tentar(() => dados.entrar(), t("erro_login")),
   motivo: (v) => { S.motivos[v] = !S.motivos[v]; desenhar(); },
   aceitar: (v, el) => { S.aceito = el.checked; desenhar(); },
   pedir: async () => { if (await tentar(() => dados.pedirEntrada({ nome: S.eu.nome, motivos: Object.keys(S.motivos).filter((k) => S.motivos[k]), convidado: S.eu.convidado }))) await arrancar(S.user); },
-  "cancelar-pedido": async () => { if (await confirmar({ titulo: "Cancelar o seu pedido?", texto: "O pedido é apagado. Pode pedir de novo quando quiser.", botao: "Sim, cancelar o pedido" }) && await tentar(() => dados.apagarTudoOQueEMeu())) await arrancar(S.user); },
-  semear: async () => { if (await tentar(() => dados.semearCirculos())) { aviso("Círculos criados."); await recarregar(); } },
+  "cancelar-pedido": async () => { if (await confirmar({ titulo: t("c_pedido_t"), texto: t("c_pedido_d"), botao: t("c_pedido_b") }) && await tentar(() => dados.apagarTudoOQueEMeu())) await arrancar(S.user); },
+  semear: async () => { if (await tentar(() => dados.semearCirculos())) { aviso(t("a_circulos_criados")); await recarregar(); } },
   ressoou: async (v) => { const novo = !S.ressoou[v]; if (await tentar(() => dados.marcarRessoou(v, novo))) { S.ressoou[v] = novo; desenhar(); } },
   editar: (v) => { S.editando = v; desenhar(); document.getElementById("com-ed")?.focus(); },
   "cancelar-edicao": () => { S.editando = ""; desenhar(); },
-  denunciar: async (v) => { if (await tentar(() => dados.denunciar(v))) { aviso("Obrigado. A moderação vai ver com cuidado."); await carregarRota(); } },
-  manter: async (v) => { if (await tentar(() => dados.manterPartilha(v))) { aviso("Partilha mantida."); await carregarRota(); } },
+  denunciar: async (v) => { if (await tentar(() => dados.denunciar(v))) { aviso(t("a_denuncia")); await carregarRota(); } },
+  manter: async (v) => { if (await tentar(() => dados.manterPartilha(v))) { aviso(t("a_mantida")); await carregarRota(); } },
   "apagar-partilha": async (v) => {
-    if (!await confirmar({ titulo: "Apagar esta partilha?", texto: "A partilha e as respostas a ela vão ser apagadas para sempre. Isto não pode ser desfeito.", botao: "Sim, apagar a partilha" })) return;
-    if (await tentar(() => dados.apagarPartilha(v))) { aviso("Partilha apagada."); if (rota().chave === "p") ir(`#c=${S.circuloId}`); else await carregarRota(); }
+    if (!await confirmar({ titulo: t("c_partilha_t"), texto: t("c_partilha_d"), botao: t("c_partilha_b") })) return;
+    if (await tentar(() => dados.apagarPartilha(v))) { aviso(t("a_partilha_apagada")); if (rota().chave === "p") ir(`#c=${S.circuloId}`); else await carregarRota(); }
   },
   "apagar-resposta": async (v) => {
-    if (!await confirmar({ titulo: "Apagar esta resposta?", texto: "A resposta vai ser apagada para sempre. Isto não pode ser desfeito.", botao: "Sim, apagar a resposta" })) return;
-    if (await tentar(() => dados.apagarResposta(S.aberto.id, v))) { aviso("Resposta apagada."); await carregarRota(); }
+    if (!await confirmar({ titulo: t("c_resposta_t"), texto: t("c_resposta_d"), botao: t("c_resposta_b") })) return;
+    if (await tentar(() => dados.apagarResposta(S.aberto.id, v))) { aviso(t("a_resposta_apagada")); await carregarRota(); }
   },
   "apagar-circulo": async (v) => {
-    const c = S.circulos.find((x) => x.id === v);
-    if (!await confirmar({ titulo: "Apagar o círculo inteiro?", texto: `O círculo «${c.nome}» e todas as partilhas e respostas dentro dele vão ser apagados para sempre, para todas as pessoas. Isto não pode ser desfeito.`, botao: "Sim, apagar o círculo", nome: c.nome })) return;
-    if (await tentar(() => dados.apagarCirculo(v))) { aviso("Círculo apagado."); S.circulos = await dados.circulos(); ir("#"); }
+    const c = circ(S.circulos.find((x) => x.id === v));
+    if (!await confirmar({ titulo: t("c_circulo_t"), texto: t("c_circulo_d", { n: c.nome }), botao: t("c_circulo_b"), nome: c.nome })) return;
+    if (await tentar(() => dados.apagarCirculo(v))) { aviso(t("a_circulo_apagado")); S.circulos = await dados.circulos(); ir("#"); }
   },
   "entrar-grupo": async (v) => { if (await tentar(() => dados.entrarNoGrupo(v))) ir(`#g=${v}`); },
-  "sair-grupo": async (v) => { if (await confirmar({ titulo: "Sair deste grupo?", texto: "Você deixa de ver a conversa. As suas mensagens ficam.", botao: "Sim, sair do grupo" }) && await tentar(() => dados.sairDoGrupo(v))) ir("#grupos"); },
+  "sair-grupo": async (v) => { if (await confirmar({ titulo: t("c_sair_t"), texto: t("c_sair_d"), botao: t("c_sair_b") }) && await tentar(() => dados.sairDoGrupo(v))) ir("#grupos"); },
   "tirar-do-grupo": async (v) => { if (await tentar(() => dados.tirarDoGrupo(S.grupo.id, v))) await carregarRota(); },
   "apagar-grupo": async (v) => {
     const g = S.grupos.find((x) => x.id === v);
-    if (!await confirmar({ titulo: "Apagar o grupo inteiro?", texto: `O grupo «${g.nome}» e toda a sua conversa vão ser apagados para sempre, para todos os membros. Isto não pode ser desfeito.`, botao: "Sim, apagar o grupo", nome: g.nome })) return;
-    if (await tentar(() => dados.apagarGrupo(v))) { aviso("Grupo apagado."); await carregarRota(); }
+    if (!await confirmar({ titulo: t("c_grupo_t"), texto: t("c_grupo_d", { n: g.nome }), botao: t("c_grupo_b"), nome: g.nome })) return;
+    if (await tentar(() => dados.apagarGrupo(v))) { aviso(t("a_grupo_apagado")); await carregarRota(); }
   },
-  "apagar-mensagem": async (v) => { if (await confirmar({ titulo: "Apagar esta mensagem?", texto: "A mensagem desaparece para todo o grupo.", botao: "Sim, apagar a mensagem" })) await tentar(() => dados.apagarMensagem(S.grupo.id, v)); },
-  "apagar-canal": async (v) => { if (await confirmar({ titulo: "Apagar este aviso?", texto: "O aviso desaparece para todos os membros.", botao: "Sim, apagar o aviso" }) && await tentar(() => dados.apagarDoCanal(v))) { await carregarLados(); desenhar(); } },
-  "apagar-encontro": async (v) => { if (await confirmar({ titulo: "Apagar este encontro?", texto: "O encontro desaparece para todos, incluindo quem guardou lugar.", botao: "Sim, apagar o encontro" }) && await tentar(() => dados.apagarEncontro(v))) { await carregarLados(); desenhar(); } },
-  lugar: async (v) => { const e = S.encontros.find((x) => x.id === v); const novo = !e.guardado; if (await tentar(() => dados.guardarLugar(v, novo))) { e.guardado = novo; aviso(novo ? "Lugar guardado." : "Lugar libertado."); desenhar(); } },
-  aprovar: async (v) => { if (await tentar(() => dados.aprovar(v))) { aviso("Aprovado. A pessoa vê o aviso quando voltar ao site."); await recarregar(); } },
-  recusar: async (v) => { if (await confirmar({ titulo: "Apagar este pedido?", texto: "A ficha da pessoa é apagada, sem aviso público. Ela pode pedir de novo.", botao: "Sim, apagar" }) && await tentar(() => dados.recusar(v))) await recarregar(); },
+  "apagar-mensagem": async (v) => { if (await confirmar({ titulo: t("c_msg_t"), texto: t("c_msg_d"), botao: t("c_msg_b") })) await tentar(() => dados.apagarMensagem(S.grupo.id, v)); },
+  "apagar-canal": async (v) => { if (await confirmar({ titulo: t("c_aviso_t"), texto: t("c_aviso_d"), botao: t("c_aviso_b") }) && await tentar(() => dados.apagarDoCanal(v))) { await carregarLados(); desenhar(); } },
+  "apagar-encontro": async (v) => { if (await confirmar({ titulo: t("c_enc_t"), texto: t("c_enc_d"), botao: t("c_enc_b") }) && await tentar(() => dados.apagarEncontro(v))) { await carregarLados(); desenhar(); } },
+  lugar: async (v) => { const e = S.encontros.find((x) => x.id === v); const novo = !e.guardado; if (await tentar(() => dados.guardarLugar(v, novo))) { e.guardado = novo; aviso(novo ? t("a_lugar_guardado") : t("a_lugar_libertado")); desenhar(); } },
+  aprovar: async (v) => { if (await tentar(() => dados.aprovar(v))) { aviso(t("a_aprovado")); await recarregar(); } },
+  recusar: async (v) => { if (await confirmar({ titulo: t("c_recusar_t"), texto: t("c_recusar_d"), botao: t("c_recusar_b") }) && await tentar(() => dados.recusar(v))) await recarregar(); },
   remover: async (v) => {
     const m = S.gestao.membros.find((x) => x.id === v);
-    if (!await confirmar({ titulo: `Remover ${m.nome} da comunidade?`, texto: "A pessoa perde o acesso aos círculos e grupos. As partilhas dela ficam. Para voltar, você tem de a deixar entrar de novo.", botao: "Sim, remover" })) return;
-    if (await tentar(() => dados.remover(v))) { aviso(`${m.nome} saiu da comunidade.`); await recarregar(); }
+    if (!await confirmar({ titulo: t("c_remover_t", { n: m.nome }), texto: t("c_remover_d"), botao: t("c_remover_b") })) return;
+    if (await tentar(() => dados.remover(v))) { aviso(t("a_removido", { n: m.nome })); await recarregar(); }
   },
   papel: async (v, el) => { if (await tentar(() => dados.mudarPapel(v, el.dataset.p))) await recarregar(); },
   "cancelar-convite": async (v) => { if (await tentar(() => dados.cancelarConvite(v))) await carregarRota(); },
@@ -448,8 +473,8 @@ const ACOES = {
     a.click(); URL.revokeObjectURL(a.href);
   }),
   "apagar-tudo": async () => {
-    if (!await confirmar({ titulo: "Sair da comunidade e apagar o que é seu?", texto: "As suas partilhas, os seus avisos e a sua ficha de membro são apagados para sempre. As respostas que deu a outras pessoas e as mensagens em grupos ficam. Isto não pode ser desfeito.", botao: "Sim, sair e apagar", nome: "apagar" })) return;
-    if (await tentar(() => dados.apagarTudoOQueEMeu())) { aviso("Feito. Obrigado por ter estado aqui."); location.hash = ""; await arrancar(S.user); }
+    if (!await confirmar({ titulo: t("c_tudo_t"), texto: t("c_tudo_d"), botao: t("c_tudo_b"), nome: t("c_tudo_palavra") })) return;
+    if (await tentar(() => dados.apagarTudoOQueEMeu())) { aviso(t("a_feito")); location.hash = ""; await arrancar(S.user); }
   }
 };
 
@@ -458,22 +483,22 @@ const FORMS = {
   publicar: async (f) => {
     const d = new FormData(f);
     const texto = d.get("texto").trim(); if (!texto) return;
-    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto }))) { aviso("Partilha publicada."); await carregarRota(); }
+    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto }))) { aviso(t("a_publicada")); await carregarRota(); }
   },
-  editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso("Partilha editada."); await carregarRota(); } },
-  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso("Resposta publicada."); await carregarRota(); } },
-  "novo-circulo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarCirculo({ nome: d.get("nome").trim(), proposito: d.get("proposito").trim() }); })) { aviso("Círculo criado."); S.circulos = await dados.circulos(); ir(`#c=${id}`); } },
+  editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso(t("a_editada")); await carregarRota(); } },
+  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso(t("a_resposta")); await carregarRota(); } },
+  "novo-circulo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarCirculo({ nome: d.get("nome").trim(), proposito: d.get("proposito").trim() }); })) { aviso(t("a_circulo_criado")); S.circulos = await dados.circulos(); ir(`#c=${id}`); } },
   "novo-grupo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarGrupo({ nome: d.get("nome").trim(), tipo: d.get("tipo") }); })) ir(`#g=${id}`); },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },
   mensagem: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto) return; campo.value = ""; if (!await tentar(() => dados.enviarMensagem(S.grupo.id, { texto, nome: S.eu.nome }))) campo.value = texto; campo.focus(); },
   canal: async (f) => { const d = new FormData(f); if (await tentar(() => dados.publicarNoCanal({ titulo: d.get("titulo").trim(), texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); } },
   encontro: async (f) => {
     const d = new FormData(f); const data = new Date(d.get("quando"));
-    if (Number.isNaN(data.getTime())) return aviso("Escolha o dia e a hora.");
-    if (await tentar(() => dados.criarEncontro({ titulo: d.get("titulo").trim(), quando: data, link: d.get("link").trim(), nome: S.eu.nome }), "Não foi possível marcar. Confira se o link é do Google Meet.")) { aviso("Encontro marcado."); await carregarLados(); desenhar(); }
+    if (Number.isNaN(data.getTime())) return aviso(t("a_dia_hora"));
+    if (await tentar(() => dados.criarEncontro({ titulo: d.get("titulo").trim(), quando: data, link: d.get("link").trim(), nome: S.eu.nome }), t("e_meet"))) { aviso(t("a_enc_marcado")); await carregarLados(); desenhar(); }
   },
-  convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(`Convite guardado para ${email}.`); await carregarRota(); } },
-  perfil: async (f) => { const nome = new FormData(f).get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome }))) { aviso("Nome guardado."); await recarregar(); } }
+  convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(t("a_convite", { e: email })); await carregarRota(); } },
+  perfil: async (f) => { const nome = new FormData(f).get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome }))) { aviso(t("a_nome")); await recarregar(); } }
 };
 
 app.addEventListener("click", (e) => {
@@ -484,6 +509,8 @@ app.addEventListener("click", (e) => {
 app.addEventListener("change", (e) => { const el = e.target.closest("input[data-a]"); if (el) ACOES[el.dataset.a]?.(el.dataset.v, el); });
 app.addEventListener("submit", (e) => { const f = e.target.closest("form[data-f]"); if (!f) return; e.preventDefault(); FORMS[f.dataset.f]?.(f); });
 window.addEventListener("hashchange", carregarRota);
+// Ao trocar de língua, redesenha (sem recarregar os dados). Numa conversa aberta, só o que é texto da página muda.
+window.addEventListener("neuromedit:languagechange", () => { if (!document.getElementById("com-confirmar").open) desenhar(); });
 
 desenhar();
 dados.observarSessao(arrancar);

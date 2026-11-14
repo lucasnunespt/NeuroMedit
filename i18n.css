@@ -54,9 +54,12 @@
     color var(--duration-quick) var(--easing-calm);
 }
 
+/* Aberto: o contorno ganha o fundo do tema, para as línguas não se misturarem com a página. */
 .lang-globo.is-open .lang-globo-frame {
   height: calc(var(--control-height) * 6);
   color: var(--text);
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-card);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -132,13 +135,24 @@
   transition: color var(--duration-quick) var(--easing-calm);
 }
 
-.lang-globo-options button:hover {
+.lang-globo-options {
+  padding: 0 6px 6px;
+}
+
+.lang-globo-options button {
+  border-radius: var(--radius-sm);
+}
+
+.lang-globo-options button:hover,
+.lang-globo-options button:focus-visible {
+  background: var(--surface-strong);
   color: var(--text);
 }
 
-/* A língua atual brilha: só cor, sem ponto, sem peso, sem fundo. */
+/* A língua atual: cor de destaque e um fundo suave, para se ver bem qual está escolhida. */
 .lang-globo-options button.is-active,
 .lang-globo-options button.is-active:hover {
+  background: var(--surface-strong);
   color: var(--accent-dark);
 }
 

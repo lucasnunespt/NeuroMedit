@@ -124,7 +124,7 @@ export async function partilha(id) {
   if (!s.exists()) return null;
   return (await marcarMinhas([{ id: s.id, ...s.data() }]))[0];
 }
-export async function publicar({ circulo, texto, pratica, anon, nome }) {
+export async function publicar({ circulo, texto, pratica, anon, nome, foto }) {
   const novo = doc(col("comPartilhas"));
   const lote = writeBatch(db);
   const dados = { circulo, texto: texto.slice(0, 2000), pratica: pratica || "", anon: Boolean(anon), denunciada: false, criadoEm: serverTimestamp() };
@@ -133,6 +133,7 @@ export async function publicar({ circulo, texto, pratica, anon, nome }) {
   } else {
     dados.uid = uid();
     dados.nome = (nome || "").slice(0, 60);
+    if (foto) dados.foto = String(foto).slice(0, 500);
   }
   lote.set(novo, dados);
   await lote.commit();
@@ -144,11 +145,13 @@ export function editarPartilha(id, texto) {
   return updateDoc(ref("comPartilhas", id), { texto: texto.slice(0, 2000), editadoEm: serverTimestamp() });
 }
 export async function apagarPartilha(id) {
+  // Ordem importa: nas partilhas sem nome, as regras confirmam o autor lendo /privado/autor,
+  // por isso esse documento só se apaga depois da partilha.
   const rs = await getDocs(col("comPartilhas", id, "respostas")).catch(() => null);
   if (rs) for (const r of rs.docs) await deleteDoc(r.ref).catch(() => {});
-  await deleteDoc(ref("comPartilhas", id, "privado", "autor")).catch(() => {});
   await deleteDoc(ref("comPartilhas", id, "ressoou", uid())).catch(() => {});
   await deleteDoc(ref("comPartilhas", id));
+  await deleteDoc(ref("comPartilhas", id, "privado", "autor")).catch(() => {});
   await setDoc(ref("users", uid()), { comAnon: arrayRemove(id) }, { merge: true }).catch(() => {});
 }
 export function denunciar(id) { return updateDoc(ref("comPartilhas", id), { denunciada: true }); }
@@ -174,8 +177,10 @@ export function marcarRessoou(id, sim) {
 export async function respostas(partilhaId) {
   return lista(await getDocs(col("comPartilhas", partilhaId, "respostas"))).sort(antigas);
 }
-export async function responder(p, { texto, nome, professor }) {
-  await addDoc(col("comPartilhas", p.id, "respostas"), { uid: uid(), nome: (nome || "").slice(0, 60), professor: Boolean(professor), texto: texto.slice(0, 1500), criadoEm: serverTimestamp() });
+export async function responder(p, { texto, nome, professor, foto }) {
+  const r = { uid: uid(), nome: (nome || "").slice(0, 60), professor: Boolean(professor), texto: texto.slice(0, 1500), criadoEm: serverTimestamp() };
+  if (foto) r.foto = String(foto).slice(0, 500);
+  await addDoc(col("comPartilhas", p.id, "respostas"), r);
   // Aviso a quem escreveu (só nas partilhas com nome: nas sem nome ninguém sabe a quem avisar).
   if (!p.anon && p.uid && p.uid !== uid()) {
     await avisar(p.uid, { tipo: "resposta", texto: "Há uma resposta à sua partilha.", link: `comunidade.html#p=${p.id}` }).catch(() => {});

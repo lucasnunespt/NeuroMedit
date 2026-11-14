@@ -161,6 +161,253 @@ service cloud.firestore {
       }
     }
 
+    // =====================================================================
+    // COMUNIDADE (nov 2026) — tudo no plano gratuito, sem Cloud Functions.
+    // Quem manda: o Lucas (admin) em tudo; o professor só no que criou;
+    // o membro só no que é dele. Entra-se por pedido (o Lucas aprova) ou
+    // por convite do Lucas ao e-mail da pessoa.
+    //   /comMembros/{uid}                  quem pediu, quem está dentro
+    //   /comMembros/{uid}/privado/contacto e-mail (só a pessoa e o Lucas)
+    //   /comConvites/{e-mail}              convite do Lucas
+    //   /comCirculos/{id}                  círculos por intenção
+    //   /comPartilhas/{id}                 partilhas (+ respostas, ressoou, privado/autor)
+    //   /comGrupos/{id}/mensagens/{id}     grupos fechados com conversa
+    //   /comCanal/{id}                     "Dos professores"
+    //   /comEncontros/{id}/lugares/{uid}   encontros ao vivo (link do Google Meet)
+    //   /comAvisos/{uid}/itens/{id}        avisos dentro do site (no lugar do e-mail)
+    // =====================================================================
+    function comMembro(uid) {
+      return get(/databases/$(database)/documents/comMembros/$(uid)).data;
+    }
+    function ehMembro() {
+      return isAdmin()
+        || (isSignedIn()
+            && exists(/databases/$(database)/documents/comMembros/$(request.auth.uid))
+            && comMembro(request.auth.uid).estado == 'aprovado');
+    }
+    function ehProfessor() {
+      return isAdmin()
+        || (ehMembro() && comMembro(request.auth.uid).papel == 'professor');
+    }
+    function textoAte(valor, max) {
+      return valor is string && valor.size() > 0 && valor.size() <= max;
+    }
+    function temConviteCom() {
+      return isSignedIn() && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/comConvites/$(emailDoLogin()));
+    }
+
+    match /comMembros/{uid} {
+      // Membros aprovados veem-se uns aos outros (nome e papel, sem e-mail).
+      allow read: if isAdmin() || isDono(uid) || (ehMembro() && resource.data.estado == 'aprovado');
+      // A pessoa pede para entrar (pendente); só entra logo aprovada se o Lucas a convidou.
+      allow create: if isDono(uid)
+        && request.resource.data.keys().hasOnly(['nome', 'foto', 'estado', 'papel', 'motivos', 'aceitouCuidados', 'criadoEm', 'resumo'])
+        && textoAte(request.resource.data.nome, 60)
+        && request.resource.data.papel == 'membro'
+        && request.resource.data.aceitouCuidados == true
+        && (request.resource.data.estado == 'pendente'
+            || (request.resource.data.estado == 'aprovado' && temConviteCom()));
+      // A pessoa muda o seu nome, foto e preferências; nunca o estado nem o papel. O Lucas muda tudo.
+      allow update: if isAdmin()
+        || (isDono(uid)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm'])
+            && textoAte(request.resource.data.nome, 60));
+      allow delete: if isAdmin() || isDono(uid);
+
+      match /privado/{docId} {
+        allow read: if isAdmin() || isDono(uid);
+        allow write: if isDono(uid);
+        allow delete: if isAdmin();
+      }
+    }
+
+    match /comConvites/{conviteId} {
+      allow read: if isAdmin() || ehOConvidado(conviteId);
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['email', 'criadoEm'])
+        && request.resource.data.email is string
+        && conviteId == request.resource.data.email.lower();
+      allow delete: if isAdmin() || ehOConvidado(conviteId);
+    }
+
+    // Círculos: quem pediu para entrar já os pode ver (é a prévia enquanto espera).
+    match /comCirculos/{circuloId} {
+      allow read: if isSignedIn();
+      allow create: if ehProfessor()
+        && request.resource.data.criador == request.auth.uid
+        && textoAte(request.resource.data.nome, 60);
+      allow update: if isAdmin()
+        || (ehProfessor() && resource.data.criador == request.auth.uid
+            && request.resource.data.criador == resource.data.criador
+            && textoAte(request.resource.data.nome, 60));
+      allow delete: if isAdmin() || (ehProfessor() && resource.data.criador == request.auth.uid);
+    }
+
+    // Partilhas. Com nome: o campo uid diz de quem é. Sem nome: não há uid na partilha;
+    // o autor fica em /privado/autor, que só o próprio e o Lucas (moderação) leem.
+    function autorDaPartilha(partilhaId) {
+      return get(/databases/$(database)/documents/comPartilhas/$(partilhaId)/privado/autor).data.uid;
+    }
+    function ehAutorDaPartilha(partilhaId, data) {
+      return isSignedIn()
+        && ((data.anon == false && data.uid == request.auth.uid)
+            || (data.anon == true && autorDaPartilha(partilhaId) == request.auth.uid));
+    }
+    function criouOCirculo(circuloId) {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/comCirculos/$(circuloId)).data.criador == request.auth.uid;
+    }
+    match /comPartilhas/{partilhaId} {
+      allow read: if ehMembro();
+      allow create: if ehMembro()
+        && request.resource.data.keys().hasOnly(['circulo', 'uid', 'nome', 'anon', 'pratica', 'texto', 'criadoEm', 'denunciada'])
+        && textoAte(request.resource.data.texto, 2000)
+        && request.resource.data.circulo is string
+        && exists(/databases/$(database)/documents/comCirculos/$(request.resource.data.circulo))
+        && request.resource.data.denunciada == false
+        && request.resource.data.criadoEm == request.time
+        && ((request.resource.data.anon == false && request.resource.data.uid == request.auth.uid)
+            || (request.resource.data.anon == true
+                && !('uid' in request.resource.data)
+                && !('nome' in request.resource.data)
+                && getAfter(/databases/$(database)/documents/comPartilhas/$(partilhaId)/privado/autor).data.uid == request.auth.uid));
+      // O autor só muda o texto. Qualquer membro pode denunciar (e só isso). O Lucas resolve a denúncia.
+      allow update: if isAdmin()
+        || (ehMembro() && ehAutorDaPartilha(partilhaId, resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['texto', 'editadoEm'])
+            && textoAte(request.resource.data.texto, 2000))
+        || (ehMembro()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['denunciada'])
+            && request.resource.data.denunciada == true);
+      allow delete: if isAdmin()
+        || ehAutorDaPartilha(partilhaId, resource.data)
+        || criouOCirculo(resource.data.circulo);
+
+      match /privado/{docId} {
+        allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+        allow create: if ehMembro() && docId == 'autor'
+          && request.resource.data.keys().hasOnly(['uid'])
+          && request.resource.data.uid == request.auth.uid;
+        allow update: if false;
+        allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
+
+      match /respostas/{respostaId} {
+        allow read: if ehMembro();
+        allow create: if ehMembro()
+          && request.resource.data.keys().hasOnly(['uid', 'nome', 'professor', 'texto', 'criadoEm'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.professor == ehProfessor()
+          && textoAte(request.resource.data.texto, 1500)
+          && request.resource.data.criadoEm == request.time;
+        allow update: if false;
+        allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      }
+
+      // "Isto ressoou em mim": cada pessoa só vê o seu. Não existe contagem.
+      match /ressoou/{uid} {
+        allow read, delete: if isDono(uid) || isAdmin();
+        allow create: if ehMembro() && isDono(uid) && request.resource.data.keys().hasOnly(['em']);
+        allow update: if false;
+      }
+    }
+
+    // Grupos: a conversa só é lida por quem está no grupo (e pelo Lucas, para moderar).
+    function grupo(grupoId) {
+      return get(/databases/$(database)/documents/comGrupos/$(grupoId)).data;
+    }
+    function estaNoGrupo(grupoId) {
+      return isAdmin() || (ehMembro() && request.auth.uid in grupo(grupoId).membros);
+    }
+    match /comGrupos/{grupoId} {
+      allow read: if isAdmin()
+        || (ehMembro() && (request.auth.uid in resource.data.membros || resource.data.tipo == 'aberto'));
+      allow create: if ehProfessor()
+        && request.resource.data.criador == request.auth.uid
+        && request.resource.data.tipo in ['privado', 'aberto']
+        && request.resource.data.membros is list
+        && request.auth.uid in request.resource.data.membros
+        && request.resource.data.membros.size() <= 200
+        && textoAte(request.resource.data.nome, 60);
+      // Quem criou gere o grupo; num grupo aberto, cada membro entra ou sai por si (e só mexe em si próprio).
+      allow update: if isAdmin()
+        || (ehProfessor() && resource.data.criador == request.auth.uid
+            && request.resource.data.criador == resource.data.criador
+            && request.resource.data.membros.size() <= 200)
+        || (ehMembro()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['membros'])
+            && ((resource.data.tipo == 'aberto'
+                 && request.resource.data.membros.toSet().difference(resource.data.membros.toSet()) == [request.auth.uid].toSet()
+                 && request.resource.data.membros.size() == resource.data.membros.size() + 1
+                 && request.resource.data.membros.size() <= 200)
+                || (resource.data.membros.toSet().difference(request.resource.data.membros.toSet()) == [request.auth.uid].toSet()
+                    && request.resource.data.membros.size() == resource.data.membros.size() - 1)));
+      allow delete: if isAdmin() || (ehProfessor() && resource.data.criador == request.auth.uid);
+
+      match /mensagens/{mensagemId} {
+        allow read: if estaNoGrupo(grupoId);
+        allow create: if estaNoGrupo(grupoId)
+          && request.resource.data.keys().hasOnly(['uid', 'nome', 'texto', 'criadoEm'])
+          && request.resource.data.uid == request.auth.uid
+          && textoAte(request.resource.data.texto, 1000)
+          && request.resource.data.criadoEm == request.time;
+        allow update: if false;
+        allow delete: if isAdmin()
+          || (isSignedIn() && resource.data.uid == request.auth.uid)
+          || (isSignedIn() && grupo(grupoId).criador == request.auth.uid);
+      }
+    }
+
+    // "Dos professores": só professores publicam; todos os membros leem.
+    match /comCanal/{avisoId} {
+      allow read: if ehMembro();
+      allow create: if ehProfessor()
+        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'texto', 'criadoEm'])
+        && request.resource.data.uid == request.auth.uid
+        && textoAte(request.resource.data.titulo, 120)
+        && request.resource.data.criadoEm == request.time;
+      allow update: if false;
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // Encontros ao vivo: por agora um link do Google Meet criado pelo professor.
+    match /comEncontros/{encontroId} {
+      allow read: if ehMembro();
+      allow create: if ehProfessor()
+        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'criadoEm'])
+        && request.resource.data.uid == request.auth.uid
+        && textoAte(request.resource.data.titulo, 120)
+        && request.resource.data.quando is timestamp
+        && request.resource.data.link is string
+        && request.resource.data.link.matches('https://meet\\.google\\.com/[a-zA-Z0-9?=&_/-]+');
+      allow update: if false;
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+
+      match /lugares/{uid} {
+        allow read: if isDono(uid) || isAdmin();
+        allow create: if ehMembro() && isDono(uid) && request.resource.data.keys().hasOnly(['em']);
+        allow update: if false;
+        allow delete: if isDono(uid) || isAdmin();
+      }
+    }
+
+    // Avisos dentro do site (no lugar do e-mail). Só o dono lê e apaga.
+    // Um membro pode deixar um aviso curto a outro (ex.: "responderam à sua partilha"), sempre assinado com o seu uid.
+    match /comAvisos/{uid}/itens/{avisoId} {
+      allow read, delete: if isDono(uid);
+      allow create: if (ehMembro() || isAdmin())
+        && request.resource.data.keys().hasOnly(['tipo', 'texto', 'link', 'de', 'criadoEm', 'lido'])
+        && request.resource.data.tipo in ['aprovado', 'resposta', 'grupo', 'papel']
+        && request.resource.data.de == request.auth.uid
+        && textoAte(request.resource.data.texto, 200)
+        && request.resource.data.link is string && request.resource.data.link.size() <= 200
+        && request.resource.data.lido == false
+        && request.resource.data.criadoEm == request.time;
+      allow update: if isDono(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lido']);
+    }
+
     function isValidRating(data) {
       return data.keys().hasAll(['meditationId', 'stars', 'createdAt'])
         && data.keys().hasOnly(['meditationId', 'stars', 'comment', 'createdAt'])

@@ -678,17 +678,38 @@
     return wrap;
   }
 
-  const community = buildSoon({
-    key: "community",
-    icon: ICON_PEOPLE,
-    label: "Comunidade",
-    text: "A comunidade está sendo preparada com calma. Quando estiver pronta, você a encontra aqui."
-  });
-  const news = buildSoon({
-    key: "news",
-    icon: ICON_BELL,
-    label: "Novidades",
-    text: "As novidades ainda estão sendo preparadas. Quando houver alguma, ela aparece aqui, sem pressa."
+  // Comunidade: abre a página da comunidade.
+  const community = document.createElement("a");
+  community.className = "header-dot header-soon";
+  community.href = "comunidade.html";
+  community.dataset.i18n = "header_community";
+  community.dataset.i18nAttr = "aria-label,title";
+  community.setAttribute("aria-label", "Comunidade");
+  community.title = "Comunidade";
+  community.innerHTML = ICON_PEOPLE;
+  if (/comunidade\.html$/.test(window.location.pathname)) community.setAttribute("aria-current", "page");
+
+  // Novidades: os avisos da comunidade para esta pessoa (pedido aprovado, respostas,
+  // grupos). Só se leem ao abrir: sem contagem, sem ponto a chamar a atenção.
+  const news = buildSoon({ key: "news", icon: ICON_BELL, label: "Novidades", text: "" });
+  const newsPop = news.querySelector(".header-pop");
+  const newsButton = news.querySelector("button");
+  const newsEmpty = () => `<span class="header-pop-eyebrow" data-i18n="header_news">Novidades</span><span class="header-pop-text" data-i18n="header_news_empty">Nada de novo por agora.</span>`;
+  newsPop.innerHTML = newsEmpty();
+  newsButton.addEventListener("click", async () => {
+    if (newsPop.hidden || !settings()?.getUser?.()) return;
+    try {
+      const dadosCom = await import("./comunidade-dados.js");
+      const itens = await dadosCom.avisos();
+      if (!itens.length) { newsPop.innerHTML = newsEmpty(); translate(); return; }
+      newsPop.innerHTML = `<span class="header-pop-eyebrow" data-i18n="header_news">Novidades</span>` + itens.slice(0, 8).map((a) =>
+        `<a class="header-pop-item header-search-hit" href="${escapeHtml(a.link || "comunidade.html")}"><span class="header-search-title">${escapeHtml(a.texto)}</span></a>`).join("");
+      translate();
+      dadosCom.marcarAvisosLidos(itens);
+    } catch (error) {
+      newsPop.innerHTML = newsEmpty();
+      translate();
+    }
   });
   /* ---------- Busca (a lupa): procura em todo o site ----------
      Páginas da navegação e todas as práticas da Biblioteca, na língua

@@ -134,6 +134,12 @@
       </li>
       <li class="bottom-sheet-divider" role="separator" aria-hidden="true"></li>
       <li>
+        <a href="comunidade.html" class="bottom-sheet-link">
+          <span class="bottom-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><circle cx="9" cy="8.5" r="3"></circle><path d="M3.5 19c0-3.1 2.4-5.2 5.5-5.2s5.5 2.1 5.5 5.2"></path><path d="M15.2 5.8a2.8 2.8 0 0 1 0 5.4"></path><path d="M17 14.2c2.2.4 3.5 2.2 3.5 4.8"></path></svg></span>
+          <span data-i18n="header_community">Comunidade</span>
+        </a>
+      </li>
+      <li>
         <a href="reservar.html" class="bottom-sheet-link">
           <span class="bottom-nav-icon">${ICONS.calendar}</span>
           <span data-i18n="nav_presencial">In-person meditation</span>

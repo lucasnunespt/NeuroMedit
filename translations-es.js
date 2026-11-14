@@ -11,6 +11,7 @@ window.NeuroMeditTranslations = {
     header_search_empty: "No se encontró nada con esa palabra. Prueba con otra, más sencilla.",
     header_community: "Comunidad",
     header_news: "Novedades",
+    header_news_empty: "Nada nuevo por ahora.",
     header_soon: "Próximamente",
     header_community_soon: "La comunidad se está preparando con calma. Cuando esté lista, la encontrarás aquí.",
     header_news_soon: "Las novedades todavía se están preparando. Cuando haya alguna, aparecerá aquí, sin prisa.",

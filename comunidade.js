@@ -161,10 +161,12 @@ const previa = () => `
       ${(S.circulos.length ? S.circulos : dados.CIRCULOS_INICIAIS).slice(0, 4).map(circ).map((c) => `<div class="com-cartao com-cartao--p"><strong>${esc(c.nome)}</strong><span>${esc(c.proposito)}</span></div>`).join("")}
     </div>
     <article class="com-cartao" aria-label="${t("pv_exemplo_aria")}">
-      <div class="com-linha"><span class="com-ini" aria-hidden="true">·</span><div class="com-quem"><strong>${t("pv_assim")}</strong><span>${t("pv_exemplo")}</span></div><span class="com-etq">${esc(t("depois_de", { p: pratica("Respiração Calma") }))}</span></div>
+      <div class="com-linha"><span class="com-ini" aria-hidden="true">·</span><div class="com-quem"><strong>${t("pv_assim")}</strong><span>${t("pv_exemplo")}</span></div></div>
       <p>${t("pv_texto")}</p>
+      ${cartaoPratica("Respiração Calma")}
     </article>
-    <div class="com-grade com-grade--3">
+    <div class="com-grade">
+      <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pin}</span><div class="com-quem"><strong>${t("pv_cid_t")}</strong><span>${t("pv_cid_d")}</span></div></div>
       <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>${t("pv_prof_t")}</strong><span>${t("pv_prof_d")}</span></div></div>
       <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>${t("pv_enc_t")}</strong><span>${t("pv_enc_d")}</span></div></div>
       <div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem"><strong>${t("pv_grp_t")}</strong><span>${t("pv_grp_d")}</span></div></div>

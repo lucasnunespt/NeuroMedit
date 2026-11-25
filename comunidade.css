@@ -75,6 +75,11 @@
 .com-cartao--p > span,
 .com-cartao--p > strong { display: block; }
 .com-cartao.com-linha { flex-direction: row; }
+/* O ícone redondo nunca vira bloco (a regra de cima tornava o círculo um bloco e o desenho saía do centro). */
+.com-cartao--p > .com-ic { display: inline-flex; }
+/* Cartões da prévia: ícone sempre à esquerda do texto, todos iguais. */
+.com-grade > .com-cartao.com-linha { flex-wrap: nowrap; align-items: flex-start; }
+.com-cartao.com-linha > .com-quem { flex: 1 1 0; min-width: 0; }
 
 .com-quem { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
 .com-quem--larga { flex: 1 1 180px; }
@@ -228,6 +233,8 @@ textarea.com-campo { min-height: 96px; padding: 0.85rem 1rem; resize: vertical; 
 .com-campo--cresce { flex: 1 1 200px; width: auto; }
 .com-sel { flex: 1 1 200px; max-width: 280px; display: flex; flex-direction: column; gap: 0.25rem; }
 .com-sel--larga { max-width: none; }
+/* Dentro de um cartão (coluna), o seletor não cresce na vertical. */
+.com-cartao:not(.com-linha) > .com-sel { flex: 0 0 auto; max-width: none; }
 .com-chk { display: inline-flex; flex: 1 1 200px; align-items: center; gap: 0.6rem; min-height: 44px; color: var(--text-soft); cursor: pointer; }
 .com-chk input { width: 18px; height: 18px; accent-color: var(--accent); }
 .com-cartao > .com-chk { flex: 0 0 auto; }

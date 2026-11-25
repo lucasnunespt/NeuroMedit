@@ -565,6 +565,28 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 .com-enc-lugar { display: inline-flex; align-items: center; gap: 0.35rem; }
 .com-enc-lugar svg { flex: none; width: 15px; height: 15px; color: var(--accent-dark); }
 
+/* ---------- Lembrete, seguir e "N pessoas vão" (nov 2026) ---------- */
+/* Lembrete: encontro com lugar guardado nas próximas 24 h. Acento do tema (é sobre a pessoa), não o dourado dos professores. */
+.com-lembrete {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+.com-lembrete .com-quem { flex: 1; gap: 0.15rem; }
+.com-lembrete .com-quem small { color: var(--accent-dark); font-size: 0.8rem; }
+.com-lembrete .com-quem span { color: var(--text-soft); }
+.com-lembrete .com-ic { color: var(--accent-dark); }
+.com-seguir { min-height: 28px; padding: 0 0.6rem; border: 1px solid var(--line); font-size: 0.8rem; }
+.com-seguir.is-on { border-color: var(--accent-dark); }
+.com-enc-vao { color: var(--accent-dark); font-size: 0.88rem; }
+.com-enc .com-acao--solta { min-height: 32px; padding: 0 0.3rem; font-size: 0.85rem; }
+.com-anf { align-self: stretch; text-align: left; }
+.com-anf summary { justify-content: center; }
+
 /* ---------- Tablet e telemóvel ---------- */
 @media (max-width: 1100px) {
   .com-dir { flex: 1 1 100%; max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }

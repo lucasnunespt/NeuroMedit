@@ -35,6 +35,9 @@ const IC = {
   pin: I('<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>'),
   globo: I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5S9.6 5.8 12 3.5z"/>'),
   video: I('<rect x="3.5" y="6.5" width="12" height="11" rx="2.5"/><path d="M15.5 10.5l5-3v9l-5-3"/>'),
+  sino: I('<path d="M6.5 17.5V11a5.5 5.5 0 0 1 11 0v6.5"/><path d="M4.5 17.5h15"/><path d="M10 20.5h4"/>'),
+  repete: I('<path d="M17 4.5l2.5 2.5L17 9.5"/><path d="M4.5 12V10a3 3 0 0 1 3-3h12"/><path d="M7 19.5L4.5 17 7 14.5"/><path d="M19.5 12v2a3 3 0 0 1-3 3h-12"/>'),
+  sol: I('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>'),
   engrenagem: I('<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6"/>')
 };
 /* ---------- Língua ----------
@@ -78,6 +81,7 @@ const S = {
   aberto: null, respostas: [], novaFoto: "", comporAberto: false,
   cidades: [], cidadeId: "", muralId: "", cidadeEscolhida: "", pedidosCidade: {},
   cidadeInfo: { pendentes: [], anfitrioes: [], jaPedi: false },
+  seguindo: [], seguidoresN: null, jaPediAnfitriao: false,
   grupos: [], grupo: null, msgs: [], pessoas: [],
   canal: [], encontros: [],
   gestao: { membros: [], convites: [], denuncias: [] }
@@ -254,7 +258,7 @@ function direita(tela) {
     ${c ? `<section class="com-cartao com-cartao--p com-so-largo" aria-labelledby="com-sobre-t"><h3 id="com-sobre-t" class="com-dir-t">${t("sobre_circulo")}</h3><p class="com-suave com-peq">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</section>` : ""}
     <section class="com-cartao com-cartao--p" aria-labelledby="com-enc-t"><h3 id="com-enc-t" class="com-dir-t"><span class="com-ic">${IC.agenda}</span>${t("enc_t")}</h3><p class="com-suave com-peq">${t("enc_d")}</p>
       ${encontrosAqui.length ? encontrosAqui.map(encontroItem).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
-      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><label class="com-chk com-chk--mini"><input type="checkbox" name="repete">${t("repete_l")}</label><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
     </section>
     <section class="com-cartao com-cartao--p com-prof" aria-labelledby="com-prof-t"><h3 id="com-prof-t" class="com-dir-t"><span class="com-ic com-ic--prof">${IC.megafone}</span>${t("pv_prof_t")}</h3><p class="com-suave com-peq">${t("canal_d")}</p>
       ${avisos.length ? avisos.map((a) => `<div class="com-linha com-linha--topo com-aviso-item"><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</div>`).join("") : (S.canal.length ? "" : `<p class="com-suave com-peq">${t("sem_avisos")}</p>`)}
@@ -322,7 +326,7 @@ function cartaoPartilha(p, { aberta = false } = {}) {
     ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">${t("editar_partilha")}</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">${t("guardar")}</button><button class="com-acao" type="button" data-a="cancelar-edicao">${t("cancelar")}</button></div></form>`
     : `<p class="com-texto">${esc(p.texto)}</p>`;
   return `<article class="com-cartao">
-    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><span class="com-nome"><strong>${esc(autor)}</strong>${p.professor && !p.anon ? selo() : ""}</span><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
+    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><span class="com-nome"><strong>${esc(autor)}</strong>${p.professor && !p.anon ? selo() + (p.minha ? "" : botaoSeguir(p.uid)) : ""}</span><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
       ${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span>` : ""}</div>
     ${corpo}
     ${p.imagem ? `<figure class="com-imagem"><img src="${esc(p.imagem)}" alt="${t("foto_alt")}" loading="lazy"></figure>` : ""}
@@ -340,7 +344,7 @@ function cartaoPartilha(p, { aberta = false } = {}) {
 /** O mural: campo de publicar + partilhas. Serve o círculo e a cidade (S.muralId). */
 function mural() {
   const aberto = S.comporAberto || Boolean(S.novaFoto);
-  return `<form class="com-cartao com-novo com-compor ${aberto ? "is-aberto" : ""}" data-f="publicar">
+  return `${lembrete()}<form class="com-cartao com-novo com-compor ${aberto ? "is-aberto" : ""}" data-f="publicar">
       <button class="com-compor-abrir" type="button" data-a="abrir-compor" ${aberto ? "hidden" : ""}>${rosto(S.eu.foto, S.eu.nome, false)}<span>${t("pub_pergunta")}</span></button>
       <div class="com-compor-corpo" ${aberto ? "" : "hidden"}>
         <label class="com-compor-p" for="com-partilha">${t("pub_pergunta")}</label>
@@ -405,10 +409,11 @@ function telaCidades() {
     return topo + `<div class="com-cartao">${eu.admin ? `<p class="com-suave">${t("cid_semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear-cidades">${t("cid_semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
   }
   const fora = eu.admin ? Object.entries(S.pedidosCidade).filter(([k]) => !cidadeDe(k)) : [];
-  return topo + porPais().map(([p, l]) => `<section class="com-cartao com-cartao--p" aria-labelledby="com-pais-${p}"><h3 id="com-pais-${p}" class="com-dir-t">${esc(nomePais(p))}</h3>
+  return topo + diaDoYoga() + porPais().map(([p, l]) => `<section class="com-cartao com-cartao--p" aria-labelledby="com-pais-${p}"><h3 id="com-pais-${p}" class="com-dir-t">${esc(nomePais(p))}</h3>
       <ul class="com-cidades">${l.map((c) => `<li><a class="com-cidade" href="#cidade=${c.id}"><span class="com-cidade-ponto ${c.estado === "aberta" ? "is-aberta" : ""}" aria-hidden="true"></span><span class="com-cidade-nome">${esc(c.nome)}${c.regiao ? ` <small>${esc(c.regiao)}</small>` : ""}</span>${c.id === eu.cidade ? `<span class="com-selo">${t("cid_minha")}</span>` : ""}<span class="com-esp"></span>${eu.admin && S.pedidosCidade[c.id] ? `<span class="com-peq com-suave">${esc(t("cid_pedidos_n", { n: S.pedidosCidade[c.id].n }))}</span>` : ""}${badgeCidade(c)}</a></li>`).join("")}</ul></section>`).join("")
     + `<section class="com-cartao com-cartao--p" aria-labelledby="com-outra-t"><h3 id="com-outra-t" class="com-dir-t">${t("cid_outra_t")}</h3><p class="com-suave com-peq">${t("cid_outra_d")}</p>
       <form class="com-linha" data-f="pedir-outra"><label class="com-so-leitor" for="com-oc">${t("cid_outra_ph")}</label><input id="com-oc" class="com-campo com-campo--cresce" name="nome" type="text" maxlength="60" placeholder="${t("cid_outra_ph")}" required><button class="com-opt" type="submit">${t("cid_quero_btn")}</button></form>
+      ${formAnfitriao(null)}
       ${fora.length ? `<p class="com-cap">${t("cid_fora_lista")}</p>${fora.map(([, v]) => `<div class="com-linha"><span>${esc(v.nome || "")}</span><span class="com-suave com-peq">${esc(t("cid_pedidos_n", { n: v.n }))}</span></div>`).join("")}` : ""}</section>`;
 }
 
@@ -432,22 +437,97 @@ function telaCidade() {
   if (!aberta) {
     return capa + `<section class="com-cartao com-centro com-breve"><strong>${esc(t("cid_breve_t", { c: c.nome }))}</strong><span class="com-suave">${t("cid_breve_d")}</span>
         ${info.jaPedi ? `<span class="com-badge com-badge--feito">${IC.certo}${t("cid_pedido_feito")}</span>` : `<button class="com-pri" type="button" data-a="pedir-cidade" data-v="${c.id}">${esc(t("cid_quero", { c: c.nome }))}</button>`}
-        <span class="com-suave com-peq">${t("cid_ser_anfitriao")}</span></section>` + gerir + pedidos;
+        ${formAnfitriao(c)}</section>` + gerir + pedidos;
   }
   return capa + pedidos + gerir + mural();
 }
+/** "Quero ser anfitrião": numa cidade em breve (c) ou na lista de cidades (escreve a cidade). */
+function formAnfitriao(c) {
+  if (S.jaPediAnfitriao) return `<span class="com-badge com-badge--feito">${IC.certo}${t("anf_feito")}</span>`;
+  return `<details class="com-mais com-anf"><summary>${IC.mais}<span>${t("anf_quero")}</span></summary>
+    <form class="com-novo" data-f="pedir-anfitriao"${c ? ` data-cidade="${esc(c.nome)}"` : ""}>
+      ${c ? "" : `<label class="com-peq com-suave" for="com-anf-c">${t("anf_cidade")}</label><input id="com-anf-c" class="com-campo" name="cidade" type="text" maxlength="60" required>`}
+      <label class="com-peq com-suave" for="com-anf-s">${t("anf_sobre_l")}</label><textarea id="com-anf-s" class="com-campo" name="sobre" maxlength="600" placeholder="${t("anf_sobre_ph")}" required></textarea>
+      <div class="com-linha"><button class="com-opt" type="submit">${t("anf_enviar")}</button></div></form></details>`;
+}
+/** Dia Internacional do Yoga (21 de junho, ONU): o dia em que todas as cidades meditam juntas. */
+function diaDoYoga() {
+  const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+  const d = new Date(hoje.getFullYear(), 5, 21);
+  if (d < hoje) d.setFullYear(d.getFullYear() + 1);
+  const dias = Math.round((d - hoje) / 864e5);
+  const ymd = (x) => `${x.getFullYear()}${String(x.getMonth() + 1).padStart(2, "0")}${String(x.getDate()).padStart(2, "0")}`;
+  const fim = new Date(d); fim.setDate(fim.getDate() + 1);
+  const cal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t("dy_t"))}&dates=${ymd(d)}/${ymd(fim)}&details=${encodeURIComponent(t("dy_d"))}&recur=${encodeURIComponent("RRULE:FREQ=YEARLY")}`;
+  return `<section class="com-destaque" aria-labelledby="com-dy-t"><span class="com-ic com-ic--prof">${IC.sol}</span><div class="com-quem"><small class="com-destaque-rot">${t("dy_rot")}</small><strong id="com-dy-t">${t("dy_t")}</strong><span>${t("dy_d")}</span><span class="com-peq">${dias === 0 ? t("dy_hoje") : esc(t("dy_faltam", { n: dias }))}</span></div><a class="com-opt com-opt--mini" href="${esc(cal)}" target="_blank" rel="noopener noreferrer">${t("por_calendario")}</a></section>`;
+}
+/** Boas-vindas: depois de aprovar, o anfitrião manda uma mensagem curta (aviso no sino da pessoa). */
+function boasVindas(m, c) {
+  const d = document.getElementById("com-confirmar");
+  const primeiro = (m.nome || "").split(" ")[0];
+  d.innerHTML = `<form method="dialog" class="com-dlg"><h2 id="com-dlg-t">${esc(t("bv_t", { n: primeiro }))}</h2><p id="com-dlg-d">${t("bv_d")}</p>
+      <label class="com-so-leitor" for="com-bv">${t("bv_t", { n: primeiro })}</label><textarea id="com-bv" class="com-campo" maxlength="200" required>${esc(t("bv_texto", { n: primeiro, c: c.nome }).slice(0, 200))}</textarea>
+      <div class="com-linha com-linha--fim"><button class="com-acao" value="nao" type="submit">${t("bv_nao")}</button><button class="com-pri" value="sim" type="submit">${t("bv_enviar")}</button></div></form>`;
+  d.setAttribute("aria-labelledby", "com-dlg-t");
+  d.setAttribute("aria-describedby", "com-dlg-d");
+  d.addEventListener("close", async () => {
+    const texto = d.querySelector("#com-bv")?.value.trim();
+    if (d.returnValue === "sim" && texto && await tentar(() => dados.avisar(m.id, { tipo: "boas-vindas", texto, link: `comunidade.html#cidade=${c.id}` }))) aviso(t("bv_enviada"));
+  }, { once: true });
+  d.returnValue = "nao";
+  d.showModal();
+  d.querySelector("#com-bv")?.focus();
+}
+
 /** Quem vê os pedidos de entrada de uma cidade: os seus anfitriões e o Lucas. */
 const aberto = (c) => souAnfitriao(c) || S.eu.admin;
+
+const msDe = (ts) => (ts?.toMillis ? ts.toMillis() : 0);
+/** Seguir um professor: só aparece para outros (nunca para si mesmo). */
+const botaoSeguir = (profUid) => {
+  if (!profUid || profUid === S.eu.uid) return "";
+  const sigo = S.seguindo.includes(profUid);
+  return `<button class="com-acao com-acao--mini com-seguir ${sigo ? "is-on" : ""}" type="button" aria-pressed="${sigo}" data-a="seguir" data-v="${esc(profUid)}">${sigo ? t("a_seguir") : t("seguir")}</button>`;
+};
+/** Link do Google Calendar (1 hora; os semanais repetem). */
+function calUrl(e) {
+  const ini = msDe(e.quando);
+  const f = (m) => new Date(m).toISOString().replace(/[-:]|\.\d{3}/g, "");
+  const c = e.cidade ? cidadeDe(e.cidade) : null;
+  const onde = e.lugar ? e.lugar + (c ? `, ${c.nome}` : "") : (e.link || "");
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${f(ini)}/${f(ini + 3600e3)}&details=${encodeURIComponent(t("cal_det") + " https://neuromedit.com/comunidade.html")}&location=${encodeURIComponent(onde)}${e.repete ? `&recur=${encodeURIComponent("RRULE:FREQ=WEEKLY")}` : ""}`;
+}
+const semanal = (e) => {
+  const d = new Date(msDe(e.quando));
+  return t("toda_semana", { d: d.toLocaleDateString(lingua(), { weekday: "long" }), h: d.toLocaleTimeString(lingua(), { hour: "2-digit", minute: "2-digit" }) });
+};
+/** Lembrete no topo: um encontro com lugar guardado nas próximas 24 horas (sem servidor: lido ao abrir). */
+function lembrete() {
+  const agora = Date.now();
+  const e = S.encontros.find((x) => x.guardado && msDe(x.quando) >= agora - 3600e3 && msDe(x.quando) <= agora + 24 * 3600e3);
+  if (!e) return "";
+  const d = new Date(msDe(e.quando));
+  const hoje = d.toDateString() === new Date().toDateString();
+  const hora = d.toLocaleTimeString(lingua(), { hour: "2-digit", minute: "2-digit" });
+  const c = e.cidade ? cidadeDe(e.cidade) : null;
+  const acao = e.lugar
+    ? `<a class="com-opt com-opt--mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.lugar + (c ? `, ${c.nome}` : ""))}" target="_blank" rel="noopener noreferrer">${t("cid_ver_mapa")}</a>`
+    : `<a class="com-opt com-opt--mini" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>`;
+  return `<section class="com-lembrete" role="status" aria-labelledby="com-lemb-t"><span class="com-ic">${IC.sino}</span><div class="com-quem"><small>${esc(t(hoje ? "lemb_hoje" : "lemb_amanha", { h: hora }))}</small><strong id="com-lemb-t">${esc(e.titulo)}</strong><span>${e.lugar ? esc(e.lugar) : t("cid_online")}</span></div>${acao}</section>`;
+}
 
 /** Encontro: online (entrar no Meet) ou presencial (lugar, com link para o mapa). */
 function encontroItem(e) {
   const eu = S.eu;
   const c = e.cidade ? cidadeDe(e.cidade) : null;
   const mapa = e.lugar ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.lugar + (c ? `, ${c.nome}` : ""))}` : "";
+  const vao = e.vao > 0 ? `<span class="com-enc-vao">${esc(t(e.vao === 1 ? "vai_1" : "vao_n", { n: e.vao }))}</span>` : "";
   return `<div class="com-enc"><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span>
+      ${e.repete ? `<span class="com-enc-lugar">${IC.repete}${esc(semanal(e))}</span>` : ""}
       ${e.lugar ? `<span class="com-enc-lugar">${IC.pin}${esc(e.lugar)}${c ? ` · ${esc(c.nome)}` : ""}</span>` : `<span class="com-enc-lugar">${IC.video}${t("cid_online")}</span>`}
-      <span>${esc(t("com_nome", { nome: e.nome }))}</span></div>
-    <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button>${e.lugar ? `<a class="com-opt" href="${esc(mapa)}" target="_blank" rel="noopener noreferrer">${t("cid_ver_mapa")}</a>` : `<a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>`}${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`;
+      <span class="com-nome"><span>${esc(t("com_nome", { nome: e.nome }))}</span>${botaoSeguir(e.uid)}</span>${vao}</div>
+    <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button>${e.lugar ? `<a class="com-opt" href="${esc(mapa)}" target="_blank" rel="noopener noreferrer">${t("cid_ver_mapa")}</a>` : `<a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>`}${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div>
+    <a class="com-acao com-acao--mini com-acao--solta" href="${esc(calUrl(e))}" target="_blank" rel="noopener noreferrer">${IC.agenda}<span>${t("por_calendario")}</span></a></div>`;
 }
 
 /** Coluna da direita na página de uma cidade: encontros no sítio e subcomunidades. */
@@ -459,7 +539,7 @@ function direitaCidade() {
   const subs = S.grupos.filter((g) => g.cidade === c.id);
   return `<section class="com-cartao com-cartao--p" aria-labelledby="com-ce"><h3 id="com-ce" class="com-dir-t"><span class="com-ic">${IC.agenda}</span>${esc(t("cid_encontros_t", { c: c.nome }))}</h3><p class="com-suave com-peq">${t("cid_encontros_d")}</p>
       ${encs.length ? encs.map(encontroItem).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
-      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro" data-cidade="${c.id}"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-elg">${t("cid_lugar")}</label><input id="com-elg" class="com-campo" name="lugar" type="text" maxlength="160" placeholder="${t("cid_lugar_ph")}"><label class="com-peq com-suave" for="com-el">${t("cid_ou_online")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..."><div class="com-linha"><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro" data-cidade="${c.id}"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-elg">${t("cid_lugar")}</label><input id="com-elg" class="com-campo" name="lugar" type="text" maxlength="160" placeholder="${t("cid_lugar_ph")}"><label class="com-peq com-suave" for="com-el">${t("cid_ou_online")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..."><label class="com-chk com-chk--mini"><input type="checkbox" name="repete">${t("repete_l")}</label><div class="com-linha"><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
     </section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-cs"><h3 id="com-cs" class="com-dir-t"><span class="com-ic">${IC.conversa}</span>${t("cid_subs_t")}</h3><p class="com-suave com-peq">${t("cid_subs_d")}</p>
       ${subs.length ? subs.map((g) => { const dentro = (g.membros || []).includes(eu.uid); return `<div class="com-linha com-aviso-item"><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}</span></div>${dentro || eu.admin ? `<a class="com-opt com-opt--mini" href="#g=${g.id}">${t("abrir_conversa")}</a>` : `<button class="com-opt com-opt--mini" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button>`}</div>`; }).join("") : `<p class="com-suave com-peq">${t("cid_sem_subs")}</p>`}
@@ -522,6 +602,8 @@ function telaGestao() {
     <section class="com-cartao com-cartao--p com-linha" aria-labelledby="com-g0"><span class="com-ic">${IC.globo}</span><div class="com-quem com-quem--larga"><strong id="com-g0">${t("cid_todas")}</strong><span>${S.cidades.length ? esc(t("cid_resumo", { a: abertas, n: S.cidades.length })) : t("cid_semear_d")}</span></div>${S.cidades.length ? `<a class="com-opt" href="#cidades">${t("cid_gerir")}</a>` : `<button class="com-pri" type="button" data-a="semear-cidades">${t("cid_semear")}</button>`}</section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g1"><h3 id="com-g1">${t("pedidos")}</h3>
       ${pedidos.length ? pedidos.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}${m.motivos?.length ? " · " + esc(m.motivos.map(motivo).join(", ")) : ""}</span></div><button class="com-opt" type="button" data-a="aprovar" data-v="${m.id}">${IC.certo} ${t("aprovar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("recusar")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_pedidos")}</p>`}</section>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-ga"><h3 id="com-ga">${t("anf_pedidos_t")}</h3>
+      ${(S.gestao.anfitriao || []).length ? S.gestao.anfitriao.map((a) => { const m = membros.find((x) => x.id === a.id); return `<div class="com-den"><div class="com-linha"><strong>${esc(a.nome)}</strong><span class="com-etq">${esc(a.cidade)}</span></div><p class="com-texto com-suave">${esc(a.sobre)}</p><div class="com-linha">${m && m.papel !== "professor" ? `<button class="com-opt" type="button" data-a="papel" data-v="${a.id}" data-p="professor">${t("anf_tornar_prof")}</button>` : (m ? `<span class="com-badge com-badge--feito">${IC.certo}${t("papel_professor")}</span>` : `<span class="com-suave com-peq">${t("anf_nao_membro")}</span>`)}<span class="com-esp"></span><button class="com-acao" type="button" data-a="apagar-pedido-anf" data-v="${a.id}">${t("anf_arquivar")}</button></div></div>`; }).join("") : `<p class="com-suave com-peq">${t("anf_sem")}</p>`}</section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g2"><h3 id="com-g2">${t("convidar_t")}</h3><p class="com-suave com-peq">${t("convidar_d")} <strong>neuromedit.com/comunidade.html</strong>.</p>
       <form class="com-linha" data-f="convidar"><label class="com-so-leitor" for="com-cv">${t("email")}</label><input id="com-cv" class="com-campo com-campo--cresce" name="email" type="email" placeholder="${t("email_ph")}" required><button class="com-pri" type="submit">${t("guardar_convite")}</button></form>
       ${convites.map((c) => `<div class="com-linha"><span class="com-etq">${t("convite_espera")}</span><span class="com-suave com-peq">${esc(c.email)}</span><button class="com-acao" type="button" data-a="cancelar-convite" data-v="${esc(c.id)}">${t("cancelar")}</button></div>`).join("")}</section>
@@ -537,6 +619,7 @@ function telaPerfil() {
   return `<div class="com-topo"><p class="com-sobre">${t("perfil_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
     <section class="com-cartao com-linha"><span class="com-foto">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span><div class="com-quem"><strong>${esc(eu.nome)}</strong><span>${papel(eu.papel)}</span><span>${t("foto_google")}</span></div></section>
     ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required>${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}<div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_nome")}</button></div></form>` : ""}
+    ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
     <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
@@ -622,10 +705,11 @@ async function carregarRota() {
         }, () => {});
       }
     } else if (chave === "gestao" && S.eu.admin) {
-      const [membros, convites, denuncias] = await Promise.all([dados.membros(), dados.convites(), dados.denunciadas()]);
-      S.gestao = { membros, convites, denuncias };
+      const [membros, convites, denuncias, anfitriao] = await Promise.all([dados.membros(), dados.convites(), dados.denunciadas(), dados.pedidosAnfitriao().catch(() => [])]);
+      S.gestao = { membros, convites, denuncias, anfitriao };
     } else if (chave === "cidades") {
       if (S.eu.admin) S.pedidosCidade = await dados.pedidosPorCidade().catch(() => ({}));
+      S.jaPediAnfitriao = await dados.jaPediAnfitriao();
     } else if (chave === "cidade") {
       S.cidadeId = valor;
       S.cidadeInfo = { pendentes: [], anfitrioes: [], jaPedi: false };
@@ -639,11 +723,14 @@ async function carregarRota() {
           S.grupos = await dados.grupos(S.eu).catch(() => []);
         } else {
           S.cidadeInfo.jaPedi = await dados.jaPedi(c.id);
+          S.jaPediAnfitriao = await dados.jaPediAnfitriao();
         }
         if (aberto(c)) S.cidadeInfo.pendentes = await dados.pendentesDaCidade(c.id).catch(() => []);
         if (S.eu.admin) S.pessoas = await dados.membrosAprovados().catch(() => []);
       }
-    } else if (chave !== "perfil") {
+    } else if (chave === "perfil") {
+      S.seguidoresN = S.eu.professor ? await dados.contarSeguidores().catch(() => null) : null;
+    } else {
       S.circuloId = chave === "c" && S.circulos.some((c) => c.id === valor) ? valor : (S.circulos[0]?.id || "");
       S.muralId = S.circuloId;
       S.posts = S.circuloId ? await dados.partilhas(S.circuloId) : [];
@@ -663,6 +750,7 @@ async function arrancar(user) {
     if (user) [S.circulos, S.cidades] = await Promise.all([dados.circulos().catch(() => []), dados.cidades().catch(() => [])]);
     if (S.eu?.estado === "aprovado") {
       await carregarLados();
+      S.seguindo = await dados.quemSigo().catch(() => []);
       if (S.eu.admin) S.gestao.membros = await dados.membros().catch(() => []);
     }
   } catch (e) {
@@ -728,8 +816,14 @@ const ACOES = {
   "apagar-mensagem": async (v) => { if (await confirmar({ titulo: t("c_msg_t"), texto: t("c_msg_d"), botao: t("c_msg_b") })) await tentar(() => dados.apagarMensagem(S.grupo.id, v)); },
   "apagar-canal": async (v) => { if (await confirmar({ titulo: t("c_aviso_t"), texto: t("c_aviso_d"), botao: t("c_aviso_b") }) && await tentar(() => dados.apagarDoCanal(v))) { await carregarLados(); desenhar(); } },
   "apagar-encontro": async (v) => { if (await confirmar({ titulo: t("c_enc_t"), texto: t("c_enc_d"), botao: t("c_enc_b") }) && await tentar(() => dados.apagarEncontro(v))) { await carregarLados(); desenhar(); } },
-  lugar: async (v) => { const e = S.encontros.find((x) => x.id === v); const novo = !e.guardado; if (await tentar(() => dados.guardarLugar(v, novo))) { e.guardado = novo; aviso(novo ? t("a_lugar_guardado") : t("a_lugar_libertado")); desenhar(); } },
-  aprovar: async (v) => { if (await tentar(() => dados.aprovar(v))) { aviso(t("a_aprovado")); await recarregar(); } },
+  lugar: async (v) => { const e = S.encontros.find((x) => x.id === v); const novo = !e.guardado; if (await tentar(() => dados.guardarLugar(v, novo))) { e.guardado = novo; e.vao = Math.max(0, (e.vao || 0) + (novo ? 1 : -1)); aviso(novo ? t("a_lugar_guardado") : t("a_lugar_libertado")); desenhar(); } },
+  seguir: async (v) => { const sim = !S.seguindo.includes(v); if (await tentar(() => dados.seguir(v, sim))) { S.seguindo = sim ? [...S.seguindo, v] : S.seguindo.filter((x) => x !== v); aviso(t(sim ? "a_seguindo" : "a_deixou")); desenhar(); } },
+  "apagar-pedido-anf": async (v) => { if (await tentar(() => dados.apagarPedidoAnfitriao(v))) await carregarRota(); },
+  aprovar: async (v) => {
+    const m = S.cidadeInfo.pendentes.find((x) => x.id === v);
+    const c = rota().chave === "cidade" ? cidadeDe(S.cidadeId) : null;
+    if (await tentar(() => dados.aprovar(v))) { aviso(t("a_aprovado")); await recarregar(); if (m && c) boasVindas(m, c); }
+  },
   recusar: async (v) => { if (await confirmar({ titulo: t("c_recusar_t"), texto: t("c_recusar_d"), botao: t("c_recusar_b") }) && await tentar(() => dados.recusar(v))) await recarregar(); },
   remover: async (v) => {
     const m = S.gestao.membros.find((x) => x.id === v);
@@ -767,7 +861,11 @@ const FORMS = {
   },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },
   mensagem: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto) return; campo.value = ""; if (!await tentar(() => dados.enviarMensagem(S.grupo.id, { texto, nome: S.eu.nome }))) campo.value = texto; campo.focus(); },
-  canal: async (f) => { const d = new FormData(f); if (await tentar(() => dados.publicarNoCanal({ titulo: d.get("titulo").trim(), texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); } },
+  canal: async (f) => { const d = new FormData(f); const titulo = d.get("titulo").trim(); if (await tentar(() => dados.publicarNoCanal({ titulo, texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); dados.avisarSeguidores(t("av_seg_aviso", { n: S.eu.nome, a: titulo }), "comunidade.html"); } },
+  "pedir-anfitriao": async (f) => {
+    const d = new FormData(f); const cidade = (f.dataset.cidade || d.get("cidade") || "").trim(); const sobre = String(d.get("sobre") || "").trim();
+    if (cidade && sobre && await tentar(() => dados.pedirAnfitriao({ cidade, nome: S.eu.nome, sobre }))) { S.jaPediAnfitriao = true; aviso(t("a_anf_enviado")); desenhar(); }
+  },
   encontro: async (f) => {
     const d = new FormData(f); const data = new Date(d.get("quando"));
     if (Number.isNaN(data.getTime())) return aviso(t("a_dia_hora"));
@@ -775,7 +873,11 @@ const FORMS = {
     const lugar = String(d.get("lugar") || "").trim(); const link = String(d.get("link") || "").trim();
     // Na cidade: presencial (lugar) ou online (Meet). Fora da cidade: só online.
     if (!lugar && !/^https:\/\/meet\.google\.com\/.+/.test(link)) return aviso(t(cidade ? "a_lugar_ou_link" : "e_meet"));
-    if (await tentar(() => dados.criarEncontro({ titulo: d.get("titulo").trim(), quando: data, link, lugar, cidade, nome: S.eu.nome }), t("e_meet"))) { aviso(t("a_enc_marcado")); await carregarLados(); desenhar(); }
+    const titulo = d.get("titulo").trim();
+    if (await tentar(() => dados.criarEncontro({ titulo, quando: data, link, lugar, cidade, nome: S.eu.nome, repete: d.get("repete") === "on" }), t("e_meet"))) {
+      aviso(t("a_enc_marcado")); await carregarLados(); desenhar();
+      dados.avisarSeguidores(t("av_seg_enc", { n: S.eu.nome, e: titulo }), cidade ? `comunidade.html#cidade=${cidade}` : "comunidade.html");
+    }
   },
   convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(t("a_convite", { e: email })); await carregarRota(); } },
   perfil: async (f) => { const d = new FormData(f); const nome = d.get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome, cidade: d.get("cidade") || "" }))) { aviso(t("a_nome")); await recarregar(); } }

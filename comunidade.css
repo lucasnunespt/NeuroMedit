@@ -25,20 +25,20 @@
 .com-pagina h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.04; font-weight: 500; letter-spacing: -0.03em; }
 .com-pagina h2 { font-size: 1.5rem; line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; }
 .com-pagina h3 { font-size: 1.08rem; line-height: 1.3; font-weight: 600; }
-.com-pagina .com-h1 { font-size: clamp(1.7rem, 3.4vw, 2.1rem); font-weight: 600; }
+.com-pagina .com-h1 { font-size: clamp(1.5rem, 2.6vw, 1.85rem); font-weight: 600; letter-spacing: -0.02em; }
 .com-pagina .com-h2 { font-size: 1.4rem; font-weight: 600; }
 .com-pagina a { color: var(--accent-dark); }
 
 .com-sobre { color: var(--accent-dark); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .com-cap { padding: 0 1rem; color: var(--text-soft); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.com-lead { max-width: 60ch; color: var(--text-soft); font-size: 1.08rem; }
+.com-lead { max-width: 60ch; color: var(--text-soft); font-size: 1rem; line-height: 1.55; }
 .com-suave { color: var(--text-soft); }
 .com-peq { font-size: 0.9rem; }
 .com-centro { align-items: center; text-align: center; }
 .com-espera { padding: 6rem 0; }
 .com-esp { flex: 1; }
 .com-recuo { margin-left: 1.5rem; }
-.com-texto { font-size: 1.04rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.com-texto { font-size: 1rem; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .com-so-leitor { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---------- Estrutura ---------- */
@@ -65,7 +65,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  padding: 1.5rem;
+  padding: 1.25rem 1.35rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -196,20 +196,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
-  padding: 0.7rem 1rem;
+  padding: 0.55rem 0.9rem;
   border-radius: var(--radius-sm);
   text-decoration: none;
+  transition: background-color var(--duration-quick) var(--easing-calm);
 }
 .com-pagina a.com-circ { color: var(--text); }
-.com-circ small { color: var(--text-soft); font-size: 0.86rem; }
+.com-circ small { color: var(--text-soft); font-size: 0.8rem; }
 .com-circ:hover { background: var(--surface); }
-.com-circ.is-on { background: var(--surface-strong); }
+.com-circ.is-on { background: var(--surface-strong); box-shadow: var(--shadow-soft); }
 
 /* ---------- Campos (publicar, responder, criar) ---------- */
 .com-novo { display: flex; flex-direction: column; gap: 0.6rem; }
-.com-esq .com-novo { padding: 0.6rem 1rem 0; }
+.com-esq .com-novo { padding: 0.6rem 0.9rem 0; }
 .com-esq .com-novo label { color: var(--text-soft); font-size: 0.9rem; }
-.com-dir .com-novo { padding-top: 0.6rem; border-top: 1px solid var(--line); }
+.com-dir .com-novo { padding-top: 0.6rem; }
 .com-campo {
   box-sizing: border-box;
   width: 100%;
@@ -222,6 +223,7 @@
   font: inherit;
 }
 textarea.com-campo { min-height: 96px; padding: 0.85rem 1rem; resize: vertical; }
+.com-compor textarea.com-campo { min-height: 76px; }
 .com-campo::placeholder { color: var(--text-subtle); }
 .com-campo--cresce { flex: 1 1 200px; width: auto; }
 .com-sel { flex: 1 1 200px; max-width: 280px; display: flex; flex-direction: column; gap: 0.25rem; }
@@ -230,7 +232,10 @@ textarea.com-campo { min-height: 96px; padding: 0.85rem 1rem; resize: vertical; 
 .com-chk input { width: 18px; height: 18px; accent-color: var(--accent); }
 .com-cartao > .com-chk { flex: 0 0 auto; }
 
-details.com-mais summary { display: flex; align-items: center; min-height: 44px; padding: 0 1rem; border-radius: var(--radius-sm); color: var(--text-soft); cursor: pointer; }
+details.com-mais summary { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 0.9rem; border-radius: var(--radius-sm); color: var(--text-soft); cursor: pointer; list-style: none; }
+details.com-mais summary::-webkit-details-marker { display: none; }
+details.com-mais summary svg { flex: none; width: 18px; height: 18px; }
+.com-mais--dir summary { padding: 0; min-height: 40px; font-size: 0.92rem; }
 details.com-mais summary:hover { color: var(--text); }
 details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
 
@@ -293,6 +298,219 @@ details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); 
 .com-circ:focus-visible,
 .com-campo:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
 
+/* ==========================================================
+   Layout da app (nov 2026, proposta aprovada pelo Lucas):
+   - a lateral dos círculos cola ao canto esquerdo, de cima a baixo,
+     como a SideNav do design system (destinos em cima, conta em baixo);
+   - o feed fica centrado no espaço que sobra, com largura de leitura;
+   - três níveis de superfície: lateral (bg-soft), página (bg), cartões (surface).
+   ========================================================== */
+@media (min-width: 941px) {
+  .com-pagina.com-pagina--app { max-width: none; margin: 0; padding-left: 0; padding-right: var(--gutter); padding-top: 0; }
+  .com-pagina--app .com-lay { display: grid; grid-template-columns: 248px minmax(0, 1fr) 300px; gap: 0 2.5rem; align-items: start; }
+  .com-pagina--app .com-esq {
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    max-width: none;
+    height: 100vh;
+    margin-top: -6.5rem;
+    padding: 7.25rem 0.9rem 1.25rem 1.1rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .com-pagina--app .com-meio { width: 100%; max-width: 680px; justify-self: center; padding-top: 1.25rem; }
+  .com-pagina--app .com-dir { max-width: none; padding-top: 1.25rem; }
+}
+@media (min-width: 941px) and (max-width: 1100px) {
+  .com-pagina--app .com-lay { grid-template-columns: 232px minmax(0, 1fr); }
+  .com-pagina--app .com-dir { grid-column: 2; }
+}
+.com-esq-fim { display: flex; flex-direction: column; gap: 0.15rem; margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--line); }
+.com-esq-fim:not(:has(*)) { display: none; }
+.com-circ--conta { flex-direction: row; align-items: center; gap: 0.7rem; }
+.com-circ--conta > span { display: flex; flex-direction: column; gap: 0.1rem; }
+.com-circ--conta svg { flex: none; width: 20px; height: 20px; color: var(--text-soft); }
+
+/* ---------- Coluna da direita ---------- */
+.com-dir-t { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; }
+.com-dir .com-ic { width: 32px; height: 32px; }
+.com-dir .com-ic svg { width: 17px; height: 17px; }
+/* Dos professores: dourado da Luz (luz-gold), a voz de quem guia. Região própria, sem gritar. */
+.com-prof {
+  border-color: color-mix(in srgb, var(--luz-gold) 45%, var(--line));
+  background: color-mix(in srgb, var(--luz-gold) 9%, var(--surface));
+}
+.com-ic--prof { border-color: var(--luz-gold-soft); background: var(--luz-gold-soft); color: var(--accent-dark); }
+.com-aviso-item { padding: 0.5rem 0; border-top: 1px solid var(--line); }
+.com-enc { border-top: 1px solid var(--line); padding-top: 0.6rem; }
+
+/* ---------- Mais opções (apagar círculo) ---------- */
+.com-menu { position: relative; flex: none; }
+.com-menu summary {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  cursor: pointer; list-style: none;
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.com-menu summary::-webkit-details-marker { display: none; }
+.com-menu summary:hover { background: var(--surface); color: var(--text); }
+.com-menu summary:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-menu summary svg { width: 22px; height: 22px; }
+.com-menu-lista {
+  position: absolute; right: 0; top: calc(100% + 0.35rem); z-index: 20;
+  min-width: 200px; padding: 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-card);
+}
+.com-menu-lista .com-acao { width: 100%; justify-content: flex-start; }
+
+/* ---------- Campo de publicar (compor) ---------- */
+.com-compor { gap: 0.7rem; }
+.com-compor-p { font-weight: 600; }
+.com-compor-barra { gap: 0.5rem; }
+.com-opt--mini { min-height: 44px; padding: 0 0.95rem; font-size: 0.92rem; }
+.com-compor input[type="file"]:focus-visible + label { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-campo--mini { width: auto; max-width: 230px; min-height: 44px; padding: 0 0.95rem; border-radius: var(--radius-pill); color: var(--text-soft); font-size: 0.92rem; }
+.com-chk--mini { flex: 0 1 auto; font-size: 0.92rem; }
+.com-previa { position: relative; width: min(260px, 100%); }
+.com-previa .com-imagem { width: 100%; }
+.com-previa[hidden] { display: none; }
+.com-previa .com-acao { position: absolute; top: 0.4rem; right: 0.4rem; z-index: 2; background: var(--bg-soft); color: var(--text); }
+
+/* ---------- Foto da prática: padrão único ----------
+   Todas as fotos: 4:3, cantos radius-md, borda line e o mesmo tom quente por cima
+   (accent em soft-light). Fotos diferentes passam a parecer da mesma família. */
+.com-imagem {
+  position: relative;
+  width: min(100%, 440px);
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+}
+.com-imagem img { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.82) contrast(0.96); }
+.com-imagem::after { content: ""; position: absolute; inset: 0; background: var(--accent); mix-blend-mode: soft-light; opacity: 0.35; pointer-events: none; }
+
+/* ---------- Prática dentro da partilha: capa com planeta de pontos ---------- */
+.com-pratica {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.45rem 0.6rem 0.45rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  text-decoration: none;
+  transition: background-color var(--duration-quick) var(--easing-calm), border-color var(--duration-quick) var(--easing-calm);
+}
+.com-pagina a.com-pratica { color: var(--text); }
+a.com-pratica:hover { background: var(--surface-strong); border-color: color-mix(in srgb, var(--accent) 34%, var(--line)); }
+a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-pratica .com-quem small { color: var(--text-soft); font-size: 0.8rem; }
+.com-pratica-capa {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  background: var(--surface-strong);
+  color: var(--accent-dark);
+}
+.com-pratica-capa svg { width: 100%; height: 100%; }
+.com-pratica-capa .pl-brilho { fill: var(--accent); }
+.com-pratica-play {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: none;
+  width: 40px; height: 40px;
+  margin-left: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  color: var(--accent-dark);
+}
+.com-pratica-play svg { width: 18px; height: 18px; }
+
+/* ---------- Capa do círculo: nome + planeta (Planetas do design system, em pequeno) ---------- */
+.com-topo--capa { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.5rem 1rem; }
+.com-topo--capa .com-h1 { min-width: 0; }
+.com-capa-sobre { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 0.75rem; }
+.com-compor-fim { display: inline-flex; align-items: center; gap: 0.35rem; margin-left: auto; }
+.com-capa-planeta { display: block; width: 96px; height: 96px; color: var(--accent-dark); }
+.com-capa-planeta svg { width: 100%; height: 100%; }
+.com-capa-planeta .pl-brilho { fill: var(--accent); }
+.com-topo--capa .com-menu { align-self: start; }
+
+/* ---------- Em destaque: o aviso mais recente dos professores, fixado no topo do feed ---------- */
+.com-destaque {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--luz-gold) 45%, var(--line));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--luz-gold) 9%, var(--surface));
+}
+.com-destaque .com-quem { flex: 1; gap: 0.2rem; }
+.com-destaque .com-quem span { color: var(--text-soft); }
+.com-destaque-rot { color: var(--accent-dark); font-size: 0.8rem; }
+
+/* ---------- Campo de publicar: fechado numa linha, abre ao tocar ---------- */
+.com-compor:not(.is-aberto) { padding: 0.7rem; }
+.com-compor-abrir {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 1.1rem 0 0.35rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-soft);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.com-compor-abrir:hover { background: var(--surface-strong); color: var(--text); }
+.com-compor-abrir:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-compor-abrir[hidden], .com-compor-corpo[hidden] { display: none; }
+.com-compor-corpo { display: flex; flex-direction: column; gap: 0.7rem; }
+
+/* ---------- Etiqueta Professor (Badge do design system, tom neutro com o dourado dos professores) ---------- */
+.com-nome { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.com-selo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.05rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--luz-gold) 45%, var(--line));
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.com-resp .com-linha > .com-selo { margin-left: -0.35rem; }
+
+/* Só num tamanho: o propósito do círculo fica na capa no telemóvel e em "Sobre este círculo" nos ecrãs largos. */
+@media (min-width: 941px) { .com-so-movel { display: none; } }
+@media (max-width: 940px) {
+  .com-so-largo { display: none; }
+  .com-capa-planeta { width: 72px; height: 72px; }
+}
+
 /* ---------- Tablet e telemóvel ---------- */
 @media (max-width: 1100px) {
   .com-dir { flex: 1 1 100%; max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
@@ -302,6 +520,9 @@ details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); 
   .com-esq { flex: 1 1 100%; width: 100%; max-width: 100%; }
   .com-esq .com-novo { padding: 0; }
   .com-esq .com-cap { display: none; }
+  .com-esq-fim { flex-direction: row; flex-wrap: wrap; gap: 0.5rem; margin-top: 0; padding-top: 0; border-top: 0; }
+  .com-circ--conta small { display: none; }
+  .com-campo--mini { max-width: none; flex: 1 1 160px; }
   .com-lista { flex-direction: row; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
   .com-circ { flex: none; padding: 0.55rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-pill); }
   .com-circ small { display: none; }
@@ -317,5 +538,5 @@ details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); 
   .com-resp { margin-left: 0; padding-left: 0.5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .com-pri, .com-opt, .com-acao, .com-perigo { transition: none; }
+  .com-pri, .com-opt, .com-acao, .com-perigo, .com-circ, .com-pratica, .com-menu summary, .com-compor-abrir { transition: none; }
 }

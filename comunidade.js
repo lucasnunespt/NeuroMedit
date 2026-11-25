@@ -27,7 +27,12 @@ const IC = {
   certo: I('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
   megafone: I('<path d="M4.5 10v4h3l7 4V6l-7 4h-3z"/><path d="M18 9.5a3.5 3.5 0 0 1 0 5"/>'),
   agenda: I('<rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10.5h16"/>'),
-  pessoa: I('<circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c0-3.7 3.1-6.2 7-6.2s7 2.5 7 6.2"/>')
+  pessoa: I('<circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c0-3.7 3.1-6.2 7-6.2s7 2.5 7 6.2"/>'),
+  foto: I('<rect x="3.5" y="6" width="17" height="13" rx="3"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1.2-2h3.6L15 6"/>'),
+  play: I('<path d="M8.5 6.2v11.6L18 12z"/>'),
+  pontos: I('<circle cx="6" cy="12" r="0.9"/><circle cx="12" cy="12" r="0.9"/><circle cx="18" cy="12" r="0.9"/>'),
+  fechar: I('<path d="M7 7l10 10M17 7L7 17"/>'),
+  engrenagem: I('<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6"/>')
 };
 /* ---------- Língua ----------
    Os textos vivem em translations-*.js (chaves com_*). Os dados guardados
@@ -67,7 +72,7 @@ const S = {
   pronto: false, user: null, eu: null, erro: "", ocupado: false,
   motivos: { calma: true }, aceito: false,
   circulos: [], circuloId: "", posts: [], ressoou: {}, editando: "",
-  aberto: null, respostas: [],
+  aberto: null, respostas: [], novaFoto: "", comporAberto: false,
   grupos: [], grupo: null, msgs: [], pessoas: [],
   canal: [], encontros: [],
   gestao: { membros: [], convites: [], denuncias: [] }
@@ -98,6 +103,7 @@ const inicial = (nome) => (nome || "·").trim().charAt(0).toUpperCase() || "·";
 const rosto = (foto, nome, anon) => (!anon && foto
   ? `<span class="com-ini com-ini--foto" aria-hidden="true"><img src="${esc(foto)}" alt="" referrerpolicy="no-referrer" loading="lazy"></span>`
   : `<span class="com-ini" aria-hidden="true">${anon ? "·" : esc(inicial(nome))}</span>`);
+const selo = () => `<span class="com-selo">${t("selo_prof")}</span>`;
 const rota = () => {
   const h = location.hash.replace(/^#/, "");
   const [chave, valor] = h.split("=");
@@ -206,31 +212,90 @@ function telaFora() {
 function lateral(tela) {
   const eu = S.eu;
   const pend = S.gestao.membros.filter((m) => m.estado === "pendente").length;
+  // Como a SideNav do design system: destinos em cima, gestão colada ao fundo.
+  // O perfil não aparece aqui: vive só no avatar do topo ("Meu perfil na comunidade"), como no Facebook.
   return `<aside class="com-esq" aria-label="${t("lat_aria")}">
     <p class="com-cap">${t("circulos")}</p>
     <nav class="com-lista">
-      ${S.circulos.map(circ).map((c) => `<a class="com-circ ${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? "is-on" : ""}" href="#c=${c.id}"><span>${esc(c.nome)}</span><small>${esc(c.sub || "")}</small></a>`).join("")}
+      ${S.circulos.map(circ).map((c) => `<a class="com-circ ${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? "is-on" : ""}" href="#c=${c.id}"${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? ' aria-current="page"' : ""}><span>${esc(c.nome)}</span><small>${esc(c.sub || "")}</small></a>`).join("")}
       <a class="com-circ ${tela === "grupos" || tela === "grupo" ? "is-on" : ""}" href="#grupos"><span>${t("grupos_t")}</span><small>${t("grupos_s")}</small></a>
-      ${eu.admin ? `<a class="com-circ ${tela === "gestao" ? "is-on" : ""}" href="#gestao"><span>${t("gestao")}</span><small>${pend ? (pend === 1 ? t("pend_1") : t("pend_n", { n: pend })) : t("gestao_s")}</small></a>` : ""}
-      <a class="com-circ ${tela === "perfil" ? "is-on" : ""}" href="#perfil"><span>${t("perfil_t")}</span><small>${t("perfil_s")}</small></a>
     </nav>
-    ${eu.professor ? `<details class="com-mais"><summary>${t("novo_circulo")}</summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">${t("nome_circulo")}</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("nome_circulo")}" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="${t("proposito_ph")}" aria-label="${t("proposito_aria")}"><button class="com-opt" type="submit">${IC.mais} ${t("criar_circulo")}</button></form></details>` : ""}
+    <div class="com-esq-fim">
+      ${eu.professor ? `<details class="com-mais"><summary>${IC.mais}<span>${t("novo_circulo")}</span></summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">${t("nome_circulo")}</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("nome_circulo")}" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="${t("proposito_ph")}" aria-label="${t("proposito_aria")}"><button class="com-opt" type="submit">${IC.mais} ${t("criar_circulo")}</button></form></details>` : ""}
+      ${eu.admin ? `<a class="com-circ com-circ--conta ${tela === "gestao" ? "is-on" : ""}" href="#gestao">${IC.engrenagem}<span>${t("gestao")}<small>${pend ? (pend === 1 ? t("pend_1") : t("pend_n", { n: pend })) : t("gestao_s")}</small></span></a>` : ""}
+    </div>
   </aside>`;
 }
 
-function direita() {
+function direita(tela) {
   const eu = S.eu;
+  const noCirculo = tela === "circulo" || tela === "partilha";
+  const c = noCirculo ? circ(S.circulos.find((x) => x.id === S.circuloId)) : null;
+  // No círculo, o aviso mais recente já está "Em destaque" no topo do feed; aqui ficam os anteriores.
+  const avisos = tela === "circulo" ? S.canal.slice(1, 5) : S.canal.slice(0, 5);
   return `<aside class="com-dir" aria-label="${t("dir_aria")}">
-    <section class="com-cartao com-cartao--p"><h3>${t("pv_prof_t")}</h3><p class="com-suave com-peq">${t("canal_d")}</p>
-      ${S.canal.length ? S.canal.slice(0, 5).map((a) => `<div class="com-linha com-linha--topo"><span class="com-ic">${IC.megafone}</span><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</div>`).join("") : `<p class="com-suave com-peq">${t("sem_avisos")}</p>`}
-      ${eu.professor ? `<form class="com-novo" data-f="canal"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("aviso_titulo")}" aria-label="${t("aviso_titulo")}" required><input class="com-campo" name="texto" type="text" maxlength="300" placeholder="${t("aviso_frase")}" aria-label="${t("aviso_texto")}"><button class="com-opt" type="submit">${t("publicar_aviso")}</button></form>` : ""}
+    ${c ? `<section class="com-cartao com-cartao--p com-so-largo" aria-labelledby="com-sobre-t"><h3 id="com-sobre-t" class="com-dir-t">${t("sobre_circulo")}</h3><p class="com-suave com-peq">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</section>` : ""}
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-enc-t"><h3 id="com-enc-t" class="com-dir-t"><span class="com-ic">${IC.agenda}</span>${t("enc_t")}</h3><p class="com-suave com-peq">${t("enc_d")}</p>
+      ${S.encontros.length ? S.encontros.map((e) => `<div class="com-enc"><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span><span>${esc(t("com_nome", { nome: e.nome }))}</span></div>
+        <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button><a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
     </section>
-    <section class="com-cartao com-cartao--p"><h3>${t("enc_t")}</h3><p class="com-suave com-peq">${t("enc_d")}</p>
-      ${S.encontros.length ? S.encontros.map((e) => `<div class="com-enc"><div class="com-linha com-linha--topo"><span class="com-ic">${IC.agenda}</span><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span><span>${esc(t("com_nome", { nome: e.nome }))}</span></div></div>
-        <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button><a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
-      ${eu.professor ? `<form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form>` : ""}
+    <section class="com-cartao com-cartao--p com-prof" aria-labelledby="com-prof-t"><h3 id="com-prof-t" class="com-dir-t"><span class="com-ic com-ic--prof">${IC.megafone}</span>${t("pv_prof_t")}</h3><p class="com-suave com-peq">${t("canal_d")}</p>
+      ${avisos.length ? avisos.map((a) => `<div class="com-linha com-linha--topo com-aviso-item"><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</div>`).join("") : (S.canal.length ? "" : `<p class="com-suave com-peq">${t("sem_avisos")}</p>`)}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("novo_aviso")}</span></summary><form class="com-novo" data-f="canal"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("aviso_titulo")}" aria-label="${t("aviso_titulo")}" required><input class="com-campo" name="texto" type="text" maxlength="300" placeholder="${t("aviso_frase")}" aria-label="${t("aviso_texto")}"><button class="com-opt" type="submit">${t("publicar_aviso")}</button></form></details>` : ""}
     </section>
   </aside>`;
+}
+
+/* ---------- Capa da prática: um planeta de pontos de brilho ----------
+   Cada prática tem o seu planeta (guia "Planetas de pontos de brilho" do design system),
+   desenhado aqui em pequeno, só com pontos e com a luz a vir de cima à esquerda.
+   Cores: accent-dark nos pontos, accent nos mais claros — seguem o tema. */
+function planeta(tipo) {
+  const R = tipo === "saturno" ? 16 : 20, C = 32, N = 90, pts = [];
+  const luz = (x, y) => Math.max(0, Math.min(1, 0.55 + 0.5 * (-(x - C) - (y - C)) / (R * 1.41)));
+  for (let i = 0; i < N; i++) {
+    const r = R * Math.sqrt((i + 0.5) / N), a = i * 2.39996;
+    const x = C + r * Math.cos(a), y = C + r * Math.sin(a);
+    let l = luz(x, y);
+    if (tipo === "netuno") l *= 0.7 + 0.3 * Math.sin((y - C) * 0.7);
+    if (tipo === "lua") for (const [cx, cy, cr] of [[25, 27, 5], [38, 36, 4], [30, 41, 3]]) { const d = Math.hypot(x - cx, y - cy); if (d < cr) l *= 0.35; else if (d < cr + 1.6) l = Math.min(1, l + 0.25); }
+    pts.push([x, y, l]);
+  }
+  if (tipo === "saturno") {
+    for (let i = 0; i < 44; i++) {
+      const a = (i / 44) * Math.PI * 2, x0 = R * 1.7 * Math.cos(a), y0 = R * 0.42 * Math.sin(a);
+      const x = C + x0 * 0.95 - y0 * 0.31, y = C + x0 * 0.31 + y0 * 0.95;
+      if (y0 < 0 && Math.hypot(x - C, y - C) < R) continue; // a parte de trás do anel fica escondida
+      pts.push([x, y, 0.35 + 0.4 * luz(x, y)]);
+    }
+  }
+  const estrelas = [[8, 10], [55, 8], [52, 54], [10, 50], [58, 30]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="0.6" opacity="0.4"/>`).join("");
+  const p = pts.map(([x, y, l]) => `<circle${l > 0.85 ? ' class="pl-brilho"' : ""} cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(0.45 + 0.9 * l).toFixed(2)}" opacity="${(0.22 + 0.78 * l).toFixed(2)}"/>`).join("");
+  return `<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false" fill="currentColor">${estrelas}${p}</svg>`;
+}
+/** O planeta de cada círculo: os quatro iniciais têm o seu; os criados depois recebem um pelo id. */
+const PLANETAS_CIRCULO = ["saturno", "venus", "lua", "netuno"];
+function planetaDoCirculo(raw) {
+  const i = dados.CIRCULOS_INICIAIS.findIndex((x) => x.nome === raw?.nome);
+  if (i >= 0) return PLANETAS_CIRCULO[i];
+  const n = [...String(raw?.id || "")].reduce((soma, ch) => soma + ch.charCodeAt(0), 0);
+  return PLANETAS_CIRCULO[n % PLANETAS_CIRCULO.length];
+}
+const CAPA = {
+  "Respiração Calma": { href: "calm.html", planeta: "venus" },
+  "Quem está falando?": { href: "radio.html", planeta: "saturno" },
+  "Desacelerar à Noite": { href: "sleep.html", planeta: "lua" },
+  "Antes de Dormir": { href: "antesdedormir.html", planeta: "netuno" }
+};
+/** Mini-cartão da prática dentro da partilha: diz o que é e convida a fazê-la. */
+function cartaoPratica(v) {
+  const c = CAPA[v];
+  const nome = pratica(v);
+  const capa = `<span class="com-pratica-capa">${planeta(c?.planeta || "venus")}</span><span class="com-quem"><small>${t("depois")}</small><strong>${esc(nome)}</strong></span>`;
+  return c
+    ? `<a class="com-pratica" href="${c.href}" aria-label="${esc(t("fazer_pratica", { p: nome }))}">${capa}<span class="com-pratica-play" aria-hidden="true">${IC.play}</span></a>`
+    : `<div class="com-pratica">${capa}</div>`;
 }
 
 function cartaoPartilha(p, { aberta = false } = {}) {
@@ -241,9 +306,11 @@ function cartaoPartilha(p, { aberta = false } = {}) {
     ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">${t("editar_partilha")}</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">${t("guardar")}</button><button class="com-acao" type="button" data-a="cancelar-edicao">${t("cancelar")}</button></div></form>`
     : `<p class="com-texto">${esc(p.texto)}</p>`;
   return `<article class="com-cartao">
-    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><strong>${esc(autor)}</strong><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
-      ${p.pratica && p.pratica !== PRATICAS[0][0] ? `<span class="com-etq">${esc(t("depois_de", { p: pratica(p.pratica) }))}</span>` : ""}${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span>` : ""}</div>
+    <div class="com-linha">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem"><span class="com-nome"><strong>${esc(autor)}</strong>${p.professor && !p.anon ? selo() : ""}</span><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
+      ${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span>` : ""}</div>
     ${corpo}
+    ${p.imagem ? `<figure class="com-imagem"><img src="${esc(p.imagem)}" alt="${t("foto_alt")}" loading="lazy"></figure>` : ""}
+    ${p.pratica && p.pratica !== PRATICAS[0][0] ? cartaoPratica(p.pratica) : ""}
     <div class="com-linha com-linha--acoes">
       <button class="com-acao ${S.ressoou[p.id] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.ressoou[p.id])}" data-a="ressoou" data-v="${p.id}">${IC.folha}<span>${S.ressoou[p.id] ? t("ressoou_em_voce") : t("ressoou")}</span></button>
       ${aberta ? "" : `<a class="com-acao" href="#p=${p.id}">${IC.responder}<span>${t("ler_responder")}</span></a>`}
@@ -260,15 +327,28 @@ function telaCirculo() {
     return `<div class="com-cartao"><h2>${t("sem_circulos")}</h2>${S.eu.admin ? `<p class="com-suave">${t("semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear">${t("semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
   }
   const podeApagar = S.eu.admin || c.criador === S.eu.uid;
-  return `<div class="com-topo"><div class="com-linha"><p class="com-sobre">${t("circulo")}</p><span class="com-esp"></span>${podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>${t("apagar_circulo")}</span></button>` : ""}</div>
-      <h1 class="com-h1">${esc(c.nome)}</h1><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</div>
-    <form class="com-cartao com-novo" data-f="publicar">
-      <label for="com-partilha"><strong>${t("pub_pergunta")}</strong></label>
-      <textarea id="com-partilha" class="com-campo" name="texto" maxlength="2000" placeholder="${t("pub_ph")}" required></textarea>
-      <div class="com-linha com-linha--base">
-        <div class="com-sel"><label class="com-peq com-suave" for="com-pratica">${t("qual_pratica")}</label><select id="com-pratica" class="com-campo" name="pratica">${PRATICAS.map(([v]) => `<option value="${esc(v)}">${esc(pratica(v))}</option>`).join("")}</select></div>
-        <label class="com-chk"><input type="checkbox" name="anon">${t("anon")}</label>
-        <button class="com-pri" type="submit">${t("publicar")}</button>
+  const aberto = S.comporAberto || Boolean(S.novaFoto);
+  const destaque = S.canal[0];
+  // Capa: o nome e o planeta do círculo (a identidade só se descobre ao entrar).
+  // O propósito e o cuidado vivem em "Sobre este círculo", à direita; no telemóvel ficam aqui.
+  // Apagar o círculo é a ação mais destrutiva da página: fica dentro de "Mais opções".
+  return `<div class="com-topo com-topo--capa"><h1 class="com-h1">${esc(c.nome)}</h1>
+      <span class="com-capa-planeta">${planeta(planetaDoCirculo(S.circulos.find((x) => x.id === S.circuloId)))}</span>
+      ${podeApagar ? `<details class="com-menu"><summary aria-label="${t("mais_opcoes")}" title="${t("mais_opcoes")}">${IC.pontos}</summary><div class="com-menu-lista"><button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>${t("apagar_circulo")}</span></button></div></details>` : ""}
+      <div class="com-capa-sobre com-so-movel"><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</div></div>
+    ${destaque ? `<section class="com-destaque" aria-labelledby="com-dest-t"><span class="com-ic com-ic--prof">${IC.megafone}</span><div class="com-quem"><small class="com-destaque-rot">${t("destaque")} · ${t("pv_prof_t")}</small><strong id="com-dest-t">${esc(destaque.titulo)}</strong>${destaque.texto ? `<span>${esc(destaque.texto)}</span>` : ""}<span class="com-peq">${esc(destaque.nome)} · ${quando(destaque.criadoEm)}</span></div>${S.eu.admin || destaque.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${destaque.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</section>` : ""}
+    <form class="com-cartao com-novo com-compor ${aberto ? "is-aberto" : ""}" data-f="publicar">
+      <button class="com-compor-abrir" type="button" data-a="abrir-compor" ${aberto ? "hidden" : ""}>${rosto(S.eu.foto, S.eu.nome, false)}<span>${t("pub_pergunta")}</span></button>
+      <div class="com-compor-corpo" ${aberto ? "" : "hidden"}>
+        <label class="com-compor-p" for="com-partilha">${t("pub_pergunta")}</label>
+        <textarea id="com-partilha" class="com-campo" name="texto" rows="2" maxlength="2000" placeholder="${t("pub_ph")}" required></textarea>
+        <div class="com-previa" id="com-previa" hidden><figure class="com-imagem"><img alt=""></figure><button class="com-acao com-acao--mini" type="button" data-a="tirar-foto" aria-label="${t("foto_tirar")}" title="${t("foto_tirar")}">${IC.fechar}</button></div>
+        <div class="com-linha com-compor-barra">
+          <input id="com-foto" class="com-so-leitor" type="file" accept="image/*" data-a="foto"><label class="com-opt com-opt--mini" for="com-foto" title="${t("foto_aria")}">${IC.foto}<span>${t("foto")}</span></label>
+          <label class="com-so-leitor" for="com-pratica">${t("qual_pratica")}</label><select id="com-pratica" class="com-campo com-campo--mini" name="pratica" title="${t("qual_pratica")}">${PRATICAS.map(([v]) => `<option value="${esc(v)}">${esc(pratica(v))}</option>`).join("")}</select>
+          <label class="com-chk com-chk--mini"><input type="checkbox" name="anon">${t("anon")}</label>
+          <span class="com-compor-fim"><button class="com-acao" type="button" data-a="fechar-compor">${t("cancelar")}</button><button class="com-pri" type="submit">${t("publicar")}</button></span>
+        </div>
       </div>
     </form>
     ${S.posts.length ? S.posts.map((p) => cartaoPartilha(p)).join("") : `<div class="com-cartao com-centro"><strong>${t("sem_partilhas")}</strong><span class="com-suave">${t("primeira")}</span></div>`}
@@ -282,7 +362,7 @@ function telaPartilha() {
   return `<a class="com-acao com-acao--solta" href="#c=${p.circulo}">${IC.voltar}<span>${esc(t("voltar_a", { c: c?.nome || t("circulo") }))}</span></a>
     ${cartaoPartilha(p, { aberta: true })}
     <p class="com-cap">${t("respostas")}</p>
-    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? t("voce") : r.nome)}${r.professor ? t("professor_tag") : ""}</strong><span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">${t("sem_respostas")}</p>`}
+    ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? t("voce") : r.nome)}</strong>${r.professor ? selo() : ""}<span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">${t("sem_respostas")}</p>`}
     <form class="com-cartao com-novo com-recuo" data-f="responder"><label for="com-resp"><strong>${t("responder_cuidado")}</strong></label><p class="com-suave com-peq">${t("responder_d")}</p><textarea id="com-resp" class="com-campo" name="texto" maxlength="1500" placeholder="${t("responder_ph")}" required></textarea><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("responder")}</button></div></form>`;
 }
 
@@ -348,15 +428,55 @@ function telaPerfil() {
     <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
 }
 
+/* ---------- Foto da prática ----------
+   Padrão único para todas as fotos: corte ao centro em 4:3, 960×720, JPEG.
+   Fica pequena o bastante para ir no próprio documento (regra: até 200 000 caracteres),
+   sem precisar do Storage. O tom final (filtro quente) é dado no CSS, em .com-imagem. */
+async function reduzirFoto(ficheiro) {
+  const img = await createImageBitmap(ficheiro);
+  const tentar = (L, A, q) => {
+    const tela = Object.assign(document.createElement("canvas"), { width: L, height: A });
+    const alvo = L / A, prop = img.width / img.height;
+    const sw = prop > alvo ? img.height * alvo : img.width, sh = prop > alvo ? img.height : img.width / alvo;
+    tela.getContext("2d").drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, L, A);
+    return tela.toDataURL("image/jpeg", q);
+  };
+  for (const [L, A, q] of [[960, 720, 0.72], [960, 720, 0.6], [800, 600, 0.55], [640, 480, 0.5]]) {
+    const url = tentar(L, A, q);
+    if (url.startsWith("data:image/jpeg;base64,") && url.length <= 195000) { img.close?.(); return url; }
+  }
+  img.close?.();
+  throw new Error("foto grande demais");
+}
+/** Abre ou fecha o campo de publicar sem redesenhar a página (o texto escrito não se perde). */
+function comporAberto(sim) {
+  S.comporAberto = sim;
+  const f = document.querySelector("form.com-compor");
+  if (!f) return;
+  f.classList.toggle("is-aberto", sim);
+  f.querySelector(".com-compor-abrir").hidden = sim;
+  f.querySelector(".com-compor-corpo").hidden = !sim;
+  if (sim) f.querySelector("textarea").focus();
+  else { f.reset(); f.querySelector(".com-compor-abrir").focus(); }
+}
+function mostrarPrevia() {
+  const caixa = document.getElementById("com-previa");
+  if (!caixa) return;
+  caixa.hidden = !S.novaFoto;
+  caixa.querySelector("img").src = S.novaFoto || "";
+}
+
 /* ---------- Desenhar ---------- */
 function desenhar() {
   if (!S.pronto) { app.innerHTML = `<p class="com-suave com-centro com-espera">${t("um_momento")}</p>`; return; }
   if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
-  if (!S.user || S.eu.estado !== "aprovado") { app.innerHTML = telaFora(); return; }
+  if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); return; }
   const { chave } = rota();
   const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil" }[chave] || "circulo";
   const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil }[tela]();
-  app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita()}</div>`;
+  app.classList.add("com-pagina--app");
+  app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita(tela)}</div>`;
+  mostrarPrevia();
   if (tela === "grupo") rolarConversa();
 }
 const rolarConversa = () => { const c = document.getElementById("com-msgs"); if (c) c.scrollTop = c.scrollHeight; };
@@ -441,6 +561,14 @@ const ACOES = {
     if (!await confirmar({ titulo: t("c_resposta_t"), texto: t("c_resposta_d"), botao: t("c_resposta_b") })) return;
     if (await tentar(() => dados.apagarResposta(S.aberto.id, v))) { aviso(t("a_resposta_apagada")); await carregarRota(); }
   },
+  foto: async (_, el) => {
+    const f = el.files?.[0]; el.value = "";
+    if (!f) return;
+    try { S.novaFoto = await reduzirFoto(f); mostrarPrevia(); } catch { aviso(t("foto_erro")); }
+  },
+  "tirar-foto": () => { S.novaFoto = ""; mostrarPrevia(); },
+  "abrir-compor": () => comporAberto(true),
+  "fechar-compor": () => { S.novaFoto = ""; mostrarPrevia(); comporAberto(false); },
   "apagar-circulo": async (v) => {
     const c = circ(S.circulos.find((x) => x.id === v));
     if (!await confirmar({ titulo: t("c_circulo_t"), texto: t("c_circulo_d", { n: c.nome }), botao: t("c_circulo_b"), nome: c.nome })) return;
@@ -483,7 +611,7 @@ const FORMS = {
   publicar: async (f) => {
     const d = new FormData(f);
     const texto = d.get("texto").trim(); if (!texto) return;
-    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto }))) { aviso(t("a_publicada")); await carregarRota(); }
+    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto, imagem: S.novaFoto, professor: S.eu.professor && d.get("anon") !== "on" }))) { S.novaFoto = ""; S.comporAberto = false; aviso(t("a_publicada")); await carregarRota(); }
   },
   editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso(t("a_editada")); await carregarRota(); } },
   responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso(t("a_resposta")); await carregarRota(); } },
@@ -508,6 +636,7 @@ app.addEventListener("click", (e) => {
 });
 app.addEventListener("change", (e) => { const el = e.target.closest("input[data-a]"); if (el) ACOES[el.dataset.a]?.(el.dataset.v, el); });
 app.addEventListener("submit", (e) => { const f = e.target.closest("form[data-f]"); if (!f) return; e.preventDefault(); FORMS[f.dataset.f]?.(f); });
+document.addEventListener("click", (e) => { document.querySelectorAll("details.com-menu[open]").forEach((d) => { if (!d.contains(e.target)) d.open = false; }); });
 window.addEventListener("hashchange", carregarRota);
 // Ao trocar de língua, redesenha (sem recarregar os dados). Numa conversa aberta, só o que é texto da página muda.
 window.addEventListener("neuromedit:languagechange", () => { if (!document.getElementById("com-confirmar").open) desenhar(); });

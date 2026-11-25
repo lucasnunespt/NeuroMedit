@@ -9,7 +9,7 @@
 import { auth, db, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "./firebase-init.js";
 import {
   doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, getDocs, collection, query, where, limit,
-  onSnapshot, serverTimestamp, writeBatch, arrayUnion, arrayRemove, Timestamp
+  onSnapshot, serverTimestamp, writeBatch, arrayUnion, arrayRemove, Timestamp, increment, getCountFromServer
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const col = (...p) => collection(db, ...p);
@@ -261,25 +261,38 @@ export function publicarNoCanal({ titulo, texto, nome }) {
 }
 export function apagarDoCanal(id) { return deleteDoc(ref("comCanal", id)); }
 
+const SEMANA = 7 * 24 * 3600 * 1000;
+/** Para um encontro semanal, o próximo dia a partir de agora (o original fica em quandoInicio). */
+function proximo(e, desde) {
+  if (e.repete !== "semanal") return e;
+  let m = ms(e.quando);
+  if (m < desde) m += Math.ceil((desde - m) / SEMANA) * SEMANA;
+  return { ...e, quandoInicio: e.quando, quando: { toMillis: () => m } };
+}
 export async function encontros() {
   const agora = Date.now() - 2 * 3600 * 1000;
-  const itens = lista(await getDocs(query(col("comEncontros"), limit(50)))).filter((e) => ms(e.quando) >= agora).sort((a, b) => ms(a.quando) - ms(b.quando));
+  const itens = lista(await getDocs(query(col("comEncontros"), limit(50)))).map((e) => proximo(e, agora)).filter((e) => ms(e.quando) >= agora).sort((a, b) => ms(a.quando) - ms(b.quando));
   await Promise.all(itens.map(async (e) => {
     e.guardado = await getDoc(ref("comEncontros", e.id, "lugares", uid())).then((s) => s.exists()).catch(() => false);
   }));
   return itens;
 }
 /** Online: com link do Meet. Presencial: com lugar, sempre numa cidade. */
-export function criarEncontro({ titulo, quando, link, lugar, cidade, nome }) {
-  const e = { uid: uid(), nome: (nome || "").slice(0, 60), titulo: titulo.slice(0, 120), quando: Timestamp.fromDate(quando), criadoEm: serverTimestamp() };
+export function criarEncontro({ titulo, quando, link, lugar, cidade, nome, repete }) {
+  const e = { uid: uid(), nome: (nome || "").slice(0, 60), titulo: titulo.slice(0, 120), quando: Timestamp.fromDate(quando), vao: 0, criadoEm: serverTimestamp() };
+  if (repete) e.repete = "semanal";
   if (lugar) e.lugar = lugar.slice(0, 160); else e.link = link;
   if (cidade) e.cidade = cidade;
   return addDoc(col("comEncontros"), e);
 }
 export function apagarEncontro(id) { return deleteDoc(ref("comEncontros", id)); }
+/** Guardar ou libertar um lugar. O contador "N pessoas vão" muda no mesmo lote (as regras confirmam). */
 export function guardarLugar(id, sim) {
+  const lote = writeBatch(db);
   const r = ref("comEncontros", id, "lugares", uid());
-  return sim ? setDoc(r, { em: serverTimestamp() }) : deleteDoc(r);
+  if (sim) lote.set(r, { em: serverTimestamp() }); else lote.delete(r);
+  lote.update(ref("comEncontros", id), { vao: increment(sim ? 1 : -1) });
+  return lote.commit();
 }
 
 /* ---------- Cidades ---------- */
@@ -326,6 +339,41 @@ export async function pedidosPorCidade() {
   todos.forEach((p) => { const k = p.cidade; conta[k] = conta[k] || { n: 0, nome: p.nome || "" }; conta[k].n += 1; });
   return conta;
 }
+
+/* ---------- Seguir professores ----------
+   O documento do seguidor vive em comMembros/{prof}/seguidores/{eu}; a minha lista fica no meu
+   documento privado (users/{eu}.comSigo), para saber a quem já sigo. O número só o professor vê. */
+export async function quemSigo() {
+  const s = await getDoc(ref("users", uid())).catch(() => null);
+  return s?.exists() ? (s.data().comSigo || []) : [];
+}
+export async function seguir(profUid, sim) {
+  const lote = writeBatch(db);
+  const r = ref("comMembros", profUid, "seguidores", uid());
+  if (sim) lote.set(r, { em: serverTimestamp() }); else lote.delete(r);
+  lote.set(ref("users", uid()), { comSigo: sim ? arrayUnion(profUid) : arrayRemove(profUid) }, { merge: true });
+  await lote.commit();
+}
+export async function contarSeguidores() {
+  const c = await getCountFromServer(col("comMembros", uid(), "seguidores"));
+  return c.data().count;
+}
+/** O professor avisa quem o segue (novo encontro, novo aviso). Até 200 avisos; falhas não param nada. */
+export async function avisarSeguidores(texto, link) {
+  const s = await getDocs(query(col("comMembros", uid(), "seguidores"), limit(200))).catch(() => null);
+  if (!s) return;
+  await Promise.all(s.docs.map((d) => avisar(d.id, { tipo: "seguindo", texto: texto.slice(0, 200), link }).catch(() => {})));
+}
+
+/* ---------- Quero ser anfitrião ---------- */
+export function pedirAnfitriao({ cidade, nome, sobre }) {
+  return setDoc(ref("comPedidosAnfitriao", uid()), { uid: uid(), cidade: cidade.slice(0, 60), nome: (nome || "").slice(0, 60), sobre: sobre.slice(0, 600), criadoEm: serverTimestamp() });
+}
+export async function jaPediAnfitriao() {
+  return getDoc(ref("comPedidosAnfitriao", uid())).then((s) => s.exists()).catch(() => false);
+}
+export async function pedidosAnfitriao() { return lista(await getDocs(col("comPedidosAnfitriao"))).sort(recentes); }
+export function apagarPedidoAnfitriao(id) { return deleteDoc(ref("comPedidosAnfitriao", id)); }
 
 /* ---------- Gestão (só o Lucas) ---------- */
 export async function membros() {

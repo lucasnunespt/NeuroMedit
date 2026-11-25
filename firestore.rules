@@ -177,6 +177,8 @@ service cloud.firestore {
     //   /comAvisos/{uid}/itens/{id}        avisos dentro do site (no lugar do e-mail)
     //   /comCidades/{id}                   cidades (Lisboa, Recife…): abertas só com anfitrião
     //   /comPedidosCidade/{cidade_uid}     "quero o NeuroMedit na minha cidade"
+    //   /comPedidosAnfitriao/{uid}         "quero ser anfitrião" (só o Lucas lê)
+    //   /comMembros/{prof}/seguidores/{uid} quem segue um professor (o número só o professor vê)
     // =====================================================================
     function comMembro(uid) {
       return get(/databases/$(database)/documents/comMembros/$(uid)).data;
@@ -245,6 +247,19 @@ service cloud.firestore {
       allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
     }
 
+    // "Quero ser anfitrião": um pedido por pessoa. Só o Lucas lê todos.
+    match /comPedidosAnfitriao/{pedidoUid} {
+      allow read: if isAdmin() || isDono(pedidoUid);
+      allow create, update: if isDono(pedidoUid)
+        && request.resource.data.keys().hasOnly(['uid', 'cidade', 'nome', 'sobre', 'criadoEm'])
+        && request.resource.data.uid == request.auth.uid
+        && textoAte(request.resource.data.cidade, 60)
+        && textoAte(request.resource.data.nome, 60)
+        && textoAte(request.resource.data.sobre, 600)
+        && request.resource.data.criadoEm == request.time;
+      allow delete: if isAdmin() || isDono(pedidoUid);
+    }
+
     match /comMembros/{uid} {
       // Membros aprovados veem-se uns aos outros (nome e papel, sem e-mail).
       allow read: if isAdmin() || isDono(uid) || (ehMembro() && resource.data.estado == 'aprovado')
@@ -274,6 +289,17 @@ service cloud.firestore {
         allow read: if isAdmin() || isDono(uid);
         allow write: if isDono(uid);
         allow delete: if isAdmin() || pendenteDaMinhaCidade(uid);
+      }
+
+      // Seguir um professor (ou o Lucas). Cada pessoa só cria ou apaga o seu documento;
+      // o professor lê a lista para saber quantos o seguem (e para lhes mandar avisos). Ninguém mais vê o número.
+      match /seguidores/{seguidorUid} {
+        allow read: if isAdmin() || isDono(uid) || isDono(seguidorUid);
+        allow create: if ehMembro() && isDono(seguidorUid) && seguidorUid != uid
+          && request.resource.data.keys().hasOnly(['em'])
+          && (exists(/databases/$(database)/documents/admins/$(uid)) || comMembro(uid).papel == 'professor');
+        allow update: if false;
+        allow delete: if isAdmin() || isDono(seguidorUid);
       }
     }
 
@@ -449,10 +475,13 @@ service cloud.firestore {
     match /comEncontros/{encontroId} {
       allow read: if ehMembro();
       allow create: if ehProfessor()
-        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'lugar', 'cidade', 'criadoEm'])
+        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'lugar', 'cidade', 'repete', 'vao', 'criadoEm'])
         && request.resource.data.uid == request.auth.uid
         && textoAte(request.resource.data.titulo, 120)
         && request.resource.data.quando is timestamp
+        // Encontro fixo: repete todas as semanas (como as sanghas).
+        && (!('repete' in request.resource.data) || request.resource.data.repete == 'semanal')
+        && (!('vao' in request.resource.data) || request.resource.data.vao == 0)
         && (!('cidade' in request.resource.data) || cidadeAberta(request.resource.data.cidade))
         // Online: um link do Google Meet. Presencial: um lugar, sempre numa cidade.
         && ((!('lugar' in request.resource.data)
@@ -461,7 +490,17 @@ service cloud.firestore {
             || (!('link' in request.resource.data)
                 && 'cidade' in request.resource.data
                 && textoAte(request.resource.data.lugar, 160)));
-      allow update: if false;
+      // "N pessoas vão": o contador só sobe 1 com o lugar guardado nesse momento, e só desce 1 com ele apagado.
+      // Assim mostra-se quantos vão sem mostrar quem.
+      allow update: if ehMembro()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['vao'])
+        && ((request.resource.data.vao == resource.data.get('vao', 0) + 1
+             && !exists(/databases/$(database)/documents/comEncontros/$(encontroId)/lugares/$(request.auth.uid))
+             && existsAfter(/databases/$(database)/documents/comEncontros/$(encontroId)/lugares/$(request.auth.uid)))
+            || (request.resource.data.vao == resource.data.get('vao', 0) - 1
+                && request.resource.data.vao >= 0
+                && exists(/databases/$(database)/documents/comEncontros/$(encontroId)/lugares/$(request.auth.uid))
+                && !existsAfter(/databases/$(database)/documents/comEncontros/$(encontroId)/lugares/$(request.auth.uid))));
       allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
 
       match /lugares/{uid} {
@@ -478,7 +517,7 @@ service cloud.firestore {
       allow read, delete: if isDono(uid);
       allow create: if (ehMembro() || isAdmin())
         && request.resource.data.keys().hasOnly(['tipo', 'texto', 'link', 'de', 'criadoEm', 'lido'])
-        && request.resource.data.tipo in ['aprovado', 'resposta', 'grupo', 'papel']
+        && request.resource.data.tipo in ['aprovado', 'resposta', 'grupo', 'papel', 'boas-vindas', 'seguindo']
         && request.resource.data.de == request.auth.uid
         && textoAte(request.resource.data.texto, 200)
         && request.resource.data.link is string && request.resource.data.link.size() <= 200

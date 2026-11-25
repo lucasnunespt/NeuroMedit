@@ -256,3 +256,45 @@ describe("Cidades", () => {
     await assertFails(addDoc(collection(de(RUI), "comGrupos"), { ...g, criador: RUI, membros: [RUI], cidade: "lisboa" }));
   });
 });
+
+describe("Seguir, quem vai e anfitriões", () => {
+  const enc = (extra) => ({ uid: ANA, nome: "Ana", titulo: "Meditação no jardim", quando: Timestamp.fromDate(new Date(Date.now() + 864e5)), criadoEm: serverTimestamp(), cidade: "lisboa", lugar: "Jardim da Estrela", ...extra });
+  test("só se seguem professores; ninguém se segue a si mesmo", async () => {
+    await assertSucceeds(setDoc(doc(de(RUI), "comMembros", ANA, "seguidores", RUI), { em: serverTimestamp() }));
+    await assertFails(setDoc(doc(de(RUI), "comMembros", EVA, "seguidores", RUI), { em: serverTimestamp() }));
+    await assertFails(setDoc(doc(de(ANA), "comMembros", ANA, "seguidores", ANA), { em: serverTimestamp() }));
+    await assertFails(setDoc(doc(de(RUI), "comMembros", ANA, "seguidores", EVA), { em: serverTimestamp() }));
+  });
+  test("o número de seguidores só o professor vê", async () => {
+    await env.withSecurityRulesDisabled(async (c) => setDoc(doc(c.firestore(), "comMembros", ANA, "seguidores", RUI), { em: Timestamp.now() }));
+    await assertSucceeds(getDocs(collection(de(ANA), "comMembros", ANA, "seguidores")));
+    await assertFails(getDocs(collection(de(EVA), "comMembros", ANA, "seguidores")));
+  });
+  test("encontro semanal; outra repetição não", async () => {
+    await assertSucceeds(addDoc(collection(de(ANA), "comEncontros"), enc({ repete: "semanal", vao: 0 })));
+    await assertFails(addDoc(collection(de(ANA), "comEncontros"), enc({ repete: "diario" })));
+    await assertFails(addDoc(collection(de(ANA), "comEncontros"), enc({ vao: 50 })));
+  });
+  test("\"N pessoas vão\": o contador só muda 1, com o lugar guardado ou libertado no mesmo lote", async () => {
+    await env.withSecurityRulesDisabled(async (c) => setDoc(doc(c.firestore(), "comEncontros", "e1"), { ...enc({ vao: 3 }), criadoEm: Timestamp.now() }));
+    const guardar = (u, n) => { const b = writeBatch(de(u)); b.set(doc(de(u), "comEncontros", "e1", "lugares", u), { em: serverTimestamp() }); b.update(doc(de(u), "comEncontros", "e1"), { vao: n }); return b.commit(); };
+    await assertFails(guardar(RUI, 5));
+    await assertSucceeds(guardar(RUI, 4));
+    await assertFails(updateDoc(doc(de(EVA), "comEncontros", "e1"), { vao: 5 }));
+    const b = writeBatch(de(RUI)); b.delete(doc(de(RUI), "comEncontros", "e1", "lugares", RUI)); b.update(doc(de(RUI), "comEncontros", "e1"), { vao: 3 });
+    await assertSucceeds(b.commit());
+  });
+  test("aviso de boas-vindas e de quem se segue", async () => {
+    const av = (tipo) => ({ tipo, texto: "Olá!", link: "comunidade.html", de: ANA, lido: false, criadoEm: serverTimestamp() });
+    await assertSucceeds(addDoc(collection(de(ANA), "comAvisos", RUI, "itens"), av("boas-vindas")));
+    await assertSucceeds(addDoc(collection(de(ANA), "comAvisos", RUI, "itens"), av("seguindo")));
+    await assertFails(addDoc(collection(de(ANA), "comAvisos", RUI, "itens"), av("publicidade")));
+  });
+  test("quero ser anfitrião: cada um o seu pedido; só o Lucas lê todos", async () => {
+    const p = { uid: RUI, cidade: "Porto", nome: "Rui", sobre: "Yoga há 5 anos", criadoEm: serverTimestamp() };
+    await assertSucceeds(setDoc(doc(de(RUI), "comPedidosAnfitriao", RUI), p));
+    await assertFails(setDoc(doc(de(RUI), "comPedidosAnfitriao", EVA), { ...p, uid: EVA }));
+    await assertFails(getDocs(collection(de(EVA), "comPedidosAnfitriao")));
+    await assertSucceeds(getDocs(collection(de(LUCAS), "comPedidosAnfitriao")));
+  });
+});

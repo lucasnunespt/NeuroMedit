@@ -43,13 +43,25 @@ Encontros: online (link do Meet) ou presenciais (lugar numa cidade aberta, com "
 
 Por fazer: o mapa das cidades como pontos de luz na Terra (vistas Europa e Américas do design system); seguir mais de uma cidade.
 
+## Encontros, seguir e anfitriões (nov 2026)
+
+Adaptado da pesquisa sobre comunidades de yoga e meditação (sanghas do Plum Village, Insight Timer, Meetup, estúdios):
+
+- **Encontro fixo semanal** (`repete: "semanal"`): como as sanghas, o mesmo dia e hora todas as semanas. O site mostra sempre a próxima data.
+- **"N pessoas vão"** (`vao` no encontro): o contador muda no mesmo lote que o lugar guardado; as regras só deixam subir ou descer 1, com o lugar criado ou apagado nesse momento.
+- **Lembrete**: quem guardou lugar vê, no topo do mural, o encontro das próximas 24 horas. Sem servidor, só aparece ao abrir o site; por isso cada encontro tem também **"Pôr no calendário"** (Google Calendar; os semanais repetem).
+- **Seguir professores**: `comMembros/{prof}/seguidores/{uid}` e a lista própria em `users/{uid}.comSigo`. Quando o professor marca um encontro ou publica um aviso, os seguidores recebem um aviso no sino (tipo `seguindo`).
+- **Boas-vindas**: ao aprovar alguém na página da cidade, o anfitrião manda uma mensagem curta (aviso `boas-vindas`). Nos estúdios, até 90% de quem vem pela primeira vez não volta; uma pessoa que fala com elas muda isso.
+- **Quero ser anfitrião** (`comPedidosAnfitriao/{uid}`): na lista de cidades e nas cidades em breve. O Lucas vê os pedidos na Gestão e pode tornar a pessoa professora.
+- **Dia Internacional do Yoga** (21 de junho, ONU): destaque na lista de cidades, com contagem dos dias e "Pôr no calendário".
+
 ## Quem pode o quê
 
 - **Lucas (admin)**: aprova e remove pessoas, convida, resolve denúncias, apaga qualquer coisa.
 - **Professor** (o Lucas dá o papel na Gestão): cria círculos, grupos, avisos e encontros; só apaga o que criou.
 - **Membro**: publica, responde, denuncia; só edita e apaga o que é seu.
 - **Partilha sem nome**: o nome fica escondido dos membros; só a moderação o consegue ler.
-- **Sem contagens**: "Isto ressoou em mim" só é visível a quem carregou.
+- **Números só onde ajudam a aparecer** (nov 2026, decisão do Lucas): "Isto ressoou em mim" continua visível só a quem carregou. Pode-se **seguir professores**, mas o número de seguidores só o próprio professor o vê (no perfil). Cada encontro mostra **"N pessoas vão"** (quantos, nunca quem). Sem curtidas nem rankings.
 
 ## O que ficou diferente por não haver plano Blaze
 

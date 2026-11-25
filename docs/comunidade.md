@@ -110,3 +110,27 @@ Combinado com o Lucas em nov 2026: estes componentes nasceram no código e ainda
 - Política de privacidade revista por alguém da área, e decidir a idade mínima.
 - Ao apagar um círculo, as respostas de outras pessoas e os "ressoou" ficam órfãos na base de dados (não aparecem em lado nenhum); limpar exige o plano Blaze ou um script do Lucas.
 - Com Blaze: e-mails, resumo semanal, fotos próprias.
+
+## Vistoria (25 nov 2026)
+
+Antes de a primeira pessoa de fora usar a comunidade, revimos cada ecrã como admin, anfitrião, membro, quem está à espera e visitante, em 1440, 1024, 768, 390 e 320 px.
+
+- **Cabeçalho:** a lateral começa por baixo do cabeçalho. Antes subia por trás do logótipo e a borda cortava o nome "NeuroMedit".
+- **Espaço no topo:** o cabeçalho é sticky e já ocupa o seu lugar; a página deixou de somar a altura dele outra vez (no telemóvel havia ~90 px vazios).
+- **Anfitriões:**
+  - O Lucas escolhe entre todos os membros aprovados, não só professores.
+  - Pode tirar um anfitrião.
+  - Pode **convidar por e-mail** quem ainda não está na comunidade. Ao entrar com essa conta Google, a pessoa fica aprovada e anfitriã da cidade do convite, e a cidade abre. Isto acontece num só lote, que as regras confirmam contra o convite.
+  - "Copiar mensagem" prepara o texto para mandar pelo WhatsApp.
+- **O anfitrião marca encontros e cria subcomunidades na sua cidade**, mesmo sem ser professor. Quem criou um grupo continua a geri-lo.
+- **Partilha como no Facebook:**
+  - As ações secundárias (editar, denunciar, apagar) ficam num "⋯".
+  - Em baixo, uma barra com "Isto ressoou em mim" e "Comentar".
+  - Quem partilha sem nome tem um ícone de pessoa (antes era um ponto).
+- **Comentários:**
+  - Balões com o nome e o texto; por baixo, quando e as ações.
+  - A caixa de comentar é uma pílula que cresce com o texto, com o enviar dentro. No computador, Enter envia e Shift+Enter muda de linha.
+  - **Comentários denunciáveis:** a denúncia marca o comentário e manda a partilha para a fila de moderação, onde "Abrir" mostra o comentário marcado.
+- **Telemóvel:** o destaque do Dia do Yoga e o lembrete já não espremem o texto; o lixo de um encontro fica ao lado do título; "Seguir" tem área de toque maior.
+
+Testes: 31 cliques antigos, 25 dos fluxos novos, cidades e anfitriões. Auditoria automática a 110 ecrãs: sem rolagem horizontal nem erros. As regras novas têm testes em `tests/comunidade.test.mjs`, ainda por correr no emulador.

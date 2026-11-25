@@ -200,6 +200,9 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.email_verified == true
         && exists(/databases/$(database)/documents/comConvites/$(emailDoLogin()));
     }
+    function conviteCom() {
+      return get(/databases/$(database)/documents/comConvites/$(emailDoLogin())).data;
+    }
 
     // ---------- Cidades (nov 2026) ----------
     // Os círculos são globais (online); a cidade é a camada presencial: mural, encontros no sítio e
@@ -222,14 +225,27 @@ service cloud.firestore {
       let m = comMembro(pessoaUid);
       return m.estado == 'pendente' && ('cidade' in m) && ehAnfitriao(m.cidade);
     }
+    function cidadeValida(d) {
+      return d.keys().hasOnly(['nome', 'pais', 'regiao', 'estado', 'anfitrioes', 'ordem', 'criadoEm'])
+        && textoAte(d.nome, 60)
+        && d.estado in ['aberta', 'em-breve']
+        && d.anfitrioes is list
+        && (d.estado == 'em-breve' || d.anfitrioes.size() > 0);
+    }
+    // Convidado pelo Lucas para anfitrião desta cidade: ao entrar, junta-se a si próprio à lista e a cidade abre.
+    function entraComoAnfitriao(cidadeId) {
+      return temConviteCom()
+        && conviteCom().get('anfitriao', false) == true
+        && conviteCom().get('cidade', '') == cidadeId
+        && !(request.auth.uid in resource.data.anfitrioes)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['anfitrioes', 'estado'])
+        && request.resource.data.anfitrioes == resource.data.anfitrioes.concat([request.auth.uid])
+        && request.resource.data.estado == 'aberta';
+    }
     match /comCidades/{cidadeId} {
       allow read: if isSignedIn();
-      allow create, update: if isAdmin()
-        && request.resource.data.keys().hasOnly(['nome', 'pais', 'regiao', 'estado', 'anfitrioes', 'ordem', 'criadoEm'])
-        && textoAte(request.resource.data.nome, 60)
-        && request.resource.data.estado in ['aberta', 'em-breve']
-        && request.resource.data.anfitrioes is list
-        && (request.resource.data.estado == 'em-breve' || request.resource.data.anfitrioes.size() > 0);
+      allow create: if isAdmin() && cidadeValida(request.resource.data);
+      allow update: if (isAdmin() && cidadeValida(request.resource.data)) || entraComoAnfitriao(cidadeId);
       allow delete: if isAdmin();
     }
     // "Quero o NeuroMedit na minha cidade": um pedido por pessoa e cidade (id = cidade_uid).
@@ -305,10 +321,13 @@ service cloud.firestore {
 
     match /comConvites/{conviteId} {
       allow read: if isAdmin() || ehOConvidado(conviteId);
+      // Com cidade e anfitriao: true, quem entra com este e-mail fica anfitrião dessa cidade.
       allow create, update: if isAdmin()
-        && request.resource.data.keys().hasOnly(['email', 'criadoEm'])
+        && request.resource.data.keys().hasOnly(['email', 'criadoEm', 'cidade', 'anfitriao'])
         && request.resource.data.email is string
-        && conviteId == request.resource.data.email.lower();
+        && conviteId == request.resource.data.email.lower()
+        && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade))
+        && (!('anfitriao' in request.resource.data) || (request.resource.data.anfitriao == true && 'cidade' in request.resource.data));
       allow delete: if isAdmin() || ehOConvidado(conviteId);
     }
 
@@ -395,7 +414,10 @@ service cloud.firestore {
           && request.resource.data.professor == ehProfessor()
           && textoAte(request.resource.data.texto, 1500)
           && request.resource.data.criadoEm == request.time;
-        allow update: if false;
+        allow update: if isAdmin()
+          || (ehMembro()
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['denunciada'])
+              && request.resource.data.denunciada == true);
         allow delete: if isAdmin()
           || (isSignedIn() && resource.data.uid == request.auth.uid)
           || ehAutorDaPartilha(partilhaId, get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data)
@@ -421,7 +443,7 @@ service cloud.firestore {
     match /comGrupos/{grupoId} {
       allow read: if isAdmin()
         || (ehMembro() && (request.auth.uid in resource.data.membros || resource.data.tipo == 'aberto'));
-      allow create: if ehProfessor()
+      allow create: if (ehProfessor() || anfitriaoNoPedido(request.resource.data))
         && request.resource.data.criador == request.auth.uid
         && request.resource.data.tipo in ['privado', 'aberto']
         && request.resource.data.membros is list
@@ -432,7 +454,7 @@ service cloud.firestore {
         && (!('cidade' in request.resource.data) || cidadeAberta(request.resource.data.cidade));
       // Quem criou gere o grupo; num grupo aberto, cada membro entra ou sai por si (e só mexe em si próprio).
       allow update: if isAdmin()
-        || (ehProfessor() && resource.data.criador == request.auth.uid
+        || (ehMembro() && resource.data.criador == request.auth.uid
             && request.resource.data.criador == resource.data.criador
             && request.resource.data.membros.size() <= 200)
         || (ehMembro()
@@ -443,7 +465,7 @@ service cloud.firestore {
                  && request.resource.data.membros.size() <= 200)
                 || (resource.data.membros.toSet().difference(request.resource.data.membros.toSet()) == [request.auth.uid].toSet()
                     && request.resource.data.membros.size() == resource.data.membros.size() - 1)));
-      allow delete: if isAdmin() || (ehProfessor() && resource.data.criador == request.auth.uid);
+      allow delete: if isAdmin() || (ehMembro() && resource.data.criador == request.auth.uid);
 
       match /mensagens/{mensagemId} {
         allow read: if estaNoGrupo(grupoId);
@@ -472,9 +494,13 @@ service cloud.firestore {
     }
 
     // Encontros ao vivo: por agora um link do Google Meet criado pelo professor.
+    // Quem cuida de uma cidade (anfitrião) também marca encontros nessa cidade, mesmo sem ser professor.
+    function anfitriaoNoPedido(d) {
+      return ehMembro() && ('cidade' in d) && ehAnfitriao(d.cidade);
+    }
     match /comEncontros/{encontroId} {
       allow read: if ehMembro();
-      allow create: if ehProfessor()
+      allow create: if (ehProfessor() || anfitriaoNoPedido(request.resource.data))
         && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'lugar', 'cidade', 'repete', 'vao', 'criadoEm'])
         && request.resource.data.uid == request.auth.uid
         && textoAte(request.resource.data.titulo, 120)

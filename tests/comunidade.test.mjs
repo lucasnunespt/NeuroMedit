@@ -298,3 +298,44 @@ describe("Seguir, quem vai e anfitriões", () => {
     await assertSucceeds(getDocs(collection(de(LUCAS), "comPedidosAnfitriao")));
   });
 });
+
+describe("Vistoria: anfitrião por convite, encontros do anfitrião e denunciar comentários", () => {
+  const FER = "fer-uid";
+  const deFer = () => env.authenticatedContext(FER, { email: "fernando@exemplo.es", email_verified: true }).firestore();
+  const ficha = (extra = {}) => ({ ...membro("aprovado", "membro", "Fernando"), cidade: "porto", criadoEm: serverTimestamp(), ...extra });
+  test("só o Lucas convida para anfitrião, e só para uma cidade que existe", async () => {
+    await assertSucceeds(setDoc(doc(de(LUCAS), "comConvites", "fernando@exemplo.es"), { email: "fernando@exemplo.es", cidade: "porto", anfitriao: true, criadoEm: serverTimestamp() }));
+    await assertFails(setDoc(doc(de(LUCAS), "comConvites", "x@exemplo.es"), { email: "x@exemplo.es", cidade: "atlantida", anfitriao: true }));
+    await assertFails(setDoc(doc(de(LUCAS), "comConvites", "y@exemplo.es"), { email: "y@exemplo.es", anfitriao: true }));
+    await assertFails(setDoc(doc(de(ANA), "comConvites", "z@exemplo.es"), { email: "z@exemplo.es", cidade: "porto", anfitriao: true }));
+  });
+  test("o convidado entra aprovado e abre a sua cidade, juntando-se só a si próprio", async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "comConvites", "fernando@exemplo.es"), { email: "fernando@exemplo.es", cidade: "porto", anfitriao: true }));
+    const db = deFer();
+    await assertFails(updateDoc(doc(db, "comCidades", "porto"), { anfitrioes: [FER, RUI], estado: "aberta" }));
+    await assertFails(updateDoc(doc(db, "comCidades", "lisboa"), { anfitrioes: [ANA, FER] }));
+    const lote = writeBatch(db);
+    lote.set(doc(db, "comMembros", FER), ficha());
+    lote.update(doc(db, "comCidades", "porto"), { anfitrioes: arrayUnion(FER), estado: "aberta" });
+    await assertSucceeds(lote.commit());
+  });
+  test("sem convite de anfitrião, ninguém se junta a uma cidade", async () => {
+    await assertFails(updateDoc(doc(de(RUI), "comCidades", "porto"), { anfitrioes: arrayUnion(RUI), estado: "aberta" }));
+  });
+  test("a anfitriã que não é professora marca encontros e cria subcomunidades na sua cidade, e só aí", async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "comCidades", "lisboa"), { nome: "Lisboa", pais: "PT", estado: "aberta", anfitrioes: [ANA, EVA] }));
+    const enc = (extra) => ({ uid: EVA, nome: "Eva", titulo: "Yoga no parque", quando: Timestamp.fromDate(new Date(Date.now() + 864e5)), criadoEm: serverTimestamp(), ...extra });
+    await assertSucceeds(addDoc(collection(de(EVA), "comEncontros"), enc({ cidade: "lisboa", lugar: "Parque Eduardo VII" })));
+    await assertFails(addDoc(collection(de(EVA), "comEncontros"), enc({ link: "https://meet.google.com/abc-defg-hij" })));
+    await assertFails(addDoc(collection(de(RUI), "comEncontros"), { ...enc({ cidade: "lisboa", lugar: "Parque" }), uid: RUI }));
+    await assertSucceeds(addDoc(collection(de(EVA), "comGrupos"), { nome: "Yoga ao domingo", tipo: "aberto", criador: EVA, membros: [EVA], cidade: "lisboa", criadoEm: serverTimestamp() }));
+    await assertFails(addDoc(collection(de(EVA), "comGrupos"), { nome: "Sem cidade", tipo: "aberto", criador: EVA, membros: [EVA], criadoEm: serverTimestamp() }));
+  });
+  test("qualquer membro denuncia um comentário (e só isso); só o Lucas o volta a manter", async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "comPartilhas", "p-rui", "respostas", "r9"), { uid: EVA, nome: "Eva", professor: false, texto: "oi" }));
+    await assertSucceeds(updateDoc(doc(de(RUI), "comPartilhas", "p-rui", "respostas", "r9"), { denunciada: true }));
+    await assertFails(updateDoc(doc(de(RUI), "comPartilhas", "p-rui", "respostas", "r9"), { texto: "mudado" }));
+    await assertFails(updateDoc(doc(de(RUI), "comPartilhas", "p-rui", "respostas", "r9"), { denunciada: false }));
+    await assertSucceeds(updateDoc(doc(de(LUCAS), "comPartilhas", "p-rui", "respostas", "r9"), { denunciada: false }));
+  });
+});

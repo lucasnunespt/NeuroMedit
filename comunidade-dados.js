@@ -28,6 +28,24 @@ export const CIRCULOS_INICIAIS = [
   { nome: "Foco", sub: "Atenção no dia a dia", proposito: "Voltar ao que importa: pequenas práticas de atenção no trabalho e nos estudos.", cuidado: "sem comparar rendimentos" }
 ];
 
+/** Cidades iniciais: Portugal, Espanha, França e as 27 capitais do Brasil.
+ *  Todas começam "em breve"; abrem quando o Lucas lhes dá um anfitrião. */
+const CIDADE = (id, nome, pais, regiao = "") => ({ id, nome, pais, regiao });
+export const CIDADES_INICIAIS = [
+  CIDADE("lisboa", "Lisboa", "PT"), CIDADE("porto", "Porto", "PT"),
+  CIDADE("sevilha", "Sevilha", "ES"), CIDADE("madrid", "Madrid", "ES"),
+  CIDADE("paris", "Paris", "FR"),
+  CIDADE("rio-branco", "Rio Branco", "BR", "AC"), CIDADE("maceio", "Maceió", "BR", "AL"), CIDADE("macapa", "Macapá", "BR", "AP"),
+  CIDADE("manaus", "Manaus", "BR", "AM"), CIDADE("salvador", "Salvador", "BR", "BA"), CIDADE("fortaleza", "Fortaleza", "BR", "CE"),
+  CIDADE("brasilia", "Brasília", "BR", "DF"), CIDADE("vitoria", "Vitória", "BR", "ES"), CIDADE("goiania", "Goiânia", "BR", "GO"),
+  CIDADE("sao-luis", "São Luís", "BR", "MA"), CIDADE("cuiaba", "Cuiabá", "BR", "MT"), CIDADE("campo-grande", "Campo Grande", "BR", "MS"),
+  CIDADE("belo-horizonte", "Belo Horizonte", "BR", "MG"), CIDADE("belem", "Belém", "BR", "PA"), CIDADE("joao-pessoa", "João Pessoa", "BR", "PB"),
+  CIDADE("curitiba", "Curitiba", "BR", "PR"), CIDADE("recife", "Recife", "BR", "PE"), CIDADE("teresina", "Teresina", "BR", "PI"),
+  CIDADE("rio-de-janeiro", "Rio de Janeiro", "BR", "RJ"), CIDADE("natal", "Natal", "BR", "RN"), CIDADE("porto-alegre", "Porto Alegre", "BR", "RS"),
+  CIDADE("porto-velho", "Porto Velho", "BR", "RO"), CIDADE("boa-vista", "Boa Vista", "BR", "RR"), CIDADE("florianopolis", "Florianópolis", "BR", "SC"),
+  CIDADE("sao-paulo", "São Paulo", "BR", "SP"), CIDADE("aracaju", "Aracaju", "BR", "SE"), CIDADE("palmas", "Palmas", "BR", "TO")
+];
+
 /* ---------- Sessão ---------- */
 export function observarSessao(cb) { return onAuthStateChanged(auth, cb); }
 export function entrar() { return signInWithPopup(auth, new GoogleAuthProvider()); }
@@ -53,12 +71,13 @@ export async function carregarEu() {
     professor: admin || membro?.papel === "professor",
     convidado: convite,
     resumo: membro?.resumo !== false,
-    temFicha: Boolean(membro)
+    temFicha: Boolean(membro),
+    cidade: membro?.cidade || ""
   };
 }
 
 /** Pede para entrar. Com convite do Lucas, entra logo. */
-export async function pedirEntrada({ nome, motivos, convidado }) {
+export async function pedirEntrada({ nome, motivos, convidado, cidade }) {
   const u = auth.currentUser;
   const lote = writeBatch(db);
   lote.set(ref("comMembros", u.uid), {
@@ -68,6 +87,7 @@ export async function pedirEntrada({ nome, motivos, convidado }) {
     papel: "membro",
     motivos: motivos || [],
     aceitouCuidados: true,
+    ...(cidade ? { cidade } : {}),
     criadoEm: serverTimestamp()
   });
   lote.set(ref("comMembros", u.uid, "privado", "contacto"), { uid: u.uid, email: u.email || "" });
@@ -75,8 +95,9 @@ export async function pedirEntrada({ nome, motivos, convidado }) {
   if (convidado) await deleteDoc(ref("comConvites", email())).catch(() => {});
 }
 
-export function guardarPerfil({ nome, foto, resumo }) {
+export function guardarPerfil({ nome, foto, resumo, cidade }) {
   const dados = {};
+  if (cidade) dados.cidade = cidade;
   if (nome !== undefined) dados.nome = nome.slice(0, 60);
   if (foto !== undefined) dados.foto = foto;
   if (resumo !== undefined) dados.resumo = resumo;
@@ -206,8 +227,10 @@ export async function grupo(id) {
   const s = await getDoc(ref("comGrupos", id));
   return s.exists() ? { id: s.id, ...s.data() } : null;
 }
-export async function criarGrupo({ nome, tipo }) {
-  const r = await addDoc(col("comGrupos"), { nome: nome.slice(0, 60), tipo: tipo === "aberto" ? "aberto" : "privado", criador: uid(), membros: [uid()], criadoEm: serverTimestamp() });
+export async function criarGrupo({ nome, tipo, cidade }) {
+  const g = { nome: nome.slice(0, 60), tipo: tipo === "aberto" ? "aberto" : "privado", criador: uid(), membros: [uid()], criadoEm: serverTimestamp() };
+  if (cidade) g.cidade = cidade; // subcomunidade de uma cidade
+  const r = await addDoc(col("comGrupos"), g);
   return r.id;
 }
 export async function apagarGrupo(id) {
@@ -246,13 +269,62 @@ export async function encontros() {
   }));
   return itens;
 }
-export function criarEncontro({ titulo, quando, link, nome }) {
-  return addDoc(col("comEncontros"), { uid: uid(), nome: (nome || "").slice(0, 60), titulo: titulo.slice(0, 120), quando: Timestamp.fromDate(quando), link, criadoEm: serverTimestamp() });
+/** Online: com link do Meet. Presencial: com lugar, sempre numa cidade. */
+export function criarEncontro({ titulo, quando, link, lugar, cidade, nome }) {
+  const e = { uid: uid(), nome: (nome || "").slice(0, 60), titulo: titulo.slice(0, 120), quando: Timestamp.fromDate(quando), criadoEm: serverTimestamp() };
+  if (lugar) e.lugar = lugar.slice(0, 160); else e.link = link;
+  if (cidade) e.cidade = cidade;
+  return addDoc(col("comEncontros"), e);
 }
 export function apagarEncontro(id) { return deleteDoc(ref("comEncontros", id)); }
 export function guardarLugar(id, sim) {
   const r = ref("comEncontros", id, "lugares", uid());
   return sim ? setDoc(r, { em: serverTimestamp() }) : deleteDoc(r);
+}
+
+/* ---------- Cidades ---------- */
+export async function cidades() {
+  return lista(await getDocs(col("comCidades")))
+    .sort((a, b) => (a.pais || "").localeCompare(b.pais || "") || (a.ordem ?? 99) - (b.ordem ?? 99) || (a.nome || "").localeCompare(b.nome || ""));
+}
+/** Cria a lista inicial (todas "em breve"). Lisboa abre já, com o Lucas como anfitrião. */
+export async function semearCidades() {
+  const lote = writeBatch(db);
+  CIDADES_INICIAIS.forEach((c, i) => {
+    const aberta = c.id === "lisboa";
+    lote.set(ref("comCidades", c.id), { nome: c.nome, pais: c.pais, regiao: c.regiao, estado: aberta ? "aberta" : "em-breve", anfitrioes: aberta ? [uid()] : [], ordem: i, criadoEm: serverTimestamp() });
+  });
+  await lote.commit();
+}
+/** Abrir com anfitriões, ou voltar a "em breve" (lista vazia). */
+export function definirAnfitrioes(cidadeId, anfitrioes) {
+  const lista = [...new Set(anfitrioes)].filter(Boolean);
+  return updateDoc(ref("comCidades", cidadeId), { anfitrioes: lista, estado: lista.length ? "aberta" : "em-breve" });
+}
+/** Quem pediu para entrar e escolheu esta cidade (o anfitrião aprova). Sem e-mails. */
+export async function pendentesDaCidade(cidadeId) {
+  return lista(await getDocs(query(col("comMembros"), where("cidade", "==", cidadeId), where("estado", "==", "pendente")))).sort(antigas);
+}
+/** Nomes dos anfitriões (só os que já são membros aprovados). */
+export async function nomesDe(uids) {
+  const r = await Promise.all((uids || []).map((u) => getDoc(ref("comMembros", u)).then((s) => (s.exists() ? s.data().nome : "")).catch(() => "")));
+  return r.filter(Boolean);
+}
+/** "Quero o NeuroMedit na minha cidade". Para uma cidade fora da lista, o id vem do nome escrito. */
+export function pedirCidade(cidadeId, nome) {
+  const d = { uid: uid(), cidade: cidadeId, criadoEm: serverTimestamp() };
+  if (nome) d.nome = nome.slice(0, 60);
+  return setDoc(ref("comPedidosCidade", `${cidadeId}_${uid()}`), d);
+}
+export async function jaPedi(cidadeId) {
+  return getDoc(ref("comPedidosCidade", `${cidadeId}_${uid()}`)).then((s) => s.exists()).catch(() => false);
+}
+/** Só o Lucas: quantas pessoas pediram cada cidade (incluindo as que não estão na lista). */
+export async function pedidosPorCidade() {
+  const todos = lista(await getDocs(col("comPedidosCidade")));
+  const conta = {};
+  todos.forEach((p) => { const k = p.cidade; conta[k] = conta[k] || { n: 0, nome: p.nome || "" }; conta[k].n += 1; });
+  return conta;
 }
 
 /* ---------- Gestão (só o Lucas) ---------- */

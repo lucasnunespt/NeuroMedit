@@ -10,7 +10,8 @@ import { readFileSync } from "node:fs";
 import { initializeTestEnvironment, assertSucceeds, assertFails } from "@firebase/rules-unit-testing";
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, query, where, getDocs, serverTimestamp, writeBatch, arrayUnion, Timestamp } from "firebase/firestore";
 
-const LUCAS = "lucas-uid", ANA = "ana-uid" /* professora */, RUI = "rui-uid" /* membro */, EVA = "eva-uid" /* membro */, ZE = "ze-uid" /* pendente */, FORA = "fora-uid";
+const LUCAS = "lucas-uid", ANA = "ana-uid" /* professora, anfitriã de Lisboa */, RUI = "rui-uid" /* membro */, EVA = "eva-uid" /* membro */, ZE = "ze-uid" /* pendente, sem cidade */, FORA = "fora-uid";
+const LIA = "lia-uid" /* pendente em Lisboa */, TOM = "tom-uid" /* pendente no Porto */;
 let env;
 const de = (uid, extra = {}) => env.authenticatedContext(uid, { email: `${uid}@x.pt`, email_verified: true, ...extra }).firestore();
 const membro = (estado, papel = "membro", nome = "Nome") => ({ nome, foto: "", estado, papel, motivos: [], aceitouCuidados: true });
@@ -36,6 +37,12 @@ beforeEach(async () => {
     await setDoc(doc(db, "comGrupos", "g-ana"), { nome: "Turma", tipo: "privado", criador: ANA, membros: [ANA, RUI] });
     await setDoc(doc(db, "comGrupos", "g-aberto"), { nome: "Manhã", tipo: "aberto", criador: ANA, membros: [ANA] });
     await setDoc(doc(db, "comGrupos", "g-ana", "mensagens", "m1"), { uid: ANA, nome: "Ana", texto: "oi" });
+    // Cidades: Lisboa aberta com a Ana como anfitriã; Porto ainda em breve.
+    await setDoc(doc(db, "comCidades", "lisboa"), { nome: "Lisboa", pais: "PT", estado: "aberta", anfitrioes: [ANA] });
+    await setDoc(doc(db, "comCidades", "porto"), { nome: "Porto", pais: "PT", estado: "em-breve", anfitrioes: [] });
+    await setDoc(doc(db, "comMembros", LIA), { ...membro("pendente", "membro", "Lia"), cidade: "lisboa" });
+    await setDoc(doc(db, "comMembros", LIA, "privado", "contacto"), { uid: LIA, email: "lia@x.pt" });
+    await setDoc(doc(db, "comMembros", TOM), { ...membro("pendente", "membro", "Tom"), cidade: "porto" });
   });
 });
 
@@ -191,5 +198,61 @@ describe("Encontros e avisos", () => {
     await assertFails(addDoc(collection(de(ZE), "comAvisos", RUI, "itens"), a(ZE)));
     await assertSucceeds(getDocs(collection(de(RUI), "comAvisos", RUI, "itens")));
     await assertFails(getDocs(collection(de(EVA), "comAvisos", RUI, "itens")));
+  });
+});
+
+describe("Cidades", () => {
+  const encontro = (extra) => ({ uid: ANA, nome: "Ana", titulo: "Meditação no jardim", quando: Timestamp.fromDate(new Date(Date.now() + 864e5)), criadoEm: serverTimestamp(), ...extra });
+  test("só o Lucas cria e muda cidades; uma cidade só abre com anfitrião", async () => {
+    await assertSucceeds(setDoc(doc(de(LUCAS), "comCidades", "recife"), { nome: "Recife", pais: "BR", regiao: "PE", estado: "em-breve", anfitrioes: [] }));
+    await assertFails(setDoc(doc(de(LUCAS), "comCidades", "aracaju"), { nome: "Aracaju", pais: "BR", estado: "aberta", anfitrioes: [] }));
+    await assertFails(updateDoc(doc(de(ANA), "comCidades", "lisboa"), { anfitrioes: [ANA, RUI] }));
+    await assertSucceeds(updateDoc(doc(de(LUCAS), "comCidades", "porto"), { estado: "aberta", anfitrioes: [ANA] }));
+  });
+  test("a anfitriã vê e aprova quem pediu para entrar na sua cidade, e só aí", async () => {
+    await assertSucceeds(getDocs(query(collection(de(ANA), "comMembros"), where("cidade", "==", "lisboa"), where("estado", "==", "pendente"))));
+    await assertFails(getDocs(query(collection(de(ANA), "comMembros"), where("cidade", "==", "porto"), where("estado", "==", "pendente"))));
+    await assertSucceeds(updateDoc(doc(de(ANA), "comMembros", LIA), { estado: "aprovado" }));
+    await assertFails(updateDoc(doc(de(ANA), "comMembros", TOM), { estado: "aprovado" }));
+    await assertFails(updateDoc(doc(de(RUI), "comMembros", LIA), { estado: "aprovado" }));
+  });
+  test("a anfitriã não dá outro papel nem lê o e-mail", async () => {
+    await assertFails(updateDoc(doc(de(ANA), "comMembros", LIA), { estado: "aprovado", papel: "professor" }));
+    await assertFails(getDoc(doc(de(ANA), "comMembros", LIA, "privado", "contacto")));
+  });
+  test("a anfitriã recusa (apaga) um pedido da sua cidade", async () => {
+    await assertSucceeds(deleteDoc(doc(de(ANA), "comMembros", LIA, "privado", "contacto")));
+    await assertSucceeds(deleteDoc(doc(de(ANA), "comMembros", LIA)));
+    await assertFails(deleteDoc(doc(de(ANA), "comMembros", TOM)));
+  });
+  test("cada pessoa escolhe a sua cidade, que tem de existir", async () => {
+    await assertSucceeds(updateDoc(doc(de(RUI), "comMembros", RUI), { cidade: "porto" }));
+    await assertFails(updateDoc(doc(de(RUI), "comMembros", RUI), { cidade: "atlantida" }));
+  });
+  test("quero o NeuroMedit na minha cidade: um pedido por pessoa, só o Lucas vê todos", async () => {
+    await assertSucceeds(setDoc(doc(de(FORA), "comPedidosCidade", "porto_" + FORA), { uid: FORA, cidade: "porto", criadoEm: serverTimestamp() }));
+    await assertFails(setDoc(doc(de(FORA), "comPedidosCidade", "porto_outro"), { uid: FORA, cidade: "porto", criadoEm: serverTimestamp() }));
+    await assertFails(getDocs(collection(de(RUI), "comPedidosCidade")));
+    await assertSucceeds(getDocs(collection(de(LUCAS), "comPedidosCidade")));
+  });
+  test("encontro presencial: lugar numa cidade aberta; online: só Meet", async () => {
+    await assertSucceeds(addDoc(collection(de(ANA), "comEncontros"), encontro({ cidade: "lisboa", lugar: "Jardim da Estrela, junto ao coreto" })));
+    await assertFails(addDoc(collection(de(ANA), "comEncontros"), encontro({ lugar: "Jardim da Estrela" })));
+    await assertFails(addDoc(collection(de(ANA), "comEncontros"), encontro({ cidade: "porto", lugar: "Palácio de Cristal" })));
+    await assertFails(addDoc(collection(de(ANA), "comEncontros"), encontro({ cidade: "lisboa", lugar: "Estrela", link: "https://meet.google.com/abc" })));
+    await assertSucceeds(addDoc(collection(de(ANA), "comEncontros"), encontro({ link: "https://meet.google.com/abc-defg-hij" })));
+  });
+  test("mural da cidade: só cidades abertas; a anfitriã modera", async () => {
+    const p = { uid: RUI, nome: "Rui", anon: false, pratica: "", texto: "Primeira vez no jardim", denunciada: false, criadoEm: serverTimestamp() };
+    await assertSucceeds(addDoc(collection(de(RUI), "comPartilhas"), { ...p, circulo: "lisboa" }));
+    await assertFails(addDoc(collection(de(RUI), "comPartilhas"), { ...p, circulo: "porto" }));
+    await env.withSecurityRulesDisabled(async (c) => setDoc(doc(c.firestore(), "comPartilhas", "p-lx"), { ...p, circulo: "lisboa", criadoEm: Timestamp.now() }));
+    await assertSucceeds(deleteDoc(doc(de(ANA), "comPartilhas", "p-lx")));
+  });
+  test("subcomunidade: grupo de professor numa cidade aberta", async () => {
+    const g = { nome: "Yoga ao nascer do sol", tipo: "aberto", criador: ANA, membros: [ANA] };
+    await assertSucceeds(addDoc(collection(de(ANA), "comGrupos"), { ...g, cidade: "lisboa" }));
+    await assertFails(addDoc(collection(de(ANA), "comGrupos"), { ...g, cidade: "porto" }));
+    await assertFails(addDoc(collection(de(RUI), "comGrupos"), { ...g, criador: RUI, membros: [RUI], cidade: "lisboa" }));
   });
 });

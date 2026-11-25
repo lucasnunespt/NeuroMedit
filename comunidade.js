@@ -32,6 +32,9 @@ const IC = {
   play: I('<path d="M8.5 6.2v11.6L18 12z"/>'),
   pontos: I('<circle cx="6" cy="12" r="0.9"/><circle cx="12" cy="12" r="0.9"/><circle cx="18" cy="12" r="0.9"/>'),
   fechar: I('<path d="M7 7l10 10M17 7L7 17"/>'),
+  pin: I('<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>'),
+  globo: I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5S9.6 5.8 12 3.5z"/>'),
+  video: I('<rect x="3.5" y="6.5" width="12" height="11" rx="2.5"/><path d="M15.5 10.5l5-3v9l-5-3"/>'),
   engrenagem: I('<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4L18 18M6 18l1.6-1.6M16.4 7.6L18 6"/>')
 };
 /* ---------- Língua ----------
@@ -73,6 +76,8 @@ const S = {
   motivos: { calma: true }, aceito: false,
   circulos: [], circuloId: "", posts: [], ressoou: {}, editando: "",
   aberto: null, respostas: [], novaFoto: "", comporAberto: false,
+  cidades: [], cidadeId: "", muralId: "", cidadeEscolhida: "", pedidosCidade: {},
+  cidadeInfo: { pendentes: [], anfitrioes: [], jaPedi: false },
   grupos: [], grupo: null, msgs: [], pessoas: [],
   canal: [], encontros: [],
   gestao: { membros: [], convites: [], denuncias: [] }
@@ -198,6 +203,7 @@ function telaFora() {
     <section class="com-cartao" aria-labelledby="com-q1"><h2 id="com-q1">${t("q1_t")}</h2>
       <p class="com-suave">${t("q1_d")}</p>
       <div class="com-linha">${MOTIVOS.map((k) => `<button class="com-opt ${S.motivos[k] ? "is-on" : ""}" type="button" aria-pressed="${Boolean(S.motivos[k])}" data-a="motivo" data-v="${k}">${motivo(k)}</button>`).join("")}</div>
+      ${S.cidades.length ? `<div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-cid">${t("cid_entrada_l")}</label><select id="com-cid" class="com-campo" data-a="escolher-cidade">${opcoesCidades(S.cidadeEscolhida)}</select><span class="com-peq com-suave">${t("cid_entrada_d")}</span></div>` : ""}
     </section>
     <section class="com-cartao" aria-labelledby="com-q2"><h2 id="com-q2">${t("q2_t")}</h2>
       <p class="com-suave">${t("q2_d")}</p>
@@ -214,7 +220,14 @@ function lateral(tela) {
   const pend = S.gestao.membros.filter((m) => m.estado === "pendente").length;
   // Como a SideNav do design system: destinos em cima, gestão colada ao fundo.
   // O perfil não aparece aqui: vive só no avatar do topo ("Meu perfil na comunidade"), como no Facebook.
+  const minha = cidadeDe(eu.cidade);
   return `<aside class="com-esq" aria-label="${t("lat_aria")}">
+    ${S.cidades.length ? `<p class="com-cap">${t("cid_cap")}</p>
+    <nav class="com-lista" aria-label="${t("cid_cap")}">
+      ${minha ? `<a class="com-circ com-circ--conta ${tela === "cidade" && S.cidadeId === minha.id ? "is-on" : ""}" href="#cidade=${minha.id}">${IC.pin}<span>${esc(minha.nome)}<small>${minha.estado === "aberta" ? t("cid_sub_aberta") : t("em_breve")}</small></span></a>`
+        : `<a class="com-circ com-circ--conta" href="#cidades">${IC.pin}<span>${t("cid_escolher")}<small>${t("cid_escolher_s")}</small></span></a>`}
+      <a class="com-circ com-circ--conta ${tela === "cidades" || (tela === "cidade" && S.cidadeId !== eu.cidade) ? "is-on" : ""}" href="#cidades">${IC.globo}<span>${t("cid_todas")}<small>${t("cid_todas_s")}</small></span></a>
+    </nav>` : ""}
     <p class="com-cap">${t("circulos")}</p>
     <nav class="com-lista">
       ${S.circulos.map(circ).map((c) => `<a class="com-circ ${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? "is-on" : ""}" href="#c=${c.id}"${(tela === "circulo" || tela === "partilha") && c.id === S.circuloId ? ' aria-current="page"' : ""}><span>${esc(c.nome)}</span><small>${esc(c.sub || "")}</small></a>`).join("")}
@@ -229,6 +242,8 @@ function lateral(tela) {
 
 function direita(tela) {
   const eu = S.eu;
+  if (tela === "cidade") return `<aside class="com-dir" aria-label="${t("dir_aria")}">${direitaCidade()}</aside>`;
+  const encontrosAqui = S.encontros.filter((e) => !e.cidade || e.cidade === eu.cidade);
   const noCirculo = tela === "circulo" || tela === "partilha";
   const c = noCirculo ? circ(S.circulos.find((x) => x.id === S.circuloId)) : null;
   // No círculo, o aviso mais recente já está "Em destaque" no topo do feed; aqui ficam os anteriores.
@@ -236,8 +251,7 @@ function direita(tela) {
   return `<aside class="com-dir" aria-label="${t("dir_aria")}">
     ${c ? `<section class="com-cartao com-cartao--p com-so-largo" aria-labelledby="com-sobre-t"><h3 id="com-sobre-t" class="com-dir-t">${t("sobre_circulo")}</h3><p class="com-suave com-peq">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</section>` : ""}
     <section class="com-cartao com-cartao--p" aria-labelledby="com-enc-t"><h3 id="com-enc-t" class="com-dir-t"><span class="com-ic">${IC.agenda}</span>${t("enc_t")}</h3><p class="com-suave com-peq">${t("enc_d")}</p>
-      ${S.encontros.length ? S.encontros.map((e) => `<div class="com-enc"><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span><span>${esc(t("com_nome", { nome: e.nome }))}</span></div>
-        <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button><a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
+      ${encontrosAqui.length ? encontrosAqui.map(encontroItem).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
       ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-el">${t("link_meet")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..." pattern="https://meet\\.google\\.com/.+" required><div class="com-linha"><a class="com-acao" href="https://meet.google.com/new" target="_blank" rel="noopener noreferrer">${t("criar_sala")}</a><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
     </section>
     <section class="com-cartao com-cartao--p com-prof" aria-labelledby="com-prof-t"><h3 id="com-prof-t" class="com-dir-t"><span class="com-ic com-ic--prof">${IC.megafone}</span>${t("pv_prof_t")}</h3><p class="com-suave com-peq">${t("canal_d")}</p>
@@ -301,7 +315,7 @@ function cartaoPratica(v) {
 function cartaoPartilha(p, { aberta = false } = {}) {
   const eu = S.eu;
   const autor = p.minha ? t("voce") : (p.anon ? t("sem_nome") : (p.nome || t("papel_membro")));
-  const podeApagar = eu.admin || p.minha || S.circulos.find((c) => c.id === p.circulo)?.criador === eu.uid;
+  const podeApagar = eu.admin || p.minha || S.circulos.find((c) => c.id === p.circulo)?.criador === eu.uid || souAnfitriao(cidadeDe(p.circulo));
   const corpo = S.editando === p.id
     ? `<form data-f="editar" data-v="${p.id}" class="com-novo"><label for="com-ed">${t("editar_partilha")}</label><textarea id="com-ed" class="com-campo" name="texto" maxlength="2000" required>${esc(p.texto)}</textarea><div class="com-linha"><button class="com-pri" type="submit">${t("guardar")}</button><button class="com-acao" type="button" data-a="cancelar-edicao">${t("cancelar")}</button></div></form>`
     : `<p class="com-texto">${esc(p.texto)}</p>`;
@@ -321,23 +335,10 @@ function cartaoPartilha(p, { aberta = false } = {}) {
     </div></article>`;
 }
 
-function telaCirculo() {
-  const c = circ(S.circulos.find((x) => x.id === S.circuloId));
-  if (!c) {
-    return `<div class="com-cartao"><h2>${t("sem_circulos")}</h2>${S.eu.admin ? `<p class="com-suave">${t("semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear">${t("semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
-  }
-  const podeApagar = S.eu.admin || c.criador === S.eu.uid;
+/** O mural: campo de publicar + partilhas. Serve o círculo e a cidade (S.muralId). */
+function mural() {
   const aberto = S.comporAberto || Boolean(S.novaFoto);
-  const destaque = S.canal[0];
-  // Capa: o nome e o planeta do círculo (a identidade só se descobre ao entrar).
-  // O propósito e o cuidado vivem em "Sobre este círculo", à direita; no telemóvel ficam aqui.
-  // Apagar o círculo é a ação mais destrutiva da página: fica dentro de "Mais opções".
-  return `<div class="com-topo com-topo--capa"><h1 class="com-h1">${esc(c.nome)}</h1>
-      <span class="com-capa-planeta">${planeta(planetaDoCirculo(S.circulos.find((x) => x.id === S.circuloId)))}</span>
-      ${podeApagar ? `<details class="com-menu"><summary aria-label="${t("mais_opcoes")}" title="${t("mais_opcoes")}">${IC.pontos}</summary><div class="com-menu-lista"><button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>${t("apagar_circulo")}</span></button></div></details>` : ""}
-      <div class="com-capa-sobre com-so-movel"><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</div></div>
-    ${destaque ? `<section class="com-destaque" aria-labelledby="com-dest-t"><span class="com-ic com-ic--prof">${IC.megafone}</span><div class="com-quem"><small class="com-destaque-rot">${t("destaque")} · ${t("pv_prof_t")}</small><strong id="com-dest-t">${esc(destaque.titulo)}</strong>${destaque.texto ? `<span>${esc(destaque.texto)}</span>` : ""}<span class="com-peq">${esc(destaque.nome)} · ${quando(destaque.criadoEm)}</span></div>${S.eu.admin || destaque.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${destaque.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</section>` : ""}
-    <form class="com-cartao com-novo com-compor ${aberto ? "is-aberto" : ""}" data-f="publicar">
+  return `<form class="com-cartao com-novo com-compor ${aberto ? "is-aberto" : ""}" data-f="publicar">
       <button class="com-compor-abrir" type="button" data-a="abrir-compor" ${aberto ? "hidden" : ""}>${rosto(S.eu.foto, S.eu.nome, false)}<span>${t("pub_pergunta")}</span></button>
       <div class="com-compor-corpo" ${aberto ? "" : "hidden"}>
         <label class="com-compor-p" for="com-partilha">${t("pub_pergunta")}</label>
@@ -355,11 +356,120 @@ function telaCirculo() {
     <div class="com-fim"><strong>${t("fim_t")}</strong><span>${t("fim_d")}</span></div>`;
 }
 
+function telaCirculo() {
+  const c = circ(S.circulos.find((x) => x.id === S.circuloId));
+  if (!c) {
+    return `<div class="com-cartao"><h2>${t("sem_circulos")}</h2>${S.eu.admin ? `<p class="com-suave">${t("semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear">${t("semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
+  }
+  const podeApagar = S.eu.admin || c.criador === S.eu.uid;
+  const destaque = S.canal[0];
+  // Capa: o nome e o planeta do círculo (a identidade só se descobre ao entrar).
+  // O propósito e o cuidado vivem em "Sobre este círculo", à direita; no telemóvel ficam aqui.
+  // Apagar o círculo é a ação mais destrutiva da página: fica dentro de "Mais opções".
+  return `<div class="com-topo com-topo--capa"><h1 class="com-h1">${esc(c.nome)}</h1>
+      <span class="com-capa-planeta">${planeta(planetaDoCirculo(S.circulos.find((x) => x.id === S.circuloId)))}</span>
+      ${podeApagar ? `<details class="com-menu"><summary aria-label="${t("mais_opcoes")}" title="${t("mais_opcoes")}">${IC.pontos}</summary><div class="com-menu-lista"><button class="com-acao com-acao--perigo" type="button" data-a="apagar-circulo" data-v="${c.id}">${IC.lixo}<span>${t("apagar_circulo")}</span></button></div></details>` : ""}
+      <div class="com-capa-sobre com-so-movel"><p class="com-lead">${esc(c.proposito || "")}</p>${c.cuidado ? `<div><span class="com-etq">${esc(t("cuidado_circulo", { c: c.cuidado }))}</span></div>` : ""}</div></div>
+    ${destaque ? `<section class="com-destaque" aria-labelledby="com-dest-t"><span class="com-ic com-ic--prof">${IC.megafone}</span><div class="com-quem"><small class="com-destaque-rot">${t("destaque")} · ${t("pv_prof_t")}</small><strong id="com-dest-t">${esc(destaque.titulo)}</strong>${destaque.texto ? `<span>${esc(destaque.texto)}</span>` : ""}<span class="com-peq">${esc(destaque.nome)} · ${quando(destaque.criadoEm)}</span></div>${S.eu.admin || destaque.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${destaque.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</section>` : ""}
+    ${mural()}`;
+}
+
+/* ---------- Cidades ----------
+   Os círculos são globais (online). A cidade é a camada presencial: mural da cidade,
+   encontros no sítio e subcomunidades dos professores. Uma cidade só abre com anfitrião;
+   as outras aparecem "em breve", com o pedido "quero o NeuroMedit na minha cidade". */
+const PAISES = ["PT", "ES", "FR", "BR"];
+const nomePais = (cc) => { try { return new Intl.DisplayNames([lingua()], { type: "region" }).of(cc) || cc; } catch { return cc; } };
+const cidadeDe = (id) => S.cidades.find((c) => c.id === id);
+const souAnfitriao = (c) => Boolean(c && S.eu && (c.anfitrioes || []).includes(S.eu.uid));
+const hashDoMural = (id) => (cidadeDe(id) ? `#cidade=${id}` : `#c=${id}`);
+const slug = (txt) => String(txt || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
+const porPais = () => {
+  const paises = [...PAISES, ...new Set(S.cidades.map((c) => c.pais).filter((p) => !PAISES.includes(p)))];
+  return paises.map((p) => [p, S.cidades.filter((c) => c.pais === p)]).filter(([, l]) => l.length);
+};
+/** Opções do seletor de cidade, por país; as em breve dizem-no. */
+const opcoesCidades = (escolhida) => `<option value="">${t("cid_nenhuma")}</option>` + porPais().map(([p, l]) =>
+  `<optgroup label="${esc(nomePais(p))}">${l.map((c) => `<option value="${c.id}" ${c.id === escolhida ? "selected" : ""}>${esc(c.nome)}${c.regiao ? ` (${esc(c.regiao)})` : ""}${c.estado === "aberta" ? "" : ` · ${t("em_breve")}`}</option>`).join("")}</optgroup>`).join("");
+/** Badge do design system: "Aberta" (feito, com check) ou "Em breve" (neutro). */
+const badgeCidade = (c) => (c.estado === "aberta"
+  ? `<span class="com-badge com-badge--feito">${IC.certo}${t("cid_aberta")}</span>`
+  : `<span class="com-badge">${t("em_breve")}</span>`);
+
+function telaCidades() {
+  const eu = S.eu;
+  const topo = `<div class="com-topo"><p class="com-sobre">${t("cid_eyebrow")}</p><h1 class="com-h1">${t("cid_h1")}</h1><p class="com-lead">${t("cid_lead")}</p></div>`;
+  if (!S.cidades.length) {
+    return topo + `<div class="com-cartao">${eu.admin ? `<p class="com-suave">${t("cid_semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear-cidades">${t("cid_semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
+  }
+  const fora = eu.admin ? Object.entries(S.pedidosCidade).filter(([k]) => !cidadeDe(k)) : [];
+  return topo + porPais().map(([p, l]) => `<section class="com-cartao com-cartao--p" aria-labelledby="com-pais-${p}"><h3 id="com-pais-${p}" class="com-dir-t">${esc(nomePais(p))}</h3>
+      <ul class="com-cidades">${l.map((c) => `<li><a class="com-cidade" href="#cidade=${c.id}"><span class="com-cidade-ponto ${c.estado === "aberta" ? "is-aberta" : ""}" aria-hidden="true"></span><span class="com-cidade-nome">${esc(c.nome)}${c.regiao ? ` <small>${esc(c.regiao)}</small>` : ""}</span>${c.id === eu.cidade ? `<span class="com-selo">${t("cid_minha")}</span>` : ""}<span class="com-esp"></span>${eu.admin && S.pedidosCidade[c.id] ? `<span class="com-peq com-suave">${esc(t("cid_pedidos_n", { n: S.pedidosCidade[c.id].n }))}</span>` : ""}${badgeCidade(c)}</a></li>`).join("")}</ul></section>`).join("")
+    + `<section class="com-cartao com-cartao--p" aria-labelledby="com-outra-t"><h3 id="com-outra-t" class="com-dir-t">${t("cid_outra_t")}</h3><p class="com-suave com-peq">${t("cid_outra_d")}</p>
+      <form class="com-linha" data-f="pedir-outra"><label class="com-so-leitor" for="com-oc">${t("cid_outra_ph")}</label><input id="com-oc" class="com-campo com-campo--cresce" name="nome" type="text" maxlength="60" placeholder="${t("cid_outra_ph")}" required><button class="com-opt" type="submit">${t("cid_quero_btn")}</button></form>
+      ${fora.length ? `<p class="com-cap">${t("cid_fora_lista")}</p>${fora.map(([, v]) => `<div class="com-linha"><span>${esc(v.nome || "")}</span><span class="com-suave com-peq">${esc(t("cid_pedidos_n", { n: v.n }))}</span></div>`).join("")}` : ""}</section>`;
+}
+
+function telaCidade() {
+  const eu = S.eu;
+  const c = cidadeDe(S.cidadeId);
+  const info = S.cidadeInfo;
+  if (!c) return `<div class="com-cartao"><h2>${t("cid_nao_existe")}</h2><div class="com-linha"><a class="com-opt" href="#cidades">${t("cid_todas")}</a></div></div>`;
+  const aberta = c.estado === "aberta";
+  const minha = eu.cidade === c.id;
+  const capa = `<div class="com-topo com-topo--capa"><div class="com-capa-tit"><p class="com-sobre">${esc(nomePais(c.pais))}${c.regiao ? ` · ${esc(c.regiao)}` : ""}</p><h1 class="com-h1">${esc(c.nome)}</h1></div>
+      <span class="com-capa-planeta">${planeta(planetaDoCirculo({ id: c.id }))}</span>
+      ${eu.admin && aberta ? `<details class="com-menu"><summary aria-label="${t("mais_opcoes")}" title="${t("mais_opcoes")}">${IC.pontos}</summary><div class="com-menu-lista"><button class="com-acao com-acao--perigo" type="button" data-a="fechar-cidade" data-v="${c.id}">${t("cid_fechar")}</button></div></details>` : ""}
+      <div class="com-capa-sobre"><p class="com-lead">${t(aberta ? "cid_capa_lead" : "cid_breve_lead")}</p>
+        <div class="com-linha">${minha ? `<span class="com-selo">${IC.pin}${t("cid_minha")}</span>` : (eu.temFicha ? `<button class="com-opt com-opt--mini" type="button" data-a="minha-cidade" data-v="${c.id}">${IC.pin}<span>${t("cid_e_minha")}</span></button>` : "")}${info.anfitrioes.length ? `<span class="com-suave com-peq">${esc(t("cid_anfitrioes", { n: info.anfitrioes.join(", ") }))}</span>` : ""}</div></div></div>`;
+  const professores = (S.pessoas || []).filter((m) => m.papel === "professor" && !(c.anfitrioes || []).includes(m.id));
+  const gerir = eu.admin ? `<section class="com-cartao com-cartao--p" aria-labelledby="com-cg"><h3 id="com-cg" class="com-dir-t">${t(aberta ? "cid_anfitrioes_t" : "cid_abrir_t")}</h3><p class="com-suave com-peq">${t(aberta ? "cid_anfitrioes_d" : "cid_abrir_d")}</p>
+      <form class="com-linha com-linha--base" data-f="abrir-cidade" data-v="${c.id}"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-anf">${t("cid_anfitriao")}</label><select id="com-anf" class="com-campo" name="anfitriao" required>${(c.anfitrioes || []).includes(eu.uid) ? "" : `<option value="${esc(eu.uid)}">${t("cid_eu")}</option>`}${professores.map((m) => `<option value="${esc(m.id)}">${esc(m.nome)}</option>`).join("")}</select></div><button class="com-opt" type="submit">${aberta ? `${IC.mais} ${t("cid_juntar")}` : esc(t("cid_abrir", { c: c.nome }))}</button></form></section>` : "";
+  const pedidos = aberto(c) ? `<section class="com-cartao com-cartao--p com-prof" aria-labelledby="com-cp"><h3 id="com-cp" class="com-dir-t"><span class="com-ic com-ic--prof">${IC.pessoa}</span>${esc(t("cid_pedidos_t", { c: c.nome }))}</h3>
+      ${info.pendentes.length ? info.pendentes.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong>${m.motivos?.length ? `<span>${esc(m.motivos.map(motivo).join(", "))}</span>` : ""}</div><button class="com-opt" type="button" data-a="aprovar" data-v="${m.id}">${IC.certo} ${t("aprovar")}</button><button class="com-acao" type="button" data-a="recusar" data-v="${m.id}">${t("recusar")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("cid_sem_pedidos")}</p>`}</section>` : "";
+  if (!aberta) {
+    return capa + `<section class="com-cartao com-centro com-breve"><strong>${esc(t("cid_breve_t", { c: c.nome }))}</strong><span class="com-suave">${t("cid_breve_d")}</span>
+        ${info.jaPedi ? `<span class="com-badge com-badge--feito">${IC.certo}${t("cid_pedido_feito")}</span>` : `<button class="com-pri" type="button" data-a="pedir-cidade" data-v="${c.id}">${esc(t("cid_quero", { c: c.nome }))}</button>`}
+        <span class="com-suave com-peq">${t("cid_ser_anfitriao")}</span></section>` + gerir + pedidos;
+  }
+  return capa + pedidos + gerir + mural();
+}
+/** Quem vê os pedidos de entrada de uma cidade: os seus anfitriões e o Lucas. */
+const aberto = (c) => souAnfitriao(c) || S.eu.admin;
+
+/** Encontro: online (entrar no Meet) ou presencial (lugar, com link para o mapa). */
+function encontroItem(e) {
+  const eu = S.eu;
+  const c = e.cidade ? cidadeDe(e.cidade) : null;
+  const mapa = e.lugar ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.lugar + (c ? `, ${c.nome}` : ""))}` : "";
+  return `<div class="com-enc"><div class="com-quem"><strong>${esc(e.titulo)}</strong><span>${esc(dataHora(e.quando))}</span>
+      ${e.lugar ? `<span class="com-enc-lugar">${IC.pin}${esc(e.lugar)}${c ? ` · ${esc(c.nome)}` : ""}</span>` : `<span class="com-enc-lugar">${IC.video}${t("cid_online")}</span>`}
+      <span>${esc(t("com_nome", { nome: e.nome }))}</span></div>
+    <div class="com-linha"><button class="com-opt ${e.guardado ? "is-on" : ""}" type="button" aria-pressed="${e.guardado}" data-a="lugar" data-v="${e.id}">${e.guardado ? t("lugar_guardado") : t("guardar_lugar")}</button>${e.lugar ? `<a class="com-opt" href="${esc(mapa)}" target="_blank" rel="noopener noreferrer">${t("cid_ver_mapa")}</a>` : `<a class="com-opt" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">${t("entrar_enc")}</a>`}${eu.admin || e.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-encontro" data-v="${e.id}" aria-label="${t("apagar_enc")}">${IC.lixo}</button>` : ""}</div></div>`;
+}
+
+/** Coluna da direita na página de uma cidade: encontros no sítio e subcomunidades. */
+function direitaCidade() {
+  const eu = S.eu;
+  const c = cidadeDe(S.cidadeId);
+  if (!c || c.estado !== "aberta") return "";
+  const encs = S.encontros.filter((e) => e.cidade === c.id);
+  const subs = S.grupos.filter((g) => g.cidade === c.id);
+  return `<section class="com-cartao com-cartao--p" aria-labelledby="com-ce"><h3 id="com-ce" class="com-dir-t"><span class="com-ic">${IC.agenda}</span>${esc(t("cid_encontros_t", { c: c.nome }))}</h3><p class="com-suave com-peq">${t("cid_encontros_d")}</p>
+      ${encs.length ? encs.map(encontroItem).join("") : `<p class="com-suave com-peq">${t("sem_enc")}</p>`}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("marcar_enc")}</span></summary><form class="com-novo" data-f="encontro" data-cidade="${c.id}"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("enc_nome")}" aria-label="${t("enc_nome")}" required><label class="com-peq com-suave" for="com-eq">${t("dia_hora")}</label><input id="com-eq" class="com-campo" name="quando" type="datetime-local" required><label class="com-peq com-suave" for="com-elg">${t("cid_lugar")}</label><input id="com-elg" class="com-campo" name="lugar" type="text" maxlength="160" placeholder="${t("cid_lugar_ph")}"><label class="com-peq com-suave" for="com-el">${t("cid_ou_online")}</label><input id="com-el" class="com-campo" name="link" type="url" placeholder="https://meet.google.com/..."><div class="com-linha"><button class="com-opt" type="submit">${t("marcar_enc")}</button></div></form></details>` : ""}
+    </section>
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-cs"><h3 id="com-cs" class="com-dir-t"><span class="com-ic">${IC.conversa}</span>${t("cid_subs_t")}</h3><p class="com-suave com-peq">${t("cid_subs_d")}</p>
+      ${subs.length ? subs.map((g) => { const dentro = (g.membros || []).includes(eu.uid); return `<div class="com-linha com-aviso-item"><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}</span></div>${dentro || eu.admin ? `<a class="com-opt com-opt--mini" href="#g=${g.id}">${t("abrir_conversa")}</a>` : `<button class="com-opt com-opt--mini" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button>`}</div>`; }).join("") : `<p class="com-suave com-peq">${t("cid_sem_subs")}</p>`}
+      ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("cid_criar_sub")}</span></summary><form class="com-novo" data-f="novo-grupo" data-cidade="${c.id}"><input class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("cid_sub_ph")}" aria-label="${t("novo_grupo")}" required><select class="com-campo" name="tipo" aria-label="${t("quem_entra")}"><option value="aberto">${t("qualquer")}</option><option value="privado">${t("so_incluir")}</option></select><button class="com-opt" type="submit">${IC.mais} ${t("cid_criar_sub")}</button></form></details>` : ""}
+    </section>`;
+}
+
 function telaPartilha() {
   const p = S.aberto;
   if (!p) return `<div class="com-cartao"><h2>${t("nao_existe")}</h2><div class="com-linha"><a class="com-opt" href="#">${t("voltar_circulos")}</a></div></div>`;
-  const c = circ(S.circulos.find((x) => x.id === p.circulo));
-  return `<a class="com-acao com-acao--solta" href="#c=${p.circulo}">${IC.voltar}<span>${esc(t("voltar_a", { c: c?.nome || t("circulo") }))}</span></a>
+  const c = circ(S.circulos.find((x) => x.id === p.circulo)) || cidadeDe(p.circulo);
+  return `<a class="com-acao com-acao--solta" href="${hashDoMural(p.circulo)}">${IC.voltar}<span>${esc(t("voltar_a", { c: c?.nome || t("circulo") }))}</span></a>
     ${cartaoPartilha(p, { aberta: true })}
     <p class="com-cap">${t("respostas")}</p>
     ${S.respostas.length ? S.respostas.map((r) => `<div class="com-resp">${rosto(r.foto, r.nome, false)}<div class="com-quem com-quem--larga"><div class="com-linha"><strong>${esc(r.uid === S.eu.uid ? t("voce") : r.nome)}</strong>${r.professor ? selo() : ""}<span class="com-suave com-peq">${quando(r.criadoEm)}</span><span class="com-esp"></span>${S.eu.admin || r.uid === S.eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div><p class="com-texto">${esc(r.texto)}</p></div></div>`).join("") : `<p class="com-suave com-peq com-recuo">${t("sem_respostas")}</p>`}
@@ -372,7 +482,7 @@ function telaGrupos() {
     ${eu.professor ? `<form class="com-cartao com-linha com-linha--base" data-f="novo-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-ng">${t("novo_grupo")}</label><input id="com-ng" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("novo_grupo_ph")}" required></div><div class="com-sel"><label class="com-peq com-suave" for="com-tg">${t("quem_entra")}</label><select id="com-tg" class="com-campo" name="tipo"><option value="privado">${t("so_incluir")}</option><option value="aberto">${t("qualquer")}</option></select></div><button class="com-pri" type="submit">${IC.mais} ${t("criar_grupo")}</button></form>` : `<p class="com-suave com-peq">${t("grupos_quem")}</p>`}
     ${S.grupos.length ? S.grupos.map((g) => {
       const dentro = (g.membros || []).includes(eu.uid);
-      return `<div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}${g.criador === eu.uid ? t("criado_voce") : ""}</span></div>
+      return `<div class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.conversa}</span><div class="com-quem com-quem--larga"><strong>${esc(g.nome)}</strong><span>${g.tipo === "privado" ? t("so_inclusao") : t("aberto")}${g.cidade && cidadeDe(g.cidade) ? ` · ${esc(cidadeDe(g.cidade).nome)}` : ""}${g.criador === eu.uid ? t("criado_voce") : ""}</span></div>
         ${dentro || eu.admin ? `<a class="com-opt" href="#g=${g.id}">${t("abrir_conversa")}</a>` : `<button class="com-opt" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button>`}
         ${eu.admin || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-grupo" data-v="${g.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""}</div>`;
     }).join("") : `<div class="com-cartao com-centro"><strong>${t("sem_grupos")}</strong></div>`}`;
@@ -405,7 +515,9 @@ function telaGestao() {
   const dentro = membros.filter((m) => m.estado === "aprovado");
   const fora = membros.filter((m) => m.estado === "removido");
   const nomeDe = (id) => membros.find((m) => m.id === id)?.nome || "";
+  const abertas = S.cidades.filter((c) => c.estado === "aberta").length;
   return `<div class="com-topo"><p class="com-sobre">${t("gest_eyebrow")}</p><h1 class="com-h1">${t("gest_h1")}</h1><p class="com-lead">${t("gest_lead")}</p></div>
+    <section class="com-cartao com-cartao--p com-linha" aria-labelledby="com-g0"><span class="com-ic">${IC.globo}</span><div class="com-quem com-quem--larga"><strong id="com-g0">${t("cid_todas")}</strong><span>${S.cidades.length ? esc(t("cid_resumo", { a: abertas, n: S.cidades.length })) : t("cid_semear_d")}</span></div>${S.cidades.length ? `<a class="com-opt" href="#cidades">${t("cid_gerir")}</a>` : `<button class="com-pri" type="button" data-a="semear-cidades">${t("cid_semear")}</button>`}</section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g1"><h3 id="com-g1">${t("pedidos")}</h3>
       ${pedidos.length ? pedidos.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}${m.motivos?.length ? " · " + esc(m.motivos.map(motivo).join(", ")) : ""}</span></div><button class="com-opt" type="button" data-a="aprovar" data-v="${m.id}">${IC.certo} ${t("aprovar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("recusar")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_pedidos")}</p>`}</section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g2"><h3 id="com-g2">${t("convidar_t")}</h3><p class="com-suave com-peq">${t("convidar_d")} <strong>neuromedit.com/comunidade.html</strong>.</p>
@@ -422,7 +534,7 @@ function telaPerfil() {
   const eu = S.eu;
   return `<div class="com-topo"><p class="com-sobre">${t("perfil_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
     <section class="com-cartao com-linha"><span class="com-foto">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span><div class="com-quem"><strong>${esc(eu.nome)}</strong><span>${papel(eu.papel)}</span><span>${t("foto_google")}</span></div></section>
-    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_nome")}</button></div></form>` : ""}
+    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required>${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}<div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_nome")}</button></div></form>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
     <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
@@ -472,8 +584,8 @@ function desenhar() {
   if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
   if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); return; }
   const { chave } = rota();
-  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil" }[chave] || "circulo";
-  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil }[tela]();
+  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
+  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, cidades: telaCidades, cidade: telaCidade }[tela]();
   app.classList.add("com-pagina--app");
   app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita(tela)}</div>`;
   mostrarPrevia();
@@ -493,7 +605,7 @@ async function carregarRota() {
   try {
     if (chave === "p") {
       S.aberto = await dados.partilha(valor);
-      if (S.aberto) { S.circuloId = S.aberto.circulo; S.respostas = await dados.respostas(valor); await carregarRessoou([S.aberto]); }
+      if (S.aberto) { S.muralId = S.aberto.circulo; if (!cidadeDe(S.aberto.circulo)) S.circuloId = S.aberto.circulo; S.respostas = await dados.respostas(valor); await carregarRessoou([S.aberto]); }
     } else if (chave === "grupos") {
       S.grupos = await dados.grupos(S.eu);
     } else if (chave === "g") {
@@ -510,8 +622,28 @@ async function carregarRota() {
     } else if (chave === "gestao" && S.eu.admin) {
       const [membros, convites, denuncias] = await Promise.all([dados.membros(), dados.convites(), dados.denunciadas()]);
       S.gestao = { membros, convites, denuncias };
+    } else if (chave === "cidades") {
+      if (S.eu.admin) S.pedidosCidade = await dados.pedidosPorCidade().catch(() => ({}));
+    } else if (chave === "cidade") {
+      S.cidadeId = valor;
+      S.cidadeInfo = { pendentes: [], anfitrioes: [], jaPedi: false };
+      const c = cidadeDe(valor);
+      if (c) {
+        S.cidadeInfo.anfitrioes = await dados.nomesDe(c.anfitrioes).catch(() => []);
+        if (c.estado === "aberta") {
+          S.muralId = c.id;
+          S.posts = await dados.partilhas(c.id);
+          await carregarRessoou(S.posts);
+          S.grupos = await dados.grupos(S.eu).catch(() => []);
+        } else {
+          S.cidadeInfo.jaPedi = await dados.jaPedi(c.id);
+        }
+        if (aberto(c)) S.cidadeInfo.pendentes = await dados.pendentesDaCidade(c.id).catch(() => []);
+        if (S.eu.admin) S.pessoas = await dados.membrosAprovados().catch(() => []);
+      }
     } else if (chave !== "perfil") {
       S.circuloId = chave === "c" && S.circulos.some((c) => c.id === valor) ? valor : (S.circulos[0]?.id || "");
+      S.muralId = S.circuloId;
       S.posts = S.circuloId ? await dados.partilhas(S.circuloId) : [];
       await carregarRessoou(S.posts);
     }
@@ -526,7 +658,7 @@ async function arrancar(user) {
   S.user = user; S.erro = "";
   try {
     S.eu = user ? await dados.carregarEu() : null;
-    if (user) S.circulos = await dados.circulos().catch(() => []);
+    if (user) [S.circulos, S.cidades] = await Promise.all([dados.circulos().catch(() => []), dados.cidades().catch(() => [])]);
     if (S.eu?.estado === "aprovado") {
       await carregarLados();
       if (S.eu.admin) S.gestao.membros = await dados.membros().catch(() => []);
@@ -538,14 +670,23 @@ async function arrancar(user) {
   S.pronto = true;
   await carregarRota();
 }
-const recarregar = async () => { S.eu = await dados.carregarEu(); S.circulos = await dados.circulos().catch(() => []); await carregarLados(); if (S.eu.admin) S.gestao.membros = await dados.membros().catch(() => []); await carregarRota(); };
+const recarregar = async () => { S.eu = await dados.carregarEu(); [S.circulos, S.cidades] = await Promise.all([dados.circulos().catch(() => []), dados.cidades().catch(() => [])]); await carregarLados(); if (S.eu.admin) S.gestao.membros = await dados.membros().catch(() => []); await carregarRota(); };
 
 /* ---------- Ações (cliques) ---------- */
 const ACOES = {
   login: () => tentar(() => dados.entrar(), t("erro_login")),
   motivo: (v) => { S.motivos[v] = !S.motivos[v]; desenhar(); },
   aceitar: (v, el) => { S.aceito = el.checked; desenhar(); },
-  pedir: async () => { if (await tentar(() => dados.pedirEntrada({ nome: S.eu.nome, motivos: Object.keys(S.motivos).filter((k) => S.motivos[k]), convidado: S.eu.convidado }))) await arrancar(S.user); },
+  pedir: async () => { if (await tentar(() => dados.pedirEntrada({ nome: S.eu.nome, motivos: Object.keys(S.motivos).filter((k) => S.motivos[k]), convidado: S.eu.convidado, cidade: S.cidadeEscolhida }))) await arrancar(S.user); },
+  "escolher-cidade": (_, el) => { S.cidadeEscolhida = el.value; },
+  "minha-cidade": async (v) => { if (await tentar(() => dados.guardarPerfil({ cidade: v }))) { S.eu.cidade = v; aviso(t("a_cidade", { c: cidadeDe(v)?.nome || "" })); desenhar(); } },
+  "pedir-cidade": async (v) => { if (await tentar(() => dados.pedirCidade(v))) { S.cidadeInfo.jaPedi = true; aviso(t("a_pedido_cidade")); desenhar(); } },
+  "semear-cidades": async () => { if (await tentar(() => dados.semearCidades())) { S.cidades = await dados.cidades(); aviso(t("a_cidades_criadas")); ir("#cidades"); } },
+  "fechar-cidade": async (v) => {
+    const c = cidadeDe(v);
+    if (!await confirmar({ titulo: t("c_fechar_t", { c: c.nome }), texto: t("c_fechar_d"), botao: t("cid_fechar") })) return;
+    if (await tentar(() => dados.definirAnfitrioes(v, []))) { S.cidades = await dados.cidades(); await carregarRota(); }
+  },
   "cancelar-pedido": async () => { if (await confirmar({ titulo: t("c_pedido_t"), texto: t("c_pedido_d"), botao: t("c_pedido_b") }) && await tentar(() => dados.apagarTudoOQueEMeu())) await arrancar(S.user); },
   semear: async () => { if (await tentar(() => dados.semearCirculos())) { aviso(t("a_circulos_criados")); await recarregar(); } },
   ressoou: async (v) => { const novo = !S.ressoou[v]; if (await tentar(() => dados.marcarRessoou(v, novo))) { S.ressoou[v] = novo; desenhar(); } },
@@ -555,7 +696,7 @@ const ACOES = {
   manter: async (v) => { if (await tentar(() => dados.manterPartilha(v))) { aviso(t("a_mantida")); await carregarRota(); } },
   "apagar-partilha": async (v) => {
     if (!await confirmar({ titulo: t("c_partilha_t"), texto: t("c_partilha_d"), botao: t("c_partilha_b") })) return;
-    if (await tentar(() => dados.apagarPartilha(v))) { aviso(t("a_partilha_apagada")); if (rota().chave === "p") ir(`#c=${S.circuloId}`); else await carregarRota(); }
+    if (await tentar(() => dados.apagarPartilha(v))) { aviso(t("a_partilha_apagada")); if (rota().chave === "p") ir(hashDoMural(S.muralId)); else await carregarRota(); }
   },
   "apagar-resposta": async (v) => {
     if (!await confirmar({ titulo: t("c_resposta_t"), texto: t("c_resposta_d"), botao: t("c_resposta_b") })) return;
@@ -611,30 +752,39 @@ const FORMS = {
   publicar: async (f) => {
     const d = new FormData(f);
     const texto = d.get("texto").trim(); if (!texto) return;
-    if (await tentar(() => dados.publicar({ circulo: S.circuloId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto, imagem: S.novaFoto, professor: S.eu.professor && d.get("anon") !== "on" }))) { S.novaFoto = ""; S.comporAberto = false; aviso(t("a_publicada")); await carregarRota(); }
+    if (await tentar(() => dados.publicar({ circulo: S.muralId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto, imagem: S.novaFoto, professor: S.eu.professor && d.get("anon") !== "on" }))) { S.novaFoto = ""; S.comporAberto = false; aviso(t("a_publicada")); await carregarRota(); }
   },
   editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso(t("a_editada")); await carregarRota(); } },
   responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso(t("a_resposta")); await carregarRota(); } },
   "novo-circulo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarCirculo({ nome: d.get("nome").trim(), proposito: d.get("proposito").trim() }); })) { aviso(t("a_circulo_criado")); S.circulos = await dados.circulos(); ir(`#c=${id}`); } },
-  "novo-grupo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarGrupo({ nome: d.get("nome").trim(), tipo: d.get("tipo") }); })) ir(`#g=${id}`); },
+  "novo-grupo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarGrupo({ nome: d.get("nome").trim(), tipo: d.get("tipo"), cidade: f.dataset.cidade || "" }); })) ir(`#g=${id}`); },
+  "pedir-outra": async (f) => { const nome = new FormData(f).get("nome").trim(); const id = slug(nome); if (id && await tentar(() => dados.pedirCidade(id, nome))) { f.reset(); aviso(t("a_pedido_cidade")); } },
+  "abrir-cidade": async (f) => {
+    const c = cidadeDe(f.dataset.v); const novo = new FormData(f).get("anfitriao");
+    if (c && novo && await tentar(() => dados.definirAnfitrioes(c.id, [...(c.anfitrioes || []), novo]))) { S.cidades = await dados.cidades(); aviso(t("a_cidade_aberta", { c: c.nome })); await carregarRota(); }
+  },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },
   mensagem: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto) return; campo.value = ""; if (!await tentar(() => dados.enviarMensagem(S.grupo.id, { texto, nome: S.eu.nome }))) campo.value = texto; campo.focus(); },
   canal: async (f) => { const d = new FormData(f); if (await tentar(() => dados.publicarNoCanal({ titulo: d.get("titulo").trim(), texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); } },
   encontro: async (f) => {
     const d = new FormData(f); const data = new Date(d.get("quando"));
     if (Number.isNaN(data.getTime())) return aviso(t("a_dia_hora"));
-    if (await tentar(() => dados.criarEncontro({ titulo: d.get("titulo").trim(), quando: data, link: d.get("link").trim(), nome: S.eu.nome }), t("e_meet"))) { aviso(t("a_enc_marcado")); await carregarLados(); desenhar(); }
+    const cidade = f.dataset.cidade || "";
+    const lugar = String(d.get("lugar") || "").trim(); const link = String(d.get("link") || "").trim();
+    // Na cidade: presencial (lugar) ou online (Meet). Fora da cidade: só online.
+    if (!lugar && !/^https:\/\/meet\.google\.com\/.+/.test(link)) return aviso(t(cidade ? "a_lugar_ou_link" : "e_meet"));
+    if (await tentar(() => dados.criarEncontro({ titulo: d.get("titulo").trim(), quando: data, link, lugar, cidade, nome: S.eu.nome }), t("e_meet"))) { aviso(t("a_enc_marcado")); await carregarLados(); desenhar(); }
   },
   convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(t("a_convite", { e: email })); await carregarRota(); } },
-  perfil: async (f) => { const nome = new FormData(f).get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome }))) { aviso(t("a_nome")); await recarregar(); } }
+  perfil: async (f) => { const d = new FormData(f); const nome = d.get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome, cidade: d.get("cidade") || "" }))) { aviso(t("a_nome")); await recarregar(); } }
 };
 
 app.addEventListener("click", (e) => {
   const el = e.target.closest("[data-a]");
-  if (!el || el.tagName === "INPUT") return;
+  if (!el || el.tagName === "INPUT" || el.tagName === "SELECT") return;
   ACOES[el.dataset.a]?.(el.dataset.v, el);
 });
-app.addEventListener("change", (e) => { const el = e.target.closest("input[data-a]"); if (el) ACOES[el.dataset.a]?.(el.dataset.v, el); });
+app.addEventListener("change", (e) => { const el = e.target.closest("input[data-a], select[data-a]"); if (el) ACOES[el.dataset.a]?.(el.dataset.v, el); });
 app.addEventListener("submit", (e) => { const f = e.target.closest("form[data-f]"); if (!f) return; e.preventDefault(); FORMS[f.dataset.f]?.(f); });
 document.addEventListener("click", (e) => { document.querySelectorAll("details.com-menu[open]").forEach((d) => { if (!d.contains(e.target)) d.open = false; }); });
 window.addEventListener("hashchange", carregarRota);

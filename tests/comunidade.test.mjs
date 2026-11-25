@@ -120,6 +120,19 @@ describe("Partilhas", () => {
   test("partilha com nome pode levar a foto da conta; sem nome, nunca", async () => {
     await assertSucceeds(addDoc(collection(de(RUI), "comPartilhas"), { circulo: "c-lucas", uid: RUI, nome: "Rui", foto: "https://lh3.googleusercontent.com/a/x", anon: false, pratica: "", texto: "t", denunciada: false, criadoEm: serverTimestamp() }));
   });
+  test("partilha pode levar uma foto da prática em JPEG pequeno; outra coisa não", async () => {
+    const base = { circulo: "c-lucas", uid: RUI, nome: "Rui", anon: false, pratica: "", texto: "t", denunciada: false, criadoEm: serverTimestamp() };
+    await assertSucceeds(addDoc(collection(de(RUI), "comPartilhas"), { ...base, imagem: "data:image/jpeg;base64,/9j/4AAQSkZJRg==" }));
+    await assertFails(addDoc(collection(de(RUI), "comPartilhas"), { ...base, imagem: "https://exemplo.com/foto.jpg" }));
+    await assertFails(addDoc(collection(de(RUI), "comPartilhas"), { ...base, imagem: "data:image/png;base64,iVBORw0KGgo=" }));
+    await assertFails(addDoc(collection(de(RUI), "comPartilhas"), { ...base, imagem: "data:image/jpeg;base64," + "A".repeat(200000) }));
+  });
+  test("etiqueta Professor na partilha: só professores, e nunca sem nome", async () => {
+    const base = (uid, nome) => ({ circulo: "c-lucas", uid, nome, anon: false, pratica: "", texto: "t", denunciada: false, criadoEm: serverTimestamp() });
+    await assertSucceeds(addDoc(collection(de(ANA), "comPartilhas"), { ...base(ANA, "Ana"), professor: true }));
+    await assertFails(addDoc(collection(de(RUI), "comPartilhas"), { ...base(RUI, "Rui"), professor: true }));
+    await assertFails(addDoc(collection(de(ANA), "comPartilhas"), { ...base(ANA, "Ana"), professor: false }));
+  });
   test("ressoou: cada pessoa só vê o seu", async () => {
     await assertSucceeds(setDoc(doc(de(EVA), "comPartilhas", "p-rui", "ressoou", EVA), { em: serverTimestamp() }));
     await assertFails(getDoc(doc(de(RUI), "comPartilhas", "p-rui", "ressoou", EVA)));

@@ -37,7 +37,11 @@ Para correr os testes das regras (precisa de Java): `npm install` e depois `npm 
 - **Avisos no site, não por e-mail**: o pedido aprovado, as respostas e as inclusões em grupos aparecem nas Novidades (o sino).
 - **Convite**: guarda o e-mail da pessoa; ela entra logo quando fizer login com esse e-mail. É o Lucas que lhe manda o link.
 - **Encontros ao vivo**: o professor cola o link de uma sala do Google Meet.
-- **Foto**: a da conta Google.
+- **Foto de perfil**: a da conta Google.
+- **Foto da prática** (nov 2026): sem Storage. O aparelho corta a foto ao centro em 4:3, reduz para 960×720 (ou menos) em JPEG e guarda-a no próprio documento da partilha, no campo `imagem` (a regra aceita só `data:image/jpeg;base64,…` até 200 000 caracteres). **É preciso publicar as regras outra vez** para isto funcionar.
+- **Perfil**: um só, no avatar do topo ("Meu perfil na comunidade"). Saiu da lateral (nov 2026).
+- **Etiqueta Professor nas partilhas**: campo `professor: true`, que a regra só aceita de quem é professor e nunca numa partilha sem nome. Também precisa das regras publicadas.
+- **Capas das práticas**: cada prática tem o seu planeta (Respiração Calma → Vênus, Quem está falando? → Saturno, Desacelerar à Noite → Lua, Antes de Dormir → Netuno). O cartão leva direto à prática.
 - **Sem resumo semanal.**
 
 ## Dívida de design system (não esquecer)
@@ -53,6 +57,16 @@ Combinado com o Lucas em nov 2026: estes componentes nasceram no código e ainda
 - [ ] Aviso curto no fundo do ecrã (`.com-aviso`)
 - [ ] Item de círculo na lateral, que vira pílula no telemóvel (`.com-circ`)
 - [ ] Botão de perfil e menu da conta, lupa e Novidades da barra do topo
+- [ ] Lateral colada à esquerda (`.com-esq` em ecrãs largos): segue a anatomia da SideNav, com destinos em cima e conta/gestão no fundo
+- [ ] Região "Dos professores" em dourado da Luz (`.com-prof`: `luz-gold` misturado em `surface` e `line`)
+- [ ] Menu "Mais opções" (`.com-menu`), onde fica "Apagar círculo"
+- [ ] Foto da prática (`.com-imagem`): 4:3, `radius-md`, tom quente `accent` em soft-light
+- [ ] Capa do círculo com o seu planeta (`.com-topo--capa`): Partilhas → Saturno, Calma → Vênus, Sono → Lua, Foco → Netuno; os criados depois recebem um pelo id
+- [ ] "Em destaque" (`.com-destaque`): o aviso mais recente dos professores fixado no topo do feed, como os destaques dos grupos do Facebook
+- [ ] Campo de publicar fechado numa linha (`.com-compor-abrir`), que abre ao tocar
+- [ ] Etiqueta "Professor" (`.com-selo`), segue o Badge (tom neutro) com borda dourada
+- [ ] "Sobre este círculo" na coluna da direita (propósito e cuidado); no telemóvel ficam na capa
+- [ ] Cartão da prática com capa de planeta em pontos (`.com-pratica`, `planeta()` em comunidade.js): versão pequena (64 px) dos Planetas, com cor do tema (`accent-dark`/`accent`) e não sobre o fundo da Luz
 
 ## Por fazer
 

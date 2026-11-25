@@ -476,6 +476,10 @@
     }
   };
 
+  // O logótipo leva sempre ao Início (home.html). "/" é o index (alívio imediato) e,
+  // para quem já está dentro do site, começava uma meditação sem aviso (teste de out 2026).
+  if (brand.getAttribute("href") === "/") brand.setAttribute("href", "home.html");
+
   /* ---------- Voltar e Avançar ---------- */
   const start = document.createElement("div");
   start.className = "header-start";
@@ -526,6 +530,7 @@
       <div class="header-pop-sep"></div>
       <div data-account-in hidden>
         <a class="header-pop-item" href="reservar.html#minhas" data-i18n="account_my_sessions">Minhas sessões</a>
+        <a class="header-pop-item" href="comunidade.html#perfil" data-i18n="account_community_profile">Meu perfil na comunidade</a>
         <button type="button" class="header-pop-item" data-account-settings data-i18n="account_settings">Ajustes</button>
         <a class="header-pop-item" href="painel.html" data-account-pro hidden data-i18n="account_pro_panel">Painel de profissional</a>
         <div class="header-pop-sep"></div>

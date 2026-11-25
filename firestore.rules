@@ -258,11 +258,18 @@ service cloud.firestore {
       return isSignedIn()
         && get(/databases/$(database)/documents/comCirculos/$(circuloId)).data.criador == request.auth.uid;
     }
+    function imagemDaPratica(v) {
+      return v is string && v.size() <= 200000 && v.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$');
+    }
     match /comPartilhas/{partilhaId} {
       allow read: if ehMembro();
       allow create: if ehMembro()
-        && request.resource.data.keys().hasOnly(['circulo', 'uid', 'nome', 'foto', 'anon', 'pratica', 'texto', 'criadoEm', 'denunciada'])
+        && request.resource.data.keys().hasOnly(['circulo', 'uid', 'nome', 'foto', 'imagem', 'professor', 'anon', 'pratica', 'texto', 'criadoEm', 'denunciada'])
         && (!('foto' in request.resource.data) || (request.resource.data.foto is string && request.resource.data.foto.size() <= 500))
+        // Foto da prática: só JPEG já reduzido no aparelho (4:3), guardado no próprio documento (plano gratuito, sem Storage).
+        && (!('imagem' in request.resource.data) || imagemDaPratica(request.resource.data.imagem))
+        // Etiqueta "Professor": só quem é professor, e nunca numa partilha sem nome.
+        && (!('professor' in request.resource.data) || (request.resource.data.professor == true && ehProfessor() && request.resource.data.anon == false))
         && textoAte(request.resource.data.texto, 2000)
         && request.resource.data.circulo is string
         && exists(/databases/$(database)/documents/comCirculos/$(request.resource.data.circulo))

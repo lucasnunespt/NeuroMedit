@@ -124,16 +124,19 @@ export async function partilha(id) {
   if (!s.exists()) return null;
   return (await marcarMinhas([{ id: s.id, ...s.data() }]))[0];
 }
-export async function publicar({ circulo, texto, pratica, anon, nome, foto }) {
+export async function publicar({ circulo, texto, pratica, anon, nome, foto, imagem, professor }) {
   const novo = doc(col("comPartilhas"));
   const lote = writeBatch(db);
   const dados = { circulo, texto: texto.slice(0, 2000), pratica: pratica || "", anon: Boolean(anon), denunciada: false, criadoEm: serverTimestamp() };
+  // A foto da prática já chega reduzida (JPEG 4:3, ver reduzirFoto em comunidade.js) e vai no próprio documento.
+  if (imagem) dados.imagem = imagem;
   if (anon) {
     lote.set(doc(db, "comPartilhas", novo.id, "privado", "autor"), { uid: uid() });
   } else {
     dados.uid = uid();
     dados.nome = (nome || "").slice(0, 60);
     if (foto) dados.foto = String(foto).slice(0, 500);
+    if (professor) dados.professor = true;
   }
   lote.set(novo, dados);
   await lote.commit();

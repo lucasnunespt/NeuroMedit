@@ -9,7 +9,8 @@
   box-sizing: border-box;
   max-width: 1240px;
   min-height: 80vh;
-  padding-top: clamp(6rem, 9vw, 6.75rem);
+  /* O cabeçalho é sticky e já ocupa o seu lugar: aqui só o respiro (antes somava-se a altura dele outra vez). */
+  padding-top: 1.5rem;
   padding-bottom: 6rem;
   color: var(--text);
 }
@@ -315,16 +316,20 @@ details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); 
 @media (min-width: 941px) {
   .com-pagina.com-pagina--app { max-width: none; margin: 0; padding-left: 0; padding-right: var(--gutter); padding-top: 0; }
   .com-pagina--app .com-lay { display: grid; grid-template-columns: 248px minmax(0, 1fr) 300px; gap: 0 2.5rem; align-items: start; }
+  /* Colada à esquerda, mas a começar por baixo do cabeçalho: antes subia por trás do logótipo
+     e a linha da borda cortava o nome "NeuroMedit". */
   .com-pagina--app .com-esq {
     position: sticky;
-    top: 0;
+    top: 6.5rem;
     box-sizing: border-box;
     max-width: none;
-    height: 100vh;
-    margin-top: -6.5rem;
-    padding: 7.25rem 0.9rem 1.25rem 1.1rem;
+    height: calc(100vh - 6.5rem);
+    margin-top: 0;
+    padding: 1.25rem 0.9rem 1.25rem 1.1rem;
     overflow-y: auto;
-    border-right: 1px solid var(--line);
+    border: 1px solid var(--line);
+    border-left: 0;
+    border-radius: 0 var(--radius-lg) 0 0;
     background: var(--bg-soft);
   }
   .com-pagina--app .com-meio { width: 100%; max-width: 680px; justify-self: center; padding-top: 1.25rem; }
@@ -580,7 +585,7 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 .com-lembrete .com-quem small { color: var(--accent-dark); font-size: 0.8rem; }
 .com-lembrete .com-quem span { color: var(--text-soft); }
 .com-lembrete .com-ic { color: var(--accent-dark); }
-.com-seguir { min-height: 28px; padding: 0 0.6rem; border: 1px solid var(--line); font-size: 0.8rem; }
+.com-seguir { min-height: 36px; padding: 0 0.75rem; border: 1px solid var(--line); font-size: 0.8rem; }
 .com-seguir.is-on { border-color: var(--accent-dark); }
 .com-enc-vao { color: var(--accent-dark); font-size: 0.88rem; }
 .com-enc .com-acao--solta { min-height: 32px; padding: 0 0.3rem; font-size: 0.85rem; }
@@ -592,7 +597,7 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
   .com-dir { flex: 1 1 100%; max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
 }
 @media (max-width: 940px) {
-  .com-pagina { padding-top: 5.5rem; padding-bottom: 8rem; }
+  .com-pagina { padding-top: 1rem; padding-bottom: 8rem; }
   .com-esq { flex: 1 1 100%; width: 100%; max-width: 100%; }
   .com-esq .com-novo { padding: 0; }
   .com-esq .com-cap { display: none; }
@@ -615,4 +620,107 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 }
 @media (prefers-reduced-motion: reduce) {
   .com-pri, .com-opt, .com-acao, .com-perigo, .com-circ, .com-pratica, .com-menu summary, .com-compor-abrir, .com-cidade { transition: none; }
+}
+
+/* ---------- Vistoria (nov 2026): como no Facebook, sem copiar o ruído ---------- */
+/* Rosto de quem partilha sem nome: um ícone de pessoa, não um ponto quase invisível. */
+.com-ini--anon svg { width: 20px; height: 20px; }
+
+/* Partilha: ações secundárias num "⋯" no canto; em baixo, uma barra com as duas ações principais. */
+.com-post-topo { flex-wrap: nowrap; align-items: flex-start; }
+.com-post-topo > .com-quem--larga { min-width: 0; }
+.com-menu--cartao { margin-left: auto; margin-top: -0.35rem; margin-right: -0.5rem; }
+.com-barra {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--line);
+}
+.com-barra .com-acao { justify-content: center; width: 100%; padding: 0 0.5rem; white-space: nowrap; }
+
+/* Comentários: rosto pequeno, balão com o nome e o texto, e por baixo quando e as ações. */
+.com-comentarios { gap: 0.9rem; }
+.com-comentarios .com-cap { margin: 0; padding: 0; font-size: 0.82rem; font-weight: 400; }
+.com-coment { display: flex; gap: 0.6rem; align-items: flex-start; }
+.com-coment > .com-ini { width: 34px; height: 34px; font-size: 0.82rem; background: var(--bg-soft); box-shadow: inset 0 0 0 1px var(--line); }
+.com-coment-corpo { display: flex; flex-direction: column; gap: 0.2rem; flex: 1 1 auto; min-width: 0; }
+.com-balao {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 0.55rem 0.9rem 0.65rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow-wrap: anywhere;
+}
+.com-balao .com-nome { font-size: 0.9rem; }
+.com-balao .com-texto { margin: 0.1rem 0 0; }
+.com-coment-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.1rem 0.25rem; padding-left: 0.6rem; color: var(--text-soft); font-size: 0.82rem; }
+.com-coment-meta > span:first-child { margin-right: 0.35rem; }
+.com-coment-meta .com-acao { font-size: 0.82rem; font-weight: 600; }
+/* A caixa de comentar: uma pílula que cresce com o texto, com o enviar dentro. */
+.com-coment--novo { padding-top: 0.25rem; }
+.com-balao-campo {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  padding: 0.25rem 0.3rem 0.25rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-strong);
+  transition: border-color var(--duration-quick) var(--easing-calm);
+}
+.com-balao-campo:focus-within { border-color: var(--accent-dark); }
+.com-balao-campo textarea.com-campo--balao {
+  flex: 1 1 auto;
+  min-height: 44px;
+  max-height: 40vh;
+  padding: 0.7rem 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  resize: none;
+  overflow-y: auto;
+}
+.com-balao-campo textarea.com-campo--balao::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.com-balao-campo textarea.com-campo--balao:focus, .com-balao-campo textarea.com-campo--balao:focus-visible { outline: none; box-shadow: none; }
+.com-enviar {
+  display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border: 0; border-radius: var(--radius-pill);
+  background: var(--accent); color: var(--button-text);
+  cursor: pointer;
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.com-enviar:hover { background: var(--accent-dark); }
+.com-enviar:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-enviar svg { width: 19px; height: 19px; }
+
+/* Encontro: o lixo vive ao lado do título, não sozinho numa linha. */
+.com-quem .com-enc-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; color: var(--text); font-size: 1rem; }
+.com-enc-topo .com-acao { margin: -0.35rem -0.35rem 0 0; }
+
+/* Anfitriões: quem cuida agora, separador, convidar por e-mail. */
+.com-pessoas { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.com-sep { height: 1px; margin: 0.35rem 0; background: var(--line); }
+.com-sub { margin: 0; font-size: 1rem; font-weight: 600; color: var(--text); }
+.com-convite { display: flex; flex-direction: column; gap: 0.4rem; padding: 0.75rem 0.85rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.com-destaque--anf { margin-bottom: 0; }
+
+/* Telemóvel: o destaque do Dia do Yoga e o lembrete não espremem o texto ao lado do botão. */
+@media (max-width: 560px) {
+  .com-lembrete, .com-destaque { flex-wrap: wrap; align-items: flex-start; }
+  .com-lembrete > .com-quem, .com-destaque > .com-quem { flex: 1 1 0; min-width: 0; }
+  .com-lembrete > .com-opt, .com-destaque > .com-opt { flex: 1 1 100%; justify-content: center; }
+  .com-coment-meta { padding-left: 0.4rem; }
+}
+/* Telemóveis pequenos (até 380 px): a barra pode partir a linha e a caixa de comentar ganha espaço sem o rosto. */
+@media (max-width: 380px) {
+  .com-barra .com-acao { white-space: normal; font-size: 0.88rem; line-height: 1.25; }
+  .com-coment--novo > .com-ini { display: none; }
+  .com-balao-campo { padding-left: 0.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .com-balao-campo, .com-enviar { transition: none; }
 }

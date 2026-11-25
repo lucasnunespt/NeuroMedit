@@ -58,7 +58,7 @@ export async function carregarEu() {
   const [admin, membro, convite] = await Promise.all([
     getDoc(ref("admins", u.uid)).then((s) => s.exists()).catch(() => false),
     getDoc(ref("comMembros", u.uid)).then((s) => (s.exists() ? s.data() : null)),
-    u.emailVerified ? getDoc(ref("comConvites", email())).then((s) => s.exists()).catch(() => false) : false
+    u.emailVerified ? getDoc(ref("comConvites", email())).then((s) => (s.exists() ? s.data() : null)).catch(() => null) : null
   ]);
   return {
     uid: u.uid,
@@ -69,7 +69,10 @@ export async function carregarEu() {
     estado: admin ? "aprovado" : (membro?.estado || "fora"),
     papel: admin ? "admin" : (membro?.papel || "membro"),
     professor: admin || membro?.papel === "professor",
-    convidado: convite,
+    convidado: Boolean(convite),
+    // Convite para anfitrião: ao entrar, a pessoa fica a cuidar desta cidade (e a cidade abre).
+    conviteCidade: convite?.cidade || "",
+    conviteAnfitriao: convite?.anfitriao === true,
     resumo: membro?.resumo !== false,
     temFicha: Boolean(membro),
     cidade: membro?.cidade || ""
@@ -77,9 +80,10 @@ export async function carregarEu() {
 }
 
 /** Pede para entrar. Com convite do Lucas, entra logo. */
-export async function pedirEntrada({ nome, motivos, convidado, cidade }) {
+export async function pedirEntrada({ nome, motivos, convidado, cidade, anfitriaoDe }) {
   const u = auth.currentUser;
   const lote = writeBatch(db);
+  if (anfitriaoDe) cidade = anfitriaoDe;
   lote.set(ref("comMembros", u.uid), {
     nome: (nome || u.displayName || "Sem nome").slice(0, 60),
     foto: u.photoURL || "",
@@ -91,6 +95,8 @@ export async function pedirEntrada({ nome, motivos, convidado, cidade }) {
     criadoEm: serverTimestamp()
   });
   lote.set(ref("comMembros", u.uid, "privado", "contacto"), { uid: u.uid, email: u.email || "" });
+  // Convidado para anfitrião: entra na lista da cidade no mesmo lote (as regras confirmam o convite).
+  if (convidado && anfitriaoDe) lote.update(ref("comCidades", anfitriaoDe), { anfitrioes: arrayUnion(u.uid), estado: "aberta" });
   await lote.commit();
   if (convidado) await deleteDoc(ref("comConvites", email())).catch(() => {});
 }
@@ -211,6 +217,14 @@ export async function responder(p, { texto, nome, professor, foto }) {
   }
 }
 export function apagarResposta(partilhaId, id) { return deleteDoc(ref("comPartilhas", partilhaId, "respostas", id)); }
+/** Denunciar um comentário: marca-o e manda a partilha para a fila de moderação (onde o Lucas o vê). */
+export async function denunciarResposta(partilhaId, id) {
+  const lote = writeBatch(db);
+  lote.update(ref("comPartilhas", partilhaId, "respostas", id), { denunciada: true });
+  lote.update(ref("comPartilhas", partilhaId), { denunciada: true });
+  await lote.commit();
+}
+export function manterResposta(partilhaId, id) { return updateDoc(ref("comPartilhas", partilhaId, "respostas", id), { denunciada: false }); }
 
 /* ---------- Grupos e conversas ---------- */
 export async function grupos(eu) {
@@ -318,10 +332,10 @@ export function definirAnfitrioes(cidadeId, anfitrioes) {
 export async function pendentesDaCidade(cidadeId) {
   return lista(await getDocs(query(col("comMembros"), where("cidade", "==", cidadeId), where("estado", "==", "pendente")))).sort(antigas);
 }
-/** Nomes dos anfitriões (só os que já são membros aprovados). */
+/** Anfitriões com nome (só os que já são membros aprovados): [{ id, nome }]. */
 export async function nomesDe(uids) {
-  const r = await Promise.all((uids || []).map((u) => getDoc(ref("comMembros", u)).then((s) => (s.exists() ? s.data().nome : "")).catch(() => "")));
-  return r.filter(Boolean);
+  const r = await Promise.all((uids || []).map((u) => getDoc(ref("comMembros", u)).then((s) => ({ id: u, nome: s.exists() ? s.data().nome : "" })).catch(() => ({ id: u, nome: "" }))));
+  return r.filter((x) => x.nome);
 }
 /** "Quero o NeuroMedit na minha cidade". Para uma cidade fora da lista, o id vem do nome escrito. */
 export function pedirCidade(cidadeId, nome) {
@@ -401,9 +415,13 @@ export async function mudarPapel(pessoaUid, papel) {
   if (papel === "professor") await avisar(pessoaUid, { tipo: "papel", texto: "Agora você é professor na comunidade: pode criar círculos, grupos e encontros.", link: "comunidade.html" }).catch(() => {});
 }
 export async function convites() { return lista(await getDocs(col("comConvites"))).sort(recentes); }
-export function convidar(emailPessoa) {
+/** Convite pelo e-mail. Com cidade e anfitriao: true, quem entra fica anfitrião dessa cidade. */
+export function convidar(emailPessoa, { cidade = "", anfitriao = false } = {}) {
   const e = emailPessoa.trim().toLowerCase();
-  return setDoc(ref("comConvites", e), { email: e, criadoEm: serverTimestamp() });
+  const d = { email: e, criadoEm: serverTimestamp() };
+  if (cidade) d.cidade = cidade;
+  if (cidade && anfitriao) d.anfitriao = true;
+  return setDoc(ref("comConvites", e), d);
 }
 export function cancelarConvite(id) { return deleteDoc(ref("comConvites", id)); }
 

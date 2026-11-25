@@ -24,6 +24,25 @@ npx firebase deploy --only firestore:rules
 
 Para correr os testes das regras (precisa de Java): `npm install` e depois `npm run testar-regras`.
 
+## Cidades (nov 2026)
+
+A comunidade passou a ser a **comunidade internacional de yoga e meditação** do NeuroMedit, em três níveis:
+
+1. **Mundo**: os círculos (Calma, Sono, Foco, Partilhas) continuam globais e online.
+2. **Cidade** (`#cidade=lisboa`): a camada presencial. Tem o mural da cidade, os encontros no lugar (ou online) e as subcomunidades.
+3. **Subcomunidades**: os grupos que os professores criam dentro de uma cidade (campo `cidade` em `comGrupos`).
+
+Decisões do Lucas:
+
+- **Uma cidade só abre com anfitrião.** As outras aparecem "Em breve", com o botão "Quero o NeuroMedit em…". Os pedidos (`comPedidosCidade`, incluindo cidades fora da lista) só o Lucas os vê, para saber onde abrir a seguir.
+- **Os anfitriões aprovam quem entra na sua cidade.** Quem pede para entrar escolhe a cidade. O anfitrião só aprova ou recusa os pedidos pendentes da sua cidade, e não vê e-mails nem muda papéis. O Lucas continua a ver tudo.
+- **A cidade é escolhida, não detetada.** Não há localização automática. Muda-se no perfil ou em "Esta é a minha cidade".
+- **Lista inicial** (botão "Criar a lista de cidades" na Gestão): Lisboa (aberta, com o Lucas como anfitrião), Porto, Sevilha, Madrid, Paris e as 27 capitais do Brasil. Abrir uma cidade = escolher um anfitrião na página dela.
+
+Encontros: online (link do Meet) ou presenciais (lugar numa cidade aberta, com "Ver no mapa").
+
+Por fazer: o mapa das cidades como pontos de luz na Terra (vistas Europa e Américas do design system); seguir mais de uma cidade.
+
 ## Quem pode o quê
 
 - **Lucas (admin)**: aprova e remove pessoas, convida, resolve denúncias, apaga qualquer coisa.
@@ -66,6 +85,10 @@ Combinado com o Lucas em nov 2026: estes componentes nasceram no código e ainda
 - [ ] Campo de publicar fechado numa linha (`.com-compor-abrir`), que abre ao tocar
 - [ ] Etiqueta "Professor" (`.com-selo`), segue o Badge (tom neutro) com borda dourada
 - [ ] "Sobre este círculo" na coluna da direita (propósito e cuidado); no telemóvel ficam na capa
+- [ ] Lista de cidades com ponto de luz (`.com-cidade`, `.com-cidade-ponto`): aberta = `luz-gold`, em breve = só contorno
+- [ ] Badge em código (`.com-badge`, tons feito e neutro), igual ao Badge do design system
+- [ ] Página da cidade (capa com país, "Esta é a minha cidade", anfitriões, pedidos para entrar)
+- [ ] Encontro presencial (`.com-enc-lugar`, com "Ver no mapa")
 - [ ] Cartão da prática com capa de planeta em pontos (`.com-pratica`, `planeta()` em comunidade.js): versão pequena (64 px) dos Planetas, com cor do tema (`accent-dark`/`accent`) e não sobre o fundo da Luz
 
 ## Por fazer

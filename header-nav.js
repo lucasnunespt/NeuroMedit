@@ -351,8 +351,12 @@
     });
   }
 
+  // Com margem: a barra encolhe cerca de 10 px ao ficar "scrolled", e o navegador corrige a rolagem.
+  // Com um só limite (8 px) isso fazia a barra encolher e crescer sem parar perto do topo.
   function updateScrolledState() {
-    header.classList.toggle("scrolled", window.scrollY > 8);
+    const y = window.scrollY;
+    if (y > 24) header.classList.add("scrolled");
+    else if (y < 4) header.classList.remove("scrolled");
   }
 
   function queueScrollWork() {

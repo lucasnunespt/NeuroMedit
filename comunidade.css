@@ -511,6 +511,53 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
   .com-capa-planeta { width: 72px; height: 72px; }
 }
 
+/* ---------- Cidades (nov 2026) ----------
+   Cada cidade é um ponto: aberto = ponto de luz dourado (luz-gold, anel luz-gold-soft);
+   em breve = ponto só com contorno. O estado lê-se também pela palavra (Badge). */
+.com-cidades { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.com-cidade {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 48px;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.com-pagina a.com-cidade { color: var(--text); }
+.com-cidade:hover { background: var(--surface-strong); }
+.com-cidade:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-cidades li + li .com-cidade { border-top: 1px solid var(--line); border-radius: 0; }
+.com-cidade-nome small { color: var(--text-soft); font-size: 0.8rem; }
+.com-cidade-ponto { flex: none; width: 10px; height: 10px; border: 1px solid var(--line); border-radius: var(--radius-pill); }
+.com-cidade-ponto.is-aberta { border-color: var(--luz-gold); background: var(--luz-gold); box-shadow: 0 0 0 4px var(--luz-gold-soft); }
+
+/* Badge do design system: feito (surface-strong, check em accent-dark) e neutro (text-soft). */
+.com-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.com-badge--feito { color: var(--text); }
+.com-badge svg { width: 14px; height: 14px; color: var(--accent-dark); }
+.com-selo svg { width: 13px; height: 13px; margin-right: 0.25rem; color: var(--accent-dark); }
+
+.com-capa-tit { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.com-breve { gap: 0.75rem; padding: 2rem 1.5rem; }
+.com-breve .com-pri { align-self: center; }
+.com-enc-lugar { display: inline-flex; align-items: center; gap: 0.35rem; }
+.com-enc-lugar svg { flex: none; width: 15px; height: 15px; color: var(--accent-dark); }
+
 /* ---------- Tablet e telemóvel ---------- */
 @media (max-width: 1100px) {
   .com-dir { flex: 1 1 100%; max-width: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
@@ -538,5 +585,5 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
   .com-resp { margin-left: 0; padding-left: 0.5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .com-pri, .com-opt, .com-acao, .com-perigo, .com-circ, .com-pratica, .com-menu summary, .com-compor-abrir { transition: none; }
+  .com-pri, .com-opt, .com-acao, .com-perigo, .com-circ, .com-pratica, .com-menu summary, .com-compor-abrir, .com-cidade { transition: none; }
 }

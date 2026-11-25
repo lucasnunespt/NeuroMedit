@@ -175,6 +175,8 @@ service cloud.firestore {
     //   /comCanal/{id}                     "Dos professores"
     //   /comEncontros/{id}/lugares/{uid}   encontros ao vivo (link do Google Meet)
     //   /comAvisos/{uid}/itens/{id}        avisos dentro do site (no lugar do e-mail)
+    //   /comCidades/{id}                   cidades (Lisboa, Recife…): abertas só com anfitrião
+    //   /comPedidosCidade/{cidade_uid}     "quero o NeuroMedit na minha cidade"
     // =====================================================================
     function comMembro(uid) {
       return get(/databases/$(database)/documents/comMembros/$(uid)).data;
@@ -197,13 +199,61 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/comConvites/$(emailDoLogin()));
     }
 
+    // ---------- Cidades (nov 2026) ----------
+    // Os círculos são globais (online); a cidade é a camada presencial: mural, encontros no sítio e
+    // subcomunidades dos professores. Só o Lucas cria cidades e escolhe os anfitriões; uma cidade
+    // só abre com pelo menos um anfitrião. O anfitrião aprova quem pede para entrar na sua cidade.
+    function cidade(cidadeId) {
+      return get(/databases/$(database)/documents/comCidades/$(cidadeId)).data;
+    }
+    function existeCidade(cidadeId) {
+      return cidadeId is string && exists(/databases/$(database)/documents/comCidades/$(cidadeId));
+    }
+    function cidadeAberta(cidadeId) {
+      return existeCidade(cidadeId) && cidade(cidadeId).estado == 'aberta';
+    }
+    function ehAnfitriao(cidadeId) {
+      return isSignedIn() && existeCidade(cidadeId) && request.auth.uid in cidade(cidadeId).anfitrioes;
+    }
+    // Quem pediu para entrar e escolheu a cidade deste anfitrião.
+    function pendenteDaMinhaCidade(pessoaUid) {
+      let m = comMembro(pessoaUid);
+      return m.estado == 'pendente' && ('cidade' in m) && ehAnfitriao(m.cidade);
+    }
+    match /comCidades/{cidadeId} {
+      allow read: if isSignedIn();
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['nome', 'pais', 'regiao', 'estado', 'anfitrioes', 'ordem', 'criadoEm'])
+        && textoAte(request.resource.data.nome, 60)
+        && request.resource.data.estado in ['aberta', 'em-breve']
+        && request.resource.data.anfitrioes is list
+        && (request.resource.data.estado == 'em-breve' || request.resource.data.anfitrioes.size() > 0);
+      allow delete: if isAdmin();
+    }
+    // "Quero o NeuroMedit na minha cidade": um pedido por pessoa e cidade (id = cidade_uid).
+    // Só o Lucas vê os pedidos de todos, para saber onde abrir a seguir.
+    match /comPedidosCidade/{pedidoId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'cidade', 'nome', 'criadoEm'])
+        && request.resource.data.uid == request.auth.uid
+        && textoAte(request.resource.data.cidade, 60)
+        && pedidoId == request.resource.data.cidade + '_' + request.auth.uid
+        && (!('nome' in request.resource.data) || textoAte(request.resource.data.nome, 60))
+        && request.resource.data.criadoEm == request.time;
+      allow update: if false;
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
     match /comMembros/{uid} {
       // Membros aprovados veem-se uns aos outros (nome e papel, sem e-mail).
-      allow read: if isAdmin() || isDono(uid) || (ehMembro() && resource.data.estado == 'aprovado');
+      allow read: if isAdmin() || isDono(uid) || (ehMembro() && resource.data.estado == 'aprovado')
+        || (resource.data.estado == 'pendente' && ehAnfitriao(resource.data.cidade));
       // A pessoa pede para entrar (pendente); só entra logo aprovada se o Lucas a convidou.
       allow create: if isDono(uid)
-        && request.resource.data.keys().hasOnly(['nome', 'foto', 'estado', 'papel', 'motivos', 'aceitouCuidados', 'criadoEm', 'resumo'])
+        && request.resource.data.keys().hasOnly(['nome', 'foto', 'estado', 'papel', 'motivos', 'aceitouCuidados', 'criadoEm', 'resumo', 'cidade'])
         && textoAte(request.resource.data.nome, 60)
+        && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade))
         && request.resource.data.papel == 'membro'
         && request.resource.data.aceitouCuidados == true
         && (request.resource.data.estado == 'pendente'
@@ -211,14 +261,19 @@ service cloud.firestore {
       // A pessoa muda o seu nome, foto e preferências; nunca o estado nem o papel. O Lucas muda tudo.
       allow update: if isAdmin()
         || (isDono(uid)
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm'])
-            && textoAte(request.resource.data.nome, 60));
-      allow delete: if isAdmin() || isDono(uid);
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade'])
+            && textoAte(request.resource.data.nome, 60)
+            && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade)))
+        // O anfitrião só aprova quem pediu para entrar na sua cidade (não muda mais nada).
+        || (pendenteDaMinhaCidade(uid)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'aprovadoEm'])
+            && request.resource.data.estado == 'aprovado');
+      allow delete: if isAdmin() || isDono(uid) || pendenteDaMinhaCidade(uid);
 
       match /privado/{docId} {
         allow read: if isAdmin() || isDono(uid);
         allow write: if isDono(uid);
-        allow delete: if isAdmin();
+        allow delete: if isAdmin() || pendenteDaMinhaCidade(uid);
       }
     }
 
@@ -272,7 +327,9 @@ service cloud.firestore {
         && (!('professor' in request.resource.data) || (request.resource.data.professor == true && ehProfessor() && request.resource.data.anon == false))
         && textoAte(request.resource.data.texto, 2000)
         && request.resource.data.circulo is string
-        && exists(/databases/$(database)/documents/comCirculos/$(request.resource.data.circulo))
+        // Num círculo (global) ou no mural de uma cidade aberta.
+        && (exists(/databases/$(database)/documents/comCirculos/$(request.resource.data.circulo))
+            || cidadeAberta(request.resource.data.circulo))
         && request.resource.data.denunciada == false
         && request.resource.data.criadoEm == request.time
         && ((request.resource.data.anon == false && request.resource.data.uid == request.auth.uid)
@@ -291,7 +348,8 @@ service cloud.firestore {
             && request.resource.data.denunciada == true);
       allow delete: if isAdmin()
         || ehAutorDaPartilha(partilhaId, resource.data)
-        || criouOCirculo(resource.data.circulo);
+        || criouOCirculo(resource.data.circulo)
+        || ehAnfitriao(resource.data.circulo);
 
       match /privado/{docId} {
         allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
@@ -315,7 +373,8 @@ service cloud.firestore {
         allow delete: if isAdmin()
           || (isSignedIn() && resource.data.uid == request.auth.uid)
           || ehAutorDaPartilha(partilhaId, get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data)
-          || criouOCirculo(get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data.circulo);
+          || criouOCirculo(get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data.circulo)
+          || ehAnfitriao(get(/databases/$(database)/documents/comPartilhas/$(partilhaId)).data.circulo);
       }
 
       // "Isto ressoou em mim": cada pessoa só vê o seu. Não existe contagem.
@@ -342,7 +401,9 @@ service cloud.firestore {
         && request.resource.data.membros is list
         && request.auth.uid in request.resource.data.membros
         && request.resource.data.membros.size() <= 200
-        && textoAte(request.resource.data.nome, 60);
+        && textoAte(request.resource.data.nome, 60)
+        // Subcomunidade de uma cidade aberta (opcional).
+        && (!('cidade' in request.resource.data) || cidadeAberta(request.resource.data.cidade));
       // Quem criou gere o grupo; num grupo aberto, cada membro entra ou sai por si (e só mexe em si próprio).
       allow update: if isAdmin()
         || (ehProfessor() && resource.data.criador == request.auth.uid
@@ -388,12 +449,18 @@ service cloud.firestore {
     match /comEncontros/{encontroId} {
       allow read: if ehMembro();
       allow create: if ehProfessor()
-        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'criadoEm'])
+        && request.resource.data.keys().hasOnly(['uid', 'nome', 'titulo', 'quando', 'link', 'lugar', 'cidade', 'criadoEm'])
         && request.resource.data.uid == request.auth.uid
         && textoAte(request.resource.data.titulo, 120)
         && request.resource.data.quando is timestamp
-        && request.resource.data.link is string
-        && request.resource.data.link.matches('https://meet\\.google\\.com/[a-zA-Z0-9?=&_/-]+');
+        && (!('cidade' in request.resource.data) || cidadeAberta(request.resource.data.cidade))
+        // Online: um link do Google Meet. Presencial: um lugar, sempre numa cidade.
+        && ((!('lugar' in request.resource.data)
+             && request.resource.data.link is string
+             && request.resource.data.link.matches('https://meet\\.google\\.com/[a-zA-Z0-9?=&_/-]+'))
+            || (!('link' in request.resource.data)
+                && 'cidade' in request.resource.data
+                && textoAte(request.resource.data.lugar, 160)));
       allow update: if false;
       allow delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
 

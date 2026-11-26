@@ -39,6 +39,23 @@
     .ponto h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; }
     .ponto p { margin: 0; color: var(--text-soft); line-height: 1.7; }
     @media (max-width: 640px) { .convite-titulo { font-size: 1.7rem; } }
+    /* Imersão antes do cadastro (nov 2026): obrigado → a história → o que pode fazer. */
+    .luz { align-self: center; width: 240px; height: 240px; margin: 8px 0 12px; }
+    .luz canvas { display: block; width: 100%; height: 100%; }
+    .centro { text-align: center; }
+    .centro .convite-lead { margin-bottom: 0; }
+    .historia p { margin: 0 0 16px; color: var(--text-soft); line-height: 1.75; }
+    .historia p strong { color: var(--text); font-weight: 600; }
+    .livro { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--glass-highlight); color: var(--text); text-decoration: none; }
+    .livro span { flex: 1; color: var(--text-soft); font-size: 0.95rem; line-height: 1.5; }
+    .livro strong { display: block; color: var(--text); font-weight: 600; }
+    .livro svg { flex: none; width: 20px; height: 20px; color: var(--accent-dark); }
+    .ponto { display: grid; grid-template-columns: 40px 1fr; gap: 0 14px; }
+    .ponto .ic { grid-row: span 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--surface-strong); border: 1px solid var(--line); color: var(--accent-dark); }
+    .ponto .ic svg { width: 20px; height: 20px; }
+    .imersao-pontos { display: flex; justify-content: center; gap: 8px; }
+    .imersao-pontos i { width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--line); }
+    .imersao-pontos i.on { width: 24px; background: var(--accent); }
     .bolha { max-width: 88%; box-sizing: border-box; padding: 12px 16px; line-height: 1.7; background: var(--surface-strong); border: 1px solid var(--line);
       box-shadow: var(--glass-highlight); border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-chip); }
     .chega { animation: chegar var(--duration-calm) var(--easing-calm) both; animation-delay: calc(var(--duration-calm) * var(--ordem, 0)); }
@@ -93,21 +110,44 @@
   <main style="display: contents;">
     <section tabindex="-1" class="passo" data-passo="carregar"><div class="bolha">Um momento…</div></section>
 
+    <section tabindex="-1" class="passo centro" data-passo="obrigado" hidden>
+      <div class="luz" aria-hidden="true"><canvas data-luz width="440" height="440"></canvas></div>
+      <h1 class="convite-titulo">Obrigado por querer colaborar com o NeuroMedit.</h1>
+      <p class="convite-lead">A sua presença vai tornar única a experiência de cada pessoa que chega aqui. Você está colaborando para que o mundo fique um pouco mais calmo, e eu agradeço por isso.</p>
+      <p class="convite-lead">Nos próximos minutos, você vai conhecer como o NeuroMedit nasceu e o que pode fazer aqui como colaborador.</p>
+    </section>
+
+    <section tabindex="-1" class="passo historia" data-passo="historia" hidden>
+      <h1 class="convite-titulo">Como o NeuroMedit nasceu</h1>
+      <p>O NeuroMedit nasceu de uma vontade minha, <strong>Lucas</strong>: ajudar meus amigos mais próximos a meditar. Tenho amigos em várias partes do mundo, e nem sempre estou perto deles para gravar e meditar junto.</p>
+      <p>Então pensei: em vez de mandar as meditações no privado do WhatsApp, vou gravar e publicar num site. Assim não são só meus amigos que escutam, mas qualquer pessoa. Não preciso nem saber quem é: ter a certeza de que vou ajudar alguém já me deixa feliz.</p>
+      <p><strong>O NeuroMedit nasceu da vontade de ajudar não só os amigos que conheço, mas também os que não conheço e talvez nunca vá conhecer.</strong> Hoje é uma plataforma que cresce a cada dia, e todo o site foi feito em meditação. Sou grato por você estar aqui: você faz parte de um propósito que começou pequeno e hoje não para de crescer.</p>
+      <a class="livro" href="https://www.amazon.com.br/dp/B0H7XXKX29" target="_blank" rel="noopener"><span><strong>A minha história</strong>Está no meu livro, A Revolução da Delicadeza, na Amazon.</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5h5v5"/><path d="M19 5l-8 8"/><path d="M18 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4"/></svg></a>
+    </section>
+
     <section tabindex="-1" class="passo" data-passo="convite" hidden>
-      <h1 class="convite-titulo">Tenha a sua página de reservas no NeuroMedit.</h1>
+      <h1 class="convite-titulo">O que você pode fazer como colaborador</h1>
       <p class="convite-lead">Para quem ensina ou acompanha pessoas: meditação, yoga, massagem, terapias, treino.</p>
       <div class="pontos">
-        <div class="ponto">
-          <h2>O que fica seu</h2>
-          <p>Uma página com o seu nome, o que faz e onde trabalha. As pessoas veem os seus horários livres e pedem a sessão. Não precisa de site, nem de combinar horas por mensagem.</p>
+        <div class="ponto"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c0-3.7 3.1-6.2 7-6.2s7 2.5 7 6.2"/></svg></span>
+          <h2>A sua página e o seu link</h2>
+          <p>Um perfil com seu nome, o que faz e onde trabalha, e uma página de reservas só sua para partilhar onde quiser.</p>
         </div>
-        <div class="ponto">
+        <div class="ponto"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="14" rx="3"/><path d="M8 3.5v4M16 3.5v4M4 10.5h16"/></svg></span>
+          <h2>A sua agenda e os seus lugares</h2>
+          <p>Abra os dias livres de cada mês e diga onde atende: estúdio, parque, online ou na casa da pessoa.</p>
+        </div>
+        <div class="ponto"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v11H4z"/><path d="M4 11h16"/><path d="M8 15h3"/></svg></span>
+          <h2>Reservas organizadas</h2>
+          <p>Os pedidos chegam ao seu painel com o sinal por MB Way, e você vê o que recebeu. Sem combinar horas por mensagem.</p>
+        </div>
+        <div class="ponto"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3.2"/><circle cx="16.5" cy="10" r="2.6"/><path d="M3.5 19c0-3.2 2.5-5.4 5.5-5.4s5.5 2.2 5.5 5.4"/><path d="M15 14.2c2.9-.4 5.5 1.5 5.5 4.6"/></svg></span>
+          <h2>A sua comunidade</h2>
+          <p>Na comunidade de yoga e meditação, você marca encontros ao vivo, cria grupos e avisa quem segue o seu trabalho. Pode até ser anfitrião da sua cidade.</p>
+        </div>
+        <div class="ponto"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
           <h2>Quanto trabalho dá</h2>
-          <p>Seis perguntas curtas, cerca de cinco minutos. Depois é só abrir os horários que quiser, no seu painel. Pode mudar tudo mais tarde.</p>
-        </div>
-        <div class="ponto">
-          <h2>Quem decide</h2>
-          <p>A página fica em rascunho, só para você. Vai ao ar quando você pedir e a sua entrada for aprovada.</p>
+          <p>Seis perguntas curtas, cerca de cinco minutos. A página fica em rascunho, só para você, e vai ao ar quando pedir e for aprovada.</p>
         </div>
       </div>
     </section>
@@ -178,6 +218,7 @@
     <button type="button" class="btn btn--primary" data-seguir>Continuar</button>
   </div>
 
+  <script src="js/luz-figure.js"></script>
   <script type="module">
     import { auth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, db, doc, getDoc } from "./firebase-init.js";
     import { lerContaPro, criarContaPro, reclamarConvite } from "./conta-pro.js";
@@ -187,6 +228,7 @@
 
     const $ = (s) => document.querySelector(s);
     const ORDEM = ["nome", "area", "onde", "sessao", "contato", "resumo"];
+    const IMERSAO = ["obrigado", "historia", "convite"];
     const NOMES = { nome: "O seu nome", area: "O que faz", onde: "Onde", sessao: "Sessão", contato: "Contato", resumo: "Conferir" };
 
     const d = { nome: "", area: "", saude: false, profissao: "", cidade: "", modos: [], duracao: 60, precoAvulsa: "", sinal: 5, mbway: "", whatsapp: "", emailAvisos: "" };
@@ -209,13 +251,17 @@
       $("[data-passo-texto]").textContent = i >= 0 ? `Passo ${i + 1} de ${ORDEM.length} · ${NOMES[p]}` : "";
       $("[data-feito]").style.width = i >= 0 ? `${((i + 1) / ORDEM.length) * 100}%` : "0";
       $(".progresso").hidden = i < 0;
+      const im = IMERSAO.indexOf(p);
+      if (im >= 0) luz(p === "obrigado");
       const barra = $("[data-barra]"), seguir = $("[data-seguir]"), voltar = $("[data-voltar]");
       barra.hidden = p === "carregar";
-      voltar.hidden = i <= 0;
+      voltar.hidden = i <= 0 && im <= 0;
       seguir.className = "btn " + (p === "entrar" ? "btn--google" : "btn--primary");
       seguir.disabled = false;
       if (p === "entrar") seguir.innerHTML = '<img src="assets/google-g.svg" alt="" width="20" height="20"><span>Continuar com o Google</span>';
-      else if (p === "convite") seguir.textContent = "Começar";
+      else if (p === "obrigado") seguir.textContent = "Continuar";
+      else if (p === "historia") seguir.textContent = "Ver o que posso fazer";
+      else if (p === "convite") seguir.textContent = "Quero colaborar";
       else seguir.textContent = p === "resumo" ? "Criar a minha página" : "Continuar";
       if (p === "area") { $("[data-primeiro]").textContent = d.nome.split(" ")[0]; }
       if (p === "resumo") pintarResumo();
@@ -301,6 +347,8 @@
 
     $("[data-seguir]").addEventListener("click", async () => {
       const seguir = $("[data-seguir]");
+      if (passo === "obrigado") { mostrar("historia"); return; }
+      if (passo === "historia") { mostrar("convite"); return; }
       if (passo === "convite") { mostrar(user ? "nome" : "entrar"); return; }
       if (passo === "entrar") {
         erro("");
@@ -323,17 +371,40 @@
       }
       mostrar(ORDEM[ORDEM.indexOf(passo) + 1]);
     });
-    $("[data-voltar]").addEventListener("click", () => { const i = ORDEM.indexOf(passo); if (i > 0) mostrar(ORDEM[i - 1]); });
+    $("[data-voltar]").addEventListener("click", () => {
+      const im = IMERSAO.indexOf(passo); if (im > 0) { mostrar(IMERSAO[im - 1]); return; }
+      const i = ORDEM.indexOf(passo); if (i > 0) mostrar(ORDEM[i - 1]);
+    });
+
+    // ---------- a pessoa de luz do agradecimento (respira em duration-breath; parada com movimento reduzido)
+    let luzAnim = 0;
+    function luz(ligar) {
+      cancelAnimationFrame(luzAnim);
+      const cv = $("[data-luz]");
+      if (!ligar || !cv || !window.NeuroMeditLuzFigure) return;
+      const fig = window.NeuroMeditLuzFigure.create(), cx = cv.getContext("2d");
+      const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const ciclo = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--duration-breath")) * 1000 || 11000;
+      const t0 = performance.now();
+      const quadro = (agora) => {
+        const t = (agora - t0) / 1000;
+        cx.clearRect(0, 0, cv.width, cv.height);
+        const breath = reduz ? 0.5 : 0.5 - 0.5 * Math.cos(((agora - t0) % ciclo) / ciclo * Math.PI * 2);
+        fig.draw(cx, cv.width / 2, cv.height / 2 + 10, cv.width * 0.78, reduz ? 0 : t, { breath });
+        if (!reduz && passo === "obrigado") luzAnim = requestAnimationFrame(quadro);
+      };
+      luzAnim = requestAnimationFrame(quadro);
+    }
     document.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" && ev.target.matches("input:not([type=checkbox])")) { ev.preventDefault(); $("[data-seguir]").click(); }
     });
 
     // ---------- arranque: quem já tem painel vai direto para ele
-    const limite = setTimeout(() => { if (passo === "carregar") mostrar("convite"); }, 4000);
+    const limite = setTimeout(() => { if (passo === "carregar") mostrar("obrigado"); }, 4000);
     onAuthStateChanged(auth, async (u) => {
       clearTimeout(limite);
       user = u;
-      if (!u) { if (passo === "carregar") mostrar("convite"); return; }
+      if (!u) { if (passo === "carregar") mostrar("obrigado"); return; }
       const [admin, conta] = await Promise.all([
         getDoc(doc(db, "admins", u.uid)).then((s) => s.exists()).catch(() => false),
         lerContaPro(u.uid).then((c) => c || reclamarConvite(u)) // convite do Lucas: a página já está à espera deste e-mail
@@ -343,7 +414,7 @@
       d.emailAvisos = d.emailAvisos || u.email || "";
       preencher();
       // Quem acabou de entrar com o Google segue para as perguntas; quem chega agora vê o convite.
-      if (passo === "carregar") mostrar("convite");
+      if (passo === "carregar") mostrar("obrigado");
       else if (!ORDEM.includes(passo)) mostrar("nome");
     });
   </script>

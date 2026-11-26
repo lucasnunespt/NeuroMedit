@@ -134,3 +134,15 @@ Antes de a primeira pessoa de fora usar a comunidade, revimos cada ecrã como ad
 - **Telemóvel:** o destaque do Dia do Yoga e o lembrete já não espremem o texto; o lixo de um encontro fica ao lado do título; "Seguir" tem área de toque maior.
 
 Testes: 31 cliques antigos, 25 dos fluxos novos, cidades e anfitriões. Auditoria automática a 110 ecrãs: sem rolagem horizontal nem erros. As regras novas têm testes em `tests/comunidade.test.mjs`, ainda por correr no emulador.
+
+## A porta e a Terra (26 nov 2026)
+
+Quem ainda não entrou vê primeiro uma janela escura da Luz com a **Terra** (componente do design system, `terra.js` + `terra.css` + `data/terra.json`) e três passos: **país → cidade → entrar com o Google**. Como no Meetup e no Insight Timer, primeiro vê-se o que existe perto de si e só depois se pede a conta.
+
+- A escolha fica em `sessionStorage` (`com-escolha-pais`, `com-escolha-cidade`) e chega já marcada ao pedido de entrada.
+- "Minha cidade não está aqui" e "Outro país" entram pelos círculos online.
+- As cidades leem-se antes do login: a regra de `comCidades` passou a `allow read: if true` (o documento não tem nomes nem e-mails).
+- Membros: "Todas as cidades" tem a Terra no topo e a lista compacta (país → cidades; Espanha, França e Itália agrupadas por região).
+- Cidades novas (Itália e as maiores de Portugal, Espanha e França) vivem em `CIDADES_INICIAIS` com latitude e longitude (só para a Terra). O Lucas cria as que faltam com **"Acrescentar cidades novas"**, em Todas as cidades; entram em breve e as abertas não mudam.
+- Testes de cliques: `teste-porta.py` no ambiente de teste (28/28).
+- Faixa da home: `faixa-terra.js` desenha o mundo plano em pontos (projeção Equal Earth, áreas verdadeiras) por baixo do convite "Medite com quem está perto de você", que leva à porta. As cidades vêm de `cidades-lista.js`, sem o Firebase.

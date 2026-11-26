@@ -10,6 +10,7 @@
    estão no design system. Estão listados em docs/comunidade.md.
    ========================================================== */
 import * as dados from "./comunidade-dados.js";
+import { criarTerra } from "./terra.js";
 
 const app = document.getElementById("com-app");
 const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -74,12 +75,16 @@ function circ(c) {
   return { ...c, nome: t(`c${i}_nome`), sub: t(`c${i}_sub`), proposito: t(`c${i}_prop`), cuidado: c.cuidado ? t(`c${i}_cui`) : "" };
 }
 
+/* A escolha feita no globo antes de entrar sobrevive a um recarregar da página (só nesta sessão do navegador). */
+function lerEscolha(k) { try { return sessionStorage.getItem(`com-escolha-${k}`) || ""; } catch { return ""; } }
+function guardarEscolha() { try { sessionStorage.setItem("com-escolha-pais", S.paisEscolhido || ""); sessionStorage.setItem("com-escolha-cidade", S.cidadeEscolhida || ""); } catch { /* sem storage: fica só em memória */ } }
+
 const S = {
   pronto: false, user: null, eu: null, erro: "", ocupado: false,
   motivos: { calma: true }, aceito: false,
   circulos: [], circuloId: "", posts: [], ressoou: {}, editando: "",
   aberto: null, respostas: [], novaFoto: "", comporAberto: false,
-  cidades: [], cidadeId: "", muralId: "", cidadeEscolhida: "", pedidosCidade: {},
+  cidades: [], cidadeId: "", muralId: "", cidadeEscolhida: lerEscolha("cidade"), paisEscolhido: lerEscolha("pais"), semCidade: false, paisAberto: "", pedidosCidade: {},
   cidadeInfo: { pendentes: [], anfitrioes: [], jaPedi: false },
   seguindo: [], seguidoresN: null, jaPediAnfitriao: false,
   grupos: [], grupo: null, msgs: [], pessoas: [],
@@ -120,6 +125,8 @@ const rota = () => {
   const [chave, valor] = h.split("=");
   return { chave: chave || "", valor: valor ? decodeURIComponent(valor) : "" };
 };
+/** Depois de um passo da porta, o foco vai para a pergunta seguinte (teclado e leitor de ecrã). */
+const focarPasso = () => { const q = app.querySelector(".com-porta-passo .com-porta-q"); if (q) { q.tabIndex = -1; q.focus({ preventScroll: true }); } };
 const ir = (hash) => { if (location.hash === hash) carregarRota(); else location.hash = hash; };
 
 /** Janela de confirmação antes de apagar. Com `nome`, obriga a escrever o nome. */
@@ -186,13 +193,51 @@ const capa = () => `
     <p class="com-lead">${t("capa_lead")}</p>
   </div>`;
 
+/* ---------- A porta: a entrada de quem ainda não entrou ----------
+   Como no Meetup e no Insight Timer: primeiro ver o que existe perto de si, depois a conta.
+   1. O país (no globo ou nos botões) → 2. A cidade → 3. Entrar com o Google, com a cidade já escolhida. */
+const nomeCidade = (id) => cidadeDe(id)?.nome || dados.CIDADES_INICIAIS.find((c) => c.id === id)?.nome || "";
+const cidadeAberta = (id) => cidadeDe(id)?.estado === "aberta";
+function passosPorta() {
+  const p = S.paisEscolhido, c = S.cidadeEscolhida || S.semCidade || p === "outro";
+  const passo = !p ? 1 : (!c ? 2 : 3);
+  const itens = [1, 2, 3].map((i) => `<li class="${i < passo ? "is-feito" : ""}" ${i === passo ? 'aria-current="step"' : ""}><span aria-hidden="true">${i < passo ? IC.certo : i}</span>${t("passo" + i)}</li>`).join("");
+  let corpo;
+  if (passo === 1) {
+    corpo = `<h2 class="com-porta-q">${t("q_pais_t")}</h2><p class="com-porta-d">${t("q_pais_d")}</p>
+      <div class="com-porta-chips">${PAISES.map((cc) => `<button type="button" class="com-porta-chip" data-a="porta-pais" data-v="${cc}"><span class="com-porta-cod" aria-hidden="true">${cc}</span>${esc(nomePais(cc))}</button>`).join("")}
+      <button type="button" class="com-porta-chip com-porta-chip--sec" data-a="porta-pais" data-v="outro">${t("pais_outro")}</button></div>`;
+  } else if (passo === 2) {
+    const l = dados.CIDADES_INICIAIS.filter((x) => x.pais === p).sort((a, b) => cidadeAberta(b.id) - cidadeAberta(a.id));
+    corpo = `<h2 class="com-porta-q">${t("q_cid_t")}</h2><p class="com-porta-d">${t("q_cid_d")}</p>
+      <div class="com-porta-chips">${l.map((x) => `<button type="button" class="com-porta-chip ${cidadeAberta(x.id) ? "is-aberta" : ""}" data-a="porta-cidade" data-v="${x.id}"><span class="com-porta-ponto" aria-hidden="true"></span>${esc(x.nome)}${cidadeAberta(x.id) ? `<span class="com-so-leitor"> · ${t("leg_aberta")}</span>` : ""}</button>`).join("")}
+      <button type="button" class="com-porta-chip com-porta-chip--sec" data-a="porta-cidade" data-v="">${t("cid_nao_esta")}</button></div>
+      <button type="button" class="com-porta-trocar" data-a="porta-pais" data-v="">${IC.voltar}${esc(nomePais(p))} · ${t("trocar")}</button>`;
+  } else {
+    const id = S.cidadeEscolhida, nome = nomeCidade(id);
+    const [tit, desc] = !id ? [t("res_outra_t"), t("res_outra_d")] : cidadeAberta(id) ? [t("res_aberta_t", { c: nome }), t("res_aberta_d", { c: nome })] : [t("res_breve_t", { c: nome }), t("res_breve_d", { c: nome })];
+    corpo = `<div class="com-porta-res ${id && cidadeAberta(id) ? "is-aberta" : ""}"><span class="com-porta-res-ic" aria-hidden="true">${IC.pin}</span><div><h2 class="com-porta-q">${esc(tit)}</h2><p class="com-porta-d">${esc(desc)}</p></div></div>
+      <div class="com-porta-acoes"><button class="com-porta-entrar" data-a="login" type="button">${t("login_google")}</button>
+      <button type="button" class="com-porta-trocar" data-a="${p === "outro" ? "porta-pais" : "porta-cidade-trocar"}" data-v="">${IC.voltar}${esc(id ? nome : (p === "outro" ? t("pais_outro") : nomePais(p)))} · ${t("trocar")}</button></div>
+      <p class="com-porta-nota">${t("fora_login_d")}</p>`;
+  }
+  return `<ol class="com-passos" aria-label="${t("passos_aria")}">${itens}</ol><div class="com-porta-passo" aria-live="polite">${corpo}</div>`;
+}
+const legendaGlobo = () => `<ul class="terra-legenda"><li><i></i>${t("leg_aberta")}</li><li class="is-breve"><i></i>${t("leg_breve")}</li><li class="is-fechado"><i></i>${t("leg_fechado")}</li></ul>`;
+const porta = () => `
+  <section class="com-porta" aria-labelledby="com-porta-t">
+    <div class="com-porta-cab">
+      <p class="com-porta-eyebrow">${t("porta_eyebrow")}</p>
+      <h1 id="com-porta-t" class="com-porta-t">${t("porta_t")}</h1>
+      <p class="com-porta-lead">${t("porta_lead")}</p>
+    </div>
+    <div class="com-porta-globo"><div data-terra></div>${legendaGlobo()}</div>
+    <div class="com-porta-passos">${passosPorta()}</div>
+  </section>`;
+
 function telaFora() {
   if (!S.user) {
-    return `<main class="com-entrada">${capa()}
-      <section class="com-cartao"><h2>${t("fora_login_t")}</h2>
-      <p class="com-suave">${t("fora_login_d")}</p>
-      <div class="com-linha"><button class="com-pri" data-a="login" type="button">${t("login_google")}</button></div></section>
-      ${previa()}</main>`;
+    return `<main class="com-entrada com-entrada--porta">${porta()}${previa()}</main>`;
   }
   if (S.eu.estado === "removido") {
     return `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("removido_t")}</h2><p class="com-suave">${t("removido_d")}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`;
@@ -389,7 +434,7 @@ function telaCirculo() {
    Os círculos são globais (online). A cidade é a camada presencial: mural da cidade,
    encontros no sítio e subcomunidades dos professores. Uma cidade só abre com anfitrião;
    as outras aparecem "em breve", com o pedido "quero o NeuroMedit na minha cidade". */
-const PAISES = ["PT", "ES", "FR", "BR"];
+const PAISES = ["PT", "ES", "FR", "IT", "BR"];
 const nomePais = (cc) => { try { return new Intl.DisplayNames([lingua()], { type: "region" }).of(cc) || cc; } catch { return cc; } };
 const cidadeDe = (id) => S.cidades.find((c) => c.id === id);
 const souAnfitriao = (c) => Boolean(c && S.eu && (c.anfitrioes || []).includes(S.eu.uid));
@@ -414,8 +459,20 @@ function telaCidades() {
     return topo + `<div class="com-cartao">${eu.admin ? `<p class="com-suave">${t("cid_semear_d")}</p><div class="com-linha"><button class="com-pri" type="button" data-a="semear-cidades">${t("cid_semear")}</button></div>` : `<p class="com-suave">${t("preparando")}</p>`}</div>`;
   }
   const fora = eu.admin ? Object.entries(S.pedidosCidade).filter(([k]) => !cidadeDe(k)) : [];
-  return topo + diaDoYoga() + porPais().map(([p, l]) => `<section class="com-cartao com-cartao--p" aria-labelledby="com-pais-${p}"><h3 id="com-pais-${p}" class="com-dir-t">${esc(nomePais(p))}</h3>
-      <ul class="com-cidades">${l.map((c) => `<li><a class="com-cidade" href="#cidade=${c.id}"><span class="com-cidade-ponto ${c.estado === "aberta" ? "is-aberta" : ""}" aria-hidden="true"></span><span class="com-cidade-nome">${esc(c.nome)}${c.regiao ? ` <small>${esc(c.regiao)}</small>` : ""}</span>${c.id === eu.cidade ? `<span class="com-selo">${t("cid_minha")}</span>` : ""}<span class="com-esp"></span>${eu.admin && S.pedidosCidade[c.id] ? `<span class="com-peq com-suave">${esc(t("cid_pedidos_n", { n: S.pedidosCidade[c.id].n }))}</span>` : ""}${badgeCidade(c)}</a></li>`).join("")}</ul></section>`).join("")
+  const faltam = eu.admin ? dados.CIDADES_INICIAIS.filter((c) => !cidadeDe(c.id)).length : 0;
+  const AGRUPA = { ES: true, FR: true, IT: true };
+  const linha = (c) => `<li><a class="com-cidade com-cid-linha ${c.id === S.cidadeMarcada ? "is-marcada" : ""}" data-cid="${c.id}" href="#cidade=${c.id}"><span class="com-cidade-ponto ${c.estado === "aberta" ? "is-aberta" : ""}" aria-hidden="true"></span><span class="com-cidade-nome">${esc(c.nome)}${c.regiao && !AGRUPA[c.pais] ? ` <small>${esc(c.regiao)}</small>` : ""}</span>${c.id === eu.cidade ? `<span class="com-selo">${t("cid_minha")}</span>` : ""}<span class="com-esp"></span>${eu.admin && S.pedidosCidade[c.id] ? `<span class="com-peq com-suave">${esc(t("cid_pedidos_n", { n: S.pedidosCidade[c.id].n }))}</span>` : ""}${badgeCidade(c)}</a></li>`;
+  const pais = ([p, l]) => {
+    const ab = l.filter((c) => c.estado === "aberta").length, br = l.length - ab, on = S.paisAberto === p;
+    const resumo = t(ab === 0 ? "pais_res_0" : ab === 1 ? "pais_res_1" : "pais_res_n", { a: ab, b: br });
+    const dentro = AGRUPA[p]
+      ? [...new Set(l.map((c) => c.regiao))].map((r) => `${r ? `<p class="com-regiao">${esc(r)}</p>` : ""}<ul class="com-cidades">${l.filter((c) => c.regiao === r).map(linha).join("")}</ul>`).join("")
+      : `<ul class="com-cidades">${l.map(linha).join("")}</ul>`;
+    return `<li class="com-pais" data-pais="${p}"><button type="button" class="com-pais-btn" data-a="abrir-pais" data-v="${p}" aria-expanded="${on}" aria-controls="com-pc-${p}"><span class="com-pais-cod" aria-hidden="true">${p}</span><span class="com-pais-txt"><span class="com-pais-nome">${esc(nomePais(p))}</span><span class="com-pais-res">${esc(resumo)}</span></span><svg class="com-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="com-pais-corpo ${on ? "is-on" : ""}" id="com-pc-${p}" ${on ? "" : "inert"}><div><div class="com-pais-dentro">${dentro}</div></div></div></li>`;
+  };
+  return topo + (faltam ? `<div class="com-cartao com-cartao--p com-linha"><span class="com-suave com-peq com-esp">${t("cid_acrescentar_d")}</span><button class="com-opt" type="button" data-a="acrescentar-cidades">${esc(t("cid_acrescentar", { n: faltam }))}</button></div>` : "")
+    + `<section class="com-mapa" aria-label="${t("cid_globo_aria")}"><div data-terra></div>${legendaGlobo()}</section>`
+    + diaDoYoga() + `<ul class="com-paises">${porPais().map(pais).join("")}</ul>`
     + `<section class="com-cartao com-cartao--p" aria-labelledby="com-outra-t"><h3 id="com-outra-t" class="com-dir-t">${t("cid_outra_t")}</h3><p class="com-suave com-peq">${t("cid_outra_d")}</p>
       <form class="com-linha" data-f="pedir-outra"><label class="com-so-leitor" for="com-oc">${t("cid_outra_ph")}</label><input id="com-oc" class="com-campo com-campo--cresce" name="nome" type="text" maxlength="60" placeholder="${t("cid_outra_ph")}" required><button class="com-opt" type="submit">${t("cid_quero_btn")}</button></form>
       ${formAnfitriao(null)}
@@ -701,17 +758,54 @@ function mostrarPrevia() {
   caixa.querySelector("img").src = S.novaFoto || "";
 }
 
+/* ---------- A Terra ----------
+   Uma só Terra para a página toda: a porta (visitantes) e o topo de "Todas as cidades".
+   O HTML da página é redesenhado a cada mudança; o globo não: cada desenho deixa um lugar
+   vazio (data-terra) e o mesmo elemento muda-se para lá, sem perder a rotação nem o zoom. */
+let GLOBO = null;
+function globo() {
+  if (GLOBO) return GLOBO;
+  const fora = !S.user || S.eu?.estado !== "aprovado";
+  GLOBO = criarTerra({
+    cidades: dados.CIDADES_INICIAIS, paises: dados.PAISES_GLOBO, aberta: cidadeAberta,
+    inicio: fora ? { lon: -75, lat: 5, zoom: 0.7 } : { lon: -20, lat: 25, zoom: 1.05 },
+    chegada: fora && !S.paisEscolhido ? { lon: -20, lat: 25, zoom: 1.05 } : null,
+    vista: { lon: -20, lat: 25, zoom: 1.05 },
+    rotulos: { aria: t("globo_aria"), dica: t("globo_dica"), mais: t("globo_mais"), menos: t("globo_menos"), inicio: t("globo_inicio") },
+    aoEscolherPais: (p) => escolherNoGlobo(p, ""),
+    aoEscolherCidade: (id) => escolherNoGlobo(dados.CIDADES_INICIAIS.find((c) => c.id === id)?.pais || "", id),
+    aoLimpar: () => escolherNoGlobo("", "")
+  });
+  // Quem já tinha escolhido (e recarregou a página) volta a ver a sua escolha, sem a viagem de chegada.
+  if (fora && S.cidadeEscolhida) GLOBO.escolherCidade(S.cidadeEscolhida);
+  else if (fora && PAISES.includes(S.paisEscolhido)) GLOBO.escolherPais(S.paisEscolhido);
+  return GLOBO;
+}
+function escolherNoGlobo(pais, cidade) {
+  if (!S.user || S.eu?.estado !== "aprovado") {
+    S.paisEscolhido = pais; S.cidadeEscolhida = cidade; S.semCidade = false; guardarEscolha(); desenhar();
+  } else {
+    S.paisAberto = pais; S.cidadeMarcada = cidade; desenhar();
+    if (cidade) document.querySelector(`.com-cid-linha[data-cid="${cidade}"]`)?.scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+}
+function montarGlobo() {
+  const lugar = app.querySelector("[data-terra]");
+  if (lugar) lugar.replaceWith(globo().el);
+}
+
 /* ---------- Desenhar ---------- */
 function desenhar() {
   if (!S.pronto) { app.innerHTML = `<p class="com-suave com-centro com-espera">${t("um_momento")}</p>`; return; }
   if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
-  if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); return; }
+  if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); montarGlobo(); return; }
   const { chave } = rota();
   const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
   const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, cidades: telaCidades, cidade: telaCidade }[tela]();
   app.classList.add("com-pagina--app");
   app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita(tela)}</div>`;
   mostrarPrevia();
+  montarGlobo();
   if (tela === "grupo") rolarConversa();
 }
 const rolarConversa = () => { const c = document.getElementById("com-msgs"); if (c) c.scrollTop = c.scrollHeight; };
@@ -788,7 +882,8 @@ async function arrancar(user) {
   S.user = user; S.erro = "";
   try {
     S.eu = user ? await dados.carregarEu() : null;
-    if (user) [S.circulos, S.cidades] = await Promise.all([dados.circulos().catch(() => []), dados.cidades().catch(() => [])]);
+    // As cidades leem-se sempre: a porta mostra quais já estão abertas a quem ainda não entrou.
+    [S.circulos, S.cidades] = await Promise.all([user ? dados.circulos().catch(() => []) : [], dados.cidades().catch(() => [])]);
     if (S.eu?.estado === "aprovado") {
       await carregarLados();
       S.seguindo = await dados.quemSigo().catch(() => []);
@@ -814,7 +909,30 @@ const ACOES = {
     if (!await tentar(() => dados.pedirEntrada({ nome: S.eu.nome, motivos: Object.keys(S.motivos).filter((k) => S.motivos[k]), convidado: S.eu.convidado, cidade: S.cidadeEscolhida, anfitriaoDe: anf }))) return;
     if (anf) { location.hash = `#cidade=${anf}`; await arrancar(S.user); aviso(t("a_agora_anf", { c: nomeCid })); } else await arrancar(S.user);
   },
-  "escolher-cidade": (_, el) => { S.cidadeEscolhida = el.value; },
+  "escolher-cidade": (_, el) => { S.cidadeEscolhida = el.value; guardarEscolha(); },
+  "porta-pais": (v) => {
+    S.paisEscolhido = v; S.cidadeEscolhida = ""; S.semCidade = false; guardarEscolha();
+    if (v && v !== "outro") globo().escolherPais(v); else globo().limpar();
+    desenhar(); focarPasso();
+  },
+  "porta-cidade": (v) => {
+    S.cidadeEscolhida = v; S.semCidade = !v; guardarEscolha();
+    if (v) globo().escolherCidade(v);
+    desenhar(); focarPasso();
+  },
+  "porta-cidade-trocar": () => { S.cidadeEscolhida = ""; S.semCidade = false; guardarEscolha(); if (S.paisEscolhido) globo().escolherPais(S.paisEscolhido); desenhar(); focarPasso(); },
+  "abrir-pais": (v, el) => {
+    const abrir = el.getAttribute("aria-expanded") !== "true";
+    S.paisAberto = abrir ? v : ""; S.cidadeMarcada = "";
+    app.querySelectorAll(".com-pais").forEach((p) => {
+      const on = abrir && p.dataset.pais === v;
+      p.querySelector(".com-pais-btn").setAttribute("aria-expanded", on);
+      p.querySelector(".com-pais-corpo").classList.toggle("is-on", on);
+      p.querySelector(".com-pais-corpo").inert = !on;
+    });
+    if (abrir) globo().escolherPais(v); else globo().limpar();
+  },
+  "acrescentar-cidades": async () => { if (await tentar(() => dados.acrescentarCidades(S.cidades))) { S.cidades = await dados.cidades(); aviso(t("a_cidades_acrescentadas")); desenhar(); } },
   "minha-cidade": async (v) => { if (await tentar(() => dados.guardarPerfil({ cidade: v }))) { S.eu.cidade = v; aviso(t("a_cidade", { c: cidadeDe(v)?.nome || "" })); desenhar(); } },
   "pedir-cidade": async (v) => { if (await tentar(() => dados.pedirCidade(v))) { S.cidadeInfo.jaPedi = true; aviso(t("a_pedido_cidade")); desenhar(); } },
   "semear-cidades": async () => { if (await tentar(() => dados.semearCidades())) { S.cidades = await dados.cidades(); aviso(t("a_cidades_criadas")); ir("#cidades"); } },

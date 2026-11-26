@@ -1,0 +1,18 @@
+/* terra.css — a Terra do design system NeuroMedit (ver terra.js).
+   Uma janela escura da Luz: fundo luz-bg, texto luz-text, dourado luz-gold. Só tokens. */
+/* As cores de texto do tema passam a ser as da Luz dentro da Terra (o tema pinta p e h* com mais especificidade). */
+.terra { --text: var(--luz-text); --text-primary: var(--luz-text); --text-secondary: var(--luz-text-soft); --text-soft: var(--luz-text-soft); --text-muted: var(--luz-text-soft); position: relative; width: 100%; aspect-ratio: 1 / 1; max-height: 78vh; background: var(--luz-bg); border-radius: var(--radius-lg); overflow: hidden; color: var(--luz-text); isolation: isolate; }
+.terra canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.terra.is-arrastar canvas { cursor: grabbing; }
+.terra-dica { position: absolute; left: 0.75rem; top: 0.75rem; margin: 0; padding: 0.35rem 0.8rem; border-radius: var(--radius-pill); background: var(--luz-bg); color: var(--luz-text-soft); font-size: 0.82rem; pointer-events: none; }
+.terra-ctrl { position: absolute; right: 0.75rem; top: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.terra-ctrl button { width: 44px; height: 44px; padding: 0; border-radius: var(--radius-pill); border: 1px solid var(--luz-line); background: var(--luz-bg); color: var(--luz-text); cursor: pointer; display: grid; place-items: center; transition: border-color var(--duration-quick) var(--easing-calm); }
+.terra-ctrl button svg { width: 18px; height: 18px; }
+.terra-ctrl button:hover, .terra-ctrl button:focus-visible { border-color: var(--luz-gold); outline: none; }
+.terra-etiqueta { position: absolute; transform: translate(-50%, calc(-100% - 14px)); padding: 0.35rem 0.75rem; border-radius: var(--radius-pill); background: var(--luz-bg); border: 1px solid var(--luz-gold-soft); color: var(--luz-text); font-size: 0.82rem; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity var(--duration-quick) var(--easing-calm); }
+.terra-etiqueta.is-on { opacity: 1; }
+.terra-legenda { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; padding: 0; list-style: none; font-size: 0.82rem; color: var(--luz-text-soft); }
+.terra-legenda li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.terra-legenda i { width: 9px; height: 9px; border-radius: 50%; background: var(--luz-gold); box-shadow: var(--glow-gold); }
+.terra-legenda .is-breve i { width: 7px; height: 7px; background: var(--luz-glow-mid); box-shadow: 0 0 0 2px var(--luz-bg); }
+.terra-legenda .is-fechado i { width: 5px; height: 5px; background: var(--luz-text); opacity: 0.4; box-shadow: none; }

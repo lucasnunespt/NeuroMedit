@@ -724,3 +724,125 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 @media (prefers-reduced-motion: reduce) {
   .com-balao-campo, .com-enviar { transition: none; }
 }
+
+/* ---------- A porta (nov 2026): a entrada de quem ainda não entrou ----------
+   Uma janela escura da Luz com a Terra: título serif da Luz, três passos (país, cidade, entrar)
+   e o botão dourado. Só tokens: luz-*, radius-*, duration-*, easing-calm, rise-distance. */
+.com-entrada--porta { max-width: none; }
+.com-porta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  grid-template-areas: "cab globo" "passos globo";
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem 2.5rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  border-radius: var(--radius-lg);
+  background: var(--luz-bg);
+  color: var(--luz-text);
+  /* Dentro da janela da Luz, as cores de texto do tema passam a ser as da Luz
+     (o theme-sync pinta h1, h2 e p com --text-primary e --text-soft, com mais especificidade). */
+  --text: var(--luz-text);
+  --text-primary: var(--luz-text);
+  --text-secondary: var(--luz-text-soft);
+  --text-soft: var(--luz-text-soft);
+  --text-muted: var(--luz-text-soft);
+}
+.com-porta-cab { grid-area: cab; display: flex; flex-direction: column; gap: 0.9rem; }
+.com-porta-globo { grid-area: globo; display: flex; flex-direction: column; gap: 0.75rem; align-self: center; }
+.com-porta-passos { grid-area: passos; display: flex; flex-direction: column; gap: 1.25rem; }
+.com-pagina .com-porta-eyebrow { color: var(--luz-gold); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.com-pagina .com-porta-t { max-width: 16ch; color: var(--luz-text); font-family: var(--font-serif); font-size: clamp(30px, 5.4vw, 60px); font-weight: 400; line-height: 1.08; letter-spacing: -0.01em; }
+.com-pagina .com-porta-lead { max-width: 46ch; color: var(--luz-text-soft); font-size: 1.12rem; line-height: 1.75; }
+
+.com-passos { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin: 0; padding: 0; list-style: none; color: var(--luz-text-soft); font-size: 0.9rem; }
+.com-passos li { display: inline-flex; align-items: center; gap: 0.5rem; }
+.com-passos li > span { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid var(--luz-line); border-radius: var(--radius-pill); font-size: 0.82rem; }
+.com-passos li > span svg { width: 14px; height: 14px; }
+.com-passos li[aria-current="step"] { color: var(--luz-text); }
+.com-passos li[aria-current="step"] > span { border-color: var(--luz-gold); color: var(--luz-gold); box-shadow: var(--glow-gold); }
+.com-passos li.is-feito > span { border-color: var(--luz-gold-soft); color: var(--luz-gold); }
+
+.com-porta-passo { display: flex; flex-direction: column; gap: 0.85rem; animation: com-surge var(--duration-calm) var(--easing-calm); }
+@keyframes com-surge { from { opacity: 0; transform: translateY(var(--rise-distance)); } }
+.com-pagina .com-porta-q { color: var(--luz-text); font-family: var(--font-serif); font-size: clamp(24px, 3.6vw, 36px); font-weight: 400; line-height: 1.15; letter-spacing: -0.005em; }
+.com-porta-q:focus { outline: none; }
+.com-pagina .com-porta-d { color: var(--luz-text-soft); line-height: 1.6; }
+.com-porta-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.com-porta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0 1.05rem 0 0.6rem;
+  border: 1px solid var(--luz-line);
+  border-radius: var(--radius-pill);
+  background: var(--luz-surface);
+  color: var(--luz-text);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color var(--duration-quick) var(--easing-calm), background-color var(--duration-quick) var(--easing-calm);
+}
+.com-porta-chip:hover { border-color: var(--luz-gold); }
+.com-porta-chip:focus-visible { outline: 2px solid var(--luz-gold); outline-offset: 2px; }
+.com-porta-chip--sec { padding-left: 1.05rem; border-style: dashed; color: var(--luz-text-soft); }
+.com-porta-cod { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--luz-gold-soft); border-radius: var(--radius-pill); color: var(--luz-gold); font-size: 0.75rem; letter-spacing: 0.08em; }
+.com-porta-ponto { width: 8px; height: 8px; margin-left: 0.45rem; border-radius: var(--radius-pill); background: var(--luz-glow-mid); opacity: 0.7; }
+.com-porta-chip.is-aberta { border-color: var(--luz-gold-soft); }
+.com-porta-chip.is-aberta .com-porta-ponto { background: var(--luz-gold); opacity: 1; box-shadow: var(--glow-gold); }
+.com-porta-trocar { display: inline-flex; align-items: center; gap: 0.35rem; align-self: flex-start; min-height: 44px; padding: 0 0.25rem; border: 0; background: none; color: var(--luz-text-soft); font: inherit; font-size: 0.9rem; cursor: pointer; }
+.com-porta-trocar svg { width: 16px; height: 16px; }
+.com-porta-trocar:hover { color: var(--luz-text); }
+.com-porta-trocar:focus-visible { outline: 2px solid var(--luz-gold); outline-offset: 2px; border-radius: var(--radius-sm); }
+.com-porta-res { display: flex; gap: 0.9rem; align-items: flex-start; }
+.com-porta-res > div { display: flex; flex-direction: column; gap: 0.5rem; }
+.com-porta-res-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--luz-line); border-radius: var(--radius-pill); color: var(--luz-text-soft); }
+.com-porta-res-ic svg { width: 20px; height: 20px; }
+.com-porta-res.is-aberta .com-porta-res-ic { border-color: var(--luz-gold); color: var(--luz-gold); box-shadow: var(--glow-gold); }
+.com-porta-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.com-porta-entrar {
+  min-height: var(--control-height);
+  padding: 0 var(--button-pad-x);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--luz-gold);
+  color: var(--luz-bg);
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2.4vw, 22px);
+  cursor: pointer;
+  box-shadow: var(--glow-gold);
+  transition: background-color var(--duration-quick) var(--easing-calm);
+}
+.com-porta-entrar:hover { background: var(--luz-glow-mid); }
+.com-porta-entrar:focus-visible { outline: 2px solid var(--luz-text); outline-offset: 3px; }
+.com-pagina .com-porta-nota { max-width: 52ch; color: var(--luz-text-soft); font-size: 0.9rem; line-height: 1.55; }
+.com-porta .terra-legenda { padding-left: 0.25rem; }
+
+@media (max-width: 940px) {
+  .com-porta { grid-template-columns: minmax(0, 1fr); grid-template-areas: "cab" "globo" "passos"; grid-template-rows: auto; gap: 1.25rem; }
+}
+@media (max-width: 560px) {
+  .com-porta { margin-inline: calc(var(--gutter) * -0.5); padding: 1.25rem 1rem 1.5rem; }
+  .com-porta .terra { border-radius: var(--radius-md); }
+}
+
+/* ---------- Todas as cidades: a Terra e a lista compacta (país → cidades) ---------- */
+.com-mapa { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.6rem 0.6rem 0.9rem; border-radius: var(--radius-lg); background: var(--luz-bg); }
+.com-mapa .terra { max-height: 62vh; border-radius: var(--radius-md); }
+.com-mapa .terra-legenda { padding-left: 0.6rem; }
+.com-paises { display: flex; flex-direction: column; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.com-pais { border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--glass-highlight); overflow: hidden; }
+.com-pais-btn { display: flex; align-items: center; gap: 0.75rem; width: 100%; min-height: 60px; padding: 0.6rem 1rem; border: 0; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.com-pais-btn:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: -4px; border-radius: var(--radius-md); }
+.com-pais-cod { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface-strong); color: var(--accent-dark); font-size: 0.78rem; letter-spacing: 0.08em; }
+.com-pais-txt { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.com-pais-nome { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.02em; }
+.com-pais-res { color: var(--text-soft); font-size: 0.9rem; }
+.com-chev { flex: none; width: 20px; height: 20px; color: var(--text-soft); transition: transform var(--duration-calm) var(--easing-calm); }
+.com-pais-btn[aria-expanded="true"] .com-chev { transform: rotate(180deg); }
+.com-pais-corpo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--duration-calm) var(--easing-calm); }
+.com-pais-corpo.is-on { grid-template-rows: 1fr; }
+.com-pais-corpo > div { min-height: 0; overflow: hidden; }
+.com-pais-dentro { padding: 0 0.6rem 0.75rem; }
+.com-regiao { margin: 0.75rem 0.6rem 0.2rem; color: var(--accent-dark); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.com-cidade.is-marcada { background: var(--surface-strong); box-shadow: inset 3px 0 0 var(--luz-gold); }

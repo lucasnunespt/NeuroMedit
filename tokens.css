@@ -31,12 +31,20 @@
   --luz-glow-core: #fffae8;
   --luz-glow-mid: #ffe4a8;
   --glow-gold: 0 0 22px rgba(233, 196, 106, 0.22), inset 0 0 14px rgba(233, 196, 106, 0.12);
+  /* Os valores do tema Luz (bg, text, text-soft, line, surface), para janelas escuras da Luz
+     dentro de páginas com outro tema, como a Terra. Mesmos valores do tokens.json, tema "luz". */
+  --luz-bg: #050506;
+  --luz-text: #efe9dc;
+  --luz-text-soft: rgba(239, 233, 220, 0.64);
+  --luz-line: rgba(239, 233, 220, 0.12);
+  --luz-surface: rgba(255, 255, 255, 0.04);
 
   /* Movimento (design system, nov 2026): só opacidade e pequenas deslocações */
   --duration-quick: 160ms;
   --duration-calm: 700ms;
   --easing-calm: cubic-bezier(0.22, 1, 0.36, 1);
   --rise-distance: 12px;
+  --duration-breath: 11s; /* a respiração-mestra: o único loop permitido */
 }
 
 /* accent-light e accent-light-hover (design system, nov 2026): o acento de cada tema, mais claro.

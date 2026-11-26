@@ -158,35 +158,36 @@
 }
 
 /* ---------------------------------------------------
-   FAIXA DA COMUNIDADE (nov 2026) — a mesma forma da faixa presencial, mas
-   uma janela escura da Luz com o mundo plano em pontos (Equal Earth, faixa-terra.js).
-   Leva à porta da Comunidade, onde está a Terra. Só tokens: luz-*, radius-*, duration-*.
+   FAIXA DA COMUNIDADE (nov 2026) — a mesma forma da faixa presencial, num cartão do tema
+   (claro de dia, escuro à noite), com o mundo plano em pontos por trás (Equal Earth,
+   faixa-terra.js; cores --terra-* de terra.css). Leva à porta da Comunidade. Só tokens.
 --------------------------------------------------- */
 .home-comunidade { padding: 0 0 3rem; }
 .terra-faixa {
-  position: relative; display: flex; align-items: center; min-height: 300px; overflow: hidden;
-  padding: 1.8rem; border-radius: var(--radius-lg);
-  background: var(--luz-bg); color: var(--luz-text);
-  --text-primary: var(--luz-text); /* os títulos ficam claros em todos os temas */
+  position: relative; display: flex; align-items: center; min-height: 280px; overflow: hidden;
+  padding: 1.6rem; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface); color: var(--text);
+  box-shadow: var(--shadow-card), var(--glass-highlight);
   text-decoration: none;
 }
 .terra-faixa-mapa { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.terra-faixa-texto { position: relative; display: grid; gap: 0.45rem; max-width: 30rem; }
+.terra-faixa-texto { position: relative; display: grid; gap: 0.3rem; max-width: 30rem; }
 .home-comunidade .terra-faixa .terra-faixa-texto > * { margin: 0; }
-.terra-faixa-sinal { color: var(--luz-gold); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
-.home-comunidade .terra-faixa h2.terra-faixa-titulo { color: var(--luz-text); font-family: var(--font-serif); font-size: clamp(24px, 3.6vw, 36px); font-weight: 400; line-height: 1.15; letter-spacing: -0.005em; }
-.terra-faixa-frase { color: var(--luz-text-soft); line-height: 1.6; max-width: 40ch; }
+.terra-faixa-sinal { color: var(--accent-dark); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.home-comunidade .terra-faixa h2.terra-faixa-titulo { font-size: 1.5rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; }
+.terra-faixa-frase { color: var(--text-soft); line-height: 1.6; max-width: 40ch; }
 .terra-faixa-acao {
-  justify-self: start; display: inline-flex; align-items: center; min-height: var(--control-height); margin-top: 0.6rem; padding: 0 var(--button-pad-x);
-  border-radius: var(--radius-pill); background: var(--luz-gold); color: var(--luz-bg); font-weight: 500; white-space: nowrap;
-  box-shadow: var(--glow-gold);
+  justify-self: start; display: inline-flex; align-items: center; min-height: var(--control-height); margin-top: 0.7rem; padding: 0 var(--button-pad-x);
+  border-radius: var(--radius-pill); background: var(--accent); color: var(--button-text); font-weight: 500; white-space: nowrap;
+  box-shadow: var(--shadow-soft);
   transition: background-color var(--duration-quick) var(--easing-calm);
 }
-.terra-faixa:hover .terra-faixa-acao { background: var(--luz-glow-mid); }
+.terra-faixa:hover .terra-faixa-acao { background: var(--accent-dark); }
 .terra-faixa:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 @media (max-width: 640px) {
   .terra-faixa { flex-direction: column; align-items: stretch; padding: 0; min-height: 0; }
   .terra-faixa-mapa { position: relative; inset: auto; height: 190px; }
   .terra-faixa-texto { padding: 1.1rem 1.3rem 1.4rem; }
+  .home-comunidade .terra-faixa h2.terra-faixa-titulo { font-size: 1.3rem; }
   .terra-faixa-acao { justify-self: stretch; justify-content: center; }
 }

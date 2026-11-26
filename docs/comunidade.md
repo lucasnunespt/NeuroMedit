@@ -146,3 +146,5 @@ Quem ainda não entrou vê primeiro uma janela escura da Luz com a **Terra** (co
 - Cidades novas (Itália e as maiores de Portugal, Espanha e França) vivem em `CIDADES_INICIAIS` com latitude e longitude (só para a Terra). O Lucas cria as que faltam com **"Acrescentar cidades novas"**, em Todas as cidades; entram em breve e as abertas não mudam.
 - Testes de cliques: `teste-porta.py` no ambiente de teste (28/28).
 - Faixa da home: `faixa-terra.js` desenha o mundo plano em pontos (projeção Equal Earth, áreas verdadeiras) por baixo do convite "Medite com quem está perto de você", que leva à porta. As cidades vêm de `cidades-lista.js`, sem o Firebase.
+- A porta, o mapa de Todas as cidades e a faixa da home seguem o tema do dia (26 nov 2026): cartões `surface`, tipografia da página, botão `com-pri`. As cores da Terra vêm de `--terra-*` em `terra.css` (acento nos temas claros, luz dourada nos escuros).
+- Barras de rolagem (todo o site com `theme-sync.css`): finas, em pílula, cor `text-subtle` (`text-soft` com o cursor), calha transparente.

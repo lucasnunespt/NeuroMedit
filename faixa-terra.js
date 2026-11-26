@@ -3,7 +3,7 @@
    Um mapa plano em pontos de luz, na projeção Equal Earth (áreas verdadeiras:
    a África e o Brasil no tamanho real), recortado no mundo entre as Américas e a
    Europa. Decorativo: o texto da faixa diz tudo; o mapa é parado (sem loop).
-   Cores: só tokens da Luz, lidos do CSS. Dados: data/terra.json, como a Terra.
+   Cores: as variáveis --terra-* de terra.css (acento nos temas claros, luz nos escuros). Dados: data/terra.json, como a Terra.
    ========================================================== */
 import { CIDADES_INICIAIS } from "./cidades-lista.js";
 
@@ -27,7 +27,7 @@ async function desenhar(cv) {
   cv.width = W * dpr; cv.height = H * dpr;
   const cx = cv.getContext("2d"); cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
   const css = getComputedStyle(cv), tok = (n) => css.getPropertyValue(n).trim();
-  const COR = { terra: tok("--luz-text"), nucleo: tok("--luz-glow-core"), meio: tok("--luz-glow-mid"), ouro: tok("--luz-gold") };
+  const COR = { terra: tok("--terra-mundo"), nucleo: tok("--terra-ativo"), meio: tok("--terra-halo"), ouro: tok("--terra-ouro") };
   // O recorte inteiro cabe: no computador encosta à direita (o texto fica à esquerda); no telemóvel ocupa a largura.
   const largo = W > 640, k = Math.min(H / (Y1 - Y0), (largo ? W * 0.66 : W) / (X1 - X0));
   const ox = largo ? W - (X1 - X0) * k : (W - (X1 - X0) * k) / 2, oy = H - (H - (Y1 - Y0) * k) / 2;
@@ -51,14 +51,17 @@ async function desenhar(cv) {
   // As cidades da comunidade: pontos dourados com um halo ténue.
   for (const c of CIDADES_INICIAIS) {
     const [x, y] = xy(c.lat, c.lon);
-    const g = cx.createRadialGradient(x, y, 0, x, y, 8);
+    const g = cx.createRadialGradient(x, y, 0, x, y, 6);
     g.addColorStop(0, COR.meio); g.addColorStop(1, "transparent");
-    cx.globalAlpha = 0.5; cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, 8, 0, Math.PI * 2); cx.fill();
+    cx.globalAlpha = 0.3; cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, 6, 0, Math.PI * 2); cx.fill();
     cx.globalAlpha = 1; cx.fillStyle = COR.ouro; cx.beginPath(); cx.arc(x, y, 2, 0, Math.PI * 2); cx.fill();
   }
   cx.globalAlpha = 1;
 }
 
 document.querySelectorAll("canvas[data-faixa-terra]").forEach((cv) => {
-  new ResizeObserver(() => desenhar(cv).catch(() => {})).observe(cv);
+  const ir = () => desenhar(cv).catch(() => {});
+  new ResizeObserver(ir).observe(cv);
+  // O tema do dia muda sozinho: redesenha com as cores novas.
+  new MutationObserver(ir).observe(document.body, { attributes: true, attributeFilter: ["data-theme", "class"] });
 });

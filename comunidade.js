@@ -204,22 +204,22 @@ function passosPorta() {
   const itens = [1, 2, 3].map((i) => `<li class="${i < passo ? "is-feito" : ""}" ${i === passo ? 'aria-current="step"' : ""}><span aria-hidden="true">${i < passo ? IC.certo : i}</span>${t("passo" + i)}</li>`).join("");
   let corpo;
   if (passo === 1) {
-    corpo = `<h2 class="com-porta-q">${t("q_pais_t")}</h2><p class="com-porta-d">${t("q_pais_d")}</p>
+    corpo = `<h2 class="com-porta-q">${t("q_pais_t")}</h2><p class="com-suave com-porta-d">${t("q_pais_d")}</p>
       <div class="com-porta-chips">${PAISES.map((cc) => `<button type="button" class="com-porta-chip" data-a="porta-pais" data-v="${cc}"><span class="com-porta-cod" aria-hidden="true">${cc}</span>${esc(nomePais(cc))}</button>`).join("")}
       <button type="button" class="com-porta-chip com-porta-chip--sec" data-a="porta-pais" data-v="outro">${t("pais_outro")}</button></div>`;
   } else if (passo === 2) {
     const l = dados.CIDADES_INICIAIS.filter((x) => x.pais === p).sort((a, b) => cidadeAberta(b.id) - cidadeAberta(a.id));
-    corpo = `<h2 class="com-porta-q">${t("q_cid_t")}</h2><p class="com-porta-d">${t("q_cid_d")}</p>
+    corpo = `<h2 class="com-porta-q">${t("q_cid_t")}</h2><p class="com-suave com-porta-d">${t("q_cid_d")}</p>
       <div class="com-porta-chips">${l.map((x) => `<button type="button" class="com-porta-chip ${cidadeAberta(x.id) ? "is-aberta" : ""}" data-a="porta-cidade" data-v="${x.id}"><span class="com-porta-ponto" aria-hidden="true"></span>${esc(x.nome)}${cidadeAberta(x.id) ? `<span class="com-so-leitor"> · ${t("leg_aberta")}</span>` : ""}</button>`).join("")}
       <button type="button" class="com-porta-chip com-porta-chip--sec" data-a="porta-cidade" data-v="">${t("cid_nao_esta")}</button></div>
       <button type="button" class="com-porta-trocar" data-a="porta-pais" data-v="">${IC.voltar}${esc(nomePais(p))} · ${t("trocar")}</button>`;
   } else {
     const id = S.cidadeEscolhida, nome = nomeCidade(id);
     const [tit, desc] = !id ? [t("res_outra_t"), t("res_outra_d")] : cidadeAberta(id) ? [t("res_aberta_t", { c: nome }), t("res_aberta_d", { c: nome })] : [t("res_breve_t", { c: nome }), t("res_breve_d", { c: nome })];
-    corpo = `<div class="com-porta-res ${id && cidadeAberta(id) ? "is-aberta" : ""}"><span class="com-porta-res-ic" aria-hidden="true">${IC.pin}</span><div><h2 class="com-porta-q">${esc(tit)}</h2><p class="com-porta-d">${esc(desc)}</p></div></div>
-      <div class="com-porta-acoes"><button class="com-porta-entrar" data-a="login" type="button">${t("login_google")}</button>
+    corpo = `<div class="com-porta-res ${id && cidadeAberta(id) ? "is-aberta" : ""}"><span class="com-porta-res-ic" aria-hidden="true">${IC.pin}</span><div><h2 class="com-porta-q">${esc(tit)}</h2><p class="com-suave com-porta-d">${esc(desc)}</p></div></div>
+      <div class="com-porta-acoes"><button class="com-pri com-porta-entrar" data-a="login" type="button">${t("login_google")}</button>
       <button type="button" class="com-porta-trocar" data-a="${p === "outro" ? "porta-pais" : "porta-cidade-trocar"}" data-v="">${IC.voltar}${esc(id ? nome : (p === "outro" ? t("pais_outro") : nomePais(p)))} · ${t("trocar")}</button></div>
-      <p class="com-porta-nota">${t("fora_login_d")}</p>`;
+      <p class="com-suave com-peq com-porta-nota">${t("fora_login_d")}</p>`;
   }
   return `<ol class="com-passos" aria-label="${t("passos_aria")}">${itens}</ol><div class="com-porta-passo" aria-live="polite">${corpo}</div>`;
 }
@@ -227,9 +227,9 @@ const legendaGlobo = () => `<ul class="terra-legenda"><li><i></i>${t("leg_aberta
 const porta = () => `
   <section class="com-porta" aria-labelledby="com-porta-t">
     <div class="com-porta-cab">
-      <p class="com-porta-eyebrow">${t("porta_eyebrow")}</p>
+      <p class="com-sobre">${t("porta_eyebrow")}</p>
       <h1 id="com-porta-t" class="com-porta-t">${t("porta_t")}</h1>
-      <p class="com-porta-lead">${t("porta_lead")}</p>
+      <p class="com-lead com-porta-lead">${t("porta_lead")}</p>
     </div>
     <div class="com-porta-globo"><div data-terra></div>${legendaGlobo()}</div>
     <div class="com-porta-passos">${passosPorta()}</div>

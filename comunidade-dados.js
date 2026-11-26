@@ -30,21 +30,9 @@ export const CIRCULOS_INICIAIS = [
 
 /** Cidades iniciais: Portugal, Espanha, França e as 27 capitais do Brasil.
  *  Todas começam "em breve"; abrem quando o Lucas lhes dá um anfitrião. */
-const CIDADE = (id, nome, pais, regiao = "") => ({ id, nome, pais, regiao });
-export const CIDADES_INICIAIS = [
-  CIDADE("lisboa", "Lisboa", "PT"), CIDADE("porto", "Porto", "PT"),
-  CIDADE("sevilha", "Sevilha", "ES"), CIDADE("madrid", "Madrid", "ES"),
-  CIDADE("paris", "Paris", "FR"),
-  CIDADE("rio-branco", "Rio Branco", "BR", "AC"), CIDADE("maceio", "Maceió", "BR", "AL"), CIDADE("macapa", "Macapá", "BR", "AP"),
-  CIDADE("manaus", "Manaus", "BR", "AM"), CIDADE("salvador", "Salvador", "BR", "BA"), CIDADE("fortaleza", "Fortaleza", "BR", "CE"),
-  CIDADE("brasilia", "Brasília", "BR", "DF"), CIDADE("vitoria", "Vitória", "BR", "ES"), CIDADE("goiania", "Goiânia", "BR", "GO"),
-  CIDADE("sao-luis", "São Luís", "BR", "MA"), CIDADE("cuiaba", "Cuiabá", "BR", "MT"), CIDADE("campo-grande", "Campo Grande", "BR", "MS"),
-  CIDADE("belo-horizonte", "Belo Horizonte", "BR", "MG"), CIDADE("belem", "Belém", "BR", "PA"), CIDADE("joao-pessoa", "João Pessoa", "BR", "PB"),
-  CIDADE("curitiba", "Curitiba", "BR", "PR"), CIDADE("recife", "Recife", "BR", "PE"), CIDADE("teresina", "Teresina", "BR", "PI"),
-  CIDADE("rio-de-janeiro", "Rio de Janeiro", "BR", "RJ"), CIDADE("natal", "Natal", "BR", "RN"), CIDADE("porto-alegre", "Porto Alegre", "BR", "RS"),
-  CIDADE("porto-velho", "Porto Velho", "BR", "RO"), CIDADE("boa-vista", "Boa Vista", "BR", "RR"), CIDADE("florianopolis", "Florianópolis", "BR", "SC"),
-  CIDADE("sao-paulo", "São Paulo", "BR", "SP"), CIDADE("aracaju", "Aracaju", "BR", "SE"), CIDADE("palmas", "Palmas", "BR", "TO")
-];
+/* As cidades e os países da Terra vivem em cidades-lista.js (também os usa a faixa da home, sem o Firebase). */
+export { CIDADES_INICIAIS, PAISES_GLOBO } from "./cidades-lista.js";
+import { CIDADES_INICIAIS } from "./cidades-lista.js";
 
 /* ---------- Sessão ---------- */
 export function observarSessao(cb) { return onAuthStateChanged(auth, cb); }
@@ -320,6 +308,18 @@ export async function semearCidades() {
   CIDADES_INICIAIS.forEach((c, i) => {
     const aberta = c.id === "lisboa";
     lote.set(ref("comCidades", c.id), { nome: c.nome, pais: c.pais, regiao: c.regiao, estado: aberta ? "aberta" : "em-breve", anfitrioes: aberta ? [uid()] : [], ordem: i, criadoEm: serverTimestamp() });
+  });
+  await lote.commit();
+}
+/** Só o Lucas: cria as cidades da lista que ainda não existem (em breve) e põe a região e a ordem
+   nas que já existem. Não mexe em quem é anfitrião nem no estado. */
+export async function acrescentarCidades(existentes) {
+  const lote = writeBatch(db);
+  const ja = Object.fromEntries(existentes.map((c) => [c.id, c]));
+  CIDADES_INICIAIS.forEach((c, i) => {
+    const e = ja[c.id];
+    if (!e) lote.set(ref("comCidades", c.id), { nome: c.nome, pais: c.pais, regiao: c.regiao, estado: "em-breve", anfitrioes: [], ordem: i, criadoEm: serverTimestamp() });
+    else if (e.regiao !== c.regiao || e.ordem !== i) lote.update(ref("comCidades", c.id), { regiao: c.regiao, ordem: i });
   });
   await lote.commit();
 }

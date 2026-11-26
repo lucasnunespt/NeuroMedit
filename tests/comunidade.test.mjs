@@ -204,6 +204,9 @@ describe("Encontros e avisos", () => {
 describe("Cidades", () => {
   const encontro = (extra) => ({ uid: ANA, nome: "Ana", titulo: "Meditação no jardim", quando: Timestamp.fromDate(new Date(Date.now() + 864e5)), criadoEm: serverTimestamp(), ...extra });
   test("só o Lucas cria e muda cidades; uma cidade só abre com anfitrião", async () => {
+    // A Terra da entrada lê as cidades antes de a pessoa entrar.
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), "comCidades", "lisboa")));
+    await assertFails(setDoc(doc(env.unauthenticatedContext().firestore(), "comCidades", "braga"), { nome: "Braga", pais: "PT", estado: "em-breve", anfitrioes: [] }));
     await assertSucceeds(setDoc(doc(de(LUCAS), "comCidades", "recife"), { nome: "Recife", pais: "BR", regiao: "PE", estado: "em-breve", anfitrioes: [] }));
     await assertFails(setDoc(doc(de(LUCAS), "comCidades", "aracaju"), { nome: "Aracaju", pais: "BR", estado: "aberta", anfitrioes: [] }));
     await assertFails(updateDoc(doc(de(ANA), "comCidades", "lisboa"), { anfitrioes: [ANA, RUI] }));

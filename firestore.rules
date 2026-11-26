@@ -242,8 +242,10 @@ service cloud.firestore {
         && request.resource.data.anfitrioes == resource.data.anfitrioes.concat([request.auth.uid])
         && request.resource.data.estado == 'aberta';
     }
+    // Leitura pública: a Terra da entrada mostra a quem ainda não entrou que cidades já têm comunidade.
+    // O documento só tem nome, país, região, estado, ordem e os uid dos anfitriões (sem nomes nem e-mails).
     match /comCidades/{cidadeId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create: if isAdmin() && cidadeValida(request.resource.data);
       allow update: if (isAdmin() && cidadeValida(request.resource.data)) || entraComoAnfitriao(cidadeId);
       allow delete: if isAdmin();

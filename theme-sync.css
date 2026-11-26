@@ -570,3 +570,20 @@ body.mouse-idle .idle-hide {
   pointer-events: none;
 }
 
+
+/* ---------- Barras de rolagem (nov 2026) ----------
+   Finas, em pílula, da cor do texto ténue do tema; a calha é transparente.
+   Aparecem mais quando o cursor está por cima. Só tokens: text-subtle, text-soft, radius-pill. */
+@supports not selector(::-webkit-scrollbar) {
+  html, body, body * { scrollbar-width: thin; scrollbar-color: var(--text-subtle) transparent; }
+}
+body ::-webkit-scrollbar, html::-webkit-scrollbar { width: 10px; height: 10px; }
+body ::-webkit-scrollbar-track, html::-webkit-scrollbar-track { background: transparent; }
+body ::-webkit-scrollbar-thumb, html::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--text-subtle);
+  background-clip: padding-box;
+}
+body ::-webkit-scrollbar-thumb:hover, html::-webkit-scrollbar-thumb:hover { background: var(--text-soft); background-clip: padding-box; }
+body ::-webkit-scrollbar-corner { background: transparent; }

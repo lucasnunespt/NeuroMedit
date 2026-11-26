@@ -4,7 +4,8 @@
    Arrasta para rodar (com inércia), roda/pinça para aproximar, toca num país
    ativo para voar até ele, toca numa cidade para a escolher.
 
-   Cores: só tokens (--luz-*), lidos do CSS do elemento.
+   Cores: só tokens, pelas variáveis --terra-* de terra.css, que mudam com o tema
+   (acento nos claros, luz dourada nos escuros). Ao mudar de tema, a Terra relê-as.
    Movimento: o voo usa easing-calm e múltiplos de duration-calm; o único loop é
    a respiração das cidades abertas (duration-breath). Com prefers-reduced-motion,
    tudo parado e as mudanças são imediatas.
@@ -61,7 +62,7 @@ export function criarTerra(o) {
   const lerTokens = () => {
     const css = getComputedStyle(el), tok = (n) => css.getPropertyValue(n).trim();
     const ms = (n) => { const v = tok(n); return v.endsWith("ms") ? parseFloat(v) : parseFloat(v) * 1000; };
-    COR = { terra: tok("--luz-text"), ouro: tok("--luz-gold"), nucleo: tok("--luz-glow-core"), meio: tok("--luz-glow-mid"), fundo: tok("--luz-bg") };
+    COR = { terra: tok("--terra-mundo"), ativo: tok("--terra-ativo"), ouro: tok("--terra-ouro"), halo: tok("--terra-halo"), meio: tok("--terra-meio"), mar: tok("--terra-mar"), fundo: tok("--terra-fundo") };
     DUR = 2 * (ms("--duration-calm") || 0); BREATH = ms("--duration-breath") || 11000;
   };
 
@@ -71,6 +72,9 @@ export function criarTerra(o) {
 
   const medir = () => { const r = cv.getBoundingClientRect(); if (!r.width) return; dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; R0 = Math.min(W, H) * 0.42; sujo = true; };
   const ro = new ResizeObserver(medir); ro.observe(cv);
+  // O tema do dia muda sozinho (theme-sync): relê as cores quando o body muda de tema.
+  const mo = new MutationObserver(() => { COR = null; sujo = true; });
+  mo.observe(document.body, { attributes: true, attributeFilter: ["data-theme", "class"] });
 
   // Projeção ortográfica: (v.lat, v.lon) fica no centro do círculo.
   function proj(sinLa, cosLa, lo) {
@@ -90,15 +94,15 @@ export function criarTerra(o) {
     const R = R0 * v.zoom, ox = W / 2, oy = H / 2 + v.oy;
     // Atmosfera: um anel dourado só por fora da Terra (o gradiente não pinta o interior).
     const atm = cx.createRadialGradient(ox, oy, R, ox, oy, R * 1.12);
-    atm.addColorStop(0, COR.ouro); atm.addColorStop(1, "transparent");
+    atm.addColorStop(0, COR.halo); atm.addColorStop(1, "transparent");
     cx.globalAlpha = 0.34; cx.fillStyle = atm; cx.beginPath(); cx.arc(ox, oy, R * 1.12, 0, Math.PI * 2); cx.arc(ox, oy, R, 0, Math.PI * 2, true); cx.fill("evenodd");
     // Oceano: um véu dourado e uma luz de cima à esquerda. De perto, o mar volta ao escuro e a terra sobressai.
     const perto = Math.min(1, 1.6 / v.zoom);
-    cx.globalAlpha = 0.22 * perto; cx.fillStyle = COR.ouro; cx.beginPath(); cx.arc(ox, oy, R, 0, Math.PI * 2); cx.fill();
+    cx.globalAlpha = 0.22 * perto; cx.fillStyle = COR.mar; cx.beginPath(); cx.arc(ox, oy, R, 0, Math.PI * 2); cx.fill();
     const mar = cx.createRadialGradient(ox - R * 0.35, oy - R * 0.4, R * 0.1, ox, oy, R);
-    mar.addColorStop(0, COR.nucleo); mar.addColorStop(1, COR.fundo);
+    mar.addColorStop(0, COR.mar); mar.addColorStop(1, "transparent");
     cx.globalAlpha = 0.16 * perto; cx.fillStyle = mar; cx.fill();
-    cx.globalAlpha = 0.5; cx.strokeStyle = COR.ouro; cx.lineWidth = 1; cx.stroke();
+    cx.globalAlpha = 0.5; cx.strokeStyle = COR.halo; cx.lineWidth = 1; cx.stroke();
     if (!T) { cx.globalAlpha = 1; return; }
     // Pontos de terra: o resto do mundo ténue; os países ativos quase brancos.
     const tam = Math.max(1, Math.min(2.6, 1.1 * Math.sqrt(v.zoom))), tamD = Math.max(0.9, Math.min(2.2, 0.55 * Math.sqrt(v.zoom) + 0.3));
@@ -108,7 +112,7 @@ export function criarTerra(o) {
       const k = T.cod[i], pais = T.codigos[k];
       let a = !k ? 0.4 : (paisSel && pais !== paisSel ? 0.55 : (paisSel ? 1 : 0.85));
       if (k && hover && hover.pais === pais) a = 1;
-      cx.globalAlpha = a * (0.35 + 0.65 * c); cx.fillStyle = k ? COR.nucleo : COR.terra;
+      cx.globalAlpha = a * (0.35 + 0.65 * c); cx.fillStyle = k ? COR.ativo : COR.terra;
       const s = k ? tamD : tam; cx.fillRect(x - s / 2, y - s / 2, s, s);
     }
     // Fronteiras em linha.
@@ -126,10 +130,10 @@ export function criarTerra(o) {
       const b = 0.4 + 0.6 * c, sel = ci.id === cidSel, hov = hover && hover.cidade === ci.id;
       if (o.aberta(ci.id)) {
         const g = cx.createRadialGradient(x, y, 0, x, y, 16 + 6 * resp);
-        g.addColorStop(0, COR.meio); g.addColorStop(1, "transparent");
+        g.addColorStop(0, COR.halo); g.addColorStop(1, "transparent");
         cx.globalAlpha = 0.55 * resp * b; cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, 22, 0, Math.PI * 2); cx.fill();
         cx.globalAlpha = b; cx.fillStyle = COR.ouro; cx.beginPath(); cx.arc(x, y, 4.2, 0, Math.PI * 2); cx.fill();
-        cx.fillStyle = COR.nucleo; cx.beginPath(); cx.arc(x, y, 1.8, 0, Math.PI * 2); cx.fill();
+        cx.fillStyle = COR.fundo; cx.beginPath(); cx.arc(x, y, 1.6, 0, Math.PI * 2); cx.fill();
       } else {
         if (paisSel && ci.pais !== paisSel && !sel) continue;
         cx.globalAlpha = (sel || hov ? 1 : 0.9) * b; cx.fillStyle = COR.meio; cx.strokeStyle = COR.fundo; cx.lineWidth = 1.5;
@@ -239,6 +243,6 @@ export function criarTerra(o) {
   return {
     el, escolherPais, escolherCidade, limpar,
     atualizar() { COR = null; sujo = true; },
-    destruir() { vivo = false; ro.disconnect(); el.remove(); }
+    destruir() { vivo = false; ro.disconnect(); mo.disconnect(); el.remove(); }
   };
 }

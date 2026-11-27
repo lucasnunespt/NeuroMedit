@@ -22,7 +22,8 @@ async function carregar() {
     await auth.authStateReady?.();
     if (auth.currentUser) {
       const { membrosAprovados } = await import("./comunidade-dados.js");
-      (await membrosAprovados()).forEach((m) => {
+      // Só quem escolheu um @ (perfil completo) aparece na pesquisa.
+      (await membrosAprovados()).filter((m) => m.usuario).forEach((m) => {
         const ja = mapa.get(m.id) || (m.papel === "admin" ? mapa.get("lucas") : null);
         const fotoCurta = m.foto && m.foto.length < 600 ? m.foto : (m.foto || "");
         if (ja) { ja.usuario = m.usuario || ""; ja.extra += " " + (m.bio || "") + " " + (m.interesses || []).join(" "); return; }

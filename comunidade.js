@@ -290,6 +290,7 @@ function lateral(tela) {
     </nav>
     <div class="com-esq-fim">
       <a class="com-calma" href="index.html">${IC.sol}<span>${t("calma")}<small>${t("calma_s")}</small></span></a>
+      <a class="com-circ com-circ--conta ${tela === "mensagens" || tela === "conversa" ? "is-on" : ""}" href="#mensagens">${IC.conversa}${novasN() ? `<span class="com-dm-num" aria-hidden="true">${novasN()}</span>` : ""}<span>${t("msgs_t")}<small>${novasN() ? esc(t(novasN() === 1 ? "msgs_nova_1" : "msgs_nova_n", { n: novasN() })) : t("msgs_s")}</small></span></a>
       <a class="com-circ com-circ--conta ${tela === "perfil" ? "is-on" : ""}" href="#perfil">${IC.engrenagem}<span>${t("ajustes_t")}<small>${eu.usuario ? "@" + esc(eu.usuario) : t("ajustes_s")}</small></span></a>
       ${eu.professor ? `<details class="com-mais"><summary>${IC.mais}<span>${t("novo_circulo")}</span></summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">${t("nome_circulo")}</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("nome_circulo")}" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="${t("proposito_ph")}" aria-label="${t("proposito_aria")}"><button class="com-opt" type="submit">${IC.mais} ${t("criar_circulo")}</button></form></details>` : ""}
       ${eu.admin ? `<a class="com-circ com-circ--conta ${tela === "gestao" ? "is-on" : ""}" href="#gestao">${IC.engrenagem}<span>${t("gestao")}<small>${pend ? (pend === 1 ? t("pend_1") : t("pend_n", { n: pend })) : t("gestao_s")}</small></span></a>` : ""}
@@ -688,6 +689,46 @@ function mensagens() {
   return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu.uid ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu.uid ? t("voce") : m.nome)}</span><span>${esc(m.texto)}</span>${eu.admin || m.uid === eu.uid || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-mensagem" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
 }
 
+/* ---------- Mensagens diretas ---------- */
+const novasN = () => (S.convs || []).filter((c) => c.novaPara === S.eu?.uid && c.estado !== "bloqueada").length;
+/** Posso escrever a esta pessoa? Depende do que ela escolheu em "Quem me pode escrever". */
+const podeEscrever = (p) => p && p.uid !== S.eu.uid && p.estado === "aprovado" && (!p.quemEscreve || p.quemEscreve === "todos" || (p.quemEscreve === "professores" && S.eu.professor));
+function telaMensagens() {
+  const eu = S.eu.uid;
+  const quem = (c) => S.pessoas.find((m) => m.id === c.membros.find((x) => x !== eu)) || { nome: "", foto: "" };
+  const linha = (c) => { const p = quem(c); const nova = c.novaPara === eu && c.estado !== "bloqueada";
+    const estado = c.estado === "bloqueada" ? t("msg_estado_bloq") : (c.estado === "pedido" && c.de === eu ? t("msg_estado_esp") : "");
+    return `<a class="com-dm-linha ${nova ? "is-nova" : ""}" href="#m=${c.id}">${rosto(p.foto, p.nome)}<span class="com-quem com-quem--larga"><strong>${esc(p.nome || t("papel_membro"))}</strong><span>${esc(estado || c.ultimaTexto || "")}</span></span><span class="com-suave com-peq">${c.ultimaEm ? quando(c.ultimaEm) : ""}</span>${nova ? `<span class="com-dm-ponto" aria-label="${t("msg_nova")}"></span>` : ""}</a>`; };
+  const pedidos = S.convs.filter((c) => c.estado === "pedido" && c.para === eu);
+  const resto = S.convs.filter((c) => !(c.estado === "pedido" && c.para === eu));
+  return `<div class="com-topo"><h1 class="com-h1">${t("msgs_t")}</h1><p class="com-lead">${t("msgs_lead")}</p></div>
+    ${pedidos.length ? `<section class="com-cartao com-novo"><h2 class="com-pessoa-h2">${t("msgs_pedidos")}</h2>${pedidos.map((c) => `<div class="com-dm-pedido">${linha(c)}<div class="com-linha"><button class="com-pri" type="button" data-a="aceitar-conversa" data-v="${c.id}">${t("msg_aceitar")}</button><button class="com-acao" type="button" data-a="bloquear-conversa" data-v="${c.id}">${t("msg_bloquear")}</button></div></div>`).join("")}</section>` : ""}
+    <section class="com-cartao com-novo">${resto.length ? resto.map(linha).join("") : `<p class="com-suave com-centro">${t("msgs_vazio")}</p>`}</section>
+    <p class="com-suave com-peq com-centro">${t("msgs_privacidade")} <a href="#perfil">${t("quem_escreve_l")}</a></p>`;
+}
+function telaConversa() {
+  const c = S.conv, eu = S.eu.uid, o = S.convOutro;
+  if (!c) return `<div class="com-cartao"><h2>${t("msg_nao")}</h2><div class="com-linha"><a class="com-opt" href="#mensagens">${t("msgs_t")}</a></div></div>`;
+  const dentro = c.membros.includes(eu);
+  const pedidoParaMim = c.estado === "pedido" && c.para === eu;
+  const escrevo = dentro && (c.estado === "aberta" || (c.estado === "pedido" && c.de === eu));
+  const menu = dentro ? `<details class="com-menu"><summary aria-label="${t("mais_opcoes")}" title="${t("mais_opcoes")}">${IC.pontos}</summary><div class="com-menu-lista">
+      ${c.estado === "bloqueada" ? (c.bloqueadaPor === eu ? `<button type="button" class="com-acao" data-a="desbloquear-conversa" data-v="${c.id}">${t("msg_desbloquear")}</button>` : "") : `<button type="button" class="com-acao" data-a="bloquear-conversa" data-v="${c.id}">${t("msg_bloquear")}</button>`}
+      ${c.denunciada ? "" : `<button type="button" class="com-acao com-acao--perigo" data-a="denunciar-conversa" data-v="${c.id}">${IC.bandeira}<span>${t("msg_denunciar")}</span></button>`}</div></details>` : "";
+  return `<a class="com-acao com-acao--solta" href="#mensagens">${IC.voltar}<span>${t("msgs_t")}</span></a>
+    <div class="com-linha">${rosto(o?.foto, o?.nome)}<div class="com-quem"><a class="com-nome-link" href="#u=${esc(o?.uid || "")}"><strong>${esc(o?.nome || t("papel_membro"))}</strong></a>${o?.usuario ? `<span>@${esc(o.usuario)}</span>` : ""}</div><span class="com-esp"></span>${menu}</div>
+    ${!dentro ? `<p class="com-aviso-dm">${t("msg_admin_denuncia")}</p>${S.eu.admin ? `<div class="com-linha"><button class="com-opt" type="button" data-a="arquivar-conversa" data-v="${c.id}">${t("msg_arquivar")}</button></div>` : ""}` : ""}
+    ${pedidoParaMim ? `<section class="com-cartao com-cartao--p com-novo"><p>${esc(t("msg_pedido_de", { n: o?.nome || "" }))}</p><div class="com-linha"><button class="com-pri" type="button" data-a="aceitar-conversa" data-v="${c.id}">${t("msg_aceitar")}</button><button class="com-acao" type="button" data-a="bloquear-conversa" data-v="${c.id}">${t("msg_bloquear")}</button></div></section>` : ""}
+    <section class="com-cartao com-conversa" id="com-msgs" aria-label="${t("mensagens")}" aria-live="polite">${mensagensDiretas()}</section>
+    ${escrevo ? `<form class="com-linha" data-f="dm"><label class="com-so-leitor" for="com-dm">${t("mensagem")}</label><input id="com-dm" class="com-campo com-campo--cresce" name="texto" type="text" maxlength="1000" placeholder="${t("msg_ph")}" autocomplete="off" required><button class="com-pri" type="submit" aria-label="${t("enviar")}">${IC.enviar}</button></form>` : ""}
+    <p class="com-suave com-peq">${c.estado === "bloqueada" ? t("msg_estado_bloq_d") : (c.estado === "pedido" && c.de === eu ? t("msg_espera_d") : t("msg_privada_d"))}</p>`;
+}
+function mensagensDiretas() {
+  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
+  const eu = S.eu.uid;
+  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu ? t("voce") : (S.convOutro?.nome || ""))} · ${quando(m.criadoEm)}</span><span>${esc(m.texto)}</span>${m.uid === eu ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-dm" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
+}
+
 function telaGestao() {
   const { membros, convites, denuncias } = S.gestao;
   const pedidos = membros.filter((m) => m.estado === "pendente");
@@ -706,6 +747,7 @@ function telaGestao() {
       ${convites.map((c) => `<div class="com-linha"><span class="com-etq">${c.anfitriao ? esc(t("convite_anf_rot", { c: cidadeDe(c.cidade)?.nome || c.cidade })) : t("convite_espera")}</span><span class="com-suave com-peq">${esc(c.email)}</span><button class="com-acao" type="button" data-a="cancelar-convite" data-v="${esc(c.id)}">${t("cancelar")}</button></div>`).join("")}</section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g3"><h3 id="com-g3">${t("denuncias")}</h3>
       ${denuncias.length ? denuncias.map((p) => `<div class="com-den"><p class="com-texto">${esc(p.texto)}</p><div class="com-linha"><span class="com-suave com-peq">${esc(circ(S.circulos.find((c) => c.id === p.circulo))?.nome || "")} · ${esc(p.anon ? t("sem_nome_de", { n: nomeDe(p.autorUid) || t("autor_desconhecido") }) : p.nome)}</span><span class="com-esp"></span><a class="com-acao" href="#p=${p.id}">${t("abrir")}</a><button class="com-opt" type="button" data-a="manter" data-v="${p.id}">${t("manter")}</button><button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>${t("apagar_partilha")}</span></button></div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_denuncias")}</p>`}</section>
+    ${(S.gestao.conversasDen || []).length ? `<section class="com-cartao com-cartao--p" aria-labelledby="com-g3b"><h3 id="com-g3b">${t("msg_den_t")}</h3>${S.gestao.conversasDen.map((c) => `<div class="com-linha"><span class="com-quem com-quem--larga"><strong>${esc(c.membros.map(nomeDe).filter(Boolean).join(" · ") || t("papel_membro"))}</strong><span>${t("msg_den_por", { n: nomeDe(c.bloqueadaPor) || "" })}</span></span><a class="com-acao" href="#m=${c.id}">${t("abrir")}</a><button class="com-opt" type="button" data-a="arquivar-conversa" data-v="${c.id}">${t("msg_arquivar")}</button></div>`).join("")}</section>` : ""}
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g4"><h3 id="com-g4">${t("membros")}</h3>
       ${dentro.length ? dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><span class="com-etq">${papel(m.papel)}</span><button class="com-acao" type="button" data-a="papel" data-v="${m.id}" data-p="${m.papel === "professor" ? "membro" : "professor"}">${m.papel === "professor" ? t("tornar_membro") : t("tornar_prof")}</button><button class="com-acao com-acao--perigo" type="button" data-a="remover" data-v="${m.id}">${t("remover")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_membros")}</p>`}
       ${fora.length ? `<p class="com-cap">${t("removidos")}</p>${fora.map((m) => `<div class="com-linha"><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><button class="com-acao" type="button" data-a="aprovar" data-v="${m.id}">${t("deixar_voltar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("apagar_ficha")}</button></div>`).join("")}` : ""}</section>`;
@@ -730,7 +772,8 @@ function telaPerfil() {
       ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
       <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a><button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
     <section class="com-cartao com-novo"><h3>${t("privacidade_t")}</h3>
-      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label></section>
+      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label>
+      <div class="com-sel"><label class="com-peq com-suave" for="com-qe">${t("quem_escreve_l")}</label><select id="com-qe" class="com-campo" data-a="quem-escreve">${["todos", "professores", "ninguem"].map((v) => `<option value="${v}" ${eu.quemEscreve === v ? "selected" : ""}>${t("qe_" + v)}</option>`).join("")}</select></div></section>
     ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
@@ -759,7 +802,7 @@ function telaPessoa() {
     <div class="com-linha com-pessoa-meta">${prof ? selo() : ""}${c && mostra ? `<a class="com-acao" href="#cidade=${c.id}">${IC.pin}${esc(c.nome)}</a>` : ""}</div>
     ${p.bio ? `<p class="com-pessoa-bio">${esc(p.bio)}</p>` : ""}
     ${(p.interesses || []).length ? `<div class="com-chips">${interessesDe(p.interesses)}</div>` : ""}
-    <div class="com-linha com-pessoa-meta">${eu ? `<a class="com-opt" href="#perfil">${IC.editar} ${t("editar_perfil")}</a>` : (prof ? botaoSeguir(p.uid) : "")}${v.pro ? `<a class="com-pri" href="perfil.html?p=${encodeURIComponent(p.uid)}">${t("ver_pagina_pro")}</a>` : ""}</div>
+    <div class="com-linha com-pessoa-meta">${eu ? `<a class="com-opt" href="#perfil">${IC.editar} ${t("editar_perfil")}</a>` : `${prof ? botaoSeguir(p.uid) : ""}${podeEscrever(p) ? `<button class="com-opt" type="button" data-a="conversar" data-v="${esc(p.uid)}">${IC.conversa} ${t("msg_enviar")}</button>` : ""}`}${v.pro ? `<a class="com-pri" href="perfil.html?p=${encodeURIComponent(p.uid)}">${t("ver_pagina_pro")}</a>` : ""}</div>
   </section>
   ${(v.proximos || []).length || (v.passados || []).length ? secao(t("pessoa_encontros"), `${(v.proximos || []).length ? `<p class="com-regiao">${t("pessoa_proximos")}</p><ul class="com-pessoa-lista">${v.proximos.map(enc).join("")}</ul>` : ""}${(v.passados || []).length ? `<p class="com-regiao">${t("pessoa_passados")}</p><ul class="com-pessoa-lista com-pessoa-lista--passado">${v.passados.map(enc).join("")}</ul>` : ""}`) : ""}
   ${(v.fotos || []).length ? secao(t("pessoa_fotos"), `<div class="com-pessoa-fotos">${v.fotos.map((f) => `<a href="#p=${f.id}"><img src="${esc(f.imagem)}" alt="${esc((f.texto || "").slice(0, 80))}" loading="lazy"></a>`).join("")}</div>`) : ""}
@@ -860,13 +903,13 @@ function desenhar() {
   if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
   if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); montarGlobo(); return; }
   const { chave } = rota();
-  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", u: "pessoa", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
-  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, pessoa: telaPessoa, cidades: telaCidades, cidade: telaCidade }[tela]();
+  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", u: "pessoa", mensagens: "mensagens", m: "conversa", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
+  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, pessoa: telaPessoa, mensagens: telaMensagens, conversa: telaConversa, cidades: telaCidades, cidade: telaCidade }[tela]();
   app.classList.add("com-pagina--app");
   app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita(tela)}</div>`;
   mostrarPrevia();
   montarGlobo();
-  if (tela === "grupo") rolarConversa();
+  if (tela === "grupo" || tela === "conversa") rolarConversa();
 }
 const rolarConversa = () => { const c = document.getElementById("com-msgs"); if (c) c.scrollTop = c.scrollHeight; };
 
@@ -897,8 +940,8 @@ async function carregarRota() {
         }, () => {});
       }
     } else if (chave === "gestao" && S.eu.admin) {
-      const [membros, convites, denuncias, anfitriao] = await Promise.all([dados.membros(), dados.convites(), dados.denunciadas(), dados.pedidosAnfitriao().catch(() => [])]);
-      S.gestao = { membros, convites, denuncias, anfitriao };
+      const [membros, convites, denuncias, anfitriao, conversasDen] = await Promise.all([dados.membros(), dados.convites(), dados.denunciadas(), dados.pedidosAnfitriao().catch(() => []), dados.conversasDenunciadas().catch(() => [])]);
+      S.gestao = { membros, convites, denuncias, anfitriao, conversasDen };
     } else if (chave === "cidades") {
       if (S.eu.admin) S.pedidosCidade = await dados.pedidosPorCidade().catch(() => ({}));
       S.jaPediAnfitriao = await dados.jaPediAnfitriao();
@@ -926,6 +969,21 @@ async function carregarRota() {
     } else if (chave === "u") {
       S.pessoa = await dados.membro(valor).catch(() => null);
       S.vida = S.pessoa ? await dados.vidaDe(valor, await dados.grupos(S.eu).catch(() => [])).catch(() => null) : null;
+    } else if (chave === "mensagens") {
+      [S.convs, S.pessoas] = await Promise.all([dados.conversas().catch(() => []), dados.membrosAprovados().catch(() => [])]);
+    } else if (chave === "m") {
+      S.conv = await dados.conversa(valor).catch(() => null);
+      S.msgs = [];
+      if (S.conv) {
+        const outro = S.conv.membros.find((x) => x !== S.eu.uid) || S.conv.membros[0];
+        S.convOutro = await dados.membro(outro).catch(() => null);
+        if (S.conv.novaPara === S.eu.uid) { await dados.marcarLida(valor).catch(() => {}); S.conv.novaPara = ""; S.convs = (S.convs || []).map((c) => (c.id === valor ? { ...c, novaPara: "" } : c)); }
+        pararConversa = dados.ouvirConversa(valor, (m) => {
+          S.msgs = m;
+          const caixa = document.getElementById("com-msgs");
+          if (caixa) { caixa.innerHTML = mensagensDiretas(); rolarConversa(); }
+        }, () => {});
+      }
     } else if (chave === "perfil") {
       S.seguidoresN = S.eu.professor ? await dados.contarSeguidores().catch(() => null) : null;
     } else {
@@ -940,6 +998,7 @@ async function carregarRota() {
 async function carregarLados() {
   const [canal, encontros] = await Promise.all([dados.canal().catch(() => []), dados.encontros().catch(() => [])]);
   S.canal = canal; S.encontros = encontros;
+  S.convs = await dados.conversas().catch(() => []);
 }
 async function arrancar(user) {
   S.user = user; S.erro = "";
@@ -1038,6 +1097,14 @@ const ACOES = {
     if (!f) return;
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
+  "quem-escreve": async (_, el) => { if (await tentar(() => dados.guardarQuemEscreve(el.value))) { S.eu.quemEscreve = el.value; aviso(t("a_perfil")); } },
+  conversar: async (v) => { let id = ""; if (await tentar(async () => { id = await dados.abrirConversa(v); }, t("msg_nao_pode")) && id) location.hash = "m=" + id; },
+  "aceitar-conversa": async (v) => { if (await tentar(() => dados.aceitarConversa(v))) { aviso(t("msg_aceite")); await carregarRota(); } },
+  "bloquear-conversa": async (v) => { if (confirm(t("msg_bloquear_q")) && await tentar(() => dados.bloquearConversa(v))) { aviso(t("msg_bloqueada")); await carregarRota(); } },
+  "desbloquear-conversa": async (v) => { if (await tentar(() => dados.desbloquearConversa(v))) await carregarRota(); },
+  "denunciar-conversa": async (v) => { if (confirm(t("msg_denunciar_q")) && await tentar(() => dados.denunciarConversa(v, S.conv?.estado === "bloqueada"))) { aviso(t("msg_denunciada")); await carregarRota(); } },
+  "arquivar-conversa": async (v) => { if (await tentar(() => dados.arquivarDenuncia(v))) await carregarRota(); },
+  "apagar-dm": async (v) => { if (await tentar(() => dados.apagarMensagemDireta(S.conv.id, v))) aviso(t("msg_apagada")); },
   "mostrar-comunidades": async (_, el) => { if (await tentar(() => dados.guardarMostrarComunidades(el.checked))) { S.eu.mostrarComunidades = el.checked; aviso(t("a_perfil")); } },
   "foto-google": () => { S.fotoPerfil = S.eu.fotoGoogle; mostrarFotoPerfil(); },
   foto: async (_, el) => {
@@ -1108,6 +1175,7 @@ const FORMS = {
     if (c && novo && await tentar(() => dados.definirAnfitrioes(c.id, [...(c.anfitrioes || []), novo]))) { S.cidades = await dados.cidades(); aviso(t("a_cidade_aberta", { c: c.nome })); await carregarRota(); }
   },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },
+  dm: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto || !S.conv) return; campo.value = ""; if (await tentar(() => dados.escrever(S.conv, { texto, nome: S.eu.nome }))) { S.conv.ultimaPor = S.eu.uid; } else campo.value = texto; campo.focus(); },
   mensagem: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto) return; campo.value = ""; if (!await tentar(() => dados.enviarMensagem(S.grupo.id, { texto, nome: S.eu.nome }))) campo.value = texto; campo.focus(); },
   canal: async (f) => { const d = new FormData(f); const titulo = d.get("titulo").trim(); if (await tentar(() => dados.publicarNoCanal({ titulo, texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); dados.avisarSeguidores(t("av_seg_aviso", { n: S.eu.nome, a: titulo }), "comunidade.html"); } },
   "pedir-anfitriao": async (f) => {

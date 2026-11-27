@@ -250,18 +250,40 @@ details.com-mais summary:focus-visible { outline: 2px solid var(--accent-dark); 
 /* ---------- Respostas, conversa, denúncias, encontros ---------- */
 .com-resp { display: flex; gap: 0.75rem; padding: 0.25rem 0.5rem 0.25rem 1.5rem; }
 .com-conversa { gap: 0.6rem; min-height: 320px; max-height: 60vh; overflow-y: auto; }
+/* Bolhas de conversa (nov 2026): as minhas à direita, na cor de destaque; as dos outros à esquerda. */
+.com-conversa { gap: 0.2rem; padding: 1rem 0.9rem; background: var(--bg-soft); }
+.com-dia { align-self: center; margin: 0.75rem 0 0.4rem; }
+.com-dia span { display: inline-block; padding: 0.25rem 0.75rem; border-radius: var(--radius-pill); background: var(--surface-strong);
+  border: 1px solid var(--line); color: var(--text-soft); font-size: 0.78rem; }
 .com-msg {
   position: relative;
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
   align-self: flex-start;
   max-width: 78%;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem 0.4rem;
+  border-radius: var(--radius-lg);
   background: var(--surface-strong);
+  border: 1px solid var(--line);
+  color: var(--text);
   overflow-wrap: anywhere;
+  cursor: default;
 }
-.com-msg.is-minha { align-self: flex-end; border: 1px solid var(--line); background: var(--surface); }
+.com-msg.is-primeira { margin-top: 0.45rem; border-top-left-radius: var(--radius-sm); }
+.com-msg.is-minha { align-self: flex-end; background: var(--accent); border-color: var(--accent); color: var(--button-text); }
+.com-msg.is-minha.is-primeira { border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-sm); }
+.com-msg-nome { color: var(--accent-dark); font-size: 0.8rem; font-weight: 600; }
+.com-msg-texto { line-height: 1.45; }
+.com-msg-hora { float: right; margin: 0.35rem 0 -0.15rem 0.75rem; font-size: 0.7rem; line-height: 1.6; opacity: 0.7; white-space: nowrap; }
+.com-msg[data-a] { cursor: pointer; }
+.com-msg-apagar { display: none; position: absolute; top: 50%; transform: translateY(-50%); right: calc(100% + 0.35rem);
+  place-items: center; width: 32px; height: 32px; padding: 0; border-radius: var(--radius-pill);
+  border: 1px solid var(--line); background: var(--surface); color: var(--exit); cursor: pointer; }
+.com-msg:not(.is-minha) .com-msg-apagar { right: auto; left: calc(100% + 0.35rem); }
+.com-msg-apagar svg { width: 16px; height: 16px; }
+.com-msg.is-acoes .com-msg-apagar, .com-msg:focus-within .com-msg-apagar { display: grid; }
+@media (hover: hover) { .com-msg:hover .com-msg-apagar { display: grid; } }
 .com-den,
 .com-enc { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.4rem 0; }
 

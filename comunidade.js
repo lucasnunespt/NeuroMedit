@@ -711,9 +711,42 @@ function telaGrupo() {
       ${fora.length ? `<form class="com-linha com-linha--base" data-f="por-no-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-pg">${t("incluir")}</label><select id="com-pg" class="com-campo" name="pessoa">${fora.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("")}</select></div><button class="com-opt" type="submit">${t("incluir_btn")}</button></form>` : ""}</section>` : ""}`;
 }
 function mensagens() {
-  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
   const g = S.grupo, eu = S.eu;
-  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu.uid ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu.uid ? t("voce") : m.nome)}</span><span>${esc(m.texto)}</span>${eu.admin || m.uid === eu.uid || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-mensagem" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
+  return bolhas(S.msgs, { nome: (m) => m.nome || "", apagar: (m) => eu.admin || m.uid === eu.uid || g.criador === eu.uid, acao: "apagar-mensagem", grupo: true });
+}
+/* ---------- Bolhas de conversa (nov 2026), como no WhatsApp e no Instagram ----------
+   As minhas à direita, na cor de destaque; as dos outros à esquerda, na superfície.
+   Separador por dia, hora dentro da bolha, nome só na primeira de uma sequência (em grupos).
+   Apagar: toca-se na própria bolha e aparece o caixote (no computador, ao passar o rato). */
+function bolhas(msgs, { nome, apagar, acao, grupo }) {
+  if (!msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
+  const eu = S.eu.uid;
+  const lingua = document.documentElement.lang || "pt-BR";
+  const ms = (x) => (x?.toMillis ? x.toMillis() : 0);
+  const dia = (m) => { const d = ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date(); return d.toDateString(); };
+  const rotuloDia = (m) => {
+    const d = ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date();
+    const hoje = new Date(); const ontem = new Date(Date.now() - 86400000);
+    if (d.toDateString() === hoje.toDateString()) return t("hoje");
+    if (d.toDateString() === ontem.toDateString()) return t("ontem");
+    return d.toLocaleDateString(lingua, { day: "numeric", month: "long" });
+  };
+  const hora = (m) => (ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date()).toLocaleTimeString(lingua, { hour: "2-digit", minute: "2-digit" });
+  let out = "", diaAnt = "", quemAnt = "";
+  msgs.forEach((m) => {
+    const d = dia(m);
+    if (d !== diaAnt) { out += `<p class="com-dia"><span>${esc(rotuloDia(m))}</span></p>`; diaAnt = d; quemAnt = ""; }
+    const minha = m.uid === eu;
+    const primeira = m.uid !== quemAnt;
+    quemAnt = m.uid;
+    const podeApagar = apagar(m);
+    out += `<div class="com-msg ${minha ? "is-minha" : ""} ${primeira ? "is-primeira" : ""}"${podeApagar ? ` data-a="msg-acoes" tabindex="0"` : ""}>
+      ${grupo && !minha && primeira ? `<span class="com-msg-nome">${esc(nome(m))}</span>` : ""}
+      <span class="com-msg-texto">${esc(m.texto)}<span class="com-msg-hora" aria-label="${esc(hora(m))}">${esc(hora(m))}</span></span>
+      ${podeApagar ? `<button class="com-msg-apagar" type="button" data-a="${acao}" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}
+    </div>`;
+  });
+  return out;
 }
 
 /* ---------- Mensagens diretas ---------- */
@@ -751,9 +784,7 @@ function telaConversa() {
     <p class="com-suave com-peq">${c.estado === "bloqueada" ? t("msg_estado_bloq_d") : (c.estado === "pedido" && c.de === eu ? t("msg_espera_d") : t("msg_privada_d"))}</p>`;
 }
 function mensagensDiretas() {
-  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
-  const eu = S.eu.uid;
-  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu ? t("voce") : (S.convOutro?.nome || ""))} · ${quando(m.criadoEm)}</span><span>${esc(m.texto)}</span>${m.uid === eu ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-dm" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
+  return bolhas(S.msgs, { nome: () => S.convOutro?.nome || "", apagar: (m) => m.uid === S.eu.uid, acao: "apagar-dm", grupo: false });
 }
 
 function telaGestao() {
@@ -1155,6 +1186,7 @@ const ACOES = {
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
   "tirar-apoio": async () => { if (confirm(t("apoio_tirar_q")) && await tentar(() => dados.tirarApoio())) { S.apoio = null; desenhar(); } },
+  "msg-acoes": (_, el) => { const on = !el.classList.contains("is-acoes"); app.querySelectorAll(".com-msg.is-acoes").forEach((x) => x.classList.remove("is-acoes")); el.classList.toggle("is-acoes", on); },
   "abrir-lugares": () => { S.esqAberta = true; desenhar(); app.querySelector('[data-a="fechar-lugares"]')?.focus(); },
   "fechar-lugares": () => { S.esqAberta = false; desenhar(); app.querySelector('[data-a="abrir-lugares"]')?.focus(); },
   "quem-escreve": async (_, el) => { if (await tentar(() => dados.guardarQuemEscreve(el.value))) { S.eu.quemEscreve = el.value; aviso(t("a_perfil")); } },

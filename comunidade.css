@@ -822,3 +822,34 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 .com-pais-dentro { padding: 0 0.6rem 0.75rem; }
 .com-regiao { margin: 0.75rem 0.6rem 0.2rem; color: var(--accent-dark); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .com-cidade.is-marcada { background: var(--surface-strong); box-shadow: inset 3px 0 0 var(--luz-gold); }
+
+/* ---------- Perfil e configurações (nov 2026): @utilizador, uma linha, interesses, foto ---------- */
+.com-perfil-foto { gap: 1rem; flex-wrap: wrap; }
+.com-foto--g { width: 96px; height: 96px; border-radius: var(--radius-pill); }
+.com-foto--xg { width: 128px; height: 128px; border-radius: var(--radius-pill); }
+.com-arroba { display: flex; align-items: center; gap: 0.4rem; }
+.com-arroba > span { color: var(--text-soft); font-size: 1.1rem; }
+.com-arroba .com-campo { flex: 1; }
+.com-interesses { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.25rem 0 0; padding: 0; border: 0; }
+.com-interesses legend { width: 100%; margin-bottom: 0.4rem; padding: 0; font-weight: 600; }
+.com-chip-op { position: relative; }
+.com-chip-op input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.com-chip-op span { display: inline-flex; align-items: center; min-height: 40px; padding: 0 0.95rem; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface-strong); color: var(--text); font-size: 0.92rem; transition: border-color var(--duration-quick) var(--easing-calm); }
+.com-chip-op input:checked + span { border-color: var(--accent-dark); background: var(--accent-light); color: var(--button-text); }
+.com-chip-op input:focus-visible + span { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+.com-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+.com-chip { display: inline-flex; align-items: center; min-height: 32px; padding: 0 0.8rem; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface-strong); color: var(--text-soft); font-size: 0.88rem; }
+.com-pessoa { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; padding-block: 2rem; text-align: center; }
+.com-pessoa .com-h1 { margin: 0.4rem 0 0; }
+.com-pessoa-meta { justify-content: center; }
+.com-pessoa-bio { max-width: 46ch; margin: 0; line-height: 1.6; }
+.com-nome-link { color: inherit; text-decoration: none; }
+.com-nome-link:hover, .com-nome-link:focus-visible { text-decoration: underline; }
+/* "Preciso de calma agora": sempre à mão, no fim da barra lateral; leva ao alívio imediato. */
+.com-calma { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.4rem; padding: 0.7rem 0.85rem; border-radius: var(--radius-md); background: var(--accent-light); color: var(--button-text); text-decoration: none; transition: background-color var(--duration-quick) var(--easing-calm); }
+.com-calma:hover { background: var(--accent-light-hover); }
+.com-calma svg { flex: none; width: 20px; height: 20px; }
+.com-calma > span { display: flex; flex-direction: column; gap: 0.1rem; font-weight: 600; }
+.com-pagina .com-calma, .com-pagina .com-calma span, .com-pagina .com-calma small, .com-pagina .com-calma svg { color: var(--button-text); }
+.com-calma small { font-weight: 400; font-size: 0.8rem; }
+.com-calma:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }

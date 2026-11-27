@@ -148,3 +148,20 @@ Quem ainda não entrou vê primeiro uma janela escura da Luz com a **Terra** (co
 - Faixa da home: `faixa-terra.js` desenha o mundo plano em pontos (projeção Equal Earth, áreas verdadeiras) por baixo do convite "Medite com quem está perto de você", que leva à porta. As cidades vêm de `cidades-lista.js`, sem o Firebase.
 - A porta, o mapa de Todas as cidades e a faixa da home seguem o tema do dia (26 nov 2026): cartões `surface`, tipografia da página, botão `com-pri`. As cores da Terra vêm de `--terra-*` em `terra.css` (acento nos temas claros, luz dourada nos escuros).
 - Barras de rolagem (todo o site com `theme-sync.css`): finas, em pílula, cor `text-subtle` (`text-soft` com o cursor), calha transparente.
+
+## Perfil, @utilizador e o caminho da comunidade (27 nov 2026)
+
+Feito nesta fase:
+- **@utilizador único** (`comUsuarios/{nome}` → `uid`; 3–20 letras minúsculas, números, `.` ou `_`). Muda-se num lote: apaga o antigo, cria o novo e atualiza a ficha; as regras verificam as duas pontas.
+- **Perfil e configurações** (`#perfil`): foto própria (quadrado reduzido no navegador, ≤ 30 000 caracteres na ficha) ou a do Google, nome, @, uma linha sobre a pessoa (140), até 6 interesses (meditação, yoga, respiração, ciência, espiritualidade, movimento, terapias), cidade, os meus dados e os cuidados.
+- **Página de cada pessoa** (`#u=uid`): foto, nome, @, selo, cidade, linha, interesses, seguir (professores). Os nomes nas partilhas e nos comentários levam a ela.
+- **"Preciso de calma agora"** no fim da barra lateral: leva ao alívio imediato (index.html).
+- As partilhas e os comentários guardam só fotos curtas (links); uma foto carregada fica no perfil.
+
+Próximas fases (por ordem):
+1. **Mensagens** aluno–professor e aluno–aluno, com pedido de mensagem no primeiro contacto, bloquear e denunciar, e "quem me pode escrever" nas configurações.
+2. **Como estou antes e depois** de cada prática (privado, ligado às sessões) e o meu padrão ao longo das semanas.
+3. **Barra "Próximos eventos"**: encontros da comunidade e eventos de bem-estar submetidos por anfitriões e professores, aprovados pelo Lucas; **um espaço patrocinado** discreto, marcado, só de bem-estar.
+4. **Horas calmas** (avisos num resumo), **parceiro de prática**, **respirar juntos agora**, **pergunta da semana** nos círculos.
+5. **Opiniões escritas** sobre professores e encontros, **perguntas ao professor**, **"a ciência por trás"** de cada prática, **traduzir com um toque**.
+6. Negócio: comissão nas reservas e encontros pagos, plano para profissionais.

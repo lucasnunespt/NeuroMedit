@@ -15,8 +15,8 @@ let todas = null;
 async function carregar() {
   const [lucas, pros] = await Promise.all([lerPerfil().catch(() => null), prosAprovados().catch(() => [])]);
   const mapa = new Map();
-  if (lucas?.nome) mapa.set("lucas", { nome: lucas.nome, sub: lucas.profissao || "", cidade: lucas.cidade || "", foto: lucas.foto || "", href: comPro("perfil.html", ""), pro: true, extra: "" });
-  pros.filter((p) => p.perfil?.nome).forEach((p) => mapa.set(p.id, { nome: p.perfil.nome, sub: p.perfil.profissao || "", cidade: p.perfil.cidade || "", foto: p.perfil.foto || "", href: comPro("perfil.html", p.id), pro: true, extra: p.perfil.area || "" }));
+  if (lucas?.nome) mapa.set("lucas", { nome: lucas.nome, sub: lucas.profissao || "", cidade: lucas.cidade || "", foto: lucas.foto || "", href: comPro("perfil.html", ""), pro: true, usuario: lucas.usuario || "", extra: "" });
+  pros.filter((p) => p.perfil?.nome).forEach((p) => mapa.set(p.id, { nome: p.perfil.nome, sub: p.perfil.profissao || "", cidade: p.perfil.cidade || "", foto: p.perfil.foto || "", href: comPro("perfil.html", p.id), pro: true, usuario: p.perfil.usuario || "", extra: p.perfil.area || "" }));
   // Membros da comunidade: só quem já é membro os pode ler. Para os outros, a consulta falha em silêncio.
   try {
     await auth.authStateReady?.();
@@ -24,7 +24,7 @@ async function carregar() {
       const { membrosAprovados } = await import("./comunidade-dados.js");
       // Só quem escolheu um @ (perfil completo) aparece na pesquisa.
       (await membrosAprovados()).filter((m) => m.usuario).forEach((m) => {
-        const ja = mapa.get(m.id) || (m.papel === "admin" ? mapa.get("lucas") : null);
+        const ja = mapa.get(m.id) || (lucas?.uid && lucas.uid === m.id ? mapa.get("lucas") : null);
         const fotoCurta = m.foto && m.foto.length < 600 ? m.foto : (m.foto || "");
         if (ja) { ja.usuario = m.usuario || ""; ja.extra += " " + (m.bio || "") + " " + (m.interesses || []).join(" "); return; }
         mapa.set(m.id, { nome: m.nome || "", sub: m.usuario ? "@" + m.usuario : "", cidade: "", foto: fotoCurta, href: `comunidade.html#u=${encodeURIComponent(m.id)}`, pro: m.papel === "professor" || m.papel === "admin", usuario: m.usuario || "", extra: (m.bio || "") + " " + (m.interesses || []).join(" ") });

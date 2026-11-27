@@ -780,7 +780,7 @@ function telaPerfil() {
       <label for="com-pb">${t("bio_l")}</label><input id="com-pb" class="com-campo" name="bio" type="text" maxlength="140" value="${esc(eu.bio)}" placeholder="${t("bio_ph")}">
       <fieldset class="com-interesses"><legend>${t("interesses_l")}</legend>${dados.INTERESSES.map((i) => `<label class="com-chip-op"><input type="checkbox" name="interesses" value="${i}" ${eu.interesses.includes(i) ? "checked" : ""}><span>${t("int_" + i)}</span></label>`).join("")}</fieldset>
       ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
-      <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a><button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
+      <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a>${eu.professor || eu.admin ? `<a class="com-acao" href="painel.html">${t("editar_pro")}</a>` : ""}<button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
     <section class="com-cartao com-novo"><h3>${t("privacidade_t")}</h3>
       <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label>
       <div class="com-sel"><label class="com-peq com-suave" for="com-qe">${t("quem_escreve_l")}</label><select id="com-qe" class="com-campo" data-a="quem-escreve">${["todos", "professores", "ninguem"].map((v) => `<option value="${v}" ${eu.quemEscreve === v ? "selected" : ""}>${t("qe_" + v)}</option>`).join("")}</select></div></section>
@@ -976,7 +976,18 @@ async function carregarRota() {
           S.cidadeInfo.convites = (await dados.convites().catch(() => [])).filter((cv) => cv.cidade === c.id && cv.anfitriao);
         }
       }
+    } else if (chave === "escrever") {
+      // Vindo do botão "Mensagem" da página de um profissional: abre (ou cria) a conversa.
+      const outro = valor === "lucas" ? (await dados.lerPerfilLucasUid().catch(() => "")) : valor;
+      if (outro && outro !== S.eu.uid) {
+        let id = "";
+        if (await tentar(async () => { id = await dados.abrirConversa(outro); }, t("msg_nao_pode")) && id) { location.replace("#m=" + id); return; }
+      }
+      location.replace("#mensagens"); return;
     } else if (chave === "u") {
+      // Perfil único: quem tem página profissional é visto lá (agenda, depoimentos, comunidade e mensagem).
+      const pagina = await dados.paginaDe(valor).catch(() => "");
+      if (pagina) { location.replace(pagina); return; }
       S.pessoa = await dados.membro(valor).catch(() => null);
       S.vida = S.pessoa ? await dados.vidaDe(valor, await dados.grupos(S.eu).catch(() => [])).catch(() => null) : null;
     } else if (chave === "mensagens") {
@@ -1010,6 +1021,8 @@ async function carregarLados() {
   S.canal = canal; S.encontros = encontros;
   S.convs = await dados.conversas().catch(() => []);
   S.apoio = await dados.lerApoio().catch(() => null);
+  // Perfil único: o @ chega à página profissional (neuromedit.com/@nome), sem esperar por uma nova gravação.
+  if (S.eu.usuario) dados.sincronizarPaginaPro(S.eu, S.eu.usuario).catch(() => {});
 }
 async function arrancar(user) {
   S.user = user; S.erro = "";

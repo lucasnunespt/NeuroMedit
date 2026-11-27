@@ -112,7 +112,7 @@
     }
   </style>
 </head>
-<body>
+<body data-nav-sem-barra>
   <header class="topo">
     <img class="orbe" src="assets/neuromedit-symbol-vector.svg" alt="" width="40" height="40">
     <strong data-nome-pro>Lucas</strong>
@@ -289,15 +289,15 @@
 
     // ---------- navegação por passos (o botão voltar do navegador também funciona)
     const PASSOS = {
-      convite:  { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", progresso: "Passo 1 de 4 · Conhecer", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
+      convite:  { voltar: () => { location.href = comPro("perfil.html", PRO); }, textoVoltar: "Perfil", rotuloVoltar: "Voltar ao perfil", progresso: "Passo 1 de 4 · Conhecer", principal: "Ver dias e horários", acao: () => ir(st.user ? "dias" : "entrar") },
       entrar:   { voltar: "convite", progresso: "Passo 2 de 4 · Sua conta", textoVoltar: "", principal: "Continuar com o Google", google: true, acao: entrar },
       dias:     { voltar: "convite", progresso: "Passo 2 de 4 · Dia e hora", principal: "Continuar", acao: () => ir("detalhes"), ativo: () => st.hora != null },
       detalhes: { voltar: "dias", progresso: "Passo 3 de 4 · Detalhes", principal: "Pedir esta sessão", acao: pedir },
-      feito:    { voltar: "convite", progresso: "Passo 4 de 4 · Pedido enviado", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
-      minhas:   { voltar: "convite", principal: "Marcar outra sessão", acao: () => ir("dias") },
+      feito:    { voltar: () => { location.href = comPro("perfil.html", PRO); }, textoVoltar: "Perfil", rotuloVoltar: "Voltar ao perfil", progresso: "Passo 4 de 4 · Pedido enviado", principal: "Ver as minhas sessões", acao: () => ir("minhas") },
+      minhas:   { voltar: () => { location.href = comPro("perfil.html", PRO); }, textoVoltar: "Perfil", rotuloVoltar: "Voltar ao perfil", principal: "Marcar outra sessão", acao: () => ir("dias") },
       politica: { voltar: "anterior", principal: "Entendi", acao: () => voltarAnterior() },
       contato:  { voltar: "anterior", principal: null },
-      pausa:    { voltar: () => { location.href = "home.html"; }, textoVoltar: "Início", rotuloVoltar: "Voltar ao início do NeuroMedit", principal: null }
+      pausa:    { voltar: () => { location.href = comPro("perfil.html", PRO); }, textoVoltar: "Perfil", rotuloVoltar: "Voltar ao perfil", principal: null }
     };
     function ir(passo) { if (location.hash !== "#" + passo) location.hash = passo; else mostrar(); }
     function voltarAnterior() { ir(st.ultimo && st.ultimo !== location.hash.slice(1) ? st.ultimo : "convite"); }
@@ -635,5 +635,6 @@
       else mostrar();
     });
   </script>
+  <script src="nav-global.js" defer></script>
 </body>
 </html>

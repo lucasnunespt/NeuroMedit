@@ -1267,6 +1267,7 @@ window.NeuroMeditTranslations = {
     com_porta_eyebrow: "Международное сообщество йоги и медитации",
     com_porta_t: "Медитируйте с теми, кто рядом.",
     com_ajustes_t: "Профиль и настройки",
+    com_editar_pro: "Изменить профессиональную страницу (расписание, цены, отзывы)",
     com_apoio_etq: "При поддержке",
     com_apoio_ver: "Подробнее",
     com_apoio_gest_t: "Место для партнёра",

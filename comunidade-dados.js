@@ -125,6 +125,28 @@ export async function guardarPerfilCompleto(eu, { nome, cidade, usuario, bio, in
   }
   lote.update(ref("comMembros", uid()), d);
   await lote.commit();
+  // Perfil único (nov 2026): o @ também vai para a página profissional, para neuromedit.com/@nome a encontrar.
+  if (usuario) await sincronizarPaginaPro(eu, usuario).catch(() => {});
+}
+/** Leva o @ (e, no caso do Lucas, o uid da conta) para a página profissional. */
+export async function sincronizarPaginaPro(eu, usuario) {
+  if (eu.admin) {
+    const s = await getDoc(ref("settings", "perfil"));
+    const d = s.exists() ? s.data() : {};
+    if (d.usuario !== usuario || d.uid !== uid()) await setDoc(ref("settings", "perfil"), { usuario, uid: uid() }, { merge: true });
+    return;
+  }
+  const s = await getDoc(ref("pros", uid()));
+  if (s.exists() && (s.data().perfil || {}).usuario !== usuario) await updateDoc(ref("pros", uid()), { "perfil.usuario": usuario });
+}
+/** A página onde esta pessoa aparece: a profissional (se tiver) ou "" (fica na comunidade). */
+export async function lerPerfilLucasUid() { const s = await getDoc(ref("settings", "perfil")); return s.exists() ? s.data().uid || "" : ""; }
+export async function paginaDe(pessoaUid) {
+  const lucas = await getDoc(ref("settings", "perfil")).catch(() => null);
+  if (lucas?.exists() && lucas.data().uid === pessoaUid) return "perfil.html";
+  const pro = await getDoc(ref("pros", pessoaUid)).catch(() => null);
+  if (pro?.exists() && pro.data().estado === "aprovado") return `perfil.html?p=${encodeURIComponent(pessoaUid)}`;
+  return "";
 }
 /** A ficha de outra pessoa (membros aprovados veem-se uns aos outros). */
 export async function membro(id) {

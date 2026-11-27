@@ -151,6 +151,21 @@ export function iniciarAjustes(raiz) {
     });
   }
 
+  // Sugestões de locais (nov 2026): o que a maioria das pessoas oferece, a um toque.
+  const SUGESTOES = ["Num parque ou ao ar livre", "No meu espaço", "Em sua casa (eu vou até você)", "Num lugar à sua escolha", "Online"];
+  const sugBox = raiz.querySelector("[data-aj-sugestoes]");
+  function pintarSugestoes() {
+    if (!sugBox) return;
+    sugBox.textContent = "";
+    SUGESTOES.filter((n) => !(n in cfg.locais)).forEach((n) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = "+ " + n;
+      b.addEventListener("click", () => { cfg.locais[n] = true; pintarLocais(); pintarSugestoes(); guardar(); });
+      sugBox.append(b);
+    });
+    sugBox.previousElementSibling.hidden = !sugBox.children.length;
+  }
+
   // Adicionar um local novo (ex.: "Em casa do cliente", "Online").
   const novoLocal = raiz.querySelector("[data-aj-local-novo]");
   raiz.querySelector("[data-aj-local-add]")?.addEventListener("click", () => {
@@ -158,7 +173,7 @@ export function iniciarAjustes(raiz) {
     if (!nome || nome in cfg.locais || /[.\/~*\[\]]/.test(nome)) { novoLocal.focus(); return; }
     cfg.locais[nome] = true;
     novoLocal.value = "";
-    pintarLocais(); guardar();
+    pintarLocais(); pintarSugestoes(); guardar();
   });
 
   // ---------- resumo dos preços com desconto
@@ -173,7 +188,7 @@ export function iniciarAjustes(raiz) {
 
   function pintarTudo() {
     raiz.querySelectorAll("[data-aj]").forEach((inp) => { inp.value = cfg[inp.dataset.aj] ?? ""; });
-    pintarSwitch(); pintarDesl(); pintarSemana(); pintarLocais(); resumoPrecos();
+    pintarSwitch(); pintarDesl(); pintarSemana(); pintarLocais(); pintarSugestoes(); resumoPrecos();
   }
 
   (async () => {

@@ -21,8 +21,11 @@ export function iniciarPerfil(raiz, user) {
     clearTimeout(timer);
     timer = setTimeout(async () => {
       try {
+        if (com.eu && com.usuarioNovo) perfil.usuario = com.usuarioNovo;
         await guardarPerfil(perfil, pro);
         estado.textContent = "Guardado.";
+        try { await sincronizarComunidade(); }
+        catch (e) { estado.textContent = com.eu && !com.eu.usuario ? "Guardado. Escolha um @ para a comunidade receber o seu perfil." : "Guardado na sua página; a comunidade não foi atualizada."; }
       } catch (err) {
         estado.textContent = "Não consegui guardar. Tente de novo.";
       }
@@ -205,8 +208,83 @@ export function iniciarPerfil(raiz, user) {
     });
   }
 
+  // ---------- Perfil único: a comunidade recebe o que se edita aqui ----------
+  // Nome, foto (pequena), uma frase do "Sobre", os interesses e o @ vão para a ficha da comunidade,
+  // para a pessoa aparecer igual nas publicações e na sua página. Só para quem já é membro.
+  const com = { d: null, eu: null, usuarioNovo: "", interesses: [] };
+  const caixaCom = raiz.querySelector("[data-pf-comunidade]");
+  const inpUsuario = raiz.querySelector("[data-pf-usuario]");
+  const notaUsuario = raiz.querySelector("[data-pf-usuario-nota]");
+  const ROTULOS = { meditacao: "Meditação", yoga: "Yoga", respiracao: "Respiração", ciencia: "Ciência", espiritualidade: "Espiritualidade", movimento: "Movimento", terapias: "Terapias" };
+  async function prepararComunidade() {
+    try {
+      com.d = await import("./comunidade-dados.js");
+      com.eu = await com.d.carregarEu();
+    } catch (e) { com.eu = null; }
+    if (!com.eu || com.eu.estado !== "aprovado") { com.eu = null; raiz.querySelector("[data-pf-sem-comunidade]")?.removeAttribute("hidden"); return; }
+    caixaCom.hidden = false;
+    inpUsuario.value = com.eu.usuario || "";
+    com.interesses = [...(com.eu.interesses || [])];
+    const box = raiz.querySelector("[data-pf-interesses]");
+    com.d.INTERESSES.forEach((i) => {
+      const lab = document.createElement("label");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = com.interesses.includes(i);
+      cb.addEventListener("change", () => {
+        com.interesses = com.d.INTERESSES.filter((x) => x === i ? cb.checked : com.interesses.includes(x)).slice(0, 6);
+        guardar();
+      });
+      lab.append(cb, document.createTextNode(ROTULOS[i] || i));
+      box.append(lab);
+    });
+    let t2 = null;
+    inpUsuario.addEventListener("input", () => {
+      const v = inpUsuario.value.trim().toLowerCase().replace(/^@/, "");
+      clearTimeout(t2);
+      com.usuarioNovo = "";
+      if (v === (com.eu.usuario || "")) { notaUsuario.textContent = "É o seu @ atual."; return; }
+      if (!com.d.USUARIO_OK.test(v)) { notaUsuario.textContent = "Letras minúsculas, números, ponto e _ (3 a 20)."; return; }
+      notaUsuario.textContent = "A ver se está livre…";
+      t2 = setTimeout(async () => {
+        const livre = await com.d.usuarioLivre(v).catch(() => false);
+        if (inpUsuario.value.trim().toLowerCase().replace(/^@/, "") !== v) return;
+        notaUsuario.textContent = livre ? `neuromedit.com/@${v} está livre. Guarda sozinho.` : "Esse @ já é de outra pessoa.";
+        if (livre) { com.usuarioNovo = v; guardar(); }
+      }, 500);
+    });
+  }
+  /** Foto pequena para a comunidade (a ficha aceita até ~30 000 caracteres). */
+  async function fotoPequena(src) {
+    if (!src) return "";
+    if (src.length <= 29000) return src;
+    try {
+      const img = new Image();
+      await new Promise((ok, erro) => { img.onload = ok; img.onerror = erro; img.src = src; });
+      for (const [lado, q] of [[160, 0.8], [128, 0.75], [112, 0.7]]) {
+        const c = document.createElement("canvas"); c.width = c.height = lado;
+        const k = Math.max(lado / img.width, lado / img.height);
+        c.getContext("2d").drawImage(img, (lado - img.width * k) / 2, (lado - img.height * k) / 2, img.width * k, img.height * k);
+        const url = c.toDataURL("image/jpeg", q);
+        if (url.length <= 29000) return url;
+      }
+    } catch (e) { /* fica sem foto nova */ }
+    return undefined;
+  }
+  /** Uma frase do "Sobre" serve de bio curta (140 caracteres). */
+  const bioDe = (sobre) => { const t = (sobre || "").trim(); if (t.length <= 140) return t; const f = t.slice(0, 140); const p = f.lastIndexOf(". "); return p > 20 ? f.slice(0, p + 1) : f.replace(/\s+\S*$/, "") + "…"; };
+  async function sincronizarComunidade() {
+    if (!com.eu) return;
+    const foto = await fotoPequena(perfil.foto || "");
+    const novo = { nome: (perfil.nome || com.eu.nome || "").slice(0, 60), cidade: com.eu.cidade || "", usuario: com.usuarioNovo || com.eu.usuario || "", bio: bioDe(perfil.sobre), interesses: com.interesses };
+    if (foto !== undefined) novo.foto = foto;
+    if (!novo.nome) return;
+    await com.d.guardarPerfilCompleto(com.eu, novo);
+    com.eu = { ...com.eu, ...novo };
+    if (com.usuarioNovo) { notaUsuario.textContent = `O seu endereço: neuromedit.com/@${com.usuarioNovo}`; com.usuarioNovo = ""; }
+  }
+
   (async () => {
     estado.textContent = "Carregando…";
+    prepararComunidade();
     perfil = (await lerPerfil(pro)) || {};
     raiz.querySelectorAll("[data-pf]").forEach((inp) => { inp.value = perfil[inp.dataset.pf] || ""; });
     estado.textContent = "";

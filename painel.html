@@ -129,6 +129,12 @@
     .aj-sug button { min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px dashed var(--text-muted);
       background: var(--surface); color: var(--text); font: inherit; font-size: 0.92rem; cursor: pointer; }
     .aj-sug button:hover { border-style: solid; }
+    .pf-interesses { border: 0; margin: 0; padding: 0; }
+    .pf-interesses legend { padding: 0; margin-bottom: 8px; }
+    .aj-sug label { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill);
+      border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 0.92rem; cursor: pointer; }
+    .aj-sug label:has(input:checked) { border-color: var(--accent); background: var(--surface-strong); }
+    .aj-sug label input { accent-color: var(--accent); }
     .ag-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
     @media (min-width: 720px) {
       .aj-grelha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -472,6 +478,12 @@
             </div>
           </div>
           <p class="muted" data-pf-foto-nota aria-live="polite">Sem foto, a sua página mostra o símbolo do NeuroMedit.</p>
+          <!-- Perfil único (nov 2026): o @ e os interesses também se editam aqui, e tudo vai para a comunidade. -->
+          <div class="aj-grelha" data-pf-comunidade hidden style="margin-top: 16px;">
+            <label class="aj-campo-rot">O seu @ (neuromedit.com/@…)<input class="aj-campo" type="text" maxlength="20" autocapitalize="none" spellcheck="false" pattern="[a-z0-9._]{3,20}" data-pf-usuario><small data-pf-usuario-nota>Letras minúsculas, números, ponto e _ (3 a 20).</small></label>
+            <fieldset class="aj-campo-rot aj-largo pf-interesses"><legend>Interesses</legend><div class="aj-sug" data-pf-interesses></div></fieldset>
+          </div>
+          <p class="muted" data-pf-sem-comunidade hidden>Para ter um @ e aparecer na comunidade, entre em <a href="comunidade.html">comunidade</a>.</p>
           <div class="conta-links">
             <a class="btn btn--secondary" data-link-perfil href="perfil.html">Ver a minha página</a>
           </div>
@@ -774,6 +786,13 @@
     document.querySelector("[data-entrar]")?.addEventListener("click", () => entrar().catch(() => {}));
     // Ao sair, recarrega: o painel seguinte pode ser de outra pessoa e não pode herdar dados deste.
     document.querySelectorAll("[data-sair]").forEach((b) => b.addEventListener("click", () => sair().finally(() => location.reload())));
+  </script>
+  <script>
+    // Vindo de "Editar o meu perfil" (comunidade): abre os Ajustes já no Perfil público.
+    if (new URLSearchParams(location.search).get("ir") === "perfil") {
+      const ir = () => { const el = document.querySelector("[data-perfil-publico]"); if (el && el.offsetParent) el.scrollIntoView({ block: "start" }); else setTimeout(ir, 300); };
+      setTimeout(ir, 300);
+    }
   </script>
   <script src="nav-global.js" defer></script>
 </body>

@@ -598,15 +598,13 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 }
 @media (max-width: 940px) {
   .com-pagina { padding-top: 1rem; padding-bottom: 8rem; }
-  .com-esq { flex: 1 1 100%; width: 100%; max-width: 100%; }
-  .com-esq .com-novo { padding: 0; }
-  .com-esq .com-cap { display: none; }
-  .com-esq-fim { flex-direction: row; flex-wrap: wrap; gap: 0.5rem; margin-top: 0; padding-top: 0; border-top: 0; }
-  .com-circ--conta small { display: none; }
+  /* Uma linha só no topo; o resto vive no painel "onde estou" (a mesma coluna, aberta por cima da página). */
+  .com-barra-m { display: flex; }
+  .com-esq { display: none; }
+  .com-esq.is-aberta { display: flex; position: fixed; inset: 0; z-index: 70; max-width: none; overflow-y: auto; overscroll-behavior: contain;
+    padding: max(1rem, env(safe-area-inset-top)) var(--gutter) 7rem; background: var(--bg); }
+  .com-esq-topo { display: flex; }
   .com-campo--mini { max-width: none; flex: 1 1 160px; }
-  .com-lista { flex-direction: row; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; }
-  .com-circ { flex: none; padding: 0.55rem 1rem; border: 1px solid var(--line); border-radius: var(--radius-pill); }
-  .com-circ small { display: none; }
   .com-aviso { bottom: 6rem; }
 }
 @media (max-width: 640px) {
@@ -887,3 +885,27 @@ a.com-circ[href="#mensagens"] { position: relative; }
 .com-apoio-etq { margin: 0; color: var(--text-soft); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .com-apoio-t { margin: 0; font-size: 1rem; }
 .com-apoio .com-acao { align-self: flex-start; }
+
+/* ---------- Telemóvel: menos botões à entrada (nov 2026) ----------
+   Uma linha: onde estou ▾ · calma · mensagens · perfil. O resto abre num painel, quando a pessoa o pede. */
+@media (min-width: 941px) { .com-barra-m, .com-esq-topo { display: none; } }
+.com-barra-m { align-items: center; gap: 0.5rem; width: 100%; }
+.com-lugar { flex: 1 1 auto; min-width: 0; display: inline-flex; align-items: center; gap: 0.5rem; min-height: var(--control-height);
+  padding: 0 1rem; border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--surface); color: var(--text);
+  font: inherit; font-weight: 600; cursor: pointer; }
+.com-lugar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.com-lugar svg { flex: none; width: 20px; height: 20px; color: var(--text-soft); }
+.com-lugar .com-lugar-seta { margin-left: auto; }
+.com-barra-ic { position: relative; flex: none; display: grid; place-items: center; width: var(--control-height); height: var(--control-height);
+  border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--surface); color: var(--text); overflow: visible; }
+.com-barra-ic svg { width: 22px; height: 22px; }
+.com-barra-ic img { width: 100%; height: 100%; border-radius: var(--radius-pill); object-fit: cover; }
+.com-barra-ic.is-on { background: var(--surface-strong); border-color: var(--accent); }
+.com-barra-ic--calma { color: var(--accent-dark); }
+.com-barra-ic .com-dm-num { top: -4px; left: auto; right: -4px; }
+.com-esq-topo { align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.25rem; }
+.com-esq-topo .com-sobre { margin: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .com-esq.is-aberta { animation: com-subir var(--duration-calm) var(--easing-calm); }
+}
+@keyframes com-subir { from { opacity: 0; transform: translateY(var(--rise-distance)); } to { opacity: 1; transform: none; } }

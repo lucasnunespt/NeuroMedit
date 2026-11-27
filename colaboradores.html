@@ -66,9 +66,6 @@
   </style>
 </head>
 <body>
-  <header class="topo">
-    <a class="redondo" data-voltar href="home.html" aria-label="Voltar" data-i18n="header_back" data-i18n-attr="aria-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
-  </header>
   <main class="pagina">
     <h1 data-i18n="col_title">Colaboradores</h1>
     <p class="lead" data-i18n="col_lead">Pessoas que oferecem sessões pelo NeuroMedit. Cada perfil foi visto e aprovado antes de aparecer aqui.</p>
@@ -152,11 +149,6 @@
       box.querySelectorAll(".pill").forEach((b) => { b.textContent = nomeForma(b.dataset.forma); });
     });
 
-    // Voltar devolve a pessoa a onde estava. Só vai à home quem chegou aqui de fora do site.
-    document.querySelector("[data-voltar]").addEventListener("click", (ev) => {
-      const veioDaqui = document.referrer && new URL(document.referrer).origin === location.origin;
-      if (veioDaqui && history.length > 1) { ev.preventDefault(); history.back(); }
-    });
   </script>
   <script src="nav-global.js" defer></script>
 </body>

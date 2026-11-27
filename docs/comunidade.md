@@ -187,3 +187,15 @@ Próximas fases (por ordem):
 - Um parceiro de cada vez (`comApoio/atual`), no fim da coluna da direita, sempre marcado como "Apoio · nome". O link leva `rel="sponsored"`.
 - Só o Lucas o põe, muda ou tira, em Gestão → Espaço de apoio. Os membros só leem.
 - Critério: só o que combina com a calma da comunidade (estúdios, retiros, livros, terapias). Nada de anúncios automáticos nem rastreio.
+
+## Menos botões à entrada, no telemóvel (nov 2026)
+
+- Até 940 px, a coluna da esquerda não aparece no topo. Fica **uma linha só**: "onde estou ▾" (o nome do círculo, cidade ou secção), calma (sol), mensagens (com o número de novas) e perfil (a foto).
+- "Onde estou" abre a mesma coluna como painel por cima da página (cidades, círculos, grupos, calma, mensagens, perfil, novo círculo, gestão). Fecha ao escolher um destino, no X ou com Escape.
+- No computador nada muda: a coluna continua à esquerda.
+
+## Perfil editado num só lugar (nov 2026)
+
+- Quem tem página profissional edita o perfil **só no painel** (Ajustes › Perfil público): foto, nome, cidade, o que faz, sobre, @, interesses, depoimentos e moradas. Cada gravação também atualiza a ficha da comunidade (nome, foto pequena, primeira frase do "Sobre" como bio, interesses, @).
+- Na comunidade, "Perfil e configurações" mostra um resumo com "Editar o meu perfil" (→ `painel.html?ir=perfil#ajustes`) e só as definições da comunidade: cidade, privacidade, quem pode escrever, os meus dados.
+- Alunos (sem página profissional) continuam a editar o perfil na comunidade.

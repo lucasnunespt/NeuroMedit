@@ -698,6 +698,12 @@ function telaGrupos() {
 function telaGrupo() {
   const g = S.grupo, eu = S.eu;
   if (!g) return `<div class="com-cartao"><h2>${t("grupo_nao")}</h2><div class="com-linha"><a class="com-opt" href="#grupos">${t("voltar_grupos")}</a></div></div>`;
+  // Grupo aberto em que ainda não estou: só o nome e quantas pessoas, e o convite para entrar.
+  if (g.vitrine && !eu.admin) return `<a class="com-acao com-acao--solta" href="#grupos">${IC.voltar}<span>${t("grupos_t")}</span></a>
+    <section class="com-cartao com-novo com-centro"><span class="com-ic">${IC.conversa}</span><h1 class="com-h2">${esc(g.nome)}</h1>
+      <p class="com-suave">${t("aberto")}${g.n ? ` · ${esc(t(g.n === 1 ? "grupo_n_1" : "grupo_n", { n: g.n }))}` : ""}</p>
+      <p class="com-suave com-peq">${t("grupo_vitrine_d")}</p>
+      <div class="com-linha" style="justify-content:center"><button class="com-pri" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button></div></section>`;
   const dono = eu.admin || g.criador === eu.uid;
   const fora = S.pessoas.filter((m) => !(g.membros || []).includes(m.id));
   const dentro = S.pessoas.filter((m) => (g.membros || []).includes(m.id));
@@ -834,7 +840,7 @@ function telaPerfil() {
       ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
       <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a>${eu.professor || eu.admin ? `<a class="com-acao" href="painel.html">${t("editar_pro")}</a>` : ""}<button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
     <section class="com-cartao com-novo"><h3>${t("privacidade_t")}</h3>
-      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label>
+      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d2")}</small></span></label>
       <div class="com-sel"><label class="com-peq com-suave" for="com-qe">${t("quem_escreve_l")}</label><select id="com-qe" class="com-campo" data-a="quem-escreve">${["todos", "professores", "ninguem"].map((v) => `<option value="${v}" ${eu.quemEscreve === v ? "selected" : ""}>${t("qe_" + v)}</option>`).join("")}</select></div></section>
     ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
@@ -1003,7 +1009,7 @@ async function carregarRota() {
     } else if (chave === "g") {
       S.grupo = await dados.grupo(valor).catch(() => null);
       S.msgs = [];
-      if (S.grupo) {
+      if (S.grupo && !S.grupo.vitrine) {
         if (S.eu.admin || S.grupo.criador === S.eu.uid) S.pessoas = await dados.membrosAprovados().catch(() => []);
         pararConversa = dados.ouvirMensagens(valor, (m) => {
           S.msgs = m;
@@ -1213,8 +1219,8 @@ const ACOES = {
     if (await tentar(() => dados.apagarCirculo(v))) { aviso(t("a_circulo_apagado")); S.circulos = await dados.circulos(); ir("#"); }
   },
   "entrar-grupo": async (v) => { if (await tentar(() => dados.entrarNoGrupo(v))) ir(`#g=${v}`); },
-  "sair-grupo": async (v) => { if (await confirmar({ titulo: t("c_sair_t"), texto: t("c_sair_d"), botao: t("c_sair_b") }) && await tentar(() => dados.sairDoGrupo(v))) ir("#grupos"); },
-  "tirar-do-grupo": async (v) => { if (await tentar(() => dados.tirarDoGrupo(S.grupo.id, v))) await carregarRota(); },
+  "sair-grupo": async (v) => { if (await confirmar({ titulo: t("c_sair_t"), texto: t("c_sair_d"), botao: t("c_sair_b") }) && await tentar(() => dados.sairDoGrupo(v, S.grupo?.tipo || (S.grupos || []).find((g) => g.id === v)?.tipo))) ir("#grupos"); },
+  "tirar-do-grupo": async (v) => { if (await tentar(() => dados.tirarDoGrupo(S.grupo.id, v, S.grupo.tipo))) await carregarRota(); },
   "apagar-grupo": async (v) => {
     const g = S.grupos.find((x) => x.id === v);
     if (!await confirmar({ titulo: t("c_grupo_t"), texto: t("c_grupo_d", { n: g.nome }), botao: t("c_grupo_b"), nome: g.nome })) return;

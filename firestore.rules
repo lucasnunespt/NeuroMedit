@@ -475,9 +475,35 @@ service cloud.firestore {
     function estaNoGrupo(grupoId) {
       return isAdmin() || (ehMembro() && request.auth.uid in grupo(grupoId).membros);
     }
+    // Vitrine dos grupos abertos: nome, cidade, quem criou e quantas pessoas — nunca quem são.
+    // Muda junto com o grupo (no mesmo lote): o número tem de bater com a lista verdadeira.
+    function grupoDepois(grupoId) {
+      return getAfter(/databases/$(database)/documents/comGrupos/$(grupoId)).data;
+    }
+    match /comGruposAbertos/{grupoId} {
+      allow read: if isAdmin() || ehMembro();
+      allow create, update: if isAdmin()
+        || (ehMembro()
+            && existsAfter(/databases/$(database)/documents/comGrupos/$(grupoId))
+            && grupoDepois(grupoId).tipo == 'aberto'
+            && request.resource.data.n == grupoDepois(grupoId).membros.size()
+            && (
+              // Quem criou o grupo escreve a vitrine (nome, cidade, número).
+              (grupoDepois(grupoId).criador == request.auth.uid
+                && request.resource.data.criador == request.auth.uid
+                && request.resource.data.keys().hasOnly(['nome', 'criador', 'n', 'criadoEm', 'cidade'])
+                && textoAte(request.resource.data.nome, 60))
+              // Quem entra ou sai só muda o número.
+              || (resource != null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['n']))
+            ));
+      allow delete: if isAdmin() || (ehMembro() && resource.data.criador == request.auth.uid);
+    }
+
     match /comGrupos/{grupoId} {
+      // Privacidade (nov 2026): a lista de quem está num grupo só a veem os que estão nele.
+      // Os grupos abertos descobrem-se pela vitrine (comGruposAbertos), sem nomes.
       allow read: if isAdmin()
-        || (ehMembro() && (request.auth.uid in resource.data.membros || resource.data.tipo == 'aberto'));
+        || (ehMembro() && request.auth.uid in resource.data.membros);
       allow create: if (ehProfessor() || anfitriaoNoPedido(request.resource.data))
         && request.resource.data.criador == request.auth.uid
         && request.resource.data.tipo in ['privado', 'aberto']

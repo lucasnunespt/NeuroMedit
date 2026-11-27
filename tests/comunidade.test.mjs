@@ -385,3 +385,28 @@ describe("Mensagens diretas", () => {
     await assertSucceeds(getDocs(collection(de(LUCAS), "comConversas", c, "mensagens")));
   });
 });
+
+describe("Privacidade dos grupos (vitrine)", () => {
+  const aberto = (criador, membros) => ({ nome: "Yoga ao nascer do sol", tipo: "aberto", criador, membros, criadoEm: serverTimestamp() });
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (c) => {
+      const db = c.firestore();
+      await setDoc(doc(db, "comGrupos", "g1"), aberto(ANA, [ANA, EVA]));
+      await setDoc(doc(db, "comGruposAbertos", "g1"), { nome: "Yoga ao nascer do sol", criador: ANA, n: 2 });
+    });
+  });
+  test("quem não está no grupo não vê quem está; vê a vitrine", async () => {
+    await assertFails(getDoc(doc(de(RUI), "comGrupos", "g1")));
+    await assertSucceeds(getDoc(doc(de(EVA), "comGrupos", "g1")));
+    await assertSucceeds(getDoc(doc(de(RUI), "comGruposAbertos", "g1")));
+    await assertFails(getDocs(query(collection(de(RUI), "comGrupos"), where("tipo", "==", "aberto"))));
+  });
+  test("entrar muda a lista e o número juntos; o número não mente", async () => {
+    const b = writeBatch(de(RUI));
+    b.update(doc(de(RUI), "comGrupos", "g1"), { membros: arrayUnion(RUI) });
+    b.update(doc(de(RUI), "comGruposAbertos", "g1"), { n: 3 });
+    await assertSucceeds(b.commit());
+    await assertFails(updateDoc(doc(de(RUI), "comGruposAbertos", "g1"), { n: 10 }));
+    await assertFails(updateDoc(doc(de(RUI), "comGruposAbertos", "g1"), { nome: "Outro" }));
+  });
+});

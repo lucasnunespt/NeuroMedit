@@ -18,14 +18,29 @@
   const base = document.currentScript && /^\//.test(document.currentScript.getAttribute("src") || "") ? "/" : "";
 
   const semBarra = document.body.hasAttribute("data-nav-sem-barra");
-  // Sem a barra de baixo, o telemóvel usa o menu do cabeçalho (o bottom-nav.css esconde-o).
-  CSS.filter((h) => !temCss(h) && !(semBarra && h === "bottom-nav.css")).forEach((h) => {
-    const l = document.createElement("link"); l.rel = "stylesheet"; l.href = base + h; document.head.append(l);
-  });
-  // O cabeçalho usa o contentor das outras páginas; aqui só o necessário, com os tokens.
+  const link = (h) => { const l = document.createElement("link"); l.rel = "stylesheet"; l.href = base + h; return l; };
+  const primeiro = document.head.firstChild;
+  // 1) Os tokens do design system antes dos estilos da página: as páginas antigas que não os carregam
+  //    ganham as medidas da barra (largura, alturas, raios) e mantêm as suas próprias cores.
+  if (!temCss("tokens.css")) document.head.insertBefore(link("tokens.css"), primeiro);
+  // 2) O mesmo ponto de partida das outras páginas (o reset e o .container do library.css), só para a navegação,
+  //    também antes dos estilos da página e com a mesma prioridade que lá têm: o header.css continua a mandar.
   const st = document.createElement("style");
-  st.textContent = ".site-header .container{max-width:var(--container);margin:0 auto;padding:0 1.5rem;box-sizing:border-box}@media (max-width:640px){.site-header .container{padding:0 1rem}}.site-header a,.site-header a:hover,.bottom-header a{text-decoration:none}";
-  document.head.append(st);
+  const NAV = ".site-header,.bottom-header,.bottom-back,.bottom-sheet,.bottom-sheet-overlay,.library-search-dock,.library-search-results,.settings-panel,.settings-overlay,.settings-fab";
+  st.textContent = `:where(${NAV}),:where(${NAV}) *{margin:0;padding:0;box-sizing:border-box}:where(${NAV}){font-family:Arial,sans-serif;line-height:1.5}`
+    + ".container:where(.site-header *){max-width:var(--container);margin:0 auto;padding:0 1.5rem}"
+    + "@media (max-width:640px){.container:where(.site-header *){padding:0 1rem}}"
+    + ".site-header{position:sticky;top:0;z-index:20}"
+    + ".site-header a,.site-header a:hover,.bottom-header a{text-decoration:none}";
+  document.head.insertBefore(st, primeiro);
+  // 3) As folhas da navegação, no fim (como nas outras páginas). Sem a barra de baixo, o telemóvel
+  //    usa o menu do cabeçalho (o bottom-nav.css esconde-o).
+  CSS.filter((h) => !temCss(h) && !(semBarra && h === "bottom-nav.css")).forEach((h) => document.head.append(link(h)));
+  // 4) Proteção, no fim: classes com o mesmo nome nas páginas antigas (.brand, .container) não mexem na barra.
+  const prot = document.createElement("style");
+  prot.textContent = ".site-header .brand{letter-spacing:normal;text-transform:none;margin-bottom:0;color:inherit}"
+    + "@media (min-width:641px){.site-header .container{max-width:var(--container)}}";
+  document.head.append(prot);
 
   const tpl = document.createElement("template");
   tpl.innerHTML = CABECALHO.replace(/(src|href)="(?!\/|https?:|#)([^"]+)"/g, (m, a, v) => `${a}="${base}${v}"`);

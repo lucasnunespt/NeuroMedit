@@ -270,13 +270,33 @@ function telaFora() {
     </section></main>`;
 }
 
+/** O nome do lugar onde a pessoa está, para o botão "onde estou" do telemóvel. */
+function lugarAtual(tela) {
+  if (tela === "cidade") return cidadeDe(S.cidadeId)?.nome || t("cid_todas");
+  if (tela === "cidades") return t("cid_todas");
+  if (tela === "circulo" || tela === "partilha") return circ(S.circulos.find((x) => x.id === S.circuloId) || {}).nome || t("circulos");
+  if (tela === "grupos" || tela === "grupo") return t("grupos_t");
+  if (tela === "mensagens" || tela === "conversa") return t("msgs_t");
+  if (tela === "perfil") return t("ajustes_t");
+  if (tela === "gestao") return t("gestao");
+  return t("circulos");
+}
 function lateral(tela) {
   const eu = S.eu;
   const pend = S.gestao.membros.filter((m) => m.estado === "pendente").length;
   // Como a SideNav do design system: destinos em cima, gestão colada ao fundo.
   // O perfil não aparece aqui: vive só no avatar do topo ("Meu perfil na comunidade"), como no Facebook.
   const minha = cidadeDe(eu.cidade);
-  return `<aside class="com-esq" aria-label="${t("lat_aria")}">
+  // Telemóvel (nov 2026): em vez de dez botões no topo, uma linha só — onde estou ▾, calma, mensagens, perfil.
+  // "Onde estou" abre esta mesma coluna como painel, com tudo o resto (cidades, círculos, grupos, novo círculo, gestão).
+  const barra = `<div class="com-barra-m">
+      <button type="button" class="com-lugar" data-a="abrir-lugares" aria-expanded="${S.esqAberta ? "true" : "false"}" aria-controls="com-esq">${IC.pin}<span>${esc(lugarAtual(tela))}</span><svg class="com-lugar-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></button>
+      <a class="com-barra-ic com-barra-ic--calma" href="index.html" aria-label="${t("calma")}" title="${t("calma")}">${IC.sol}</a>
+      <a class="com-barra-ic ${tela === "mensagens" || tela === "conversa" ? "is-on" : ""}" href="#mensagens" aria-label="${t("msgs_t")}" title="${t("msgs_t")}">${IC.conversa}${novasN() ? `<span class="com-dm-num" aria-hidden="true">${novasN()}</span>` : ""}</a>
+      <a class="com-barra-ic ${tela === "perfil" ? "is-on" : ""}" href="#perfil" aria-label="${t("ajustes_t")}" title="${t("ajustes_t")}">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</a>
+    </div>`;
+  return `${barra}<aside class="com-esq ${S.esqAberta ? "is-aberta" : ""}" id="com-esq" aria-label="${t("lat_aria")}">
+    <div class="com-esq-topo"><p class="com-sobre">${t("lugares_t")}</p><button type="button" class="com-acao com-acao--mini" data-a="fechar-lugares" aria-label="${t("fechar")}">${IC.fechar}</button></div>
     ${S.cidades.length ? `<p class="com-cap">${t("cid_cap")}</p>
     <nav class="com-lista" aria-label="${t("cid_cap")}">
       ${minha ? `<a class="com-circ com-circ--conta ${tela === "cidade" && S.cidadeId === minha.id ? "is-on" : ""}" href="#cidade=${minha.id}">${IC.pin}<span>${esc(minha.nome)}<small>${minha.estado === "aberta" ? t("cid_sub_aberta") : t("em_breve")}</small></span></a>`
@@ -770,7 +790,8 @@ function telaPerfil() {
   const eu = S.eu;
   const foto = S.fotoPerfil !== undefined ? S.fotoPerfil : eu.foto;
   return `<div class="com-topo"><p class="com-sobre">${t("ajustes_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
-    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil">
+    ${eu.temFicha && S.minhaPagina ? perfilNoPainel(eu) : ""}
+    ${eu.temFicha && !S.minhaPagina ? `<form class="com-cartao com-novo" data-f="perfil">
       <div class="com-linha com-perfil-foto"><span class="com-foto com-foto--g">${foto ? `<img src="${esc(foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span>
         <div class="com-linha"><label class="com-opt">${IC.foto} ${t("foto_mudar")}<input class="com-so-leitor" type="file" accept="image/*" data-a="foto-perfil"></label>${eu.fotoGoogle && foto !== eu.fotoGoogle ? `<button class="com-acao" type="button" data-a="foto-google">${t("foto_google_usar")}</button>` : ""}</div></div>
       <label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required>
@@ -788,6 +809,16 @@ function telaPerfil() {
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
     <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
+}
+/** Perfil único: quem tem página profissional vê aqui um resumo e edita tudo no painel. Aqui fica só a cidade da comunidade. */
+function perfilNoPainel(eu) {
+  return `<section class="com-cartao com-novo com-perfil-unico">
+      <div class="com-linha"><span class="com-foto com-foto--g">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span>
+        <div class="com-quem com-quem--larga"><strong>${esc(eu.nome)}</strong>${eu.usuario ? `<span>@${esc(eu.usuario)}</span>` : ""}${eu.bio ? `<span>${esc(eu.bio)}</span>` : ""}</div></div>
+      <p class="com-suave com-peq">${t("perfil_unico_d")}</p>
+      <div class="com-linha"><a class="com-pri" href="painel.html?ir=perfil#ajustes">${IC.editar} ${t("perfil_unico_editar")}</a><a class="com-acao" href="${esc(S.minhaPagina)}">${t("ver_publico")}</a></div>
+    </section>
+    ${S.cidades.length ? `<form class="com-cartao com-novo" data-f="cidade-com"><label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select><div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}`;
 }
 /** Troca só a imagem, sem redesenhar o formulário (o que a pessoa já escreveu fica). */
 function mostrarFotoPerfil() {
@@ -1006,6 +1037,8 @@ async function carregarRota() {
         }, () => {});
       }
     } else if (chave === "perfil") {
+      // Quem tem página profissional edita o perfil num só lugar: o painel.
+      S.minhaPagina = await dados.paginaDe(S.eu.uid).catch(() => "");
       S.seguidoresN = S.eu.professor ? await dados.contarSeguidores().catch(() => null) : null;
     } else {
       S.circuloId = chave === "c" && S.circulos.some((c) => c.id === valor) ? valor : (S.circulos[0]?.id || "");
@@ -1122,6 +1155,8 @@ const ACOES = {
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
   "tirar-apoio": async () => { if (confirm(t("apoio_tirar_q")) && await tentar(() => dados.tirarApoio())) { S.apoio = null; desenhar(); } },
+  "abrir-lugares": () => { S.esqAberta = true; desenhar(); app.querySelector('[data-a="fechar-lugares"]')?.focus(); },
+  "fechar-lugares": () => { S.esqAberta = false; desenhar(); app.querySelector('[data-a="abrir-lugares"]')?.focus(); },
   "quem-escreve": async (_, el) => { if (await tentar(() => dados.guardarQuemEscreve(el.value))) { S.eu.quemEscreve = el.value; aviso(t("a_perfil")); } },
   conversar: async (v) => { let id = ""; if (await tentar(async () => { id = await dados.abrirConversa(v); }, t("msg_nao_pode")) && id) location.hash = "m=" + id; },
   "aceitar-conversa": async (v) => { if (await tentar(() => dados.aceitarConversa(v))) { aviso(t("msg_aceite")); await carregarRota(); } },
@@ -1226,6 +1261,11 @@ const FORMS = {
     if (c && email && await tentar(() => dados.convidar(email, { cidade: c.id, anfitriao: true }))) { aviso(t("a_convite_anf", { e: email, c: c.nome })); await carregarRota(); }
   },
   convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(t("a_convite", { e: email })); await carregarRota(); } },
+  "cidade-com": async (f) => {
+    const cidade = new FormData(f).get("cidade") || "";
+    const e = S.eu;
+    if (await tentar(() => dados.guardarPerfilCompleto(e, { nome: e.nome, cidade, usuario: e.usuario, bio: e.bio, interesses: e.interesses }))) { aviso(t("a_perfil")); await recarregar(); }
+  },
   perfil: async (f) => {
     const d = new FormData(f), nome = d.get("nome").trim(), usuario = (d.get("usuario") || "").trim().toLowerCase().replace(/^@/, "");
     if (!nome) return;
@@ -1250,7 +1290,10 @@ app.addEventListener("keydown", (e) => {
   const c = e.target;
   if (e.key === "Enter" && !e.shiftKey && !e.isComposing && c.matches?.(".com-campo--balao") && matchMedia("(hover: hover) and (pointer: fine)").matches) { e.preventDefault(); c.form?.requestSubmit(); }
 });
-window.addEventListener("hashchange", carregarRota);
+window.addEventListener("hashchange", () => { S.esqAberta = false; carregarRota(); });
+// Painel "onde estou" (telemóvel): fecha com Escape e ao escolher um destino (mesmo que seja a página onde já está).
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && S.esqAberta) ACOES["fechar-lugares"](); });
+app.addEventListener("click", (e) => { if (S.esqAberta && e.target.closest(".com-esq.is-aberta a[href]")) { S.esqAberta = false; if (e.target.closest("a").getAttribute("href") === location.hash) desenhar(); } });
 // Ao trocar de língua, redesenha (sem recarregar os dados). Numa conversa aberta, só o que é texto da página muda.
 window.addEventListener("neuromedit:languagechange", () => { if (!document.getElementById("com-confirmar").open) desenhar(); });
 

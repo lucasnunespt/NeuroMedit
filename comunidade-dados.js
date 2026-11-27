@@ -65,6 +65,7 @@ export async function carregarEu() {
     temFicha: Boolean(membro),
     usuario: membro?.usuario || "",
     mostrarComunidades: membro?.mostrarComunidades !== false,
+    quemEscreve: membro?.quemEscreve || "todos",
     bio: membro?.bio || "",
     interesses: membro?.interesses || [],
     fotoGoogle: u.photoURL || "",
@@ -152,6 +153,45 @@ export async function vidaDe(pessoaUid, meusGrupos) {
   };
 }
 export const guardarMostrarComunidades = (sim) => updateDoc(ref("comMembros", uid()), { mostrarComunidades: Boolean(sim) });
+/* ---------- Mensagens diretas (nov 2026) ----------
+   Uma conversa por par de pessoas, com id fixo "uidA_uidB" (ordem alfabética).
+   Começa como "pedido": só quem pediu escreve, até a outra pessoa aceitar.
+   Qualquer um bloqueia; só quem bloqueou desbloqueia. Denunciar bloqueia e deixa o Lucas ler. */
+export const idConversa = (a, b) => (a < b ? `${a}_${b}` : `${b}_${a}`);
+export const QUEM_ESCREVE = ["todos", "professores", "ninguem"];
+export const guardarQuemEscreve = (v) => updateDoc(ref("comMembros", uid()), { quemEscreve: QUEM_ESCREVE.includes(v) ? v : "todos" });
+export async function conversas() {
+  const l = lista(await getDocs(query(col("comConversas"), where("membros", "array-contains", uid()), limit(100))));
+  return l.sort((a, b) => ms(b.ultimaEm) - ms(a.ultimaEm));
+}
+export async function conversa(id) { const s = await getDoc(ref("comConversas", id)); return s.exists() ? { id, ...s.data() } : null; }
+/** Abre (ou cria, como pedido) a conversa com outra pessoa. Devolve o id. */
+export async function abrirConversa(outro) {
+  const id = idConversa(uid(), outro);
+  const ja = await getDoc(ref("comConversas", id)).catch(() => null);
+  if (ja?.exists()) return id;
+  await setDoc(ref("comConversas", id), { membros: [uid(), outro].sort(), de: uid(), para: outro, estado: "pedido", criadoEm: serverTimestamp(), ultimaEm: serverTimestamp() });
+  return id;
+}
+export function ouvirConversa(id, cb, erro) {
+  return onSnapshot(col("comConversas", id, "mensagens"), (s) => cb(lista(s).sort(antigas)), erro);
+}
+export async function escrever(c, { texto, nome }) {
+  const outro = c.membros.find((m) => m !== uid());
+  const t = texto.slice(0, 1000);
+  await addDoc(col("comConversas", c.id, "mensagens"), { uid: uid(), texto: t, criadoEm: serverTimestamp() });
+  await updateDoc(ref("comConversas", c.id), { ultimaEm: serverTimestamp(), ultimaTexto: t.slice(0, 120), ultimaPor: uid(), novaPara: outro }).catch(() => {});
+  // O primeiro pedido avisa a outra pessoa dentro do site.
+  if (c.estado === "pedido" && !c.ultimaPor) await avisar(outro, { tipo: "mensagem", texto: `${(nome || "Alguém").slice(0, 60)} quer conversar com você.`, link: `comunidade.html#m=${c.id}` }).catch(() => {});
+}
+export const apagarMensagemDireta = (conversaId, id) => deleteDoc(ref("comConversas", conversaId, "mensagens", id));
+export const marcarLida = (id) => updateDoc(ref("comConversas", id), { novaPara: "" });
+export const aceitarConversa = (id) => updateDoc(ref("comConversas", id), { estado: "aberta" });
+export const bloquearConversa = (id) => updateDoc(ref("comConversas", id), { estado: "bloqueada", bloqueadaPor: uid() });
+export const desbloquearConversa = (id) => updateDoc(ref("comConversas", id), { estado: "aberta", bloqueadaPor: "" });
+export const denunciarConversa = (id, jaBloqueada) => updateDoc(ref("comConversas", id), jaBloqueada ? { denunciada: true } : { estado: "bloqueada", bloqueadaPor: uid(), denunciada: true });
+export async function conversasDenunciadas() { return lista(await getDocs(query(col("comConversas"), where("denunciada", "==", true), limit(50)))); }
+export const arquivarDenuncia = (id) => updateDoc(ref("comConversas", id), { denunciada: false });
 export async function uidDoUsuario(nome) {
   const s = await getDoc(ref("comUsuarios", nome));
   return s.exists() ? s.data().uid : "";
@@ -516,6 +556,11 @@ export async function exportarOsMeusDados() {
 export async function apagarTudoOQueEMeu() {
   for (const p of await minhasPartilhas().catch(() => [])) await apagarPartilha(p.id).catch(() => {});
   for (const a of await avisos().catch(() => [])) await apagarAviso(a.id).catch(() => {});
+  // As minhas mensagens diretas também saem (a conversa fica, sem o que eu escrevi).
+  for (const c of await conversas().catch(() => [])) {
+    const minhas = await getDocs(query(col("comConversas", c.id, "mensagens"), where("uid", "==", uid()))).catch(() => null);
+    for (const d of minhas?.docs || []) await deleteDoc(d.ref).catch(() => {});
+  }
   await setDoc(ref("users", uid()), { comAnon: [] }, { merge: true }).catch(() => {});
   await deleteDoc(ref("comMembros", uid(), "privado", "contacto")).catch(() => {});
   const ficha = await getDoc(ref("comMembros", uid())).catch(() => null);

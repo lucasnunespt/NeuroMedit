@@ -342,3 +342,46 @@ describe("Vistoria: anfitrião por convite, encontros do anfitrião e denunciar 
     await assertSucceeds(updateDoc(doc(de(LUCAS), "comPartilhas", "p-rui", "respostas", "r9"), { denunciada: false }));
   });
 });
+
+describe("Mensagens diretas", () => {
+  const id = (a, b) => (a < b ? `${a}_${b}` : `${b}_${a}`);
+  const pedido = (deUid, para) => ({ membros: [deUid, para].sort(), de: deUid, para, estado: "pedido", criadoEm: serverTimestamp(), ultimaEm: serverTimestamp() });
+  const msg = (uid, texto = "Olá") => ({ uid, texto, criadoEm: serverTimestamp() });
+  test("um membro pede conversa a outro; quem não é membro não pode", async () => {
+    await assertSucceeds(setDoc(doc(de(RUI), "comConversas", id(RUI, EVA)), pedido(RUI, EVA)));
+    await assertFails(setDoc(doc(de(ZE), "comConversas", id(ZE, EVA)), pedido(ZE, EVA)));
+    await assertFails(setDoc(doc(de(RUI), "comConversas", "outro-id"), pedido(RUI, ANA)));
+    await assertFails(setDoc(doc(de(RUI), "comConversas", id(RUI, ANA)), { ...pedido(RUI, ANA), estado: "aberta" }));
+  });
+  test("respeita «quem me pode escrever»", async () => {
+    await env.withSecurityRulesDisabled((c) => updateDoc(doc(c.firestore(), "comMembros", EVA), { quemEscreve: "professores" }));
+    await assertFails(setDoc(doc(de(RUI), "comConversas", id(RUI, EVA)), pedido(RUI, EVA)));
+    await assertSucceeds(setDoc(doc(de(ANA), "comConversas", id(ANA, EVA)), pedido(ANA, EVA)));
+    await assertFails(updateDoc(doc(de(EVA), "comMembros", EVA), { quemEscreve: "qualquer" }));
+    await assertSucceeds(updateDoc(doc(de(EVA), "comMembros", EVA), { quemEscreve: "ninguem" }));
+  });
+  test("no pedido só quem pediu escreve; depois de aceitar, os dois", async () => {
+    const c = id(RUI, EVA);
+    await assertSucceeds(setDoc(doc(de(RUI), "comConversas", c), pedido(RUI, EVA)));
+    await assertSucceeds(addDoc(collection(de(RUI), "comConversas", c, "mensagens"), msg(RUI)));
+    await assertFails(addDoc(collection(de(EVA), "comConversas", c, "mensagens"), msg(EVA)));
+    await assertFails(updateDoc(doc(de(RUI), "comConversas", c), { estado: "aberta" }));
+    await assertSucceeds(updateDoc(doc(de(EVA), "comConversas", c), { estado: "aberta" }));
+    await assertSucceeds(addDoc(collection(de(EVA), "comConversas", c, "mensagens"), msg(EVA)));
+    await assertFails(getDoc(doc(de(ANA), "comConversas", c)));
+    await assertFails(getDocs(collection(de(LUCAS), "comConversas", c, "mensagens")));
+  });
+  test("bloquear, desbloquear e denunciar", async () => {
+    const c = id(RUI, EVA);
+    await env.withSecurityRulesDisabled((x) => setDoc(doc(x.firestore(), "comConversas", c), { membros: [RUI, EVA].sort(), de: RUI, para: EVA, estado: "aberta" }));
+    await assertSucceeds(updateDoc(doc(de(EVA), "comConversas", c), { estado: "bloqueada", bloqueadaPor: EVA }));
+    await assertFails(addDoc(collection(de(RUI), "comConversas", c, "mensagens"), msg(RUI)));
+    await assertFails(updateDoc(doc(de(RUI), "comConversas", c), { estado: "aberta", bloqueadaPor: "" }));
+    // Quem foi bloqueado não pode "tomar" o bloqueio para depois desbloquear.
+    await assertFails(updateDoc(doc(de(RUI), "comConversas", c), { estado: "bloqueada", bloqueadaPor: RUI }));
+    await assertSucceeds(updateDoc(doc(de(RUI), "comConversas", c), { denunciada: true }));
+    await assertSucceeds(updateDoc(doc(de(EVA), "comConversas", c), { estado: "aberta", bloqueadaPor: "" }));
+    await assertSucceeds(updateDoc(doc(de(RUI), "comConversas", c), { estado: "bloqueada", bloqueadaPor: RUI, denunciada: true }));
+    await assertSucceeds(getDocs(collection(de(LUCAS), "comConversas", c, "mensagens")));
+  });
+});

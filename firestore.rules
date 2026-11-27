@@ -175,6 +175,7 @@ service cloud.firestore {
     //   /comCanal/{id}                     "Dos professores"
     //   /comEncontros/{id}/lugares/{uid}   encontros ao vivo (link do Google Meet)
     //   /comAvisos/{uid}/itens/{id}        avisos dentro do site (no lugar do e-mail)
+    //   /comConversas/{a_b}/mensagens/{id} mensagens diretas entre duas pessoas
     //   /comCidades/{id}                   cidades (Lisboa, Recife…): abertas só com anfitrião
     //   /comPedidosCidade/{cidade_uid}     "quero o NeuroMedit na minha cidade"
     //   /comPedidosAnfitriao/{uid}         "quero ser anfitrião" (só o Lucas lê)
@@ -286,6 +287,7 @@ service cloud.firestore {
         && (!('interesses' in d) || (d.interesses is list && d.interesses.size() <= 6))
         && (!('foto' in d) || (d.foto is string && d.foto.size() <= 30000))
         && (!('mostrarComunidades' in d) || d.mostrarComunidades is bool)
+        && (!('quemEscreve' in d) || d.quemEscreve in ['todos', 'professores', 'ninguem'])
         && (!('usuario' in d) || (d.usuario is string
             && existsAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario))
             && getAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario)).data.uid == uid));
@@ -324,7 +326,7 @@ service cloud.firestore {
       // A pessoa muda o seu nome, foto e preferências; nunca o estado nem o papel. O Lucas muda tudo.
       allow update: if isAdmin()
         || (isDono(uid)
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade', 'usuario', 'bio', 'interesses', 'mostrarComunidades'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade', 'usuario', 'bio', 'interesses', 'mostrarComunidades', 'quemEscreve'])
             && textoAte(request.resource.data.nome, 60)
             && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade))
             && perfilValido(uid))
@@ -514,6 +516,83 @@ service cloud.firestore {
       }
     }
 
+    // ---------------------------------------------------------------------
+    // Mensagens diretas: uma conversa por par (id "uidA_uidB", ordem alfabética).
+    // Começa como pedido (só quem pediu escreve); a outra pessoa aceita ou bloqueia.
+    // Respeita "quem me pode escrever" (comMembros.quemEscreve). O Lucas só lê
+    // as mensagens de uma conversa que alguém denunciou.
+    // ---------------------------------------------------------------------
+    function conversa(id) {
+      return get(/databases/$(database)/documents/comConversas/$(id)).data;
+    }
+    function naConversa(id) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/comConversas/$(id))
+        && request.auth.uid in conversa(id).membros;
+    }
+    function aceitaDeMim(outro) {
+      return exists(/databases/$(database)/documents/comMembros/$(outro))
+        && comMembro(outro).estado == 'aprovado'
+        && (!('quemEscreve' in comMembro(outro))
+            || comMembro(outro).quemEscreve == 'todos'
+            || (comMembro(outro).quemEscreve == 'professores' && ehProfessor()));
+    }
+    match /comConversas/{conversaId} {
+      allow read: if (isSignedIn() && request.auth.uid in resource.data.membros)
+        || (isAdmin() && resource.data.get('denunciada', false) == true);
+      allow create: if ehMembro()
+        && request.resource.data.keys().hasOnly(['membros', 'de', 'para', 'estado', 'criadoEm', 'ultimaEm'])
+        && request.resource.data.de == request.auth.uid
+        && request.resource.data.para != request.auth.uid
+        && request.resource.data.estado == 'pedido'
+        && request.resource.data.membros.size() == 2
+        && request.auth.uid in request.resource.data.membros
+        && request.resource.data.para in request.resource.data.membros
+        && conversaId == (request.auth.uid < request.resource.data.para
+              ? request.auth.uid + '_' + request.resource.data.para
+              : request.resource.data.para + '_' + request.auth.uid)
+        && request.resource.data.criadoEm == request.time
+        && request.resource.data.ultimaEm == request.time
+        && aceitaDeMim(request.resource.data.para);
+      allow update: if isSignedIn() && request.auth.uid in resource.data.membros
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'bloqueadaPor', 'ultimaEm', 'ultimaTexto', 'ultimaPor', 'novaPara', 'denunciada'])
+        && request.resource.data.membros == resource.data.membros
+        && (!('ultimaTexto' in request.resource.data) || request.resource.data.ultimaTexto is string && request.resource.data.ultimaTexto.size() <= 120)
+        && (!('ultimaPor' in request.resource.data.diff(resource.data).affectedKeys()) || request.resource.data.ultimaPor == request.auth.uid)
+        && (!('denunciada' in request.resource.data) || request.resource.data.denunciada is bool)
+        && (
+          // Sem mudar o estado: só o resumo da última mensagem (fora de bloqueio) ou marcar como lida.
+          (request.resource.data.estado == resource.data.estado
+            && !('bloqueadaPor' in request.resource.data.diff(resource.data).affectedKeys())
+            && (resource.data.estado != 'bloqueada'
+                || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['novaPara', 'denunciada'])))
+          // Aceitar o pedido: só quem o recebeu.
+          || (resource.data.estado == 'pedido' && request.resource.data.estado == 'aberta'
+              && resource.data.para == request.auth.uid)
+          // Bloquear: qualquer um dos dois.
+          || (resource.data.estado != 'bloqueada'
+              && request.resource.data.estado == 'bloqueada' && request.resource.data.bloqueadaPor == request.auth.uid)
+          // Desbloquear: só quem bloqueou.
+          || (resource.data.estado == 'bloqueada' && request.resource.data.estado == 'aberta'
+              && resource.data.bloqueadaPor == request.auth.uid)
+        );
+      allow delete: if isAdmin();
+
+      match /mensagens/{mensagemId} {
+        allow read: if naConversa(conversaId)
+          || (isAdmin() && conversa(conversaId).get('denunciada', false) == true);
+        allow create: if naConversa(conversaId)
+          && request.resource.data.keys().hasOnly(['uid', 'texto', 'criadoEm'])
+          && request.resource.data.uid == request.auth.uid
+          && textoAte(request.resource.data.texto, 1000)
+          && request.resource.data.criadoEm == request.time
+          && (conversa(conversaId).estado == 'aberta'
+              || (conversa(conversaId).estado == 'pedido' && conversa(conversaId).de == request.auth.uid));
+        allow update: if false;
+        allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+      }
+    }
+
     // "Dos professores": só professores publicam; todos os membros leem.
     match /comCanal/{avisoId} {
       allow read: if ehMembro();
@@ -576,7 +655,7 @@ service cloud.firestore {
       allow read, delete: if isDono(uid);
       allow create: if (ehMembro() || isAdmin())
         && request.resource.data.keys().hasOnly(['tipo', 'texto', 'link', 'de', 'criadoEm', 'lido'])
-        && request.resource.data.tipo in ['aprovado', 'resposta', 'grupo', 'papel', 'boas-vindas', 'seguindo']
+        && request.resource.data.tipo in ['aprovado', 'resposta', 'grupo', 'papel', 'boas-vindas', 'seguindo', 'mensagem']
         && request.resource.data.de == request.auth.uid
         && textoAte(request.resource.data.texto, 200)
         && request.resource.data.link is string && request.resource.data.link.size() <= 200

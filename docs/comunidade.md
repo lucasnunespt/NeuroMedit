@@ -171,3 +171,13 @@ Próximas fases (por ordem):
 - **Pesquisa** (`bottom-nav.js` + `pesquisa-pessoas.js`): além de práticas e páginas, mostra até 5 pessoas. Profissionais aprovados (públicos) levam a `perfil.html?p=…`; membros da comunidade (nome ou @) só aparecem para quem já é membro, porque as regras só deixam membros ler `comMembros`. Carrega na primeira pesquisa e não atrasa os outros resultados.
 - **Página da pessoa** (`#u=uid`): o que faz (da página profissional), link "Ver página e reservas", encontros próximos e passados, fotos publicadas (partilhas com imagem, não anónimas) e comunidades (cidade e grupos abertos; os privados só se eu também estiver lá).
 - **Privacidade**: em Perfil e configurações, "Mostrar na minha página as comunidades em que estou" (`comMembros.mostrarComunidades`, boolean, por omissão ligado). Desligado, a cidade e os grupos ficam escondidos para os outros.
+
+## Mensagens diretas (nov 2026)
+
+- **Onde:** "Mensagens" na barra lateral (com o número de novas), `#mensagens` (lista e pedidos) e `#m=uidA_uidB` (a conversa). No perfil de cada pessoa, o botão "Mensagem".
+- **Como funciona:** uma conversa por par (`comConversas/{uidA_uidB}`, ordem alfabética). Começa como **pedido**: só quem pediu escreve, e a outra pessoa recebe um aviso no sino. Quem recebe **aceita** ou **bloqueia**. Qualquer um bloqueia; só quem bloqueou desbloqueia; quem foi bloqueado não consegue "tomar" o bloqueio.
+- **Quem me pode escrever** (Perfil e configurações): qualquer membro, só professores ou ninguém (`comMembros.quemEscreve`). As regras verificam-no ao criar a conversa.
+- **Denunciar** bloqueia e marca a conversa. Só então o Lucas a pode ler (em Gestão → Conversas denunciadas), e arquiva a denúncia quando decidir. Fora disso, ninguém além dos dois lê as mensagens.
+- **Apagar os meus dados** também apaga as mensagens que escrevi.
+- **Testes das regras:** em `tests/comunidade.test.mjs` ("Mensagens diretas"). Precisam do emulador (Java + rede Google), que o ambiente do agente não tem.
+- **Pesquisa:** só aparecem membros que escolheram um @.

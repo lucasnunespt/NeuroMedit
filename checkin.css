@@ -1,0 +1,14 @@
+/* checkin.css — "Como você chega?" e a diferença no fim (nov 2026). Só tokens do design system. */
+.checkin { display: grid; gap: 0.5rem; margin: 1.25rem 0 0.25rem; max-width: 26rem; }
+.checkin-q { margin: 0; color: var(--text); font-weight: 600; }
+.checkin-escala { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.4rem; }
+.checkin-ponto, .checkin-opcao { min-height: 44px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); font: inherit; cursor: pointer; transition: background-color var(--duration-quick) var(--easing-calm), border-color var(--duration-quick) var(--easing-calm); }
+.checkin-ponto:hover, .checkin-opcao:hover { border-color: var(--accent); }
+.checkin-ponto[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--button-text); }
+.checkin-ponto:focus-visible, .checkin-opcao:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.checkin-pontas { display: flex; justify-content: space-between; color: var(--text-soft); font-size: 0.85rem; }
+.checkin-nota { margin: 0; color: var(--text-soft); font-size: 0.88rem; line-height: 1.5; }
+.checkin-opcoes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.checkin-opcao { padding: 0 1.1rem; }
+.checkin--fim { padding: 1rem 1.1rem; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }

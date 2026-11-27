@@ -54,6 +54,8 @@
     .linha:last-child { border-bottom: 0; }
     .linha span:last-child { text-align: right; }
     .antes { color: var(--text-soft); text-decoration: line-through; margin-right: 6px; }
+    .dep { padding: 4px 0 12px; border-bottom: 1px solid var(--line); }
+    .dep .btn--link { padding: 0; min-height: 40px; }
     .nota { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--text-soft); }
     .erro { color: var(--exit); }
     .lista-regras { margin: 0; padding-left: 1.2rem; display: grid; gap: 8px; line-height: 1.7; }
@@ -233,7 +235,7 @@
 
   <script type="module">
     import { auth, db, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, doc } from "./firebase-init.js";
-    import { collection, query, where, getDocs, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, query, where, getDocs, getDoc, setDoc, writeBatch, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { lerAjustes, precos, lerAgenda, lerOcupados, horasLivres, chaveDia, pad2, euro, proDaPagina, prefixoSlot, comPro } from "./reservas-dados.js";
     import { lerPerfil } from "./perfil-dados.js";
     // Contas por profissional: ?p=<id> abre a reserva de outro profissional; sem ?p é o Lucas, como sempre.
@@ -525,8 +527,44 @@
         const a = document.createElement("span"); a.textContent = `${q.getDate()} de ${MESES[q.getMonth()]}, ${b.hora}`;
         const c = document.createElement("span"); c.textContent = ESTADO_ANTES[b.estado] || (b.estado === "confirmada" ? "feita" : b.estado);
         l.append(a, c); box.append(l);
+        // Depoimento (nov 2026): só de uma sessão feita, com este profissional, uma vez por sessão.
+        if (["confirmada", "realizada"].includes(b.estado) && (b.proId || "") === PRO) box.append(depoimentoDe(b, `${q.getDate()} de ${MESES[q.getMonth()]}`));
       });
       $("[data-minhas-antes]").hidden = !antes.length;
+    }
+
+    /** "Deixar um depoimento" sobre uma sessão feita. Vai para o profissional aprovar antes de aparecer na página. */
+    function depoimentoDe(b, quando) {
+      const caixa = document.createElement("div"); caixa.className = "dep";
+      const abrir = document.createElement("button"); abrir.type = "button"; abrir.className = "btn btn--link dep-abrir"; abrir.textContent = "Deixar um depoimento";
+      const form = document.createElement("div"); form.className = "empilhar"; form.hidden = true;
+      const rot = document.createElement("label"); rot.className = "rotulo"; rot.textContent = `Como foi a sessão de ${quando}?`;
+      const texto = document.createElement("textarea"); texto.className = "campo"; texto.rows = 3; texto.maxLength = 300;
+      texto.style.padding = "12px 16px"; texto.style.minHeight = "0"; rot.append(texto);
+      const rotN = document.createElement("label"); rotN.className = "rotulo"; rotN.textContent = "Como quer assinar";
+      const nome = document.createElement("input"); nome.className = "campo"; nome.maxLength = 40;
+      const partes = (st.user.displayName || "").trim().split(/\s+/);
+      nome.value = partes.length > 1 ? `${partes[0]} ${partes[partes.length - 1][0]}.` : (partes[0] || "");
+      rotN.append(nome);
+      const nota = document.createElement("p"); nota.className = "nota"; nota.textContent = "Aparece na página depois de aprovado. Só com as suas palavras, e pode apagá-lo quando quiser.";
+      const enviar = document.createElement("button"); enviar.type = "button"; enviar.className = "btn btn--primary"; enviar.textContent = "Enviar depoimento";
+      const estado = document.createElement("p"); estado.className = "nota"; estado.setAttribute("aria-live", "polite");
+      form.append(rot, rotN, nota, enviar);
+      caixa.append(abrir, form, estado);
+      const ref = doc(db, "depoimentos", b.id);
+      getDoc(ref).then((s) => { if (s.exists()) { abrir.hidden = true; estado.textContent = s.data().estado === "pendente" ? "Depoimento enviado. Obrigado!" : ""; } }).catch(() => {});
+      abrir.addEventListener("click", () => { form.hidden = !form.hidden; if (!form.hidden) texto.focus(); });
+      enviar.addEventListener("click", async () => {
+        const t = texto.value.trim(), n = nome.value.trim();
+        if (t.length < 10) { estado.textContent = "Escreva um pouco mais, por favor."; texto.focus(); return; }
+        if (!n) { nome.focus(); return; }
+        enviar.disabled = true;
+        try {
+          await setDoc(ref, { bookingId: b.id, proId: b.proId || "", userId: st.user.uid, nome: n, texto: t, criadoEm: serverTimestamp(), estado: "pendente" });
+          form.hidden = true; abrir.hidden = true; estado.textContent = "Depoimento enviado. Obrigado!";
+        } catch (e) { enviar.disabled = false; estado.textContent = "Não consegui enviar agora. Tente de novo."; }
+      });
+      return caixa;
     }
 
     async function desenharMinhas() {

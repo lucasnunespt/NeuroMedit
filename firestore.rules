@@ -62,6 +62,32 @@ service cloud.firestore {
       return b.estado in ['libertada', 'reembolsada']
         || (b.estado == 'cancelada' && !(b.get('reembolsoPedido', false) == true && b.get('reembolsoFeito', false) != true));
     }
+    // ---------- Depoimentos escritos por quem teve a sessão (nov 2026) ----------
+    // Um por reserva (id = id da reserva), só de quem a fez, numa sessão confirmada ou feita.
+    // Fica "pendente": o profissional aprova (copia para o seu perfil) ou recusa (apaga).
+    match /depoimentos/{reservaId} {
+      function reserva() {
+        return get(/databases/$(database)/documents/bookings/$(reservaId)).data;
+      }
+      allow read: if isAdmin()
+        || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.proId == request.auth.uid));
+      allow create: if isSignedIn()
+        && exists(/databases/$(database)/documents/bookings/$(reservaId))
+        && reserva().userId == request.auth.uid
+        && reserva().estado in ['confirmada', 'realizada']
+        && request.resource.data.keys().hasOnly(['bookingId', 'proId', 'userId', 'nome', 'texto', 'criadoEm', 'estado'])
+        && request.resource.data.bookingId == reservaId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.proId == reserva().get('proId', '')
+        && request.resource.data.estado == 'pendente'
+        && request.resource.data.nome is string && request.resource.data.nome.size() > 0 && request.resource.data.nome.size() <= 40
+        && request.resource.data.texto is string && request.resource.data.texto.size() >= 10 && request.resource.data.texto.size() <= 300
+        && request.resource.data.criadoEm == request.time;
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.proId == request.auth.uid));
+    }
+
     match /bookings/{bookingId} {
       allow read: if isAdmin()
         || isProDoPedido(resource.data)

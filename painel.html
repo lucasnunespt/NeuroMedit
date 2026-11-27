@@ -129,6 +129,9 @@
     .aj-sug button { min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px dashed var(--text-muted);
       background: var(--surface); color: var(--text); font: inherit; font-size: 0.92rem; cursor: pointer; }
     .aj-sug button:hover { border-style: solid; }
+    .dep-pend { display: grid; gap: 10px; margin: 12px 0 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--accent); background: var(--surface-strong); }
+    .dep-pend blockquote { margin: 0; color: var(--text); line-height: 1.6; }
+    .dep-pend .dep-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
     .pf-interesses { border: 0; margin: 0; padding: 0; }
     .pf-interesses legend { padding: 0; margin-bottom: 8px; }
     .aj-sug label { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill);
@@ -491,6 +494,7 @@
         <div class="card">
           <p class="aj-titulo">Depoimentos</p>
           <p class="muted">O que as pessoas escreveram sobre as suas <span data-t="pl">sessões</span>. Só palavras reais, e só com a autorização de quem as escreveu. Aparecem na sua página pública.</p>
+          <div class="dep-pend" data-pf-dep-pendentes hidden></div>
           <div data-pf-depoimentos></div>
           <div class="aj-grelha" style="margin-top: 16px;">
             <label class="aj-campo-rot aj-largo">O que escreveram<textarea class="campo-texto" rows="3" maxlength="300" data-dep-texto></textarea></label>

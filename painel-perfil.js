@@ -9,7 +9,7 @@ import { lerAjustes } from "./reservas-dados.js";
 import { proPainel } from "./conta-pro.js";
 import { AREAS, aplicarTermos } from "./termos.js";
 import { db } from "./firebase-init.js";
-import { collection, query, where, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 export function iniciarPerfil(raiz, user) {
   if (!raiz) return;
@@ -203,6 +203,38 @@ export function iniciarPerfil(raiz, user) {
     });
   }
 
+  // ---------- Perguntas na página (nov 2026): responder ou apagar ----------
+  const caixaPerg = raiz.querySelector("[data-pf-perguntas]");
+  async function pintarPerguntas() {
+    if (!caixaPerg) return;
+    let lista = [];
+    try { lista = (await getDocs(query(collection(db, "perguntas"), where("proId", "==", pro), where("respondida", "==", false)))).docs.map((d) => ({ id: d.id, ...d.data() })); }
+    catch (e) { lista = []; }
+    caixaPerg.textContent = "";
+    if (!lista.length) { const p = document.createElement("p"); p.className = "muted"; p.textContent = "Nenhuma pergunta à espera."; caixaPerg.append(p); return; }
+    lista.forEach((q) => {
+      const item = document.createElement("div"); item.className = "perg-item";
+      const perg = document.createElement("p"); perg.textContent = `«${q.texto}» — ${q.nome}`;
+      const lab = document.createElement("label"); lab.className = "aj-campo-rot"; lab.textContent = "A sua resposta";
+      const txt = document.createElement("textarea"); txt.className = "campo-texto"; txt.rows = 3; txt.maxLength = 600; lab.append(txt);
+      const acoes = document.createElement("div"); acoes.className = "dep-acoes";
+      const resp = document.createElement("button"); resp.type = "button"; resp.className = "btn btn--primary"; resp.textContent = "Responder e mostrar na página";
+      const apagar = document.createElement("button"); apagar.type = "button"; apagar.className = "btn btn--secondary"; apagar.textContent = "Apagar";
+      const nota = document.createElement("p"); nota.className = "ag-estado"; nota.setAttribute("aria-live", "polite");
+      resp.addEventListener("click", async () => {
+        const r = txt.value.trim();
+        if (!r) { txt.focus(); return; }
+        resp.disabled = true;
+        try { await updateDoc(doc(db, "perguntas", q.id), { resposta: r, respondida: true, respondidaEm: serverTimestamp() }); pintarPerguntas(); }
+        catch (e) { resp.disabled = false; nota.textContent = "Não consegui guardar. Tente de novo."; }
+      });
+      apagar.addEventListener("click", async () => { if (!confirm("Apagar esta pergunta?")) return; await deleteDoc(doc(db, "perguntas", q.id)).catch(() => {}); pintarPerguntas(); });
+      acoes.append(resp, apagar);
+      item.append(perg, lab, acoes, nota);
+      caixaPerg.append(item);
+    });
+  }
+
   depAdd?.addEventListener("click", () => {
     if (!perfil) return;
     const texto = depTexto.value.trim();
@@ -328,5 +360,6 @@ export function iniciarPerfil(raiz, user) {
     pintarDepoimentos();
     pintarMoradas();
     pintarPendentes();
+    pintarPerguntas();
   })();
 }

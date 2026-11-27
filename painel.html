@@ -132,6 +132,10 @@
     .dep-pend { display: grid; gap: 10px; margin: 12px 0 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--accent); background: var(--surface-strong); }
     .dep-pend blockquote { margin: 0; color: var(--text); line-height: 1.6; }
     .dep-pend .dep-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dep-pend-lista { display: grid; gap: 14px; margin-top: 12px; }
+    .perg-item { display: grid; gap: 8px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+    .perg-item p { margin: 0; }
+    .perg-item .dep-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
     .pf-interesses { border: 0; margin: 0; padding: 0; }
     .pf-interesses legend { padding: 0; margin-bottom: 8px; }
     .aj-sug label { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill);
@@ -503,6 +507,12 @@
           </div>
           <button type="button" class="btn btn--secondary" style="margin-top: 12px;" data-dep-add>Adicionar depoimento</button>
           <p class="ag-estado" data-dep-erro aria-live="polite"></p>
+        </div>
+
+        <div class="card">
+          <p class="aj-titulo">Perguntas na sua página</p>
+          <p class="muted">Quem visita a sua página pode fazer uma pergunta. Ela só aparece a todos depois de você responder.</p>
+          <div class="dep-pend-lista" data-pf-perguntas></div>
         </div>
 
         <div class="card">

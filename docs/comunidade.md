@@ -199,3 +199,17 @@ Próximas fases (por ordem):
 - Quem tem página profissional edita o perfil **só no painel** (Ajustes › Perfil público): foto, nome, cidade, o que faz, sobre, @, interesses, depoimentos e moradas. Cada gravação também atualiza a ficha da comunidade (nome, foto pequena, primeira frase do "Sobre" como bio, interesses, @).
 - Na comunidade, "Perfil e configurações" mostra um resumo com "Editar o meu perfil" (→ `painel.html?ir=perfil#ajustes`) e só as definições da comunidade: cidade, privacidade, quem pode escrever, os meus dados.
 - Alunos (sem página profissional) continuam a editar o perfil na comunidade.
+
+## Privacidade a sério nos grupos (nov 2026)
+
+- `comGrupos` (com a lista `membros`) só é legível por quem está no grupo (e pelo Lucas).
+- Para descobrir grupos abertos há a vitrine `comGruposAbertos/{id}`: nome, cidade, quem criou e o número de pessoas, nunca quem são. Entrar e sair mudam a lista e o número no mesmo lote; as regras verificam que o número bate com a lista.
+- Na página de uma pessoa só aparecem os grupos em comum. Quem não está num grupo aberto vê só o nome, o número e "Entrar".
+- Os grupos abertos de antes ganham a sua entrada na vitrine quando o Lucas abre a comunidade.
+- A cidade continua guardada na ficha (o anfitrião precisa dela para aprovar quem entra); o interruptor esconde-a da página.
+
+## Check-in, depoimentos e perguntas (nov 2026)
+
+- **Check-in** (`checkin.js`): "Como você chega?" (1–5) antes de cada prática; no fim, a resposta de "Como você se sente agora?" fica junto e aparece a diferença e o padrão das últimas práticas. Só no aparelho (localStorage).
+- **Depoimentos dos alunos**: em "As minhas sessões", nas sessões feitas, "Deixar um depoimento" (`depoimentos/{reserva}`). O profissional aprova no painel (copia para o perfil) ou recusa (apaga).
+- **Perguntas e respostas** em `perfil.html`: quem tem conta pergunta (`perguntas`); só aparece a todos depois de respondida no painel (Perfil público › Perguntas na sua página).

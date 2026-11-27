@@ -105,6 +105,17 @@
     .fotos a { display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius-sm); }
     .fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+    /* Perguntas e respostas (nov 2026) */
+    .perg { display: grid; gap: 6px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); }
+    .perg-q { margin: 0; font-weight: 600; color: var(--text); }
+    .perg-a { margin: 0; color: var(--text-soft); line-height: 1.6; }
+    .perg-a b { color: var(--text); font-weight: 600; }
+    .perg-form { display: grid; gap: 10px; padding: 18px; }
+    .perg-form label { color: var(--text); font-weight: 500; }
+    .perg-form textarea { box-sizing: border-box; width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line);
+      background: var(--surface-strong); color: var(--text); font: inherit; resize: vertical; }
+    .perg-form .btn { justify-self: start; }
+
     /* Toast */
     .toast { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translate(-50%, var(--rise-distance));
       display: inline-flex; align-items: center; gap: 8px; padding: 0.7rem 1.2rem; border-radius: var(--radius-pill);
@@ -166,6 +177,17 @@
         <div class="locais" data-depoimentos></div>
       </section>
 
+      <section class="bloco" aria-labelledby="t-perg">
+        <h2 id="t-perg">Perguntas e respostas</h2>
+        <div class="lista-com" data-perguntas></div>
+        <form class="cartao perg-form" data-perg-form>
+          <label for="perg-texto" data-perg-rotulo>Tem uma pergunta? Escreva aqui.</label>
+          <textarea id="perg-texto" rows="3" maxlength="300" minlength="5" required></textarea>
+          <button class="btn btn--secondary button" type="submit">Enviar pergunta</button>
+          <p class="nota" data-perg-estado aria-live="polite">A pergunta aparece aqui, com a resposta, quando for respondida.</p>
+        </form>
+      </section>
+
       <!-- Só para quem é membro da comunidade: o que as regras deixam ler. -->
       <section class="bloco" aria-labelledby="t-com" data-comunidade hidden>
         <h2 id="t-com">Na comunidade</h2>
@@ -196,7 +218,8 @@
   <script type="module">
     import { lerPerfil, linkRota } from "./perfil-dados.js";
     import { lerAjustes, lerAgenda, lerOcupados, horasLivres, precos, euro, pad2, proDaPagina, comPro } from "./reservas-dados.js";
-    import { auth, onAuthStateChanged } from "./firebase-init.js";
+    import { auth, db, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "./firebase-init.js";
+    import { collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     import { prosAprovados } from "./conta-pro.js";
     // Perfil único (nov 2026): ?p=<id>, ou ?u=<@> (também neuromedit.com/@nome, pelo 404.html). Vazio = o Lucas.
     const ARROBA = (new URLSearchParams(location.search).get("u") || "").replace(/^@/, "").toLowerCase();
@@ -388,6 +411,7 @@
       const meu = user.uid === (PRO || perfil.uid);
       $("[data-mensagem]").hidden = meu;
       $("[data-editar]").hidden = !meu;
+      $("[data-perg-form]").hidden = meu;
       if (!proUid) return;
       const d = await import("./comunidade-dados.js").catch(() => null);
       const eu = d ? await d.carregarEu().catch(() => null) : null;
@@ -395,6 +419,45 @@
       const [m, v] = await Promise.all([d.membro(proUid).catch(() => null), d.grupos(eu).then((g) => d.vidaDe(proUid, g)).catch(() => null)]);
       if (!m && !v) return;
       pintarComunidade(m || {}, v || {}, meu, d);
+    });
+
+    // ---------- Perguntas e respostas ----------
+    const nomeCurto = (perfil.nome || "").split(" ")[0] || "o profissional";
+    $("[data-perg-rotulo]").textContent = `Tem uma pergunta para ${nomeCurto}? Escreva aqui.`;
+    async function pintarPerguntas() {
+      const box = $("[data-perguntas]");
+      let lista = [];
+      try { lista = (await getDocs(query(collection(db, "perguntas"), where("proId", "==", PRO), where("respondida", "==", true)))).docs.map((d) => d.data()); }
+      catch (e) { lista = []; }
+      lista.sort((a, b) => (b.respondidaEm?.toMillis?.() || 0) - (a.respondidaEm?.toMillis?.() || 0));
+      box.textContent = "";
+      if (!lista.length) { box.append(el("p", "nota", "Ainda sem perguntas respondidas.")); return; }
+      lista.slice(0, 12).forEach((q) => {
+        const item = el("div", "perg");
+        const r = el("p", "perg-a"); const b = el("b", "", `${nomeCurto}: `); r.append(b, document.createTextNode(q.resposta));
+        item.append(el("p", "perg-q", q.texto), r, el("p", "nota", q.nome));
+        box.append(item);
+      });
+    }
+    pintarPerguntas();
+    $("[data-perg-form]").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const campo = $("#perg-texto"), estado = $("[data-perg-estado]"), botao = ev.target.querySelector("button");
+      const texto = campo.value.trim();
+      if (texto.length < 5) { campo.focus(); return; }
+      botao.disabled = true;
+      try {
+        if (!auth.currentUser) { estado.textContent = "Entre com o Google para enviar."; await signInWithPopup(auth, new GoogleAuthProvider()); }
+        const u = auth.currentUser;
+        const partes = (u.displayName || "").trim().split(/\s+/);
+        const nome = partes.length > 1 ? `${partes[0]} ${partes[partes.length - 1][0]}.` : (partes[0] || "Alguém");
+        await addDoc(collection(db, "perguntas"), { proId: PRO, uid: u.uid, nome, texto, criadoEm: serverTimestamp(), respondida: false });
+        campo.value = "";
+        estado.textContent = `Pergunta enviada. Aparece aqui com a resposta quando ${nomeCurto} responder.`;
+      } catch (e) {
+        estado.textContent = "Não consegui enviar agora. Tente de novo.";
+      }
+      botao.disabled = false;
     });
 
     const ROT = { meditacao: "Meditação", yoga: "Yoga", respiracao: "Respiração", ciencia: "Ciência", espiritualidade: "Espiritualidade", movimento: "Movimento", terapias: "Terapias" };

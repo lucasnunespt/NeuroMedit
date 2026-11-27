@@ -429,3 +429,18 @@ describe("Depoimentos escritos por quem teve a sessão", () => {
     await assertSucceeds(deleteDoc(doc(de(ANA), "depoimentos", "b1")));
   });
 });
+
+describe("Perguntas e respostas", () => {
+  const perg = (uid, proId = ANA) => ({ proId, uid, nome: "Rui M.", texto: "Posso ir sem experiência?", criadoEm: serverTimestamp(), respondida: false });
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "pros", ANA), { estado: "aprovado", perfil: { nome: "Ana" } }));
+  });
+  test("quem tem conta pergunta; só aparece depois de respondida", async () => {
+    await assertSucceeds(setDoc(doc(de(RUI), "perguntas", "q1"), perg(RUI)));
+    await assertFails(setDoc(doc(de(RUI), "perguntas", "q2"), { ...perg(RUI), respondida: true }));
+    await assertFails(getDoc(doc(env.unauthenticatedContext().firestore(), "perguntas", "q1")));
+    await assertFails(updateDoc(doc(de(RUI), "perguntas", "q1"), { resposta: "sim", respondida: true, respondidaEm: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(de(ANA), "perguntas", "q1"), { resposta: "Pode, sim.", respondida: true, respondidaEm: serverTimestamp() }));
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), "perguntas", "q1")));
+  });
+});

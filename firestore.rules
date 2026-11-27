@@ -62,6 +62,37 @@ service cloud.firestore {
       return b.estado in ['libertada', 'reembolsada']
         || (b.estado == 'cancelada' && !(b.get('reembolsoPedido', false) == true && b.get('reembolsoFeito', false) != true));
     }
+    // ---------- Perguntas e respostas na página do profissional (nov 2026) ----------
+    // Quem tem conta pergunta; só aparece a todos depois de respondida (respondida == true).
+    // Responde o profissional da página (o Lucas, admin, na página dele: proId vazio).
+    match /perguntas/{perguntaId} {
+      function donoDaPagina(d) {
+        return (d.proId == '' && isAdmin()) || (isSignedIn() && d.proId != '' && d.proId == request.auth.uid);
+      }
+      allow read: if resource.data.respondida == true
+        || isAdmin()
+        || (isSignedIn() && (resource.data.uid == request.auth.uid || resource.data.proId == request.auth.uid));
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly(['proId', 'uid', 'nome', 'texto', 'criadoEm', 'respondida'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.respondida == false
+        && request.resource.data.proId is string
+        && request.resource.data.proId != request.auth.uid
+        && (request.resource.data.proId == ''
+            || (exists(/databases/$(database)/documents/pros/$(request.resource.data.proId))
+                && get(/databases/$(database)/documents/pros/$(request.resource.data.proId)).data.estado == 'aprovado'))
+        && request.resource.data.nome is string && request.resource.data.nome.size() > 0 && request.resource.data.nome.size() <= 60
+        && request.resource.data.texto is string && request.resource.data.texto.size() >= 5 && request.resource.data.texto.size() <= 300
+        && request.resource.data.criadoEm == request.time;
+      allow update: if donoDaPagina(resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resposta', 'respondida', 'respondidaEm'])
+        && request.resource.data.resposta is string && request.resource.data.resposta.size() > 0 && request.resource.data.resposta.size() <= 600
+        && request.resource.data.respondida == true
+        && request.resource.data.respondidaEm == request.time;
+      allow delete: if isAdmin()
+        || (isSignedIn() && (resource.data.uid == request.auth.uid || resource.data.proId == request.auth.uid));
+    }
+
     // ---------- Depoimentos escritos por quem teve a sessão (nov 2026) ----------
     // Um por reserva (id = id da reserva), só de quem a fez, numa sessão confirmada ou feita.
     // Fica "pendente": o profissional aprova (copia para o seu perfil) ou recusa (apaga).

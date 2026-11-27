@@ -192,6 +192,10 @@ export const desbloquearConversa = (id) => updateDoc(ref("comConversas", id), { 
 export const denunciarConversa = (id, jaBloqueada) => updateDoc(ref("comConversas", id), jaBloqueada ? { denunciada: true } : { estado: "bloqueada", bloqueadaPor: uid(), denunciada: true });
 export async function conversasDenunciadas() { return lista(await getDocs(query(col("comConversas"), where("denunciada", "==", true), limit(50)))); }
 export const arquivarDenuncia = (id) => updateDoc(ref("comConversas", id), { denunciada: false });
+/* ---------- Espaço de apoio (nov 2026): um só parceiro de cada vez, escolhido pelo Lucas ---------- */
+export async function lerApoio() { const s = await getDoc(ref("comApoio", "atual")); return s.exists() && s.data().ativo ? s.data() : null; }
+export const guardarApoio = ({ quem, titulo, texto, link }) => setDoc(ref("comApoio", "atual"), { quem: quem.slice(0, 60), titulo: titulo.slice(0, 80), texto: (texto || "").slice(0, 200), link, ativo: true, em: serverTimestamp() });
+export const tirarApoio = () => deleteDoc(ref("comApoio", "atual"));
 export async function uidDoUsuario(nome) {
   const s = await getDoc(ref("comUsuarios", nome));
   return s.exists() ? s.data().uid : "";

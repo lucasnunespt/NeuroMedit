@@ -316,7 +316,14 @@ function direita(tela) {
       ${avisos.length ? avisos.map((a) => `<div class="com-linha com-linha--topo com-aviso-item"><div class="com-quem"><strong>${esc(a.titulo)}</strong>${a.texto ? `<span>${esc(a.texto)}</span>` : ""}<span>${esc(a.nome)} · ${quando(a.criadoEm)}</span></div>${eu.admin || a.uid === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-canal" data-v="${a.id}" aria-label="${t("apagar_aviso")}">${IC.lixo}</button>` : ""}</div>`).join("") : (S.canal.length ? "" : `<p class="com-suave com-peq">${t("sem_avisos")}</p>`)}
       ${eu.professor ? `<details class="com-mais com-mais--dir"><summary>${IC.mais}<span>${t("novo_aviso")}</span></summary><form class="com-novo" data-f="canal"><input class="com-campo" name="titulo" type="text" maxlength="120" placeholder="${t("aviso_titulo")}" aria-label="${t("aviso_titulo")}" required><input class="com-campo" name="texto" type="text" maxlength="300" placeholder="${t("aviso_frase")}" aria-label="${t("aviso_texto")}"><button class="com-opt" type="submit">${t("publicar_aviso")}</button></form></details>` : ""}
     </section>
+    ${cartaoApoio()}
   </aside>`;
+}
+/** O espaço de apoio: discreto, no fim da coluna, sempre marcado como parceiro. */
+function cartaoApoio() {
+  const a = S.apoio;
+  if (!a) return "";
+  return `<section class="com-cartao com-cartao--p com-apoio" aria-labelledby="com-apoio-t"><p class="com-apoio-etq">${t("apoio_etq")} · ${esc(a.quem)}</p><h3 id="com-apoio-t" class="com-apoio-t">${esc(a.titulo)}</h3>${a.texto ? `<p class="com-suave com-peq">${esc(a.texto)}</p>` : ""}<a class="com-acao" href="${esc(a.link)}" target="_blank" rel="noopener noreferrer sponsored">${t("apoio_ver")}</a></section>`;
 }
 
 /* ---------- Capa da prática: um planeta de pontos de brilho ----------
@@ -748,6 +755,9 @@ function telaGestao() {
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g3"><h3 id="com-g3">${t("denuncias")}</h3>
       ${denuncias.length ? denuncias.map((p) => `<div class="com-den"><p class="com-texto">${esc(p.texto)}</p><div class="com-linha"><span class="com-suave com-peq">${esc(circ(S.circulos.find((c) => c.id === p.circulo))?.nome || "")} · ${esc(p.anon ? t("sem_nome_de", { n: nomeDe(p.autorUid) || t("autor_desconhecido") }) : p.nome)}</span><span class="com-esp"></span><a class="com-acao" href="#p=${p.id}">${t("abrir")}</a><button class="com-opt" type="button" data-a="manter" data-v="${p.id}">${t("manter")}</button><button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>${t("apagar_partilha")}</span></button></div></div>`).join("") : `<p class="com-suave com-peq">${t("sem_denuncias")}</p>`}</section>
     ${(S.gestao.conversasDen || []).length ? `<section class="com-cartao com-cartao--p" aria-labelledby="com-g3b"><h3 id="com-g3b">${t("msg_den_t")}</h3>${S.gestao.conversasDen.map((c) => `<div class="com-linha"><span class="com-quem com-quem--larga"><strong>${esc(c.membros.map(nomeDe).filter(Boolean).join(" · ") || t("papel_membro"))}</strong><span>${t("msg_den_por", { n: nomeDe(c.bloqueadaPor) || "" })}</span></span><a class="com-acao" href="#m=${c.id}">${t("abrir")}</a><button class="com-opt" type="button" data-a="arquivar-conversa" data-v="${c.id}">${t("msg_arquivar")}</button></div>`).join("")}</section>` : ""}
+    <section class="com-cartao com-cartao--p" aria-labelledby="com-g5"><h3 id="com-g5">${t("apoio_gest_t")}</h3><p class="com-suave com-peq">${t("apoio_gest_d")}</p>
+      <form class="com-novo" data-f="apoio"><input class="com-campo" name="quem" type="text" maxlength="60" placeholder="${t("apoio_quem")}" aria-label="${t("apoio_quem")}" value="${esc(S.apoio?.quem || "")}" required><input class="com-campo" name="titulo" type="text" maxlength="80" placeholder="${t("apoio_titulo")}" aria-label="${t("apoio_titulo")}" value="${esc(S.apoio?.titulo || "")}" required><textarea class="com-campo" name="texto" maxlength="200" rows="2" placeholder="${t("apoio_texto")}" aria-label="${t("apoio_texto")}">${esc(S.apoio?.texto || "")}</textarea><input class="com-campo" name="link" type="url" pattern="https://.+" placeholder="https://..." aria-label="${t("apoio_link")}" value="${esc(S.apoio?.link || "")}" required>
+      <div class="com-linha"><button class="com-pri" type="submit">${t(S.apoio ? "apoio_guardar" : "apoio_por")}</button>${S.apoio ? `<button class="com-acao com-acao--perigo" type="button" data-a="tirar-apoio">${t("apoio_tirar")}</button>` : ""}</div></form></section>
     <section class="com-cartao com-cartao--p" aria-labelledby="com-g4"><h3 id="com-g4">${t("membros")}</h3>
       ${dentro.length ? dentro.map((m) => `<div class="com-linha"><span class="com-ini" aria-hidden="true">${esc(inicial(m.nome))}</span><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><span class="com-etq">${papel(m.papel)}</span><button class="com-acao" type="button" data-a="papel" data-v="${m.id}" data-p="${m.papel === "professor" ? "membro" : "professor"}">${m.papel === "professor" ? t("tornar_membro") : t("tornar_prof")}</button><button class="com-acao com-acao--perigo" type="button" data-a="remover" data-v="${m.id}">${t("remover")}</button></div>`).join("") : `<p class="com-suave com-peq">${t("sem_membros")}</p>`}
       ${fora.length ? `<p class="com-cap">${t("removidos")}</p>${fora.map((m) => `<div class="com-linha"><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><button class="com-acao" type="button" data-a="aprovar" data-v="${m.id}">${t("deixar_voltar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("apagar_ficha")}</button></div>`).join("")}` : ""}</section>`;
@@ -999,6 +1009,7 @@ async function carregarLados() {
   const [canal, encontros] = await Promise.all([dados.canal().catch(() => []), dados.encontros().catch(() => [])]);
   S.canal = canal; S.encontros = encontros;
   S.convs = await dados.conversas().catch(() => []);
+  S.apoio = await dados.lerApoio().catch(() => null);
 }
 async function arrancar(user) {
   S.user = user; S.erro = "";
@@ -1097,6 +1108,7 @@ const ACOES = {
     if (!f) return;
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
+  "tirar-apoio": async () => { if (confirm(t("apoio_tirar_q")) && await tentar(() => dados.tirarApoio())) { S.apoio = null; desenhar(); } },
   "quem-escreve": async (_, el) => { if (await tentar(() => dados.guardarQuemEscreve(el.value))) { S.eu.quemEscreve = el.value; aviso(t("a_perfil")); } },
   conversar: async (v) => { let id = ""; if (await tentar(async () => { id = await dados.abrirConversa(v); }, t("msg_nao_pode")) && id) location.hash = "m=" + id; },
   "aceitar-conversa": async (v) => { if (await tentar(() => dados.aceitarConversa(v))) { aviso(t("msg_aceite")); await carregarRota(); } },
@@ -1175,6 +1187,7 @@ const FORMS = {
     if (c && novo && await tentar(() => dados.definirAnfitrioes(c.id, [...(c.anfitrioes || []), novo]))) { S.cidades = await dados.cidades(); aviso(t("a_cidade_aberta", { c: c.nome })); await carregarRota(); }
   },
   "por-no-grupo": async (f) => { if (await tentar(() => dados.porNoGrupo(S.grupo, new FormData(f).get("pessoa")))) await carregarRota(); },
+  apoio: async (f) => { const d = new FormData(f); const v = { quem: d.get("quem").trim(), titulo: d.get("titulo").trim(), texto: d.get("texto").trim(), link: d.get("link").trim() }; if (await tentar(() => dados.guardarApoio(v))) { S.apoio = { ...v, ativo: true }; aviso(t("apoio_ok")); desenhar(); } },
   dm: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto || !S.conv) return; campo.value = ""; if (await tentar(() => dados.escrever(S.conv, { texto, nome: S.eu.nome }))) { S.conv.ultimaPor = S.eu.uid; } else campo.value = texto; campo.focus(); },
   mensagem: async (f) => { const campo = f.elements.texto; const texto = campo.value.trim(); if (!texto) return; campo.value = ""; if (!await tentar(() => dados.enviarMensagem(S.grupo.id, { texto, nome: S.eu.nome }))) campo.value = texto; campo.focus(); },
   canal: async (f) => { const d = new FormData(f); const titulo = d.get("titulo").trim(); if (await tentar(() => dados.publicarNoCanal({ titulo, texto: d.get("texto").trim(), nome: S.eu.nome }))) { await carregarLados(); desenhar(); dados.avisarSeguidores(t("av_seg_aviso", { n: S.eu.nome, a: titulo }), "comunidade.html"); } },

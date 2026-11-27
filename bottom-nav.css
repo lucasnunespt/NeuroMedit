@@ -398,6 +398,32 @@
     font-size: 0.78rem;
   }
 
+  /* Pessoas na pesquisa (nov 2026): a foto redonda no lugar do ícone. */
+  .search-person-photo {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    color: var(--text-soft);
+  }
+
+  .search-person-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .search-result--person .search-result-meta {
+    flex: 0 1 auto;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .search-result--page .search-result-text {
     color: var(--text-soft);
   }

@@ -853,3 +853,18 @@ a.com-pratica:focus-visible { outline: 2px solid var(--accent-dark); outline-off
 .com-pagina .com-calma, .com-pagina .com-calma span, .com-pagina .com-calma small, .com-pagina .com-calma svg { color: var(--button-text); }
 .com-calma small { font-weight: 400; font-size: 0.8rem; }
 .com-calma:focus-visible { outline: 2px solid var(--accent-dark); outline-offset: 2px; }
+
+/* ---------- A página de cada pessoa: o que faz, encontros, fotos, comunidades (nov 2026) ---------- */
+.com-pessoa-faz { margin: 0; color: var(--text); font-weight: 600; }
+.com-pessoa .com-pri { text-decoration: none; display: inline-flex; align-items: center; }
+.com-pessoa-h2 { margin: 0; font-size: 1.15rem; }
+.com-pessoa-lista { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.com-pessoa-enc { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-strong); color: var(--text); text-decoration: none; }
+a.com-pessoa-enc:hover { border-color: var(--accent); }
+.com-pessoa-enc span { color: var(--text-soft); font-size: 0.9rem; }
+.com-pessoa-lista--passado .com-pessoa-enc { opacity: 0.75; }
+.com-pessoa-fotos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
+.com-pessoa-fotos a { display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius-sm); }
+.com-pessoa-fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.com-chk--bloco { align-items: flex-start; }
+.com-chk--bloco > span { display: flex; flex-direction: column; gap: 0.2rem; }

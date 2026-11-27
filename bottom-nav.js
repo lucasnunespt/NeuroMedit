@@ -383,7 +383,29 @@
         rows.push(`<p class="search-result-empty" data-i18n="library_search_noresults">${t("library_search_noresults", "No results found.")}</p>`);
       }
 
+      // As pessoas (professores, profissionais e membros) chegam depois, sem atrasar o resto.
+      rows.push('<div data-search-people></div>');
       return rows.join("");
+    }
+
+    const escapar = (v) => String(v || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const PESSOA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 19.5c0-3.7 3.1-6.2 7-6.2s7 2.5 7 6.2"/></svg>';
+    let pessoasMod = null;
+    function fillPeople(query) {
+      pessoasMod ??= import("./pesquisa-pessoas.js").catch(() => null);
+      pessoasMod.then((m) => m && m.pessoasPara(query)).then((lista) => {
+        if (!lista || !lista.length || normalize(input.value.trim()) !== query) return;
+        const box = results.querySelector("[data-search-people]");
+        if (!box) return;
+        results.querySelector(".search-result-empty")?.remove();
+        box.innerHTML = `<div class="search-result-divider" aria-hidden="true"></div><p class="search-result-label" data-i18n="library_search_people">${t("library_search_people", "People")}</p>` +
+          lista.map((p) => `
+          <a href="${escapar(p.href)}" class="search-result search-result--person">
+            <span class="bottom-nav-icon search-person-photo">${p.foto ? `<img src="${escapar(p.foto)}" alt="" referrerpolicy="no-referrer">` : PESSOA}</span>
+            <span class="search-result-text">${escapar(p.nome)}</span>
+            <span class="search-result-meta">${escapar([p.sub, p.cidade].filter(Boolean).join(" · "))}</span>
+          </a>`).join("");
+      }).catch(() => {});
     }
 
     function filterLibrary() {
@@ -403,6 +425,7 @@
 
       if (query) {
         results.innerHTML = buildResults(query);
+        fillPeople(query);
         results.classList.add("open");
       } else if (dock.classList.contains("is-expanded")) {
         showSuggestions();

@@ -64,6 +64,7 @@ export async function carregarEu() {
     resumo: membro?.resumo !== false,
     temFicha: Boolean(membro),
     usuario: membro?.usuario || "",
+    mostrarComunidades: membro?.mostrarComunidades !== false,
     bio: membro?.bio || "",
     interesses: membro?.interesses || [],
     fotoGoogle: u.photoURL || "",
@@ -129,6 +130,28 @@ export async function membro(id) {
   const s = await getDoc(ref("comMembros", id));
   return s.exists() ? { uid: id, ...s.data() } : null;
 }
+/** O que a página de uma pessoa mostra: encontros (próximos e passados), fotos publicadas,
+   grupos abertos (e os privados onde eu também estou) e a página profissional, se tiver. */
+export async function vidaDe(pessoaUid, meusGrupos) {
+  const agora = Date.now() - 2 * 3600 * 1000;
+  const [enc, parts, abertos, pro] = await Promise.all([
+    getDocs(query(col("comEncontros"), where("uid", "==", pessoaUid), limit(40))).then(lista).catch(() => []),
+    getDocs(query(col("comPartilhas"), where("uid", "==", pessoaUid), limit(40))).then(lista).catch(() => []),
+    getDocs(query(col("comGrupos"), where("tipo", "==", "aberto"))).then(lista).catch(() => []),
+    getDoc(doc(db, "pros", pessoaUid)).then((s) => (s.exists() && s.data().estado === "aprovado" ? s.data() : null)).catch(() => null)
+  ]);
+  const encontros = enc.map((e) => proximo(e, agora));
+  const mapa = new Map();
+  [...abertos, ...(meusGrupos || [])].filter((g) => (g.membros || []).includes(pessoaUid)).forEach((g) => mapa.set(g.id, g));
+  return {
+    proximos: encontros.filter((e) => ms(e.quando) >= agora).sort((a, b) => ms(a.quando) - ms(b.quando)),
+    passados: encontros.filter((e) => ms(e.quando) < agora).sort((a, b) => ms(b.quando) - ms(a.quando)).slice(0, 6),
+    fotos: parts.filter((x) => x.imagem && !x.anon && !x.denunciada).sort((a, b) => ms(b.criadoEm) - ms(a.criadoEm)).slice(0, 9),
+    grupos: [...mapa.values()],
+    pro: pro && { profissao: pro.perfil?.profissao || "", area: pro.perfil?.area || "" }
+  };
+}
+export const guardarMostrarComunidades = (sim) => updateDoc(ref("comMembros", uid()), { mostrarComunidades: Boolean(sim) });
 export async function uidDoUsuario(nome) {
   const s = await getDoc(ref("comUsuarios", nome));
   return s.exists() ? s.data().uid : "";

@@ -165,3 +165,9 @@ Próximas fases (por ordem):
 4. **Horas calmas** (avisos num resumo), **parceiro de prática**, **respirar juntos agora**, **pergunta da semana** nos círculos.
 5. **Opiniões escritas** sobre professores e encontros, **perguntas ao professor**, **"a ciência por trás"** de cada prática, **traduzir com um toque**.
 6. Negócio: comissão nas reservas e encontros pagos, plano para profissionais.
+
+## Pesquisa de pessoas e a página de cada professor (nov 2026)
+
+- **Pesquisa** (`bottom-nav.js` + `pesquisa-pessoas.js`): além de práticas e páginas, mostra até 5 pessoas. Profissionais aprovados (públicos) levam a `perfil.html?p=…`; membros da comunidade (nome ou @) só aparecem para quem já é membro, porque as regras só deixam membros ler `comMembros`. Carrega na primeira pesquisa e não atrasa os outros resultados.
+- **Página da pessoa** (`#u=uid`): o que faz (da página profissional), link "Ver página e reservas", encontros próximos e passados, fotos publicadas (partilhas com imagem, não anónimas) e comunidades (cidade e grupos abertos; os privados só se eu também estiver lá).
+- **Privacidade**: em Perfil e configurações, "Mostrar na minha página as comunidades em que estou" (`comMembros.mostrarComunidades`, boolean, por omissão ligado). Desligado, a cidade e os grupos ficam escondidos para os outros.

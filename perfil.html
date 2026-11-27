@@ -89,6 +89,22 @@
     .depoimento blockquote { margin: 0; color: var(--text); font-size: 1.12rem; line-height: 1.75; }
     .depoimento figcaption { color: var(--text-soft); font-size: 0.92rem; }
 
+    /* Perfil único (nov 2026): @, mensagem e a parte da comunidade (só para membros). */
+    .arroba { margin: 0; color: var(--text-soft); font-size: 0.95rem; }
+    .acoes-lado { display: grid; gap: 10px; }
+    .lista-com { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .item-com { display: grid; gap: 2px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line);
+      color: var(--text); text-decoration: none; }
+    a.item-com:hover { border-color: var(--accent); }
+    .item-com span { color: var(--text-soft); font-size: 0.9rem; }
+    .item-com--passado { opacity: 0.75; }
+    .sub { margin: 4px 0 0; color: var(--text-soft); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    [data-encontros], [data-fotos], [data-comunidades] { display: grid; gap: 20px; }
+    [data-encontros]:empty, [data-fotos]:empty, [data-comunidades]:empty { display: none; }
+    .fotos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .fotos a { display: block; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius-sm); }
+    .fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
     /* Toast */
     .toast { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); transform: translate(-50%, var(--rise-distance));
       display: inline-flex; align-items: center; gap: 8px; padding: 0.7rem 1.2rem; border-radius: var(--radius-pill);
@@ -104,13 +120,13 @@
       h1 { font-size: 2rem; }
       .pagina { flex-direction: column; flex-wrap: nowrap; gap: 32px; }
       .coluna { display: contents; }
-      .ph { order: 1; } .lado { order: 2; position: static; width: 100%; flex: none; } .coluna > .bloco { order: 3; }
+      .ph { order: 1; width: 100%; } .lado { order: 2; position: static; width: 100%; flex: none; } .coluna > .bloco { order: 3; }
     }
   </style>
 </head>
 <body>
   <header class="topo">
-    <a class="redondo" href="home.html" aria-label="Voltar ao início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg></a>
+    <span></span>
     <button type="button" class="redondo" data-partilhar aria-label="Compartilhar perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5.5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="18.5" r="2.2"/><path d="M8 11l8-4.4M8 13l8 4.4"/></svg></button>
   </header>
 
@@ -120,6 +136,7 @@
         <img class="foto foto--simbolo" data-foto src="assets/neuromedit-symbol-vector.svg" alt="" width="96" height="96">
         <div class="ph-texto">
           <h1 id="nome" data-p="nome">Lucas Nunes</h1>
+          <p class="arroba" data-arroba hidden></p>
           <p class="profissao" data-p="profissao"></p>
           <div class="factos">
             <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-6.5-5.6-6.5-10.7a6.5 6.5 0 0 1 13 0c0 5.1-6.5 10.7-6.5 10.7z"/><circle cx="12" cy="9.8" r="2.4"/></svg><span data-p="cidade"></span></span>
@@ -148,6 +165,15 @@
         <h2 id="t-dep">Depoimentos</h2>
         <div class="locais" data-depoimentos></div>
       </section>
+
+      <!-- Só para quem é membro da comunidade: o que as regras deixam ler. -->
+      <section class="bloco" aria-labelledby="t-com" data-comunidade hidden>
+        <h2 id="t-com">Na comunidade</h2>
+        <div class="chips" data-interesses></div>
+        <div data-encontros></div>
+        <div data-fotos></div>
+        <div data-comunidades></div>
+      </section>
     </div>
 
     <aside class="lado">
@@ -155,7 +181,11 @@
         <div class="cab"><h2 id="t-hor">Próximos horários</h2><span data-mes></span></div>
         <div class="semana" role="group" aria-label="Próximos 7 dias" data-semana></div>
         <div class="horas" data-horas aria-live="polite"></div>
-        <a class="btn btn--primary button" href="reservar.html">Agendar uma sessão</a>
+        <div class="acoes-lado">
+          <a class="btn btn--primary button" href="reservar.html">Agendar uma sessão</a>
+          <a class="btn btn--secondary button" href="comunidade.html" data-mensagem><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v8.5A1.5 1.5 0 0 1 19 17H10l-4.5 3.5V17H5a1.5 1.5 0 0 1-1.5-1.5V7A1.5 1.5 0 0 1 5 5.5z"/></svg>Enviar mensagem</a>
+          <a class="btn btn--secondary button" href="painel.html#ajustes" data-editar hidden>Editar a minha página</a>
+        </div>
         <p class="nota" data-preco></p>
       </section>
     </aside>
@@ -166,7 +196,26 @@
   <script type="module">
     import { lerPerfil, linkRota } from "./perfil-dados.js";
     import { lerAjustes, lerAgenda, lerOcupados, horasLivres, precos, euro, pad2, proDaPagina, comPro } from "./reservas-dados.js";
-    const PRO = proDaPagina(); // vazio = o Lucas; ?p=<id> = outro profissional
+    import { auth, onAuthStateChanged } from "./firebase-init.js";
+    import { prosAprovados } from "./conta-pro.js";
+    // Perfil único (nov 2026): ?p=<id>, ou ?u=<@> (também neuromedit.com/@nome, pelo 404.html). Vazio = o Lucas.
+    const ARROBA = (new URLSearchParams(location.search).get("u") || "").replace(/^@/, "").toLowerCase();
+    let PRO = proDaPagina();
+    if (ARROBA && /^[a-z0-9._]{3,20}$/.test(ARROBA)) {
+      const lucas = await lerPerfil("");
+      if (lucas?.usuario !== ARROBA) {
+        const achado = (await prosAprovados().catch(() => [])).find((x) => (x.perfil?.usuario || "") === ARROBA);
+        if (achado) PRO = achado.id;
+        else {
+          // Não é profissional: se for membro da comunidade, a página dele está lá.
+          await auth.authStateReady?.();
+          const d = auth.currentUser ? await import("./comunidade-dados.js").catch(() => null) : null;
+          const uid = d ? await d.uidDoUsuario(ARROBA).catch(() => "") : "";
+          location.replace(uid ? `comunidade.html#u=${encodeURIComponent(uid)}` : "comunidade.html");
+          await new Promise(() => {});
+        }
+      }
+    }
 
     const $ = (s) => document.querySelector(s);
     const SEM = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -234,10 +283,17 @@
         c.append(t, el("p", "texto", moradas[nome]), a);
         box.append(c);
       });
+      if (!nomes.length) {
+        const c = el("div", "cartao local");
+        const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(p.cidade || "A combinar");
+        c.append(t, el("p", "texto", "O lugar fica combinado na reserva: num parque, no meu espaço, na sua casa ou num lugar à sua escolha."));
+        box.append(c);
+        return;
+      }
       const outros = nomes.filter((n) => !moradas[n]);
       if (outros.length) {
         const c = el("div", "cartao local");
-        const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(outros.length === nomes.length ? "Em Lisboa" : "Também");
+        const t = el("div", "local-nome"); t.innerHTML = ICO.pin; t.append(outros.length === nomes.length ? (p.cidade ? `Em ${p.cidade}` : "Onde nos encontramos") : "Também");
         const chips = el("div", "chips");
         outros.forEach((n) => chips.append(el("span", "chip", n)));
         c.append(t, chips, el("p", "texto", "O ponto de encontro fica combinado na reserva."));
@@ -292,7 +348,7 @@
 
     // Compartilhar: menu do aparelho, ou copiar o link com um Toast "Link copiado".
     $("[data-partilhar]").addEventListener("click", async () => {
-      const url = location.href.split("#")[0];
+      const url = window.__urlBonita || location.href.split("#")[0];
       try {
         if (navigator.share) { await navigator.share({ title: document.title, url }); return; }
         await navigator.clipboard.writeText(url);
@@ -318,6 +374,71 @@
     pintarSessoes(cfg);
     pintarLocais(cfg, perfil);
     pintarHorarios(cfg);
+
+    // ---------- Perfil único: @, voltar, mensagem e a parte da comunidade ----------
+    const proUid = PRO || perfil.uid || "";
+    if (perfil.usuario) {
+      const a = $("[data-arroba]"); a.textContent = "@" + perfil.usuario; a.hidden = false;
+      history.replaceState(null, "", `${location.pathname}?u=${encodeURIComponent(perfil.usuario)}`);
+      window.__urlBonita = `${location.origin}/@${perfil.usuario}`;
+    }
+    $("[data-mensagem]").href = `comunidade.html#escrever=${encodeURIComponent(proUid || "lucas")}`;
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      const meu = user.uid === (PRO || perfil.uid);
+      $("[data-mensagem]").hidden = meu;
+      $("[data-editar]").hidden = !meu;
+      if (!proUid) return;
+      const d = await import("./comunidade-dados.js").catch(() => null);
+      const eu = d ? await d.carregarEu().catch(() => null) : null;
+      if (!eu || eu.estado !== "aprovado") return;
+      const [m, v] = await Promise.all([d.membro(proUid).catch(() => null), d.grupos(eu).then((g) => d.vidaDe(proUid, g)).catch(() => null)]);
+      if (!m && !v) return;
+      pintarComunidade(m || {}, v || {}, meu, d);
+    });
+
+    const ROT = { meditacao: "Meditação", yoga: "Yoga", respiracao: "Respiração", ciencia: "Ciência", espiritualidade: "Espiritualidade", movimento: "Movimento", terapias: "Terapias" };
+    function lista(titulo, itens, passado) {
+      if (!itens.length) return null;
+      const box = el("div", "bloco");
+      box.append(el("p", "sub", titulo));
+      const ul = el("ul", "lista-com");
+      itens.forEach((x) => {
+        const li = el("li");
+        const a = el(x.href ? "a" : "div", "item-com" + (passado ? " item-com--passado" : ""));
+        if (x.href) a.href = x.href;
+        a.append(el("strong", "", x.titulo), el("span", "", x.linha));
+        li.append(a); ul.append(li);
+      });
+      box.append(ul);
+      return box;
+    }
+    function pintarComunidade(m, v, meu, d) {
+      const quando = (q) => { const t = q?.toDate ? q.toDate() : new Date(q?.toMillis ? q.toMillis() : q || 0); return t.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "long" }) + " · " + t.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }); };
+      const enc = (e) => ({ titulo: e.titulo, linha: quando(e.quando) + (e.lugar ? " · " + e.lugar : (e.link ? " · online" : "")), href: e.cidade ? `comunidade.html#cidade=${encodeURIComponent(e.cidade)}` : "" });
+      const inter = $("[data-interesses]");
+      (m.interesses || []).forEach((i) => inter.append(el("span", "chip", ROT[i] || i)));
+      const bE = $("[data-encontros]");
+      [lista("Próximos encontros", (v.proximos || []).map(enc)), lista("Encontros que já aconteceram", (v.passados || []).map(enc), true)].forEach((x) => x && bE.append(x));
+      if ((v.fotos || []).length) {
+        const b = el("div", "bloco"); b.append(el("p", "sub", "Fotos publicadas"));
+        const g = el("div", "fotos");
+        v.fotos.forEach((f) => { const a = el("a"); a.href = `comunidade.html#p=${f.id}`; const img = el("img"); img.src = f.imagem; img.alt = (f.texto || "").slice(0, 80); img.loading = "lazy"; a.append(img); g.append(a); });
+        b.append(g); $("[data-fotos]").append(b);
+      }
+      const mostra = meu || m.mostrarComunidades !== false;
+      if (mostra) {
+        const cid = m.cidade ? (d.CIDADES_INICIAIS || []).find((c) => c.id === m.cidade) : null;
+        const itens = [
+          ...(cid ? [{ titulo: cid.nome, linha: "Cidade", href: `comunidade.html#cidade=${cid.id}` }] : []),
+          ...(v.grupos || []).map((g) => ({ titulo: g.nome, linha: g.tipo === "aberto" ? "Grupo aberto" : "Grupo privado", href: `comunidade.html#g=${g.id}` }))
+        ];
+        const x = lista("Comunidades", itens); if (x) $("[data-comunidades]").append(x);
+      }
+      const sec = $("[data-comunidade]");
+      sec.hidden = !(inter.children.length || bE.children.length || $("[data-fotos]").children.length || $("[data-comunidades]").children.length);
+    }
   </script>
+  <script src="nav-global.js" defer></script>
 </body>
 </html>

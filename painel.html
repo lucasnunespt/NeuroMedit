@@ -124,6 +124,11 @@
     .aj-locais { display: grid; gap: 4px; margin-top: 12px; }
     .aj-check { display: flex; align-items: center; gap: 12px; min-height: 44px; color: var(--text); }
     .aj-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+    .aj-sug-t { margin: 16px 0 8px; }
+    .aj-sug { display: flex; flex-wrap: wrap; gap: 8px; }
+    .aj-sug button { min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill); border: 1px dashed var(--text-muted);
+      background: var(--surface); color: var(--text); font: inherit; font-size: 0.92rem; cursor: pointer; }
+    .aj-sug button:hover { border-style: solid; }
     .ag-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
     @media (min-width: 720px) {
       .aj-grelha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -153,6 +158,10 @@
     .foto { flex: none; width: 64px; height: 64px; border-radius: var(--radius-pill); object-fit: cover;
       box-shadow: 0 0 0 3px var(--luz-glow-core); }
     .conta-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .saidas { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .saidas a { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 14px; border-radius: var(--radius-pill);
+      border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none; font-size: 0.92rem; }
+    .saidas svg { width: 18px; height: 18px; }
     @media (min-width: 1100px) {
       [data-estado="admin"] .shell { margin-left: calc(248px + 48px); margin-right: auto; }
       .nav { left: 24px; top: 24px; bottom: 24px; transform: none; flex-direction: column; gap: 18px; width: 248px; box-sizing: border-box;
@@ -165,6 +174,9 @@
       .nav-marca { display: flex; align-items: center; gap: 10px; padding: 4px 8px; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
       .nav-marca img { width: 32px; height: 32px; padding: 4px; box-sizing: border-box; border-radius: var(--radius-pill); background: var(--luz-glow-core); }
       .nav-conta { display: grid; gap: 4px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+      .saidas { display: none; }
+      /* Com o cabeçalho do site por cima (nav-global.js), o menu lateral começa por baixo dele. */
+      body:has(.site-header) .nav { top: 104px; }
       .nav-quem { display: flex; align-items: center; gap: 10px; padding: 0 8px 6px; min-width: 0; }
       .nav-quem img { width: 36px; height: 36px; border-radius: var(--radius-pill); object-fit: cover; flex: none; }
       .nav-quem b { display: block; font-weight: 500; color: var(--text); }
@@ -177,7 +189,7 @@
     }
   </style>
 </head>
-<body>
+<body data-nav-sem-barra>
   <!-- Antes de entrar -->
   <main class="shell" data-estado="a-verificar"><p class="muted">Um momento…</p></main>
 
@@ -208,12 +220,20 @@
       </div>
       <div class="nav-conta">
         <div class="nav-quem"><img data-foto-conta alt="" width="36" height="36" hidden><span><b data-nome-conta>Lucas</b><small data-email-curto></small></span></div>
-        <a data-link-perfil href="perfil.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
+        <a data-link-perfil href="perfil.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 4.5H19.5V10.5M19.5 4.5L11 13"/><path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/></svg>Ver a minha página</a>
+        <a href="comunidade.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><circle cx="17" cy="9.5" r="2.4"/><path d="M3.5 19c0-3.2 2.5-5.4 5.5-5.4s5.5 2.2 5.5 5.4M14.5 14.2c2.9-.4 5.5 1.4 6 4.3"/></svg>Comunidade</a>
+        <a href="home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5L12 3.75L20.5 10.5V19.5H14.75V14.25H9.25V19.5H3.5V10.5Z"/></svg>Site NeuroMedit</a>
         <button type="button" data-sair>Sair da conta</button>
       </div>
     </nav>
 
     <main class="shell" data-sec-painel="inicio">
+      <!-- Saídas do painel no telemóvel (no computador estão no fim do menu lateral). -->
+      <nav class="saidas" aria-label="Sair do painel">
+        <a href="comunidade.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5.5L8 12L14.5 18.5"/></svg>Comunidade</a>
+        <a data-link-perfil href="perfil.html">Ver a minha página</a>
+        <a href="home.html">Site</a>
+      </nav>
       <p class="kicker" data-hoje></p>
       <div class="ini-topo">
         <img class="foto" data-foto alt="" width="64" height="64" hidden>
@@ -237,7 +257,7 @@
           <p class="muted pedido-motivo" data-conta-nota hidden></p>
           <div class="conta-links">
             <button type="button" class="btn btn--primary" data-conta-pedir hidden>Pedir aprovação</button>
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html">Ver a minha página</a>
           </div>
           <p class="ag-estado" data-conta-aviso aria-live="polite"></p>
         </div>
@@ -412,6 +432,8 @@
       <div class="bloco">
         <p class="label">Locais</p>
         <div class="card"><p class="muted">Onde aceita <span data-t="pl">sessões</span>. Quem reserva só vê os marcados.</p><div class="aj-locais" data-aj-locais></div>
+          <p class="muted aj-sug-t">Sugestões (um toque para acrescentar):</p>
+          <div class="aj-sug" data-aj-sugestoes></div>
           <div class="aj-grelha" style="margin-top: 16px;">
             <label class="aj-campo-rot">Outro local<input class="aj-campo" type="text" maxlength="60" placeholder="Ex.: Em casa do cliente" data-aj-local-novo></label>
             <div style="display: flex; align-items: flex-end;"><button type="button" class="btn btn--secondary" data-aj-local-add>Adicionar local</button></div>
@@ -451,7 +473,7 @@
           </div>
           <p class="muted" data-pf-foto-nota aria-live="polite">Sem foto, a sua página mostra o símbolo do NeuroMedit.</p>
           <div class="conta-links">
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html">Ver a minha página</a>
           </div>
         </div>
         <div class="card">
@@ -479,7 +501,7 @@
         <div class="card">
           <div class="item"><span>Entrou como</span><span data-email></span></div>
           <div class="conta-links">
-            <a class="btn btn--secondary" data-link-perfil href="perfil.html" target="_blank" rel="noopener">Ver a minha página</a>
+            <a class="btn btn--secondary" data-link-perfil href="perfil.html">Ver a minha página</a>
             <button type="button" class="btn btn--secondary" data-sair>Sair da conta</button>
           </div>
         </div>
@@ -753,5 +775,6 @@
     // Ao sair, recarrega: o painel seguinte pode ser de outra pessoa e não pode herdar dados deste.
     document.querySelectorAll("[data-sair]").forEach((b) => b.addEventListener("click", () => sair().finally(() => location.reload())));
   </script>
+  <script src="nav-global.js" defer></script>
 </body>
 </html>

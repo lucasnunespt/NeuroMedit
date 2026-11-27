@@ -289,6 +289,8 @@ function lateral(tela) {
       <a class="com-circ ${tela === "grupos" || tela === "grupo" ? "is-on" : ""}" href="#grupos"><span>${t("grupos_t")}</span><small>${t("grupos_s")}</small></a>
     </nav>
     <div class="com-esq-fim">
+      <a class="com-calma" href="index.html">${IC.sol}<span>${t("calma")}<small>${t("calma_s")}</small></span></a>
+      <a class="com-circ com-circ--conta ${tela === "perfil" ? "is-on" : ""}" href="#perfil">${IC.engrenagem}<span>${t("ajustes_t")}<small>${eu.usuario ? "@" + esc(eu.usuario) : t("ajustes_s")}</small></span></a>
       ${eu.professor ? `<details class="com-mais"><summary>${IC.mais}<span>${t("novo_circulo")}</span></summary><form class="com-novo" data-f="novo-circulo"><label class="com-so-leitor" for="com-nc">${t("nome_circulo")}</label><input id="com-nc" class="com-campo" name="nome" type="text" maxlength="60" placeholder="${t("nome_circulo")}" required><input class="com-campo" name="proposito" type="text" maxlength="240" placeholder="${t("proposito_ph")}" aria-label="${t("proposito_aria")}"><button class="com-opt" type="submit">${IC.mais} ${t("criar_circulo")}</button></form></details>` : ""}
       ${eu.admin ? `<a class="com-circ com-circ--conta ${tela === "gestao" ? "is-on" : ""}" href="#gestao">${IC.engrenagem}<span>${t("gestao")}<small>${pend ? (pend === 1 ? t("pend_1") : t("pend_n", { n: pend })) : t("gestao_s")}</small></span></a>` : ""}
     </div>
@@ -380,7 +382,7 @@ function cartaoPartilha(p, { aberta = false } = {}) {
     podeApagar ? `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-partilha" data-v="${p.id}">${IC.lixo}<span>${t("apagar")}</span></button>` : ""
   ]);
   return `<article class="com-cartao com-post">
-    <div class="com-linha com-post-topo">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem com-quem--larga"><span class="com-nome"><strong>${esc(autor)}</strong>${p.professor && !p.anon ? selo() + (p.minha ? "" : botaoSeguir(p.uid)) : ""}</span><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
+    <div class="com-linha com-post-topo">${rosto(p.foto, p.nome, p.anon)}<div class="com-quem com-quem--larga"><span class="com-nome">${!p.anon && p.uid ? `<a class="com-nome-link" href="#u=${p.uid}"><strong>${esc(autor)}</strong></a>` : `<strong>${esc(autor)}</strong>`}${p.professor && !p.anon ? selo() + (p.minha ? "" : botaoSeguir(p.uid)) : ""}</span><span>${quando(p.criadoEm)}${p.editadoEm ? t("editada") : ""}</span></div>
       ${eu.admin && p.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span>` : ""}${menu}</div>
     ${corpo}
     ${p.imagem ? `<figure class="com-imagem"><img src="${esc(p.imagem)}" alt="${t("foto_alt")}" loading="lazy"></figure>` : ""}
@@ -648,7 +650,7 @@ function comentario(r, p) {
   const minha = r.uid === eu.uid;
   const podeApagar = eu.admin || minha || p.minha || S.circulos.find((c) => c.id === p.circulo)?.criador === eu.uid || souAnfitriao(cidadeDe(p.circulo));
   return `<div class="com-coment">${rosto(r.foto, r.nome, false)}<div class="com-coment-corpo">
-      <div class="com-balao"><span class="com-nome"><strong>${esc(minha ? t("voce") : r.nome)}</strong>${r.professor ? selo() : ""}</span><p class="com-texto">${esc(r.texto)}</p></div>
+      <div class="com-balao"><span class="com-nome">${r.uid ? `<a class="com-nome-link" href="#u=${r.uid}"><strong>${esc(minha ? t("voce") : r.nome)}</strong></a>` : `<strong>${esc(minha ? t("voce") : r.nome)}</strong>`}${r.professor ? selo() : ""}</span><p class="com-texto">${esc(r.texto)}</p></div>
       <div class="com-coment-meta"><span>${quando(r.criadoEm)}</span>${eu.admin && r.denunciada ? `<span class="com-etq com-etq--alerta">${t("denunciada")}</span><button class="com-acao com-acao--mini" type="button" data-a="manter-resposta" data-v="${r.id}">${t("manter")}</button>` : ""}${minha || (eu.admin && r.denunciada) ? "" : `<button class="com-acao com-acao--mini" type="button" data-a="denunciar-resposta" data-v="${r.id}" ${r.denunciada ? "disabled" : ""}>${r.denunciada ? t("denunciada") : t("denunciar")}</button>`}${podeApagar ? `<button class="com-acao com-acao--mini com-acao--perigo" type="button" data-a="apagar-resposta" data-v="${r.id}">${t("apagar")}</button>` : ""}</div>
     </div></div>`;
 }
@@ -709,21 +711,68 @@ function telaGestao() {
       ${fora.length ? `<p class="com-cap">${t("removidos")}</p>${fora.map((m) => `<div class="com-linha"><div class="com-quem com-quem--larga"><strong>${esc(m.nome)}</strong><span>${esc(m.email)}</span></div><button class="com-acao" type="button" data-a="aprovar" data-v="${m.id}">${t("deixar_voltar")}</button><button class="com-acao com-acao--perigo" type="button" data-a="recusar" data-v="${m.id}">${t("apagar_ficha")}</button></div>`).join("")}` : ""}</section>`;
 }
 
+/** As partilhas e os comentários guardam só um link curto da foto (≤ 500): uma foto carregada no perfil fica no perfil. */
+const fotoCurta = (f) => (f && f.length <= 500 ? f : "");
+const interessesDe = (l) => (l || []).map((i) => `<span class="com-chip">${t("int_" + i)}</span>`).join("");
 function telaPerfil() {
   const eu = S.eu;
-  return `<div class="com-topo"><p class="com-sobre">${t("perfil_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
-    <section class="com-cartao com-linha"><span class="com-foto">${eu.foto ? `<img src="${esc(eu.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span><div class="com-quem"><strong>${esc(eu.nome)}</strong><span>${papel(eu.papel)}</span><span>${t("foto_google")}</span></div></section>
-    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil"><label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required>${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}<div class="com-linha com-linha--fim"><button class="com-pri" type="submit">${t("guardar_nome")}</button></div></form>` : ""}
+  const foto = S.fotoPerfil !== undefined ? S.fotoPerfil : eu.foto;
+  return `<div class="com-topo"><p class="com-sobre">${t("ajustes_t")}</p><h1 class="com-h1">${t("perfil_h1")}</h1></div>
+    ${eu.temFicha ? `<form class="com-cartao com-novo" data-f="perfil">
+      <div class="com-linha com-perfil-foto"><span class="com-foto com-foto--g">${foto ? `<img src="${esc(foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span>
+        <div class="com-linha"><label class="com-opt">${IC.foto} ${t("foto_mudar")}<input class="com-so-leitor" type="file" accept="image/*" data-a="foto-perfil"></label>${eu.fotoGoogle && foto !== eu.fotoGoogle ? `<button class="com-acao" type="button" data-a="foto-google">${t("foto_google_usar")}</button>` : ""}</div></div>
+      <label for="com-pn">${t("nome_comunidade")}</label><input id="com-pn" class="com-campo" name="nome" type="text" maxlength="60" value="${esc(eu.nome)}" required>
+      <label for="com-pu">${t("usuario_l")}</label>
+      <div class="com-arroba"><span aria-hidden="true">@</span><input id="com-pu" class="com-campo" name="usuario" type="text" minlength="3" maxlength="20" pattern="[a-z0-9._]{3,20}" autocapitalize="none" autocomplete="username" spellcheck="false" value="${esc(eu.usuario)}" aria-describedby="com-pu-d" ${eu.usuario ? "" : "required"}></div>
+      <p id="com-pu-d" class="com-suave com-peq">${t("usuario_d")}</p>
+      <label for="com-pb">${t("bio_l")}</label><input id="com-pb" class="com-campo" name="bio" type="text" maxlength="140" value="${esc(eu.bio)}" placeholder="${t("bio_ph")}">
+      <fieldset class="com-interesses"><legend>${t("interesses_l")}</legend>${dados.INTERESSES.map((i) => `<label class="com-chip-op"><input type="checkbox" name="interesses" value="${i}" ${eu.interesses.includes(i) ? "checked" : ""}><span>${t("int_" + i)}</span></label>`).join("")}</fieldset>
+      ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
+      <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a><button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
     ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
     <section class="com-cartao com-novo"><h3>${t("q2_t")}</h3>${cuidados()}</section>`;
+}
+/** Troca só a imagem, sem redesenhar o formulário (o que a pessoa já escreveu fica). */
+function mostrarFotoPerfil() {
+  const span = app.querySelector(".com-foto--g");
+  if (span) span.innerHTML = S.fotoPerfil ? `<img src="${esc(S.fotoPerfil)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa;
+}
+/** O perfil de outra pessoa (ou o meu, como os outros o veem). */
+function telaPessoa() {
+  const p = S.pessoa;
+  if (!p || (p.estado !== "aprovado" && !S.eu.admin)) return `<div class="com-topo"><h1 class="com-h1">${t("perfil_nao")}</h1></div>`;
+  const prof = p.papel === "professor" || p.papel === "admin";
+  const c = p.cidade ? cidadeDe(p.cidade) : null;
+  return `<section class="com-cartao com-pessoa">
+    <span class="com-foto com-foto--xg">${p.foto ? `<img src="${esc(p.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span>
+    <h1 class="com-h1">${esc(p.nome || t("papel_membro"))}</h1>
+    ${p.usuario ? `<p class="com-suave">@${esc(p.usuario)}</p>` : ""}
+    <div class="com-linha com-pessoa-meta">${prof ? selo() : ""}${c ? `<a class="com-acao" href="#cidade=${c.id}">${IC.pin}${esc(c.nome)}</a>` : ""}</div>
+    ${p.bio ? `<p class="com-pessoa-bio">${esc(p.bio)}</p>` : ""}
+    ${(p.interesses || []).length ? `<div class="com-chips">${interessesDe(p.interesses)}</div>` : ""}
+    <div class="com-linha">${p.uid === S.eu.uid ? `<a class="com-opt" href="#perfil">${IC.editar} ${t("editar_perfil")}</a>` : (prof ? botaoSeguir(p.uid) : "")}</div>
+  </section>`;
 }
 
 /* ---------- Foto da prática ----------
    Padrão único para todas as fotos: corte ao centro em 4:3, 960×720, JPEG.
    Fica pequena o bastante para ir no próprio documento (regra: até 200 000 caracteres),
    sem precisar do Storage. O tom final (filtro quente) é dado no CSS, em .com-imagem. */
+/** A foto de perfil: um quadrado pequeno (cabe na ficha, ≤ 30 000 caracteres). */
+async function reduzirAvatar(ficheiro) {
+  const img = await createImageBitmap(ficheiro);
+  const lado = Math.min(img.width, img.height);
+  for (const [L, q] of [[192, 0.8], [160, 0.72], [128, 0.65]]) {
+    const tela = Object.assign(document.createElement("canvas"), { width: L, height: L });
+    tela.getContext("2d").drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, L, L);
+    const url = tela.toDataURL("image/jpeg", q);
+    if (url.length <= 29000) { img.close?.(); return url; }
+  }
+  img.close?.();
+  throw new Error("foto");
+}
 async function reduzirFoto(ficheiro) {
   const img = await createImageBitmap(ficheiro);
   const tentar = (L, A, q) => {
@@ -800,8 +849,8 @@ function desenhar() {
   if (S.erro) { app.innerHTML = `<main class="com-entrada">${capa()}<section class="com-cartao"><h2>${t("ligando")}</h2><p class="com-suave">${esc(t(S.erro))}</p><div class="com-linha"><a class="com-opt" href="library.html">${t("ir_biblioteca")}</a></div></section></main>`; return; }
   if (!S.user || S.eu.estado !== "aprovado") { app.classList.remove("com-pagina--app"); app.innerHTML = telaFora(); montarGlobo(); return; }
   const { chave } = rota();
-  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
-  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, cidades: telaCidades, cidade: telaCidade }[tela]();
+  const tela = { c: "circulo", "": "circulo", p: "partilha", grupos: "grupos", g: "grupo", gestao: "gestao", perfil: "perfil", u: "pessoa", cidades: "cidades", cidade: "cidade" }[chave] || "circulo";
+  const meio = { circulo: telaCirculo, partilha: telaPartilha, grupos: telaGrupos, grupo: telaGrupo, gestao: () => (S.eu.admin ? telaGestao() : telaCirculo()), perfil: telaPerfil, pessoa: telaPessoa, cidades: telaCidades, cidade: telaCidade }[tela]();
   app.classList.add("com-pagina--app");
   app.innerHTML = `<div class="com-lay">${lateral(tela)}<main class="com-meio">${meio}</main>${direita(tela)}</div>`;
   mostrarPrevia();
@@ -863,6 +912,8 @@ async function carregarRota() {
           S.cidadeInfo.convites = (await dados.convites().catch(() => [])).filter((cv) => cv.cidade === c.id && cv.anfitriao);
         }
       }
+    } else if (chave === "u") {
+      S.pessoa = await dados.membro(valor).catch(() => null);
     } else if (chave === "perfil") {
       S.seguidoresN = S.eu.professor ? await dados.contarSeguidores().catch(() => null) : null;
     } else {
@@ -970,6 +1021,12 @@ const ACOES = {
     if (!await confirmar({ titulo: t("c_resposta_t"), texto: t("c_resposta_d"), botao: t("c_resposta_b") })) return;
     if (await tentar(() => dados.apagarResposta(S.aberto.id, v))) { aviso(t("a_resposta_apagada")); await carregarRota(); }
   },
+  "foto-perfil": async (_, el) => {
+    const f = el.files?.[0]; el.value = "";
+    if (!f) return;
+    try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
+  },
+  "foto-google": () => { S.fotoPerfil = S.eu.fotoGoogle; mostrarFotoPerfil(); },
   foto: async (_, el) => {
     const f = el.files?.[0]; el.value = "";
     if (!f) return;
@@ -1026,10 +1083,10 @@ const FORMS = {
   publicar: async (f) => {
     const d = new FormData(f);
     const texto = d.get("texto").trim(); if (!texto) return;
-    if (await tentar(() => dados.publicar({ circulo: S.muralId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: S.eu.foto, imagem: S.novaFoto, professor: S.eu.professor && d.get("anon") !== "on" }))) { S.novaFoto = ""; S.comporAberto = false; aviso(t("a_publicada")); await carregarRota(); }
+    if (await tentar(() => dados.publicar({ circulo: S.muralId, texto, pratica: d.get("pratica"), anon: d.get("anon") === "on", nome: S.eu.nome, foto: fotoCurta(S.eu.foto), imagem: S.novaFoto, professor: S.eu.professor && d.get("anon") !== "on" }))) { S.novaFoto = ""; S.comporAberto = false; aviso(t("a_publicada")); await carregarRota(); }
   },
   editar: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.editarPartilha(f.dataset.v, texto))) { aviso(t("a_editada")); await carregarRota(); } },
-  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: S.eu.foto }))) { aviso(t("a_resposta")); await carregarRota(); } },
+  responder: async (f) => { const texto = new FormData(f).get("texto").trim(); if (texto && await tentar(() => dados.responder(S.aberto, { texto, nome: S.eu.nome, professor: S.eu.professor, foto: fotoCurta(S.eu.foto) }))) { aviso(t("a_resposta")); await carregarRota(); } },
   "novo-circulo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarCirculo({ nome: d.get("nome").trim(), proposito: d.get("proposito").trim() }); })) { aviso(t("a_circulo_criado")); S.circulos = await dados.circulos(); ir(`#c=${id}`); } },
   "novo-grupo": async (f) => { const d = new FormData(f); let id; if (await tentar(async () => { id = await dados.criarGrupo({ nome: d.get("nome").trim(), tipo: d.get("tipo"), cidade: f.dataset.cidade || "" }); })) ir(`#g=${id}`); },
   "pedir-outra": async (f) => { const nome = new FormData(f).get("nome").trim(); const id = slug(nome); if (id && await tentar(() => dados.pedirCidade(id, nome))) { f.reset(); aviso(t("a_pedido_cidade")); } },
@@ -1062,7 +1119,15 @@ const FORMS = {
     if (c && email && await tentar(() => dados.convidar(email, { cidade: c.id, anfitriao: true }))) { aviso(t("a_convite_anf", { e: email, c: c.nome })); await carregarRota(); }
   },
   convidar: async (f) => { const email = new FormData(f).get("email").trim(); if (await tentar(() => dados.convidar(email))) { aviso(t("a_convite", { e: email })); await carregarRota(); } },
-  perfil: async (f) => { const d = new FormData(f); const nome = d.get("nome").trim(); if (nome && await tentar(() => dados.guardarPerfil({ nome, cidade: d.get("cidade") || "" }))) { aviso(t("a_nome")); await recarregar(); } }
+  perfil: async (f) => {
+    const d = new FormData(f), nome = d.get("nome").trim(), usuario = (d.get("usuario") || "").trim().toLowerCase().replace(/^@/, "");
+    if (!nome) return;
+    if (usuario && !dados.USUARIO_OK.test(usuario)) { aviso(t("usuario_invalido")); return; }
+    if (usuario && usuario !== S.eu.usuario && !(await dados.usuarioLivre(usuario).catch(() => false))) { aviso(t("usuario_ocupado")); return; }
+    const p = { nome, cidade: d.get("cidade") || "", usuario, bio: (d.get("bio") || "").trim(), interesses: d.getAll("interesses") };
+    if (S.fotoPerfil !== undefined) p.foto = S.fotoPerfil;
+    if (await tentar(() => dados.guardarPerfilCompleto(S.eu, p))) { S.fotoPerfil = undefined; aviso(t("a_perfil")); await recarregar(); }
+  }
 };
 
 app.addEventListener("click", (e) => {

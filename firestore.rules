@@ -278,6 +278,35 @@ service cloud.firestore {
       allow delete: if isAdmin() || isDono(pedidoUid);
     }
 
+    // Perfil (nov 2026): uma linha sobre a pessoa, até 6 interesses, foto pequena (a do Google ou
+    // uma imagem reduzida no navegador) e o @utilizador, que tem de ser seu em comUsuarios.
+    function perfilValido(uid) {
+      let d = request.resource.data;
+      return (!('bio' in d) || textoAte(d.bio, 140))
+        && (!('interesses' in d) || (d.interesses is list && d.interesses.size() <= 6))
+        && (!('foto' in d) || (d.foto is string && d.foto.size() <= 30000))
+        && (!('usuario' in d) || (d.usuario is string
+            && existsAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario))
+            && getAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario)).data.uid == uid));
+    }
+
+    // Os @utilizadores: um documento por nome, com o uid de quem o tem. Qualquer pessoa com sessão
+    // pode ver se um nome está livre. Só se cria o seu, e só se a ficha aponta para ele no mesmo lote;
+    // só se apaga o seu quando a ficha já aponta para outro.
+    match /comUsuarios/{nome} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && nome.matches('^[a-z0-9._]{3,20}$')
+        && request.resource.data.keys().hasOnly(['uid', 'em'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/comMembros/$(request.auth.uid)).data.get('usuario', '') == nome;
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (isSignedIn() && resource.data.uid == request.auth.uid
+            && (!existsAfter(/databases/$(database)/documents/comMembros/$(request.auth.uid))
+                || getAfter(/databases/$(database)/documents/comMembros/$(request.auth.uid)).data.get('usuario', '') != nome));
+    }
+
     match /comMembros/{uid} {
       // Membros aprovados veem-se uns aos outros (nome e papel, sem e-mail).
       allow read: if isAdmin() || isDono(uid) || (ehMembro() && resource.data.estado == 'aprovado')
@@ -294,9 +323,10 @@ service cloud.firestore {
       // A pessoa muda o seu nome, foto e preferências; nunca o estado nem o papel. O Lucas muda tudo.
       allow update: if isAdmin()
         || (isDono(uid)
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade', 'usuario', 'bio', 'interesses'])
             && textoAte(request.resource.data.nome, 60)
-            && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade)))
+            && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade))
+            && perfilValido(uid))
         // O anfitrião só aprova quem pediu para entrar na sua cidade (não muda mais nada).
         || (pendenteDaMinhaCidade(uid)
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado', 'aprovadoEm'])

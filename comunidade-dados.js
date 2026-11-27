@@ -63,6 +63,10 @@ export async function carregarEu() {
     conviteAnfitriao: convite?.anfitriao === true,
     resumo: membro?.resumo !== false,
     temFicha: Boolean(membro),
+    usuario: membro?.usuario || "",
+    bio: membro?.bio || "",
+    interesses: membro?.interesses || [],
+    fotoGoogle: u.photoURL || "",
     cidade: membro?.cidade || ""
   };
 }
@@ -96,6 +100,38 @@ export function guardarPerfil({ nome, foto, resumo, cidade }) {
   if (foto !== undefined) dados.foto = foto;
   if (resumo !== undefined) dados.resumo = resumo;
   return updateDoc(ref("comMembros", uid()), dados);
+}
+
+/* ---------- Perfil: @utilizador, uma linha sobre a pessoa, interesses, foto (nov 2026) ----------
+   O @ é único: cada nome de utilizador é um documento comUsuarios/{nome} com o uid de quem o tem.
+   Mudar de @ = apagar o antigo, criar o novo e atualizar a ficha, tudo no mesmo lote. */
+export const USUARIO_OK = /^[a-z0-9._]{3,20}$/;
+export const INTERESSES = ["meditacao", "yoga", "respiracao", "ciencia", "espiritualidade", "movimento", "terapias"];
+export async function usuarioLivre(nome) {
+  const s = await getDoc(ref("comUsuarios", nome));
+  return !s.exists() || s.data().uid === uid();
+}
+export async function guardarPerfilCompleto(eu, { nome, cidade, usuario, bio, interesses, foto }) {
+  const lote = writeBatch(db);
+  const d = { nome: nome.slice(0, 60), bio: (bio || "").slice(0, 140), interesses: (interesses || []).filter((i) => INTERESSES.includes(i)).slice(0, 6) };
+  if (cidade) d.cidade = cidade;
+  if (foto !== undefined) d.foto = foto;
+  if (usuario && usuario !== eu.usuario) {
+    if (eu.usuario) lote.delete(ref("comUsuarios", eu.usuario));
+    lote.set(ref("comUsuarios", usuario), { uid: uid(), em: serverTimestamp() });
+    d.usuario = usuario;
+  }
+  lote.update(ref("comMembros", uid()), d);
+  await lote.commit();
+}
+/** A ficha de outra pessoa (membros aprovados veem-se uns aos outros). */
+export async function membro(id) {
+  const s = await getDoc(ref("comMembros", id));
+  return s.exists() ? { uid: id, ...s.data() } : null;
+}
+export async function uidDoUsuario(nome) {
+  const s = await getDoc(ref("comUsuarios", nome));
+  return s.exists() ? s.data().uid : "";
 }
 
 /* ---------- Círculos ---------- */
@@ -451,7 +487,7 @@ async function minhasPartilhas() {
 export async function exportarOsMeusDados() {
   const ficha = await getDoc(ref("comMembros", uid())).then((s) => s.data() || null).catch(() => null);
   const limpa = (p) => ({ texto: p.texto, pratica: p.pratica, semNome: p.anon, em: p.criadoEm ? new Date(ms(p.criadoEm)).toISOString() : "" });
-  return { exportadoEm: new Date().toISOString(), email: auth.currentUser?.email || "", perfil: ficha && { nome: ficha.nome, papel: ficha.papel, estado: ficha.estado, motivos: ficha.motivos }, partilhas: (await minhasPartilhas().catch(() => [])).map(limpa) };
+  return { exportadoEm: new Date().toISOString(), email: auth.currentUser?.email || "", perfil: ficha && { nome: ficha.nome, usuario: ficha.usuario || "", bio: ficha.bio || "", interesses: ficha.interesses || [], papel: ficha.papel, estado: ficha.estado, motivos: ficha.motivos }, partilhas: (await minhasPartilhas().catch(() => [])).map(limpa) };
 }
 /** Sai da comunidade e apaga o que é meu: partilhas, avisos e a ficha de membro. */
 export async function apagarTudoOQueEMeu() {
@@ -459,5 +495,8 @@ export async function apagarTudoOQueEMeu() {
   for (const a of await avisos().catch(() => [])) await apagarAviso(a.id).catch(() => {});
   await setDoc(ref("users", uid()), { comAnon: [] }, { merge: true }).catch(() => {});
   await deleteDoc(ref("comMembros", uid(), "privado", "contacto")).catch(() => {});
+  const ficha = await getDoc(ref("comMembros", uid())).catch(() => null);
   await deleteDoc(ref("comMembros", uid()));
+  const usuario = ficha?.exists() ? ficha.data().usuario : "";
+  if (usuario) await deleteDoc(ref("comUsuarios", usuario)).catch(() => {});
 }

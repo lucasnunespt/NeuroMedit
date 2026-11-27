@@ -285,6 +285,7 @@ service cloud.firestore {
       return (!('bio' in d) || textoAte(d.bio, 140))
         && (!('interesses' in d) || (d.interesses is list && d.interesses.size() <= 6))
         && (!('foto' in d) || (d.foto is string && d.foto.size() <= 30000))
+        && (!('mostrarComunidades' in d) || d.mostrarComunidades is bool)
         && (!('usuario' in d) || (d.usuario is string
             && existsAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario))
             && getAfter(/databases/$(database)/documents/comUsuarios/$(d.usuario)).data.uid == uid));
@@ -323,7 +324,7 @@ service cloud.firestore {
       // A pessoa muda o seu nome, foto e preferências; nunca o estado nem o papel. O Lucas muda tudo.
       allow update: if isAdmin()
         || (isDono(uid)
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade', 'usuario', 'bio', 'interesses'])
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nome', 'foto', 'motivos', 'resumo', 'vistoEm', 'cidade', 'usuario', 'bio', 'interesses', 'mostrarComunidades'])
             && textoAte(request.resource.data.nome, 60)
             && (!('cidade' in request.resource.data) || existeCidade(request.resource.data.cidade))
             && perfilValido(uid))

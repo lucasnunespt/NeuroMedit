@@ -729,6 +729,8 @@ function telaPerfil() {
       <fieldset class="com-interesses"><legend>${t("interesses_l")}</legend>${dados.INTERESSES.map((i) => `<label class="com-chip-op"><input type="checkbox" name="interesses" value="${i}" ${eu.interesses.includes(i) ? "checked" : ""}><span>${t("int_" + i)}</span></label>`).join("")}</fieldset>
       ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
       <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a><button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
+    <section class="com-cartao com-novo"><h3>${t("privacidade_t")}</h3>
+      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label></section>
     ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
       <div class="com-linha"><button class="com-opt" type="button" data-a="exportar">${t("exportar")}</button>${eu.admin ? "" : `<button class="com-acao com-acao--perigo" type="button" data-a="apagar-tudo">${t("sair_apagar")}</button>`}</div></section>
@@ -741,19 +743,28 @@ function mostrarFotoPerfil() {
 }
 /** O perfil de outra pessoa (ou o meu, como os outros o veem). */
 function telaPessoa() {
-  const p = S.pessoa;
+  const p = S.pessoa, v = S.vida || {};
   if (!p || (p.estado !== "aprovado" && !S.eu.admin)) return `<div class="com-topo"><h1 class="com-h1">${t("perfil_nao")}</h1></div>`;
   const prof = p.papel === "professor" || p.papel === "admin";
+  const eu = p.uid === S.eu.uid;
+  const mostra = eu || p.mostrarComunidades !== false;
   const c = p.cidade ? cidadeDe(p.cidade) : null;
+  const enc = (e) => { const d = `<strong>${esc(e.titulo)}</strong><span>${quando(e.quando)}${e.lugar ? " · " + esc(e.lugar) : (e.link ? " · " + t("pessoa_online") : "")}</span>`; return `<li>${e.cidade ? `<a class="com-pessoa-enc" href="#cidade=${esc(e.cidade)}">${d}</a>` : `<div class="com-pessoa-enc">${d}</div>`}</li>`; };
+  const secao = (titulo, corpo) => `<section class="com-cartao com-novo"><h2 class="com-pessoa-h2">${titulo}</h2>${corpo}</section>`;
   return `<section class="com-cartao com-pessoa">
     <span class="com-foto com-foto--xg">${p.foto ? `<img src="${esc(p.foto)}" alt="" referrerpolicy="no-referrer">` : IC.pessoa}</span>
     <h1 class="com-h1">${esc(p.nome || t("papel_membro"))}</h1>
     ${p.usuario ? `<p class="com-suave">@${esc(p.usuario)}</p>` : ""}
-    <div class="com-linha com-pessoa-meta">${prof ? selo() : ""}${c ? `<a class="com-acao" href="#cidade=${c.id}">${IC.pin}${esc(c.nome)}</a>` : ""}</div>
+    ${v.pro?.profissao ? `<p class="com-pessoa-faz">${esc(v.pro.profissao)}</p>` : ""}
+    <div class="com-linha com-pessoa-meta">${prof ? selo() : ""}${c && mostra ? `<a class="com-acao" href="#cidade=${c.id}">${IC.pin}${esc(c.nome)}</a>` : ""}</div>
     ${p.bio ? `<p class="com-pessoa-bio">${esc(p.bio)}</p>` : ""}
     ${(p.interesses || []).length ? `<div class="com-chips">${interessesDe(p.interesses)}</div>` : ""}
-    <div class="com-linha">${p.uid === S.eu.uid ? `<a class="com-opt" href="#perfil">${IC.editar} ${t("editar_perfil")}</a>` : (prof ? botaoSeguir(p.uid) : "")}</div>
-  </section>`;
+    <div class="com-linha com-pessoa-meta">${eu ? `<a class="com-opt" href="#perfil">${IC.editar} ${t("editar_perfil")}</a>` : (prof ? botaoSeguir(p.uid) : "")}${v.pro ? `<a class="com-pri" href="perfil.html?p=${encodeURIComponent(p.uid)}">${t("ver_pagina_pro")}</a>` : ""}</div>
+  </section>
+  ${(v.proximos || []).length || (v.passados || []).length ? secao(t("pessoa_encontros"), `${(v.proximos || []).length ? `<p class="com-regiao">${t("pessoa_proximos")}</p><ul class="com-pessoa-lista">${v.proximos.map(enc).join("")}</ul>` : ""}${(v.passados || []).length ? `<p class="com-regiao">${t("pessoa_passados")}</p><ul class="com-pessoa-lista com-pessoa-lista--passado">${v.passados.map(enc).join("")}</ul>` : ""}`) : ""}
+  ${(v.fotos || []).length ? secao(t("pessoa_fotos"), `<div class="com-pessoa-fotos">${v.fotos.map((f) => `<a href="#p=${f.id}"><img src="${esc(f.imagem)}" alt="${esc((f.texto || "").slice(0, 80))}" loading="lazy"></a>`).join("")}</div>`) : ""}
+  ${mostra && (c || (v.grupos || []).length) ? secao(t("pessoa_comunidades"), `<ul class="com-pessoa-lista">${c ? `<li><a class="com-pessoa-enc" href="#cidade=${c.id}"><strong>${esc(c.nome)}</strong><span>${t("pessoa_cidade")}</span></a></li>` : ""}${(v.grupos || []).map((g) => `<li><a class="com-pessoa-enc" href="#g=${g.id}"><strong>${esc(g.nome)}</strong><span>${g.tipo === "aberto" ? t("pessoa_grupo_aberto") : t("pessoa_grupo_privado")}</span></a></li>`).join("")}</ul>${eu && !p.mostrarComunidades ? "" : ""}`) : ""}
+  ${!mostra ? `<p class="com-suave com-peq com-centro">${t("pessoa_comunidades_ocultas")}</p>` : ""}`;
 }
 
 /* ---------- Foto da prática ----------
@@ -914,6 +925,7 @@ async function carregarRota() {
       }
     } else if (chave === "u") {
       S.pessoa = await dados.membro(valor).catch(() => null);
+      S.vida = S.pessoa ? await dados.vidaDe(valor, await dados.grupos(S.eu).catch(() => [])).catch(() => null) : null;
     } else if (chave === "perfil") {
       S.seguidoresN = S.eu.professor ? await dados.contarSeguidores().catch(() => null) : null;
     } else {
@@ -1026,6 +1038,7 @@ const ACOES = {
     if (!f) return;
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
+  "mostrar-comunidades": async (_, el) => { if (await tentar(() => dados.guardarMostrarComunidades(el.checked))) { S.eu.mostrarComunidades = el.checked; aviso(t("a_perfil")); } },
   "foto-google": () => { S.fotoPerfil = S.eu.fotoGoogle; mostrarFotoPerfil(); },
   foto: async (_, el) => {
     const f = el.files?.[0]; el.value = "";

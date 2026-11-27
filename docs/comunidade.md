@@ -181,3 +181,9 @@ Próximas fases (por ordem):
 - **Apagar os meus dados** também apaga as mensagens que escrevi.
 - **Testes das regras:** em `tests/comunidade.test.mjs` ("Mensagens diretas"). Precisam do emulador (Java + rede Google), que o ambiente do agente não tem.
 - **Pesquisa:** só aparecem membros que escolheram um @.
+
+## Espaço de apoio (nov 2026)
+
+- Um parceiro de cada vez (`comApoio/atual`), no fim da coluna da direita, sempre marcado como "Apoio · nome". O link leva `rel="sponsored"`.
+- Só o Lucas o põe, muda ou tira, em Gestão → Espaço de apoio. Os membros só leem.
+- Critério: só o que combina com a calma da comunidade (estúdios, retiros, livros, terapias). Nada de anúncios automáticos nem rastreio.

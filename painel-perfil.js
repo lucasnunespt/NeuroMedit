@@ -8,6 +8,8 @@ import { lerPerfil, guardarPerfil } from "./perfil-dados.js";
 import { lerAjustes } from "./reservas-dados.js";
 import { proPainel } from "./conta-pro.js";
 import { AREAS, aplicarTermos } from "./termos.js";
+import { db } from "./firebase-init.js";
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 export function iniciarPerfil(raiz, user) {
   if (!raiz) return;
@@ -167,6 +169,72 @@ export function iniciarPerfil(raiz, user) {
     });
   }
 
+  // ---------- Depoimentos à espera (escritos por quem teve a sessão, nov 2026) ----------
+  const caixaPend = raiz.querySelector("[data-pf-dep-pendentes]");
+  const MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  async function pintarPendentes() {
+    if (!caixaPend) return;
+    let lista = [];
+    try { lista = (await getDocs(query(collection(db, "depoimentos"), where("proId", "==", pro)))).docs.map((d) => ({ id: d.id, ...d.data() })).filter((d) => d.estado === "pendente"); }
+    catch (e) { lista = []; }
+    caixaPend.textContent = "";
+    caixaPend.hidden = !lista.length;
+    if (!lista.length) return;
+    const tit = document.createElement("p"); tit.className = "aj-titulo";
+    tit.textContent = lista.length === 1 ? "1 depoimento à espera da sua aprovação" : `${lista.length} depoimentos à espera da sua aprovação`;
+    caixaPend.append(tit);
+    lista.forEach((d) => {
+      const item = document.createElement("div");
+      const q = document.createElement("blockquote"); q.textContent = `«${d.texto}» — ${d.nome}`;
+      const acoes = document.createElement("div"); acoes.className = "dep-acoes";
+      const sim = document.createElement("button"); sim.type = "button"; sim.className = "btn btn--primary"; sim.textContent = "Aprovar e mostrar na página";
+      const nao = document.createElement("button"); nao.type = "button"; nao.className = "btn btn--secondary"; nao.textContent = "Recusar";
+      sim.addEventListener("click", async () => {
+        const quando = d.criadoEm?.toDate ? d.criadoEm.toDate() : new Date();
+        perfil.depoimentos = [...(perfil.depoimentos || []), { texto: d.texto, nome: d.nome, data: `${MES[quando.getMonth()]} ${quando.getFullYear()}` }];
+        pintarDepoimentos(); guardar();
+        await deleteDoc(doc(db, "depoimentos", d.id)).catch(() => {});
+        pintarPendentes();
+      });
+      nao.addEventListener("click", async () => { if (!confirm("Recusar este depoimento? Ele é apagado.")) return; await deleteDoc(doc(db, "depoimentos", d.id)).catch(() => {}); pintarPendentes(); });
+      acoes.append(sim, nao);
+      item.append(q, acoes);
+      caixaPend.append(item);
+    });
+  }
+
+  // ---------- Perguntas na página (nov 2026): responder ou apagar ----------
+  const caixaPerg = raiz.querySelector("[data-pf-perguntas]");
+  async function pintarPerguntas() {
+    if (!caixaPerg) return;
+    let lista = [];
+    try { lista = (await getDocs(query(collection(db, "perguntas"), where("proId", "==", pro), where("respondida", "==", false)))).docs.map((d) => ({ id: d.id, ...d.data() })); }
+    catch (e) { lista = []; }
+    caixaPerg.textContent = "";
+    if (!lista.length) { const p = document.createElement("p"); p.className = "muted"; p.textContent = "Nenhuma pergunta à espera."; caixaPerg.append(p); return; }
+    lista.forEach((q) => {
+      const item = document.createElement("div"); item.className = "perg-item";
+      const perg = document.createElement("p"); perg.textContent = `«${q.texto}» — ${q.nome}`;
+      const lab = document.createElement("label"); lab.className = "aj-campo-rot"; lab.textContent = "A sua resposta";
+      const txt = document.createElement("textarea"); txt.className = "campo-texto"; txt.rows = 3; txt.maxLength = 600; lab.append(txt);
+      const acoes = document.createElement("div"); acoes.className = "dep-acoes";
+      const resp = document.createElement("button"); resp.type = "button"; resp.className = "btn btn--primary"; resp.textContent = "Responder e mostrar na página";
+      const apagar = document.createElement("button"); apagar.type = "button"; apagar.className = "btn btn--secondary"; apagar.textContent = "Apagar";
+      const nota = document.createElement("p"); nota.className = "ag-estado"; nota.setAttribute("aria-live", "polite");
+      resp.addEventListener("click", async () => {
+        const r = txt.value.trim();
+        if (!r) { txt.focus(); return; }
+        resp.disabled = true;
+        try { await updateDoc(doc(db, "perguntas", q.id), { resposta: r, respondida: true, respondidaEm: serverTimestamp() }); pintarPerguntas(); }
+        catch (e) { resp.disabled = false; nota.textContent = "Não consegui guardar. Tente de novo."; }
+      });
+      apagar.addEventListener("click", async () => { if (!confirm("Apagar esta pergunta?")) return; await deleteDoc(doc(db, "perguntas", q.id)).catch(() => {}); pintarPerguntas(); });
+      acoes.append(resp, apagar);
+      item.append(perg, lab, acoes, nota);
+      caixaPerg.append(item);
+    });
+  }
+
   depAdd?.addEventListener("click", () => {
     if (!perfil) return;
     const texto = depTexto.value.trim();
@@ -291,5 +359,7 @@ export function iniciarPerfil(raiz, user) {
     pintarFoto();
     pintarDepoimentos();
     pintarMoradas();
+    pintarPendentes();
+    pintarPerguntas();
   })();
 }

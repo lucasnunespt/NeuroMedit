@@ -160,7 +160,7 @@ export async function vidaDe(pessoaUid, meusGrupos) {
   const [enc, parts, abertos, pro] = await Promise.all([
     getDocs(query(col("comEncontros"), where("uid", "==", pessoaUid), limit(40))).then(lista).catch(() => []),
     getDocs(query(col("comPartilhas"), where("uid", "==", pessoaUid), limit(40))).then(lista).catch(() => []),
-    getDocs(query(col("comGrupos"), where("tipo", "==", "aberto"))).then(lista).catch(() => []),
+    Promise.resolve([]), // privacidade: só os grupos em comum (os meus), nunca a lista de um grupo alheio
     getDoc(doc(db, "pros", pessoaUid)).then((s) => (s.exists() && s.data().estado === "aprovado" ? s.data() : null)).catch(() => null)
   ]);
   const encontros = enc.map((e) => proximo(e, agora));
@@ -340,38 +340,66 @@ export async function denunciarResposta(partilhaId, id) {
 export function manterResposta(partilhaId, id) { return updateDoc(ref("comPartilhas", partilhaId, "respostas", id), { denunciada: false }); }
 
 /* ---------- Grupos e conversas ---------- */
+/* Privacidade a sério (nov 2026): quem está num grupo só é visível a quem também está nele.
+   Para descobrir grupos abertos há uma vitrine (comGruposAbertos) só com nome, cidade e número de pessoas. */
+const vitrineDe = (g) => ({ nome: g.nome, criador: g.criador, n: (g.membros || []).length, criadoEm: g.criadoEm || serverTimestamp(), ...(g.cidade ? { cidade: g.cidade } : {}) });
 export async function grupos(eu) {
-  if (eu.admin) return lista(await getDocs(col("comGrupos"))).sort(recentes);
+  if (eu.admin) {
+    const todos = lista(await getDocs(col("comGrupos")));
+    // Os grupos abertos de antes ganham a sua entrada na vitrine (e o número certo de pessoas).
+    const vit = new Map(lista(await getDocs(col("comGruposAbertos")).catch(() => ({ docs: [] }))).map((v) => [v.id, v]));
+    for (const g of todos.filter((x) => x.tipo === "aberto")) {
+      const v = vit.get(g.id);
+      if (!v || v.n !== (g.membros || []).length || v.nome !== g.nome) await setDoc(ref("comGruposAbertos", g.id), vitrineDe(g)).catch(() => {});
+    }
+    return todos.sort(recentes);
+  }
   const [meus, abertos] = await Promise.all([
-    getDocs(query(col("comGrupos"), where("membros", "array-contains", eu.uid))),
-    getDocs(query(col("comGrupos"), where("tipo", "==", "aberto")))
+    getDocs(query(col("comGrupos"), where("membros", "array-contains", eu.uid))).then(lista),
+    getDocs(col("comGruposAbertos")).then(lista).catch(() => [])
   ]);
   const mapa = new Map();
-  [...lista(meus), ...lista(abertos)].forEach((g) => mapa.set(g.id, g));
+  abertos.forEach((v) => mapa.set(v.id, { ...v, tipo: "aberto", vitrine: true }));
+  meus.forEach((g) => mapa.set(g.id, g));
   return [...mapa.values()].sort(recentes);
 }
 export async function grupo(id) {
-  const s = await getDoc(ref("comGrupos", id));
-  return s.exists() ? { id: s.id, ...s.data() } : null;
+  const s = await getDoc(ref("comGrupos", id)).catch(() => null);
+  if (s?.exists()) return { id: s.id, ...s.data() };
+  // Grupo aberto em que ainda não estou: só a vitrine (sem a lista de quem está).
+  const v = await getDoc(ref("comGruposAbertos", id)).catch(() => null);
+  return v?.exists() ? { id, ...v.data(), tipo: "aberto", membros: [], vitrine: true } : null;
 }
 export async function criarGrupo({ nome, tipo, cidade }) {
   const g = { nome: nome.slice(0, 60), tipo: tipo === "aberto" ? "aberto" : "privado", criador: uid(), membros: [uid()], criadoEm: serverTimestamp() };
   if (cidade) g.cidade = cidade; // subcomunidade de uma cidade
-  const r = await addDoc(col("comGrupos"), g);
+  const r = doc(col("comGrupos"));
+  const lote = writeBatch(db);
+  lote.set(r, g);
+  if (g.tipo === "aberto") lote.set(ref("comGruposAbertos", r.id), vitrineDe(g));
+  await lote.commit();
   return r.id;
 }
 export async function apagarGrupo(id) {
   const m = await getDocs(col("comGrupos", id, "mensagens")).catch(() => null);
   if (m) for (const d of m.docs) await deleteDoc(d.ref).catch(() => {});
+  await deleteDoc(ref("comGruposAbertos", id)).catch(() => {});
   await deleteDoc(ref("comGrupos", id));
 }
-export function entrarNoGrupo(id) { return updateDoc(ref("comGrupos", id), { membros: arrayUnion(uid()) }); }
-export function sairDoGrupo(id) { return updateDoc(ref("comGrupos", id), { membros: arrayRemove(uid()) }); }
+/** Entrar ou sair: a lista do grupo e o número da vitrine mudam juntos. */
+function mudarMembros(id, aberto, op, pessoa) {
+  const lote = writeBatch(db);
+  lote.update(ref("comGrupos", id), { membros: op > 0 ? arrayUnion(pessoa) : arrayRemove(pessoa) });
+  if (aberto) lote.update(ref("comGruposAbertos", id), { n: increment(op) });
+  return lote.commit();
+}
+export function entrarNoGrupo(id) { return mudarMembros(id, true, 1, uid()); }
+export function sairDoGrupo(id, tipo) { return mudarMembros(id, tipo === "aberto", -1, uid()); }
 export async function porNoGrupo(g, pessoaUid) {
-  await updateDoc(ref("comGrupos", g.id), { membros: arrayUnion(pessoaUid) });
+  await mudarMembros(g.id, g.tipo === "aberto", 1, pessoaUid);
   await avisar(pessoaUid, { tipo: "grupo", texto: `Você foi incluído no grupo «${g.nome}».`.slice(0, 200), link: `comunidade.html#g=${g.id}` }).catch(() => {});
 }
-export function tirarDoGrupo(id, pessoaUid) { return updateDoc(ref("comGrupos", id), { membros: arrayRemove(pessoaUid) }); }
+export function tirarDoGrupo(id, pessoaUid, tipo) { return mudarMembros(id, tipo === "aberto", -1, pessoaUid); }
 /** Conversa em tempo real. Devolve a função que para de ouvir. */
 export function ouvirMensagens(grupoId, cb, erro) {
   return onSnapshot(col("comGrupos", grupoId, "mensagens"), (s) => cb(lista(s).sort(antigas)), erro);

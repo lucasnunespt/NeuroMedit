@@ -385,3 +385,62 @@ describe("Mensagens diretas", () => {
     await assertSucceeds(getDocs(collection(de(LUCAS), "comConversas", c, "mensagens")));
   });
 });
+
+describe("Privacidade dos grupos (vitrine)", () => {
+  const aberto = (criador, membros) => ({ nome: "Yoga ao nascer do sol", tipo: "aberto", criador, membros, criadoEm: serverTimestamp() });
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (c) => {
+      const db = c.firestore();
+      await setDoc(doc(db, "comGrupos", "g1"), aberto(ANA, [ANA, EVA]));
+      await setDoc(doc(db, "comGruposAbertos", "g1"), { nome: "Yoga ao nascer do sol", criador: ANA, n: 2 });
+    });
+  });
+  test("quem não está no grupo não vê quem está; vê a vitrine", async () => {
+    await assertFails(getDoc(doc(de(RUI), "comGrupos", "g1")));
+    await assertSucceeds(getDoc(doc(de(EVA), "comGrupos", "g1")));
+    await assertSucceeds(getDoc(doc(de(RUI), "comGruposAbertos", "g1")));
+    await assertFails(getDocs(query(collection(de(RUI), "comGrupos"), where("tipo", "==", "aberto"))));
+  });
+  test("entrar muda a lista e o número juntos; o número não mente", async () => {
+    const b = writeBatch(de(RUI));
+    b.update(doc(de(RUI), "comGrupos", "g1"), { membros: arrayUnion(RUI) });
+    b.update(doc(de(RUI), "comGruposAbertos", "g1"), { n: 3 });
+    await assertSucceeds(b.commit());
+    await assertFails(updateDoc(doc(de(RUI), "comGruposAbertos", "g1"), { n: 10 }));
+    await assertFails(updateDoc(doc(de(RUI), "comGruposAbertos", "g1"), { nome: "Outro" }));
+  });
+});
+
+describe("Depoimentos escritos por quem teve a sessão", () => {
+  const dep = (uid, proId = ANA) => ({ bookingId: "b1", proId, userId: uid, nome: "Rui M.", texto: "Saí da sessão muito mais leve.", criadoEm: serverTimestamp(), estado: "pendente" });
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "bookings", "b1"), { userId: RUI, proId: ANA, estado: "realizada" }));
+  });
+  test("só quem teve a sessão escreve, e só sobre esse profissional", async () => {
+    await assertFails(setDoc(doc(de(EVA), "depoimentos", "b1"), dep(EVA)));
+    await assertFails(setDoc(doc(de(RUI), "depoimentos", "b1"), dep(RUI, EVA)));
+    await assertSucceeds(setDoc(doc(de(RUI), "depoimentos", "b1"), dep(RUI)));
+    await assertFails(updateDoc(doc(de(RUI), "depoimentos", "b1"), { estado: "aprovado" }));
+  });
+  test("o profissional lê e decide; os outros não leem", async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "depoimentos", "b1"), { ...dep(RUI), criadoEm: Timestamp.now() }));
+    await assertSucceeds(getDocs(query(collection(de(ANA), "depoimentos"), where("proId", "==", ANA))));
+    await assertFails(getDoc(doc(de(EVA), "depoimentos", "b1")));
+    await assertSucceeds(deleteDoc(doc(de(ANA), "depoimentos", "b1")));
+  });
+});
+
+describe("Perguntas e respostas", () => {
+  const perg = (uid, proId = ANA) => ({ proId, uid, nome: "Rui M.", texto: "Posso ir sem experiência?", criadoEm: serverTimestamp(), respondida: false });
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled((c) => setDoc(doc(c.firestore(), "pros", ANA), { estado: "aprovado", perfil: { nome: "Ana" } }));
+  });
+  test("quem tem conta pergunta; só aparece depois de respondida", async () => {
+    await assertSucceeds(setDoc(doc(de(RUI), "perguntas", "q1"), perg(RUI)));
+    await assertFails(setDoc(doc(de(RUI), "perguntas", "q2"), { ...perg(RUI), respondida: true }));
+    await assertFails(getDoc(doc(env.unauthenticatedContext().firestore(), "perguntas", "q1")));
+    await assertFails(updateDoc(doc(de(RUI), "perguntas", "q1"), { resposta: "sim", respondida: true, respondidaEm: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(de(ANA), "perguntas", "q1"), { resposta: "Pode, sim.", respondida: true, respondidaEm: serverTimestamp() }));
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), "perguntas", "q1")));
+  });
+});

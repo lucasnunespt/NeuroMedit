@@ -62,6 +62,63 @@ service cloud.firestore {
       return b.estado in ['libertada', 'reembolsada']
         || (b.estado == 'cancelada' && !(b.get('reembolsoPedido', false) == true && b.get('reembolsoFeito', false) != true));
     }
+    // ---------- Perguntas e respostas na página do profissional (nov 2026) ----------
+    // Quem tem conta pergunta; só aparece a todos depois de respondida (respondida == true).
+    // Responde o profissional da página (o Lucas, admin, na página dele: proId vazio).
+    match /perguntas/{perguntaId} {
+      function donoDaPagina(d) {
+        return (d.proId == '' && isAdmin()) || (isSignedIn() && d.proId != '' && d.proId == request.auth.uid);
+      }
+      allow read: if resource.data.respondida == true
+        || isAdmin()
+        || (isSignedIn() && (resource.data.uid == request.auth.uid || resource.data.proId == request.auth.uid));
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly(['proId', 'uid', 'nome', 'texto', 'criadoEm', 'respondida'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.respondida == false
+        && request.resource.data.proId is string
+        && request.resource.data.proId != request.auth.uid
+        && (request.resource.data.proId == ''
+            || (exists(/databases/$(database)/documents/pros/$(request.resource.data.proId))
+                && get(/databases/$(database)/documents/pros/$(request.resource.data.proId)).data.estado == 'aprovado'))
+        && request.resource.data.nome is string && request.resource.data.nome.size() > 0 && request.resource.data.nome.size() <= 60
+        && request.resource.data.texto is string && request.resource.data.texto.size() >= 5 && request.resource.data.texto.size() <= 300
+        && request.resource.data.criadoEm == request.time;
+      allow update: if donoDaPagina(resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resposta', 'respondida', 'respondidaEm'])
+        && request.resource.data.resposta is string && request.resource.data.resposta.size() > 0 && request.resource.data.resposta.size() <= 600
+        && request.resource.data.respondida == true
+        && request.resource.data.respondidaEm == request.time;
+      allow delete: if isAdmin()
+        || (isSignedIn() && (resource.data.uid == request.auth.uid || resource.data.proId == request.auth.uid));
+    }
+
+    // ---------- Depoimentos escritos por quem teve a sessão (nov 2026) ----------
+    // Um por reserva (id = id da reserva), só de quem a fez, numa sessão confirmada ou feita.
+    // Fica "pendente": o profissional aprova (copia para o seu perfil) ou recusa (apaga).
+    match /depoimentos/{reservaId} {
+      function reserva() {
+        return get(/databases/$(database)/documents/bookings/$(reservaId)).data;
+      }
+      allow read: if isAdmin()
+        || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.proId == request.auth.uid));
+      allow create: if isSignedIn()
+        && exists(/databases/$(database)/documents/bookings/$(reservaId))
+        && reserva().userId == request.auth.uid
+        && reserva().estado in ['confirmada', 'realizada']
+        && request.resource.data.keys().hasOnly(['bookingId', 'proId', 'userId', 'nome', 'texto', 'criadoEm', 'estado'])
+        && request.resource.data.bookingId == reservaId
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.proId == reserva().get('proId', '')
+        && request.resource.data.estado == 'pendente'
+        && request.resource.data.nome is string && request.resource.data.nome.size() > 0 && request.resource.data.nome.size() <= 40
+        && request.resource.data.texto is string && request.resource.data.texto.size() >= 10 && request.resource.data.texto.size() <= 300
+        && request.resource.data.criadoEm == request.time;
+      allow update: if false;
+      allow delete: if isAdmin()
+        || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.proId == request.auth.uid));
+    }
+
     match /bookings/{bookingId} {
       allow read: if isAdmin()
         || isProDoPedido(resource.data)
@@ -475,9 +532,35 @@ service cloud.firestore {
     function estaNoGrupo(grupoId) {
       return isAdmin() || (ehMembro() && request.auth.uid in grupo(grupoId).membros);
     }
+    // Vitrine dos grupos abertos: nome, cidade, quem criou e quantas pessoas — nunca quem são.
+    // Muda junto com o grupo (no mesmo lote): o número tem de bater com a lista verdadeira.
+    function grupoDepois(grupoId) {
+      return getAfter(/databases/$(database)/documents/comGrupos/$(grupoId)).data;
+    }
+    match /comGruposAbertos/{grupoId} {
+      allow read: if isAdmin() || ehMembro();
+      allow create, update: if isAdmin()
+        || (ehMembro()
+            && existsAfter(/databases/$(database)/documents/comGrupos/$(grupoId))
+            && grupoDepois(grupoId).tipo == 'aberto'
+            && request.resource.data.n == grupoDepois(grupoId).membros.size()
+            && (
+              // Quem criou o grupo escreve a vitrine (nome, cidade, número).
+              (grupoDepois(grupoId).criador == request.auth.uid
+                && request.resource.data.criador == request.auth.uid
+                && request.resource.data.keys().hasOnly(['nome', 'criador', 'n', 'criadoEm', 'cidade'])
+                && textoAte(request.resource.data.nome, 60))
+              // Quem entra ou sai só muda o número.
+              || (resource != null && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['n']))
+            ));
+      allow delete: if isAdmin() || (ehMembro() && resource.data.criador == request.auth.uid);
+    }
+
     match /comGrupos/{grupoId} {
+      // Privacidade (nov 2026): a lista de quem está num grupo só a veem os que estão nele.
+      // Os grupos abertos descobrem-se pela vitrine (comGruposAbertos), sem nomes.
       allow read: if isAdmin()
-        || (ehMembro() && (request.auth.uid in resource.data.membros || resource.data.tipo == 'aberto'));
+        || (ehMembro() && request.auth.uid in resource.data.membros);
       allow create: if (ehProfessor() || anfitriaoNoPedido(request.resource.data))
         && request.resource.data.criador == request.auth.uid
         && request.resource.data.tipo in ['privado', 'aberto']

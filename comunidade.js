@@ -698,6 +698,12 @@ function telaGrupos() {
 function telaGrupo() {
   const g = S.grupo, eu = S.eu;
   if (!g) return `<div class="com-cartao"><h2>${t("grupo_nao")}</h2><div class="com-linha"><a class="com-opt" href="#grupos">${t("voltar_grupos")}</a></div></div>`;
+  // Grupo aberto em que ainda não estou: só o nome e quantas pessoas, e o convite para entrar.
+  if (g.vitrine && !eu.admin) return `<a class="com-acao com-acao--solta" href="#grupos">${IC.voltar}<span>${t("grupos_t")}</span></a>
+    <section class="com-cartao com-novo com-centro"><span class="com-ic">${IC.conversa}</span><h1 class="com-h2">${esc(g.nome)}</h1>
+      <p class="com-suave">${t("aberto")}${g.n ? ` · ${esc(t(g.n === 1 ? "grupo_n_1" : "grupo_n", { n: g.n }))}` : ""}</p>
+      <p class="com-suave com-peq">${t("grupo_vitrine_d")}</p>
+      <div class="com-linha" style="justify-content:center"><button class="com-pri" type="button" data-a="entrar-grupo" data-v="${g.id}">${t("entrar_grupo")}</button></div></section>`;
   const dono = eu.admin || g.criador === eu.uid;
   const fora = S.pessoas.filter((m) => !(g.membros || []).includes(m.id));
   const dentro = S.pessoas.filter((m) => (g.membros || []).includes(m.id));
@@ -711,9 +717,42 @@ function telaGrupo() {
       ${fora.length ? `<form class="com-linha com-linha--base" data-f="por-no-grupo"><div class="com-sel com-sel--larga"><label class="com-peq com-suave" for="com-pg">${t("incluir")}</label><select id="com-pg" class="com-campo" name="pessoa">${fora.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("")}</select></div><button class="com-opt" type="submit">${t("incluir_btn")}</button></form>` : ""}</section>` : ""}`;
 }
 function mensagens() {
-  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
   const g = S.grupo, eu = S.eu;
-  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu.uid ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu.uid ? t("voce") : m.nome)}</span><span>${esc(m.texto)}</span>${eu.admin || m.uid === eu.uid || g.criador === eu.uid ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-mensagem" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
+  return bolhas(S.msgs, { nome: (m) => m.nome || "", apagar: (m) => eu.admin || m.uid === eu.uid || g.criador === eu.uid, acao: "apagar-mensagem", grupo: true });
+}
+/* ---------- Bolhas de conversa (nov 2026), como no WhatsApp e no Instagram ----------
+   As minhas à direita, na cor de destaque; as dos outros à esquerda, na superfície.
+   Separador por dia, hora dentro da bolha, nome só na primeira de uma sequência (em grupos).
+   Apagar: toca-se na própria bolha e aparece o caixote (no computador, ao passar o rato). */
+function bolhas(msgs, { nome, apagar, acao, grupo }) {
+  if (!msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
+  const eu = S.eu.uid;
+  const lingua = document.documentElement.lang || "pt-BR";
+  const ms = (x) => (x?.toMillis ? x.toMillis() : 0);
+  const dia = (m) => { const d = ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date(); return d.toDateString(); };
+  const rotuloDia = (m) => {
+    const d = ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date();
+    const hoje = new Date(); const ontem = new Date(Date.now() - 86400000);
+    if (d.toDateString() === hoje.toDateString()) return t("hoje");
+    if (d.toDateString() === ontem.toDateString()) return t("ontem");
+    return d.toLocaleDateString(lingua, { day: "numeric", month: "long" });
+  };
+  const hora = (m) => (ms(m.criadoEm) ? new Date(ms(m.criadoEm)) : new Date()).toLocaleTimeString(lingua, { hour: "2-digit", minute: "2-digit" });
+  let out = "", diaAnt = "", quemAnt = "";
+  msgs.forEach((m) => {
+    const d = dia(m);
+    if (d !== diaAnt) { out += `<p class="com-dia"><span>${esc(rotuloDia(m))}</span></p>`; diaAnt = d; quemAnt = ""; }
+    const minha = m.uid === eu;
+    const primeira = m.uid !== quemAnt;
+    quemAnt = m.uid;
+    const podeApagar = apagar(m);
+    out += `<div class="com-msg ${minha ? "is-minha" : ""} ${primeira ? "is-primeira" : ""}"${podeApagar ? ` data-a="msg-acoes" tabindex="0"` : ""}>
+      ${grupo && !minha && primeira ? `<span class="com-msg-nome">${esc(nome(m))}</span>` : ""}
+      <span class="com-msg-texto">${esc(m.texto)}<span class="com-msg-hora" aria-label="${esc(hora(m))}">${esc(hora(m))}</span></span>
+      ${podeApagar ? `<button class="com-msg-apagar" type="button" data-a="${acao}" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}
+    </div>`;
+  });
+  return out;
 }
 
 /* ---------- Mensagens diretas ---------- */
@@ -751,9 +790,7 @@ function telaConversa() {
     <p class="com-suave com-peq">${c.estado === "bloqueada" ? t("msg_estado_bloq_d") : (c.estado === "pedido" && c.de === eu ? t("msg_espera_d") : t("msg_privada_d"))}</p>`;
 }
 function mensagensDiretas() {
-  if (!S.msgs.length) return `<p class="com-suave com-peq com-centro">${t("sem_msgs")}</p>`;
-  const eu = S.eu.uid;
-  return S.msgs.map((m) => `<div class="com-msg ${m.uid === eu ? "is-minha" : ""}"><span class="com-suave com-peq">${esc(m.uid === eu ? t("voce") : (S.convOutro?.nome || ""))} · ${quando(m.criadoEm)}</span><span>${esc(m.texto)}</span>${m.uid === eu ? `<button class="com-acao com-acao--perigo com-acao--mini" type="button" data-a="apagar-dm" data-v="${m.id}" aria-label="${t("apagar_msg")}">${IC.lixo}</button>` : ""}</div>`).join("");
+  return bolhas(S.msgs, { nome: () => S.convOutro?.nome || "", apagar: (m) => m.uid === S.eu.uid, acao: "apagar-dm", grupo: false });
 }
 
 function telaGestao() {
@@ -803,7 +840,7 @@ function telaPerfil() {
       ${S.cidades.length ? `<label for="com-pc">${t("cid_entrada_l")}</label><select id="com-pc" class="com-campo" name="cidade">${opcoesCidades(eu.cidade)}</select>` : ""}
       <div class="com-linha com-linha--fim"><a class="com-acao" href="#u=${eu.uid}">${t("ver_publico")}</a>${eu.professor || eu.admin ? `<a class="com-acao" href="painel.html">${t("editar_pro")}</a>` : ""}<button class="com-pri" type="submit">${t("guardar_perfil")}</button></div></form>` : ""}
     <section class="com-cartao com-novo"><h3>${t("privacidade_t")}</h3>
-      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d")}</small></span></label>
+      <label class="com-chk com-chk--bloco"><input type="checkbox" data-a="mostrar-comunidades" ${eu.mostrarComunidades ? "checked" : ""}><span>${t("mostrar_com_l")}<small class="com-suave">${t("mostrar_com_d2")}</small></span></label>
       <div class="com-sel"><label class="com-peq com-suave" for="com-qe">${t("quem_escreve_l")}</label><select id="com-qe" class="com-campo" data-a="quem-escreve">${["todos", "professores", "ninguem"].map((v) => `<option value="${v}" ${eu.quemEscreve === v ? "selected" : ""}>${t("qe_" + v)}</option>`).join("")}</select></div></section>
     ${eu.professor && S.seguidoresN !== null ? `<section class="com-cartao com-cartao--p com-linha"><span class="com-ic">${IC.pessoa}</span><div class="com-quem com-quem--larga"><strong>${esc(t(S.seguidoresN === 1 ? "seg_1" : "seg_n", { n: S.seguidoresN }))}</strong><span>${t("seg_privado")}</span></div></section>` : ""}
     <section class="com-cartao com-novo"><h3>${t("meus_dados")}</h3><p class="com-suave">${t("meus_dados_d")}</p>
@@ -972,7 +1009,7 @@ async function carregarRota() {
     } else if (chave === "g") {
       S.grupo = await dados.grupo(valor).catch(() => null);
       S.msgs = [];
-      if (S.grupo) {
+      if (S.grupo && !S.grupo.vitrine) {
         if (S.eu.admin || S.grupo.criador === S.eu.uid) S.pessoas = await dados.membrosAprovados().catch(() => []);
         pararConversa = dados.ouvirMensagens(valor, (m) => {
           S.msgs = m;
@@ -1155,6 +1192,7 @@ const ACOES = {
     try { S.fotoPerfil = await reduzirAvatar(f); mostrarFotoPerfil(); } catch { aviso(t("foto_erro")); }
   },
   "tirar-apoio": async () => { if (confirm(t("apoio_tirar_q")) && await tentar(() => dados.tirarApoio())) { S.apoio = null; desenhar(); } },
+  "msg-acoes": (_, el) => { const on = !el.classList.contains("is-acoes"); app.querySelectorAll(".com-msg.is-acoes").forEach((x) => x.classList.remove("is-acoes")); el.classList.toggle("is-acoes", on); },
   "abrir-lugares": () => { S.esqAberta = true; desenhar(); app.querySelector('[data-a="fechar-lugares"]')?.focus(); },
   "fechar-lugares": () => { S.esqAberta = false; desenhar(); app.querySelector('[data-a="abrir-lugares"]')?.focus(); },
   "quem-escreve": async (_, el) => { if (await tentar(() => dados.guardarQuemEscreve(el.value))) { S.eu.quemEscreve = el.value; aviso(t("a_perfil")); } },
@@ -1181,8 +1219,8 @@ const ACOES = {
     if (await tentar(() => dados.apagarCirculo(v))) { aviso(t("a_circulo_apagado")); S.circulos = await dados.circulos(); ir("#"); }
   },
   "entrar-grupo": async (v) => { if (await tentar(() => dados.entrarNoGrupo(v))) ir(`#g=${v}`); },
-  "sair-grupo": async (v) => { if (await confirmar({ titulo: t("c_sair_t"), texto: t("c_sair_d"), botao: t("c_sair_b") }) && await tentar(() => dados.sairDoGrupo(v))) ir("#grupos"); },
-  "tirar-do-grupo": async (v) => { if (await tentar(() => dados.tirarDoGrupo(S.grupo.id, v))) await carregarRota(); },
+  "sair-grupo": async (v) => { if (await confirmar({ titulo: t("c_sair_t"), texto: t("c_sair_d"), botao: t("c_sair_b") }) && await tentar(() => dados.sairDoGrupo(v, S.grupo?.tipo || (S.grupos || []).find((g) => g.id === v)?.tipo))) ir("#grupos"); },
+  "tirar-do-grupo": async (v) => { if (await tentar(() => dados.tirarDoGrupo(S.grupo.id, v, S.grupo.tipo))) await carregarRota(); },
   "apagar-grupo": async (v) => {
     const g = S.grupos.find((x) => x.id === v);
     if (!await confirmar({ titulo: t("c_grupo_t"), texto: t("c_grupo_d", { n: g.nome }), botao: t("c_grupo_b"), nome: g.nome })) return;
